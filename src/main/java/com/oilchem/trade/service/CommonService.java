@@ -1,5 +1,12 @@
 package com.oilchem.trade.service;
 
+import com.oilchem.trade.config.ImpExpType;
+import com.oilchem.trade.domain.abstrac.IdEntity;
+import org.springframework.data.repository.Repository;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Administrator
@@ -16,5 +23,26 @@ public interface CommonService {
      * @return
      */
     String unZipFile(String zipFileFullName,String unZipFullName);
+
+    /**
+     * 导入access表数据
+     * @param accessFileFullName
+     * @param impExpTypeEnum
+     * @return
+     */
+    public Boolean importAccess(String accessFileFullName, Enum<ImpExpType> impExpTypeEnum);
+
+    /**
+     * 导入数据的方法
+     * @param jdbcTemplate   jdbcTemplate
+     * @param repository    mondel dao
+     * @param e     model bean
+     * @param sql  jdbcTemplate's query sql
+     * @param filedName  access table's filed name
+     * @return
+     */
+    public List<IdEntity> importFiled(JdbcTemplate jdbcTemplate,
+                                      final Repository repository,final IdEntity e,
+                                      String sql,final String filedName);
 
 }

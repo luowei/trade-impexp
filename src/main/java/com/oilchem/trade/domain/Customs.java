@@ -20,6 +20,13 @@ public class Customs extends IdEntity implements Serializable {
     @Column(name = "customs")
     private String customs;
 
+    public Customs() {
+    }
+
+    public Customs(String customs) {
+        this.customs = customs;
+    }
+
     public String getCustoms() {
         return customs;
     }

@@ -20,6 +20,13 @@ public class ProductType extends IdEntity implements Serializable {
     @Column(name = "product_type")
     private String  productType;
 
+    public ProductType() {
+    }
+
+    public ProductType(String productType) {
+        this.productType = productType;
+    }
+
     public String getProductType() {
         return productType;
     }

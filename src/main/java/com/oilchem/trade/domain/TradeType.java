@@ -21,6 +21,13 @@ public class TradeType extends IdEntity implements Serializable {
     @Column(name = "trade_type")
     private String tradeType;
 
+    public TradeType() {
+    }
+
+    public TradeType(String tradeType) {
+        this.tradeType = tradeType;
+    }
+
     public String getTradeType() {
         return tradeType;
     }

@@ -21,6 +21,13 @@ public class Transportation extends IdEntity implements Serializable {
     @Column(name = "transportation")
     private String transportation;
 
+    public Transportation() {
+    }
+
+    public Transportation(String transportation) {
+        this.transportation = transportation;
+    }
+
     public String getTransportation() {
         return transportation;
     }

@@ -36,7 +36,7 @@
         <joda-time.version>2.1</joda-time.version>
         <joda-time-jsptag.version>1.1.1</joda-time-jsptag.version>
         <jackson.version>1.9.6</jackson.version>
-        <shiro.version>1.2.0</shiro.version>
+        <jxl.version>2.6.12</jxl.version>
 
         <jdkVersion>1.6</jdkVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -217,6 +217,13 @@
             <version>${commons-io.version}</version>
         </dependency>
 
+        <!-- jxl -->
+        <dependency>
+            <groupId>net.sourceforge.jexcelapi</groupId>
+            <artifactId>jxl</artifactId>
+            <version>${jxl.version}</version>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>junit</groupId>
@@ -230,7 +237,6 @@
             <version>${springframework.version}</version>
             <scope>test</scope>
         </dependency>
-
 
 
     </dependencies>

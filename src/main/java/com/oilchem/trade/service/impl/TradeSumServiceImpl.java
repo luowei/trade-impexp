@@ -3,9 +3,12 @@ package com.oilchem.trade.service.impl;
 import com.oilchem.trade.config.ImpExpType;
 import com.oilchem.trade.dao.ExpTradeSumDao;
 import com.oilchem.trade.dao.ImpTradeSumDao;
+import com.oilchem.trade.dao.LogDao;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,6 +30,8 @@ public class TradeSumServiceImpl implements TradeDetailService {
     ImpTradeSumDao impTradeSumDao;
     @Resource
     ExpTradeSumDao expTradeSumDao;
+    @Resource
+    LogDao logDao;
 
     @Override
     public String unZipAccess(String zipFullName, String unZipFullName) {
@@ -35,6 +40,6 @@ public class TradeSumServiceImpl implements TradeDetailService {
 
     @Override
     public Boolean importAccess(String accessFileFullName, Enum<ImpExpType> impExpTypeEnum) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 }

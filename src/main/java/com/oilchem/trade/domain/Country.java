@@ -20,6 +20,13 @@ public class Country extends IdEntity implements Serializable {
     @Column(name = "country")
     private String country;
 
+    public Country() {
+    }
+
+    public Country(String country) {
+        this.country = country;
+    }
+
     public String getCountry() {
         return country;
     }

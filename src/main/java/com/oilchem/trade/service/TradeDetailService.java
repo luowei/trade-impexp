@@ -2,6 +2,8 @@ package com.oilchem.trade.service;
 
 import com.oilchem.trade.config.ImpExpType;
 
+import java.util.Date;
+
 /**
  * 进出口明细service接口
  * Created with IntelliJ IDEA.
@@ -23,10 +25,12 @@ public interface TradeDetailService {
     /**
      * 导入Access文件
      * @param accessFileFullName     access文件全名，含绝对路径
+     * @param yearMonth        年月
      * @param impExpTypeEnum   进出口类型，进口/出口
      * @return
      */
-    Boolean importAccess(String accessFileFullName,Enum<ImpExpType> impExpTypeEnum);
+    Boolean importAccess(String accessFileFullName,
+         Date yearMonth,Enum<ImpExpType> impExpTypeEnum);
 
 
 }

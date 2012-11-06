@@ -21,6 +21,13 @@ public class ComplanyType extends IdEntity implements Serializable {
     @Column(name = "complany_type")
     private String complanyType;
 
+    public ComplanyType() {
+    }
+
+    public ComplanyType(String complanyType) {
+        this.complanyType = complanyType;
+    }
+
     public String getComplanyType() {
         return complanyType;
     }

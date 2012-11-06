@@ -3,6 +3,8 @@ package com.oilchem.trade.dao;
 import com.oilchem.trade.domain.ImpTradeDetail;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Date;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Administrator
@@ -11,4 +13,18 @@ import org.springframework.data.repository.CrudRepository;
  * To change this template use File | Settings | File Templates.
  */
 public interface ImpTradeDetailDao extends CrudRepository<ImpTradeDetail,Long> {
+
+    /**
+     * 查义指定年月的记录数量
+     * @param yearMonth
+     * @return
+     */
+    Integer findYearMonthCount(Date yearMonth);
+
+    /**
+     * 删除指定年月的记录数量
+     * @param yearMonth
+     * @return
+     */
+    Boolean deleteByYearMonth(Date yearMonth);
 }

@@ -20,6 +20,12 @@ public class City extends IdEntity implements Serializable {
     @Column(name = "city")
     private String city;
 
+    public City() {
+    }
+
+    public City(String city) {
+        this.city = city;
+    }
 
     public String getCity() {
         return city;
