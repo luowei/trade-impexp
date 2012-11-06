@@ -1,7 +1,6 @@
 package com.oilchem.trade.domain.abstrac;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -15,6 +14,8 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 @MappedSuperclass
+@Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
+//@DiscriminatorColumn(name="tradeSumType",discriminatorType=DiscriminatorType.STRING)
 public abstract class AbstractTradeSum extends IdEntity implements Serializable {
     //进出口年月
     @Column(name = "year_month")

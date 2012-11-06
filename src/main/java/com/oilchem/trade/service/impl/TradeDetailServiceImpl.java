@@ -22,21 +22,21 @@ public class TradeDetailServiceImpl implements TradeDetailService {
     @Autowired
     CommonService commonService;
 
-    @Resource
+    @Autowired
     CityDao cityDao;
-    @Resource
+    @Autowired
     ComplanyTypeDao companyTypeDao;
-    @Resource
+    @Autowired
     CountryDao countryDao;
-    @Resource
+    @Autowired
     CustomsDao customsDao;
-    @Resource
+    @Autowired
     ProductTypeDao productTypeDao;
-    @Resource
+    @Autowired
     TransportationDao transportationDao;
-    @Resource
+    @Autowired
     ExpTradeDetailDao expTradeDetailDao;
-    @Resource
+    @Autowired
     ImpTradeDetailDao impTradeDetailDao;
 
 

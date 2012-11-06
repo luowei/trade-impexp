@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Table(name = "t_product_type")
 public class ProductType extends IdEntity implements Serializable {
     @Column(name = "product_type")
-    private String productType;
+    private String  productType;
 
     public String getProductType() {
         return productType;

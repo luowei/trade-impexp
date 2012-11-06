@@ -1,5 +1,6 @@
 package com.oilchem.trade.dao;
 
+import com.oilchem.trade.domain.ExpTradeDetail;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -9,5 +10,5 @@ import org.springframework.data.repository.CrudRepository;
  * Time: 下午4:55
  * To change this template use File | Settings | File Templates.
  */
-public interface ExpTradeDetailDao extends CrudRepository<ExpTradeDetailDao,Long> {
+public interface ExpTradeDetailDao extends CrudRepository<ExpTradeDetail,Long> {
 }

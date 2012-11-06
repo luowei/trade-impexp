@@ -12,5 +12,5 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface ProductTypeDao extends CrudRepository<ProductType,Long> {
 
-    ProductType findbyProductTypet(String productType);
+    ProductType findByProductType(String productType);
 }

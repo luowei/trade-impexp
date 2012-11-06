@@ -1,8 +1,8 @@
 package com.oilchem.trade.service.impl;
 
 import com.oilchem.trade.config.ImpExpType;
-import com.oilchem.trade.domain.ExpTradeSum;
-import com.oilchem.trade.domain.ImpTradeSum;
+import com.oilchem.trade.dao.ExpTradeSumDao;
+import com.oilchem.trade.dao.ImpTradeSumDao;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +17,16 @@ import javax.annotation.Resource;
  * Time: 下午5:44
  * To change this template use File | Settings | File Templates.
  */
-@Service("tradSumService")
+@Service("tradeSumService")
 public class TradeSumServiceImpl implements TradeDetailService {
 
     @Autowired
     CommonService commonService;
 
     @Resource
-    ImpTradeSum impTradeSum;
+    ImpTradeSumDao impTradeSumDao;
     @Resource
-    ExpTradeSum expTradeSum;
+    ExpTradeSumDao expTradeSumDao;
 
     @Override
     public String unZipAccess(String zipFullName, String unZipFullName) {

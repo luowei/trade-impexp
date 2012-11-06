@@ -18,13 +18,13 @@ import java.io.Serializable;
 @Table(name = "t_customs")
 public class Customs extends IdEntity implements Serializable {
     @Column(name = "customs")
-    private String Customs;
+    private String customs;
 
     public String getCustoms() {
-        return Customs;
+        return customs;
     }
 
     public void setCustoms(String customs) {
-        Customs = customs;
+        this.customs = customs;
     }
 }

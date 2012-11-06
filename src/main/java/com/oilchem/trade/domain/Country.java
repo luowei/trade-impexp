@@ -1,5 +1,7 @@
 package com.oilchem.trade.domain;
 
+import com.oilchem.trade.domain.abstrac.IdEntity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -14,7 +16,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "t_country")
-public class Country  implements Serializable {
+public class Country extends IdEntity implements Serializable {
     @Column(name = "country")
     private String country;
 
