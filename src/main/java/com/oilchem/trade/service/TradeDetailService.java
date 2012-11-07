@@ -1,5 +1,6 @@
 package com.oilchem.trade.service;
 
+import com.oilchem.trade.config.IMessageCode;
 import com.oilchem.trade.config.ImpExpType;
 
 import java.util.Date;
@@ -26,11 +27,11 @@ public interface TradeDetailService {
      * 导入Access文件
      * @param accessFileFullName     access文件全名，含绝对路径
      * @param yearMonth        年月
-     * @param impExpTypeEnum   进出口类型，进口/出口
+     * @param impExpType   进出口类型，1进口/2出口
      * @return
      */
     Boolean importAccess(String accessFileFullName,
-         Date yearMonth,Enum<ImpExpType> impExpTypeEnum);
+         Date yearMonth,Integer impExpType);
 
 
 }

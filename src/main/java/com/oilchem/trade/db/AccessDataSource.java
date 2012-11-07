@@ -16,6 +16,11 @@ import java.sql.SQLException;
  */
 public class AccessDataSource{
 
+    /**
+     * 因为每一个Access文件都要有对应的dataSource，所以这里不能使用单例
+     * @param accessPath
+     * @return
+     */
     public DataSource getAccessDataSource(String accessPath){
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName("sun.jdbc.odbc.JdbcOdbcDriver");

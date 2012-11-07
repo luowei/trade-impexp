@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
@@ -39,7 +40,8 @@ public class TradeSumServiceImpl implements TradeDetailService {
     }
 
     @Override
-    public Boolean importAccess(String accessFileFullName, Enum<ImpExpType> impExpTypeEnum) {
-        return null;
+    public Boolean importAccess(String accessFileFullName, Date yearMonth, Integer impExpType) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
 }

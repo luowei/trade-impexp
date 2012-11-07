@@ -37,6 +37,7 @@
         <joda-time-jsptag.version>1.1.1</joda-time-jsptag.version>
         <jackson.version>1.9.6</jackson.version>
         <jxl.version>2.6.12</jxl.version>
+        <ant-zip.version>1.8.4</ant-zip.version>
 
         <jdkVersion>1.6</jdkVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -224,6 +225,12 @@
             <version>${jxl.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>${ant-zip.version}</version>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>junit</groupId>
@@ -237,12 +244,30 @@
             <version>${springframework.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>de.innosystec</groupId>
+            <artifactId>java-unrar</artifactId>
+            <version>0.3</version>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.tika</groupId>-->
+            <!--<artifactId>tika-core</artifactId>-->
+            <!--<version>0.8-SNAPSHOT</version>-->
+            <!--<optional>true</optional>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.eclipse.jdt.core.compiler</groupId>-->
+            <!--<artifactId>ecj</artifactId>-->
+            <!--<version>3.7</version>-->
+        <!--</dependency>-->
 
 
     </dependencies>
 
-
     <build>
+
+
         <finalName>${project.artifactId}</finalName>
 
         <plugins>

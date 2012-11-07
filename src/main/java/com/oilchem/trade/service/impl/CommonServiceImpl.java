@@ -1,17 +1,23 @@
 package com.oilchem.trade.service.impl;
 
 import com.oilchem.trade.config.ImpExpType;
+import com.oilchem.trade.dao.*;
+import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
+import com.oilchem.trade.domain.*;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.service.CommonService;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.Repository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,6 +29,24 @@ import java.util.List;
  */
 @Service("commonService")
 public class CommonServiceImpl implements CommonService {
+
+    @Resource
+    CityDao cityDao;
+    @Resource
+    ComplanyTypeDao companyTypeDao;
+    @Resource
+    CountryDao countryDao;
+    @Resource
+    CustomsDao customsDao;
+    @Resource
+    TradeTypeDao tradeTypeDao;
+    @Resource
+    TransportationDao transportationDao;
+
+    @Resource
+    ProductTypeDao productTypeDao;
+
+
 
     public String unZipFile(String zipFileFullName, String unZipFullName) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
@@ -41,23 +65,23 @@ public class CommonServiceImpl implements CommonService {
      * @param filedName  access table's filed name
      * @return
      */
-    public List<IdEntity> importFiled(JdbcTemplate jdbcTemplate,
-        final Repository repository,final IdEntity e,
-        String sql,final String filedName){
+    public <E extends IdEntity> List<E> queryDiffRecord(JdbcTemplate jdbcTemplate,
+                                          final Repository repository, final E e,
+                                          String sql, final String filedName){
 
-        List<IdEntity> idEntityList = jdbcTemplate.query(sql,new RowMapper<IdEntity>() {
-            public IdEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+        List<E> eList = jdbcTemplate.query(sql, new RowMapper<E>() {
+            public E mapRow(ResultSet rs, int rowNum) throws SQLException {
                 String name = rs.getString(filedName);
                 String suffix = repository.getClass().getSimpleName();
-                String methodName = "getBy"+suffix;
+                String methodName = "getBy" + suffix;
                 try {
-                    Method method = repository.getClass().getDeclaredMethod(methodName,String.class);
-                    Object findByMethodRet = method.invoke(repository,name);  //根据名字查找
+                    Method method = repository.getClass().getDeclaredMethod(methodName, String.class);
+                    E findByMethodRet = (E) method.invoke(repository, name);  //根据名字查找
 
                     //如果没有找到相同记录
-                    if(!(findByMethodRet instanceof IdEntity)){
-                        Method setMethod = e.getClass().getDeclaredMethod("set"+suffix,String.class);
-                        setMethod.invoke(e,name);
+                    if (findByMethodRet.getId() == null) {
+                        Method setMethod = e.getClass().getDeclaredMethod("set" + suffix, String.class);
+                        setMethod.invoke(e, name);
                         return e;
                     }
                 } catch (NoSuchMethodException e1) {
@@ -71,6 +95,67 @@ public class CommonServiceImpl implements CommonService {
                 return null;
             }
         });
-        return idEntityList;
+        return eList;
     }
+
+    /**
+     * 导入查询条件表
+     * @param jdbcTemplate
+     * @param sql
+     * @return
+     */
+    public Boolean importCriteriaTab(JdbcTemplate jdbcTemplate,String sql){
+        Boolean isSuccess = true;
+
+        //导入城市
+        List<City> cityList = (List<City>)queryDiffRecord(jdbcTemplate,
+                cityDao, new City(), sql, "cityName");
+        cityDao.save(cityList);
+
+        //导入企业性质
+        List<ComplanyType> complanyTypeList = (List<ComplanyType>)queryDiffRecord(jdbcTemplate,
+                companyTypeDao, new ComplanyType(), sql, "E2");
+        companyTypeDao.save(complanyTypeList);
+
+        //导入海关
+        List<Customs> customsList = (List<Customs>)queryDiffRecord(jdbcTemplate,
+                customsDao, new Customs(), sql, "CustomsName");
+        customsDao.save(customsList);
+
+        //导入贸易方式
+        List<TradeType> tradeTypeList = (List<TradeType>)queryDiffRecord(jdbcTemplate,
+                tradeTypeDao, new TradeType(), sql, "TradeName");
+        tradeTypeDao.save(tradeTypeList);
+
+        //导入运输方式
+        List<Transportation> transportationList = (List<Transportation>)queryDiffRecord(jdbcTemplate,
+                transportationDao, new Transportation(), sql, "TransName");
+        transportationDao.save(transportationList);
+
+        return isSuccess;
+    }
+
+    /**
+     * 导入贸易明细
+     * @param crudRepository  crudRepository与baseDaoDao传相同对象
+     * @param baseDaoDao        crudRepository与baseDaoDao传相同对象
+     * @param jdbcTemplate
+     * @param tradeDetailMapper
+     * @param yearMonth
+     * @param sql
+     * @param <T>
+     * @return
+     */
+    public <T extends AbstractTradeDetailRowMapper> Boolean importTradeDetail(
+            CrudRepository crudRepository,BaseDao baseDaoDao,JdbcTemplate jdbcTemplate,
+            T tradeDetailMapper,Date yearMonth, String sql) {
+        Boolean success = true;
+        if(baseDaoDao.countWithYearMonth(yearMonth) > 0){
+            success = success & baseDaoDao.delWithYearMonthRecord(yearMonth);
+        }
+        List<ExpTradeDetail> expTradeDetailList = jdbcTemplate.query(sql,tradeDetailMapper);
+        crudRepository.save(expTradeDetailList);
+        return success;
+    }
+
 }
