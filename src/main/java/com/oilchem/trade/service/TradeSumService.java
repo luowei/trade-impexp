@@ -10,12 +10,12 @@ package com.oilchem.trade.service;
 public interface TradeSumService {
 
     /**
-     * 解压excel的zip文件
-     * @param zipPath
-     * @param unZipPath
-     * @return
+     * 解包
+     * @param packageSource    源zip文件绝对路径
+     * @param packageType   包类型，rar包为true,zip包为false
+     * @return   上传后的url
      */
-    String unZipExcel(String zipPath,String unZipPath);
+    public String unPackage(String packageSource,Boolean packageType);
 
     /**
      * 读取excel文件

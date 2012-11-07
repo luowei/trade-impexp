@@ -1,5 +1,6 @@
 package com.oilchem.trade.service.impl;
 
+import com.oilchem.trade.config.Config;
 import com.oilchem.trade.config.IMessageCode;
 import com.oilchem.trade.config.ImpExpType;
 import com.oilchem.trade.dao.*;
@@ -43,11 +44,13 @@ public class TradeDetailServiceImpl implements TradeDetailService {
     @Resource
     JdbcTemplate accessJdbcTemplate;
 
-    public String unZipAccess(String zipFullName, String unZipFullName) {
-
-
-
-        return null;
+    /**
+     * 解包
+     * @param packageSourcee    源zip文件绝对路径
+     * @return
+     */
+    public String unPackage(String packageSourcee) {
+        return commonService.unpackageFile(packageSourcee, Config.UPLOAD_ACCESSZIP_DIR);
     }
 
     /**

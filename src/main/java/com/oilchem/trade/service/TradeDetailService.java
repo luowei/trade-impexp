@@ -16,12 +16,11 @@ import java.util.Date;
 public interface TradeDetailService {
 
     /**
-     * 解压access文件
-     * @param zipFullName    zip文件全名
-     * @param unZipFullName   解压后的Access文件全名
-     * @return
+     * 解包
+     * @param packageSourcee    源zip文件绝对路径
+     * @return   上传后的url
      */
-    String unZipAccess(String zipFullName,String unZipFullName);
+    public String unPackage(String packageSourcee) ;
 
     /**
      * 导入Access文件

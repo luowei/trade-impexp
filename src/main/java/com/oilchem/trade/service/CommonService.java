@@ -21,20 +21,12 @@ import java.util.List;
 public interface CommonService {
 
     /**
-     * 解压文件
-     * @param zipFileFullName   含绝对路径的zip文件全名
-     * @param unZipFullName    解压后含绝对路径的文件全名
-     * @return
+     * 解包
+     * @param packageSource    源zip文件绝对路径
+     * @param unPackageDir     解压目录
+     * @return   上传后的url
      */
-    String unZipFile(String zipFileFullName,String unZipFullName);
-
-    /**
-     * 导入access表数据
-     * @param accessFileFullName
-     * @param impExpTypeEnum
-     * @return
-     */
-    public Boolean importAccess(String accessFileFullName, Enum<ImpExpType> impExpTypeEnum);
+    public String unpackageFile(String packageSource, String unPackageDir);
 
     /**
      * 导入数据的方法

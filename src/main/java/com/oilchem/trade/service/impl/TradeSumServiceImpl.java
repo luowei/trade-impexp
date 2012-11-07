@@ -1,5 +1,6 @@
 package com.oilchem.trade.service.impl;
 
+import com.oilchem.trade.config.Config;
 import com.oilchem.trade.config.ImpExpType;
 import com.oilchem.trade.dao.ExpTradeSumDao;
 import com.oilchem.trade.dao.ImpTradeSumDao;
@@ -34,9 +35,13 @@ public class TradeSumServiceImpl implements TradeDetailService {
     @Resource
     LogDao logDao;
 
-    @Override
-    public String unZipAccess(String zipFullName, String unZipFullName) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    /**
+     * 解包
+     * @param packageSource    源zip文件绝对路径
+     * @return  上传后的url
+     */
+    public String unPackage(String packageSource,Boolean packageType) {
+        return commonService.unpackageFile(packageSource, Config.UPLOAD_EXCELZIP_DIR);
     }
 
     @Override

@@ -1,16 +1,22 @@
 package com.oilchem.trade.service.impl;
 
+import com.oilchem.common.util.FileUtil;
+import com.oilchem.common.util.ZipUtil;
+import com.oilchem.trade.config.Config;
 import com.oilchem.trade.config.ImpExpType;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.domain.*;
+import com.oilchem.trade.domain.abstrac.AbstractTradeSum;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.service.CommonService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.Repository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
@@ -46,15 +52,6 @@ public class CommonServiceImpl implements CommonService {
     @Resource
     ProductTypeDao productTypeDao;
 
-
-
-    public String unZipFile(String zipFileFullName, String unZipFullName) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public Boolean importAccess(String accessFileFullName, Enum<ImpExpType> impExpTypeEnum) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 
     /**
      * 导入数据的方法
@@ -156,6 +153,56 @@ public class CommonServiceImpl implements CommonService {
         List<ExpTradeDetail> expTradeDetailList = jdbcTemplate.query(sql,tradeDetailMapper);
         crudRepository.save(expTradeDetailList);
         return success;
+    }
+
+    /**
+     * 上传文件
+     * @author wei.luo
+     * @createTime 2012-3-24
+     * @param file  	MultipartFile的文件
+     * @param realDir	目标目录的物理路径
+     * @return		返回上传之后文件的url
+     */
+    public String uploadFile(MultipartFile file,String realDir){
+        String fileUrl = FileUtil.upload(file,realDir, Config.ROOT_URL);
+        return fileUrl;
+    }
+
+    /**
+     * 解包
+     * @param packageSource    源zip文件绝对路径
+     * @param unPackageDir     解压目录
+     * @return   上传后的url
+     */
+    public String unpackageFile(String packageSource, String unPackageDir){
+
+        if(StringUtils.isBlank(packageSource) || StringUtils.isBlank(unPackageDir))
+                return null;
+
+        String type = FileUtil.getFileSuffix(packageSource);
+
+        if(type.equals(".zip")){
+            return ZipUtil.unRar(packageSource,unPackageDir);
+        }else if(type.equals(".rar")) {
+            return ZipUtil.unZip(packageSource,unPackageDir,null);
+        }else return null;
+    }
+
+    public <E extends AbstractTradeSum> Boolean importExcel(
+            CrudRepository<E,Long> repository,String excelSource,Date yearMonth){
+
+        List<E> eList = null;
+        List<ProductType> productTypeList = null;
+        List<ProductType> originProductList = (List<ProductType>)productTypeDao.findAll();
+
+        //从excel中取得eList与筛选productTypeList
+
+        if((repository.findByYearMonthCount()) > 0)
+            repository.deleteWithYearMonth(yearMonth);
+        repository.save(eList);
+
+        productTypeDao.save(productTypeList);
+        return null;
     }
 
 }

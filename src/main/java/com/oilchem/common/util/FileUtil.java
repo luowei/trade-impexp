@@ -1,6 +1,7 @@
 package com.oilchem.common.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tools.ant.util.FileUtils;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -177,6 +178,9 @@ public class FileUtil {
 
     /**
      * 获年月日时分秒字符串
+     * @param date date
+     * @author wei.luo
+     * @createTime 2012-4-18
      * @return
      */
     public static String getYYYYMMDDHHMMSS(Date date){
@@ -199,39 +203,60 @@ public class FileUtil {
      * @createTime 2012-3-24
      * @param file	MultipartFile的文件
      * @param realDir	目标目录的物理路径
-     * @param netDir	目标目录
-     * @return		返回上传之后的目标路径
+     * @param netDir	应用的根url
+     * @return		返回上传之后文件的url
      */
     public static synchronized String upload(MultipartFile file,String realDir,String netDir) {
-        if (file.isEmpty() || StringUtils.isBlank(realDir) || netDir==null) {
+        if (file.isEmpty() || StringUtils.isBlank(realDir)) {
             return null;
         }
         // 获取路径，生成完整的文件路径
-        String fileName = getFileName(realDir)
-                + file.getOriginalFilename().substring(
-                file.getOriginalFilename().lastIndexOf("."));
-        File uploadFile = new File(fileName);
+        String originalFileName = file.getOriginalFilename();
+        String filePrefix = file.getName().substring(0,file.getName().indexOf("."));
+        String yyyyMMDDHHMMSS = getYYYYMMDDHHMMSS(new Date());
+
+        //生成的文件名为 "物理路径/前缀_日期时间+后缀"
+        String fileName = filePrefix+"_"+yyyyMMDDHHMMSS
+                + originalFileName.substring(originalFileName.lastIndexOf("."));
+        String readFileName = realDir+"/"+fileName;
+        File uploadFile = new File(readFileName);
         try {
             // 上传
             FileCopyUtils.copy(file.getBytes(), uploadFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // 网页端显示的路径的分隔符为/。
-        return netDir + "/" + YY + "/" + MM + "/" + uploadFile.getName();
+
+        // 网页端显示的路径的分隔符为/
+        if(netDir == null){
+            return null;
+        }else {
+            return netDir + "/" + fileName;
+        }
+    }
+
+    /**
+     * 获得文件后缀
+     * @param fileSource
+     * @return
+     */
+    public static String getFileSuffix(String fileSource){
+        if(!FileUtils.isAbsolutePath(fileSource))
+            return null;
+        File file = new File(fileSource);
+        return file.getName().substring(file.getName().indexOf("."));
     }
 
 
     /**
      * 将不存在的文件夹创建，并且将完整路径+文件名（无后缀）返回。
-     * @author wandonghai
+     * @author Administrator
      * @createTime 2011-6-14
      * @param RealPath
      * @return
      */
     private static String getFileName(final String RealPath) {
         //获取系统分隔符
-        String fs = File.separator;
         Calendar calendar = Calendar.getInstance();
         YY = calendar.get(Calendar.YEAR);
         MM = calendar.get(Calendar.MONTH) + 1;
@@ -240,10 +265,11 @@ public class FileUtil {
         int NN = calendar.get(Calendar.MINUTE);
         int SS = calendar.get(Calendar.SECOND);
 //		int MILL =calendar.get(Calendar.MILLISECOND);
-        File pathFile = new File(RealPath + fs + YY + fs + MM);
+        File pathFile = new File(RealPath + File.separator + YY + File.separator + MM);
         if (!pathFile.exists()) {
             pathFile.mkdirs();
         }
-        return pathFile.getPath()+fs + YY + MM + DD + HH + NN + SS ;
+        //返回形如：c:/filedir/2012/
+        return pathFile.getPath()+File.separator + YY + MM + DD + HH + NN + SS ;
     }
 }

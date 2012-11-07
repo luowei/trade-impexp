@@ -260,6 +260,39 @@ public class ZipUtil {
     }
 
     /**
+     * 把输入流导到输出流
+     * @param inputStream  输入流
+     * @param outputStream  输出流
+     * @param readBlockSize   每次读写的块大小(以byte为单位)
+     * @return    成功或失败
+     */
+    public static Boolean inputStream2OutPutStream(InputStream inputStream,
+                                                   OutputStream outputStream, int readBlockSize){
+        Boolean flag = false;
+        BufferedInputStream bis = new BufferedInputStream(inputStream);
+        BufferedOutputStream bos = new BufferedOutputStream(outputStream);
+        byte [] bytes = new byte[readBlockSize];
+        int count = 0;
+        try {
+            while ((count = bis.read(bytes)) != -1){
+                bos.write(bytes,0,count);
+            }
+            bos.flush();
+            flag = true;
+        } catch (IOException e) {
+            log.error(e.getMessage(),e);
+        } finally {
+            try {
+                bis.close();
+                bos.close();
+            } catch (IOException e) {
+                log.error(e.getMessage(),e);
+            }
+        }
+        return flag;
+    }
+
+    /**
      * 解压rar格式的压缩文件到指定目录下
      * @param rarFileName 压缩文件
      * @param extPlace 解压目录
@@ -267,7 +300,7 @@ public class ZipUtil {
      */
     public static void unrar(String rarFileName, String extPlace){
         File rarFile = null;
-         FileOutputStream os = null;
+        FileOutputStream os = null;
         try {
             (new File(extPlace)).mkdirs();
             rarFile = new File(rarFileName);
@@ -312,6 +345,85 @@ public class ZipUtil {
         } catch (Exception e) {
             log.error(e.getMessage(),e);
         }
+    }
+
+    /**
+     * 解压zip
+     * @param zipSource  zip包源路径
+     * @param unZipDir   解压目录
+     * @param encoding 编码,如果传null，默认为UTF-8
+     * @return
+     */
+    public static String unZip(String zipSource,String unZipDir,String encoding){
+        String unZipFile = null;
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            ZipFile zipFile = new ZipFile(zipSource,(encoding == null?"utf-8":encoding));
+            Enumeration<ZipEntry> zipEntrys = zipFile.getEntries();
+            while (zipEntrys.hasMoreElements()){
+                ZipEntry zipEntry = zipEntrys.nextElement();
+                unZipFile = unZipDir+"/"+zipEntry.getName();
+                if(zipEntry.isDirectory()){
+                    new File(unZipFile).mkdirs();
+                    continue;
+                }else {
+                    is = zipFile.getInputStream(zipEntry);
+                    os = new FileOutputStream(unZipFile);
+                    ZipUtil.inputStream2OutPutStream(is,os,1024);
+                }
+            }
+        } catch (IOException e) {
+            log.error(e.getMessage(),e);
+        } finally {
+            try {
+                is.close();
+                os.close();
+            } catch (IOException e) {
+                log.error(e.getMessage(),e);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 解压rar
+     * @param rarSource
+     * @param unRarDir
+     * @return  最后一个解压的文件的全路径
+     * @throws Exception
+     */
+    public static String unRar(String rarSource,String unRarDir){
+        String unRarFile = null;
+        OutputStream os = null;
+        Archive archive = null;
+        try {
+            archive = new Archive(new File(rarSource));
+
+            Iterator<FileHeader> fileHeaderIterator = archive.getFileHeaders().iterator();
+            while (fileHeaderIterator.hasNext()){
+                FileHeader fileHeader = fileHeaderIterator.next();
+                unRarFile = unRarDir+"/"+fileHeader.getFileNameString();
+                if(fileHeader.isDirectory()){
+                    new File(unRarFile).mkdirs();
+                    continue;
+                }else{
+                    os = new FileOutputStream(unRarFile);
+                    archive.extractFile(fileHeader,os);
+                }
+            }
+        } catch (RarException e) {
+            log.error(e.getMessage(),e);
+        } catch (IOException e) {
+            log.error(e.getMessage(),e);
+        } finally {
+            try {
+                os.close();
+            } catch (IOException e) {
+                log.error(e.getMessage(),e);
+            }
+        }
+        return unRarFile;
     }
 
 }
