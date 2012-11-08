@@ -10,5 +10,5 @@ import org.springframework.data.repository.CrudRepository;
  * Time: 下午12:44
  * To change this template use File | Settings | File Templates.
  */
-public interface LogDao extends CrudRepository<Log,Long> {
+public interface LogDao extends CrudRepository<Log,Long>,BaseDao<Log> {
 }

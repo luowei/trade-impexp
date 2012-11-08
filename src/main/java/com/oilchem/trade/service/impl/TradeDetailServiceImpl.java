@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.Repository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -45,12 +46,21 @@ public class TradeDetailServiceImpl implements TradeDetailService {
     JdbcTemplate accessJdbcTemplate;
 
     /**
-     * 解包
-     * @param packageSourcee    源zip文件绝对路径
-     * @return
+     * 上传文件包
+     * @param file  文件
+     * @return  上传后的文件路径
      */
-    public String unPackage(String packageSourcee) {
-        return commonService.unpackageFile(packageSourcee, Config.UPLOAD_ACCESSZIP_DIR);
+    public String uploadPackage(MultipartFile file) {
+        return commonService.uploadFile(file,Config.UPLOAD_ACCESSZIP_DIR);
+    }
+
+    /**
+     * 解包
+     * @param packageSource    源zip文件绝对路径
+     * @return  解包后的文件路径
+     */
+    public String unPackage(String packageSource) {
+        return commonService.unpackageFile(packageSource, Config.UPLOAD_ACCESSZIP_DIR);
     }
 
     /**
@@ -60,27 +70,37 @@ public class TradeDetailServiceImpl implements TradeDetailService {
      * @param impExpType   进出口类型，1进口/2出口
      * @return
      */
-    public Boolean importAccess(String accessFileFullName,Date yearMonth, Integer impExpType) {
+    public Boolean importExcel(String accessFileFullName, Date yearMonth, Integer impExpType) {
 
         Boolean isSuccess = true;
 
         final  String sql = "select * from 结果 ";
-        accessJdbcTemplate.setDataSource((new AccessDataSource()).getAccessDataSource(accessFileFullName));
+        accessJdbcTemplate.setDataSource((new AccessDataSource())
+                .getAccessDataSource(accessFileFullName));
 
         //导入查询条件表
         commonService.importCriteriaTab(accessJdbcTemplate,sql);
 
         //导入进口明细总表
         if(impExpType.equals(ImpExpType.进口.getCode())){
-            isSuccess = isSuccess & commonService.importTradeDetail(impTradeDetailDao,impTradeDetailDao,
+            isSuccess = isSuccess & commonService.importTradeDetail(
+                    impTradeDetailDao,impTradeDetailDao,
                     accessJdbcTemplate,new ImpTradeDetailRowMapper(),yearMonth, sql);
+
+            //切面更新明细表年月
+
         }
 
         //导入出口明细表
         else if(impExpType.equals(ImpExpType.出口.getCode())){
-            isSuccess = isSuccess & commonService.importTradeDetail(expTradeDetailDao,expTradeDetailDao,
+            isSuccess = isSuccess & commonService.importTradeDetail(
+                    expTradeDetailDao,expTradeDetailDao,
                     accessJdbcTemplate,new ExpTradeDetailRowMapper(),yearMonth, sql);
+
+            //切面更新明细表年月
         }
+
+        //切面更新日志
 
         return isSuccess;
     }

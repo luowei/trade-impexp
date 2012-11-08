@@ -383,7 +383,7 @@ public class ZipUtil {
                 log.error(e.getMessage(),e);
             }
         }
-        return null;
+        return unZipFile;
     }
 
     /**

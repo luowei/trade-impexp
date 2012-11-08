@@ -15,4 +15,7 @@ public class Config {
     public static String UNZIP_EXCEL_DIR = "d:/aaaa/unzip/excel";
 
     public static String ROOT_URL = "http://trade.vvvv.com";
+
+    public static String ACCESS_PACKAGE = "access";
+    public static String EXCEL_PACKAGE = "excel";
 }

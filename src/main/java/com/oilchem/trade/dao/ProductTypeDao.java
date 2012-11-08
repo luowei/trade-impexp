@@ -10,7 +10,7 @@ import org.springframework.data.repository.CrudRepository;
  * Time: 下午5:03
  * To change this template use File | Settings | File Templates.
  */
-public interface ProductTypeDao extends CrudRepository<ProductType,Long> {
+public interface ProductTypeDao extends CrudRepository<ProductType,Long>,BaseDao<ProductType> {
 
     ProductType findByProductType(String productType);
 }

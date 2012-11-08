@@ -10,7 +10,7 @@ import org.springframework.data.repository.CrudRepository;
  * Time: 下午5:05
  * To change this template use File | Settings | File Templates.
  */
-public interface TradeTypeDao extends CrudRepository<TradeType,Long> {
+public interface TradeTypeDao extends CrudRepository<TradeType,Long>,BaseDao<TradeType> {
 
     TradeType findByTradeType(String tradeType);
 }

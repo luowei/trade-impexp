@@ -20,8 +20,6 @@ public class ImpTradeDetailRowMapper
 
     @Override
     public ImpTradeDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-        ImpTradeDetail impTradeDetail = new  ImpTradeDetail();
-        this.setTraddDetail(impTradeDetail,rs);
-        return impTradeDetail;
+        return super.mapRow(rs, rowNum);
     }
 }

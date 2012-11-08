@@ -1,7 +1,5 @@
 package com.oilchem.trade.domain.abstrac;
 
-import com.oilchem.trade.domain.abstrac.IdEntity;
-
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
@@ -34,8 +32,8 @@ public abstract class AbstractTradeDetail extends IdEntity implements Serializab
     @Column(name = "product_name")
     private String productName;
     //企业性质
-    @Column(name = "complany_type")
-    private String complanyType;
+    @Column(name = "company_type")
+    private String companyType;
     //贸易方式
     @Column(name = "trade_type")
     private String tradeType;
@@ -64,8 +62,8 @@ public abstract class AbstractTradeDetail extends IdEntity implements Serializab
     @Column(name = "unit_price")
     private BigDecimal unitPrice;
 
-    @Column(name = "complany_type_id")
-    private Integer complanyTypeId;
+    @Column(name = "company_type_id")
+    private Integer companyTypeId;
     @Column(name = "trade_type_id")
     private Integer tradeTypeId;
     @Column(name = "transportation_id")
@@ -117,12 +115,12 @@ public abstract class AbstractTradeDetail extends IdEntity implements Serializab
         this.productName = productName;
     }
 
-    public String getComplanyType() {
-        return complanyType;
+    public String getCompanyType() {
+        return companyType;
     }
 
-    public void setComplanyType(String complanyType) {
-        this.complanyType = complanyType;
+    public void setCompanyType(String companyType) {
+        this.companyType = companyType;
     }
 
     public String getTradeType() {
@@ -197,12 +195,12 @@ public abstract class AbstractTradeDetail extends IdEntity implements Serializab
         this.unitPrice = unitPrice;
     }
 
-    public Integer getComplanyTypeId() {
-        return complanyTypeId;
+    public Integer getCompanyTypeId() {
+        return companyTypeId;
     }
 
-    public void setComplanyTypeId(Integer complanyTypeId) {
-        this.complanyTypeId = complanyTypeId;
+    public void setCompanyTypeId(Integer companyTypeId) {
+        this.companyTypeId = companyTypeId;
     }
 
     public Integer getTradeTypeId() {

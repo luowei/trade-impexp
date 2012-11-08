@@ -30,10 +30,15 @@ public class Log extends IdEntity implements Serializable {
     //进出口类型
     @Column(name = "trade_type")
     private String tradeType;
+    //表类型
+    @Column(name = "table_type")
+    private String tableType;
     //导入文件上传后的路径
     @Column(name = "upload_path")
     private String uploadPath;
     //导出文件的下载地址
+    Object obj = null;
+
     @Column(name = "download_url")
     private String downLoadUrl;
     //是否已完成
@@ -68,6 +73,14 @@ public class Log extends IdEntity implements Serializable {
 
     public void setTradeType(String tradeType) {
         this.tradeType = tradeType;
+    }
+
+    public String getTableType() {
+        return tableType;
+    }
+
+    public void setTableType(String tableType) {
+        this.tableType = tableType;
     }
 
     public String getUploadPath() {

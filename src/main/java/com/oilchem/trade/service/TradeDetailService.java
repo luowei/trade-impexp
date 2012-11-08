@@ -2,6 +2,7 @@ package com.oilchem.trade.service;
 
 import com.oilchem.trade.config.IMessageCode;
 import com.oilchem.trade.config.ImpExpType;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
@@ -16,11 +17,18 @@ import java.util.Date;
 public interface TradeDetailService {
 
     /**
-     * 解包
-     * @param packageSourcee    源zip文件绝对路径
-     * @return   上传后的url
+     * 上传文件包
+     * @param file  文件
+     * @return   上传后的文件路径
      */
-    public String unPackage(String packageSourcee) ;
+    public String uploadPackage(MultipartFile file);
+
+    /**
+     * 解包
+     * @param packageSource    源zip文件绝对路径
+     * @return  解包后的文件路径
+     */
+    public String unPackage(String packageSource) ;
 
     /**
      * 导入Access文件
@@ -29,8 +37,8 @@ public interface TradeDetailService {
      * @param impExpType   进出口类型，1进口/2出口
      * @return
      */
-    Boolean importAccess(String accessFileFullName,
-         Date yearMonth,Integer impExpType);
+    Boolean importExcel(String accessFileFullName,
+                        Date yearMonth, Integer impExpType);
 
 
 }

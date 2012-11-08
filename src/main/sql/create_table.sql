@@ -246,10 +246,14 @@ create table t_log(
 	log_type nvarchar(10) check (log_type in('导入','导出')),		--日志类型
 	log_time datetime ,--日志时间
 	trade_type nvarchar(10) check(trade_type in('进口','出口')), --进出类型
-	upload_path nvarchar(200), --导入文件的路径
+	table_type nvarchar(10) check(table_type in('明细表','总表')),
+	upload_path nvarchar(200), --上传包的路径
+	impfile_path nvarchar(200),--导入文件的路径
 	download_url nvarchar(200), --导出文件下载地址
-	complete_flag nvarchar(2) check(complete_flag in('是','否')), --是否已完成
-	error_occur nvarchar(2), --是否发生错误
+	upload_flag nvarchar(10) check(upload_flag in('上传成功','正在上传')), --是否已完成
+	extract_flag nvarchar(10) check(extract_flag in('解压成功','正在解压')),--是否解压完成
+	lock_flag nvarchar(10) check(lock_flag in('未锁定','锁定中'))
+	error_occur nvarchar(2000), --是否发生错误
 	--constraint chk_Person check (log_time in('导入','导出'))
 	--constraint [PK__t_export_sum__id] primary key nonclustered (id)
 )

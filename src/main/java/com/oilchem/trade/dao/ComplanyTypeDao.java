@@ -16,7 +16,8 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 //@RepositoryDefinition(domainClass = ComplanyType.class,idClass = Integer.class)
-public interface ComplanyTypeDao extends CrudRepository<ComplanyType,Long>{
+public interface ComplanyTypeDao extends CrudRepository<ComplanyType,Long>,
+        BaseDao<ComplanyType>{
 
     ComplanyType findByComplanyType(String complanyType);
 

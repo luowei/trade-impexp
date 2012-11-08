@@ -17,8 +17,6 @@ public class ExpTradeDetailRowMapper extends AbstractTradeDetailRowMapper<ExpTra
 
     @Override
     public ExpTradeDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-        ExpTradeDetail expTradeDetail = new ExpTradeDetail();
-        this.setTraddDetail(expTradeDetail,rs);
-        return expTradeDetail;
+        return super.mapRow(rs, rowNum);
     }
 }

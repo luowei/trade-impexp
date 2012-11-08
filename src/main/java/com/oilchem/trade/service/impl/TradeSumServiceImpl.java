@@ -5,12 +5,17 @@ import com.oilchem.trade.config.ImpExpType;
 import com.oilchem.trade.dao.ExpTradeSumDao;
 import com.oilchem.trade.dao.ImpTradeSumDao;
 import com.oilchem.trade.dao.LogDao;
+import com.oilchem.trade.dao.map.ExpTradeSumRowMapper;
+import com.oilchem.trade.dao.map.ImpTradeSumRowMapper;
+import com.oilchem.trade.domain.ExpTradeSum;
+import com.oilchem.trade.domain.ImpTradeSum;
 import com.oilchem.trade.service.CommonService;
-import com.oilchem.trade.service.TradeDetailService;
+import com.oilchem.trade.service.TradeSumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -23,7 +28,7 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 @Service("tradeSumService")
-public class TradeSumServiceImpl implements TradeDetailService {
+public class TradeSumServiceImpl implements TradeSumService {
 
     @Autowired
     CommonService commonService;
@@ -36,17 +41,52 @@ public class TradeSumServiceImpl implements TradeDetailService {
     LogDao logDao;
 
     /**
-     * 解包
-     * @param packageSource    源zip文件绝对路径
-     * @return  上传后的url
+     * 上传文件包
+     * @param file  文件
+     * @return  上传后的文件路径
      */
-    public String unPackage(String packageSource,Boolean packageType) {
-        return commonService.unpackageFile(packageSource, Config.UPLOAD_EXCELZIP_DIR);
+    public String uploadPackage(MultipartFile file) {
+        return commonService.uploadFile(file,Config.UPLOAD_EXCELZIP_DIR);
     }
 
-    @Override
-    public Boolean importAccess(String accessFileFullName, Date yearMonth, Integer impExpType) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    /**
+     * 解包
+     * @param packageSourcee    源zip文件绝对路径
+     * @return  解包后的文件路径
+     */
+    public String unPackage(String packageSourcee) {
+        return commonService.unpackageFile(packageSourcee, Config.UPLOAD_EXCELZIP_DIR);
+    }
+
+
+    /**
+     * 导入Excel
+     * @param excelSource     excel文件全名，含绝对路径
+     * @param yearMonth        年月
+     * @param productType   产品类型
+     * @param impExpType   进出口类型，1进口/2出口
+     * @return
+     */
+    public Boolean importExcel(String excelSource, Date yearMonth,
+            String productType,Integer impExpType) {
+
+        Boolean isSuccess = true;
+
+        if(impExpType.equals(ImpExpType.进口.getCode())){
+            isSuccess = isSuccess & commonService.importExcel(impTradeSumDao,excelSource,
+                    ImpTradeSum.class,ImpTradeSumRowMapper.class,yearMonth,productType);
+            //更新yearMonth
+        }
+
+        else if(impExpType.equals(ImpExpType.出口.getCode())){
+            isSuccess = isSuccess & commonService.importExcel(expTradeSumDao,excelSource,
+                    ExpTradeSum.class,ExpTradeSumRowMapper.class,yearMonth,productType);
+            //更新yearMonth
+        }
+
+        //更新日志记录
+
+        return isSuccess;
     }
 
 }
