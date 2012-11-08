@@ -34,11 +34,11 @@ public interface TradeDetailService {
      * 导入Access文件
      * @param accessFileFullName     access文件全名，含绝对路径
      * @param yearMonth        年月
-     * @param impExpType   进出口类型，1进口/2出口
+     * @param impExpTradeType   进出口类型，1进口/2出口
      * @return
      */
-    Boolean importExcel(String accessFileFullName,
-                        Date yearMonth, Integer impExpType);
+    Boolean importAccess(String accessFileFullName,
+                         Date yearMonth, Integer impExpTradeType);
 
 
 }

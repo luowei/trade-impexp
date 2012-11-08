@@ -2,8 +2,6 @@ package com.oilchem.trade.service.impl;
 
 import com.oilchem.common.util.FileUtil;
 import com.oilchem.common.util.ZipUtil;
-import com.oilchem.trade.config.MapperConfig;
-import com.oilchem.trade.config.Config;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.MyRowMapper;
@@ -30,6 +28,8 @@ import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import static com.oilchem.trade.config.Config.*;
+import static com.oilchem.trade.config.MapperConfig.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -53,9 +53,10 @@ public class CommonServiceImpl implements CommonService {
     TradeTypeDao tradeTypeDao;
     @Resource
     TransportationDao transportationDao;
-
     @Resource
     ProductTypeDao productTypeDao;
+    @Resource
+    LogDao logDao;
 
     //日志记录器
     Logger logger = LoggerFactory.getLogger(getClass());
@@ -70,7 +71,7 @@ public class CommonServiceImpl implements CommonService {
      * @return		返回上传之后文件的url
      */
     public String uploadFile(MultipartFile file,String realDir){
-        String fileUrl = FileUtil.upload(file, realDir, Config.ROOT_URL);
+        String fileUrl = FileUtil.upload(file, realDir, ROOT_URL);
         return fileUrl;
     }
 
@@ -80,6 +81,8 @@ public class CommonServiceImpl implements CommonService {
      * @param unPackageDir     解压目录
      * @return   上传后的url
      */
+    //@Before加锁
+    //@After解锁
     public String unpackageFile(String packageSource, String unPackageDir){
 
         if(StringUtils.isBlank(packageSource) || StringUtils.isBlank(unPackageDir))
@@ -106,27 +109,27 @@ public class CommonServiceImpl implements CommonService {
 
         //导入城市
         List<City> cityList = (List<City>)queryCriteriaRecord(jdbcTemplate,
-                cityDao, City.class, sql, "cityName");
+                cityDao, City.class, sql, CITY);
         cityDao.save(cityList);
 
         //导入企业性质
         List<ComplanyType> complanyTypeList = (List<ComplanyType>)queryCriteriaRecord(jdbcTemplate,
-                companyTypeDao, ComplanyType.class, sql, "E2");
+                companyTypeDao, ComplanyType.class, sql, COMPANY_TYPE);
         companyTypeDao.save(complanyTypeList);
 
         //导入海关
         List<Customs> customsList = (List<Customs>)queryCriteriaRecord(jdbcTemplate,
-                customsDao, Customs.class, sql, "CustomsName");
+                customsDao, Customs.class, sql, CUSTOMS);
         customsDao.save(customsList);
 
         //导入贸易方式
         List<TradeType> tradeTypeList = (List<TradeType>)queryCriteriaRecord(jdbcTemplate,
-                tradeTypeDao, TradeType.class, sql, "TradeName");
+                tradeTypeDao, TradeType.class, sql, TRADE_TYPE);
         tradeTypeDao.save(tradeTypeList);
 
         //导入运输方式
         List<Transportation> transportationList = (List<Transportation>)queryCriteriaRecord(jdbcTemplate,
-                transportationDao, Transportation.class, sql, "TransName");
+                transportationDao, Transportation.class, sql, TRANSPORTATION);
         transportationDao.save(transportationList);
 
         return isSuccess;
@@ -183,7 +186,7 @@ public class CommonServiceImpl implements CommonService {
      * @param <T>
      * @return
      */
-    public <T extends AbstractTradeDetailRowMapper> Boolean importTradeDetail(
+    public synchronized <T extends AbstractTradeDetailRowMapper> Boolean importTradeDetail(
             CrudRepository crudRepository,BaseDao baseDaoDao,JdbcTemplate jdbcTemplate,
             T tradeDetailMapper,Date yearMonth, String sql) {
         Boolean success = true;
@@ -226,7 +229,7 @@ public class CommonServiceImpl implements CommonService {
             Workbook workbook = Workbook.getWorkbook(new File(excelSource));
             Sheet sheet = workbook.getSheet(0);
             int rows = sheet.getRows();
-            int rowIdx = sheet.findCell(MapperConfig.PRODUCT_XNAME).getRow() + 1;
+            int rowIdx = sheet.findCell(PRODUCT_XNAME).getRow() + 1;
 
             //遍历excel
             for( ; rowIdx < rows; rowIdx++){
@@ -234,8 +237,7 @@ public class CommonServiceImpl implements CommonService {
                 Constructor<M> constructor = tradeSumRowMapClass.getConstructor(
                         int.class, tradeSumClass, Sheet.class);
                 M tradeSumMyRowMapper = constructor.newInstance(rowIdx,tradeSum,sheet);
-                tradeSum = tradeSumMyRowMapper.getMappingInstance();
-                tradeSumList.add(tradeSum);
+                tradeSumList.add(tradeSumMyRowMapper.getMappingInstance());
             }
         } catch (Exception e) {
             isSuccess = false;
@@ -243,9 +245,11 @@ public class CommonServiceImpl implements CommonService {
         }
 
         //判断是否已存在当年当月的数量，执行保存
-        if((productTypeDao.countWithYearMonth(yearMonth)) > 0)
-            productTypeDao.delWithYearMonthRecord(yearMonth);
-        repository.save(tradeSumList);
+        synchronized ("synchronized_lock".intern()){
+            if((productTypeDao.countWithYearMonth(yearMonth)) > 0)
+                productTypeDao.delWithYearMonthRecord(yearMonth);
+            repository.save(tradeSumList);
+        }
 
         //导入产品类型
         if(productTypeDao.findByProductType(productType) != null)
@@ -261,18 +265,43 @@ public class CommonServiceImpl implements CommonService {
      */
     public Map<Long,String> getUnExtractPackage(String packageType){
         Map<Long,String> packaeMap = new HashMap<Long, String>();
+        List<Log> logList = null;
 
+        if(packageType.equals(DETAIL)){
+            logList = logDao.findByExtractFlagAndTableType(UNEXTRACT_FLAG,DETAIL);
+        }else if(packageType.equals(SUM)){
+            logList = logDao.findByExtractFlagAndTableType(UNEXTRACT_FLAG,SUM);
+        }
+
+        if(logList!=null && !logList.isEmpty()){
+            for (Log log:logList){
+                packaeMap.put(log.getId(),log.getUploadPath());
+            }
+        }
 
         return packaeMap;
     }
 
     /**
      * 获得未导入的文件列表
+     * @param fileType 文件类型
      * @return   返回记录的Id与文件的全路径组成的Map
      */
-    public Map<Long,String> getUnImportFile(){
+    public Map<Long,String> getUnImportFile(String fileType){
         Map<Long,String> fieMap = new HashMap<Long, String>();
+        List<Log> logList = null;
 
+        if(fileType.equals(DETAIL)){
+            logList = logDao.findByImportFlagAndTableType(UNIMPORT_FLAG,DETAIL);
+        }else if(fileType.equals(SUM)){
+            logList = logDao.findByImportFlagAndTableType(UNIMPORT_FLAG,SUM);
+        }
+
+        if(logList!=null && !logList.isEmpty()){
+            for (Log log:logList){
+                fieMap.put(log.getId(),log.getExtractPath());
+            }
+        }
 
         return fieMap;
     }

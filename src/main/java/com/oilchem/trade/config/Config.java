@@ -9,13 +9,21 @@ package com.oilchem.trade.config;
  */
 public class Config {
 
-    public static String UPLOAD_ACCESSZIP_DIR = "d:/aaaa/upload/accesszip";
-    public static String UPLOAD_EXCELZIP_DIR = "d:/aaaa/upload/excelzip";
-    public static String UNZIP_ACCESS_DIR = "d:/aaaa/unzip/access";
-    public static String UNZIP_EXCEL_DIR = "d:/aaaa/unzip/excel";
+    public static String UPLOAD_DETAILZIP_DIR = "d:/aaaa/upload/detailzip";
+    public static String UPLOAD_SUMZIP_DIR = "d:/aaaa/upload/sumzip";
+    public static String UNZIP_DETAIL_DIR = "d:/aaaa/unzip/detail";
+    public static String UNZIP_SUM_DIR = "d:/aaaa/unzip/sum";
 
     public static String ROOT_URL = "http://trade.vvvv.com";
 
-    public static String ACCESS_PACKAGE = "access";
-    public static String EXCEL_PACKAGE = "excel";
+    public static String DETAIL = "明细表";
+    public static String SUM = "总表";
+
+    public static String UNEXTRACT_FLAG = "未解压";
+    public static String EXTRACTING_FLAG = "正在解压";
+    public static String EXTRACTED_FLAG = "解压成功";
+
+    public static String UNIMPORT_FLAG = "未导入";
+    public static String IMPORTING_FLAG = "正在导入";
+    public static String IMPORTED_FLAG = "导入成功";
 }

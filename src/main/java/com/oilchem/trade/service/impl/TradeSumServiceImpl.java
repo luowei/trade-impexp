@@ -1,6 +1,5 @@
 package com.oilchem.trade.service.impl;
 
-import com.oilchem.trade.config.Config;
 import com.oilchem.trade.config.ImpExpType;
 import com.oilchem.trade.dao.ExpTradeSumDao;
 import com.oilchem.trade.dao.ImpTradeSumDao;
@@ -12,13 +11,12 @@ import com.oilchem.trade.domain.ImpTradeSum;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeSumService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import static com.oilchem.trade.config.Config.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -46,7 +44,7 @@ public class TradeSumServiceImpl implements TradeSumService {
      * @return  上传后的文件路径
      */
     public String uploadPackage(MultipartFile file) {
-        return commonService.uploadFile(file,Config.UPLOAD_EXCELZIP_DIR);
+        return commonService.uploadFile(file, UPLOAD_SUMZIP_DIR);
     }
 
     /**
@@ -55,7 +53,7 @@ public class TradeSumServiceImpl implements TradeSumService {
      * @return  解包后的文件路径
      */
     public String unPackage(String packageSourcee) {
-        return commonService.unpackageFile(packageSourcee, Config.UPLOAD_EXCELZIP_DIR);
+        return commonService.unpackageFile(packageSourcee, UPLOAD_SUMZIP_DIR);
     }
 
 
@@ -64,21 +62,21 @@ public class TradeSumServiceImpl implements TradeSumService {
      * @param excelSource     excel文件全名，含绝对路径
      * @param yearMonth        年月
      * @param productType   产品类型
-     * @param impExpType   进出口类型，1进口/2出口
+     * @param impExpTradeType   进出口类型，1进口/2出口
      * @return
      */
     public Boolean importExcel(String excelSource, Date yearMonth,
-            String productType,Integer impExpType) {
+            String productType,Integer impExpTradeType) {
 
         Boolean isSuccess = true;
 
-        if(impExpType.equals(ImpExpType.进口.getCode())){
+        if(impExpTradeType.equals(ImpExpType.进口.getCode())){
             isSuccess = isSuccess & commonService.importExcel(impTradeSumDao,excelSource,
                     ImpTradeSum.class,ImpTradeSumRowMapper.class,yearMonth,productType);
             //更新yearMonth
         }
 
-        else if(impExpType.equals(ImpExpType.出口.getCode())){
+        else if(impExpTradeType.equals(ImpExpType.出口.getCode())){
             isSuccess = isSuccess & commonService.importExcel(expTradeSumDao,excelSource,
                     ExpTradeSum.class,ExpTradeSumRowMapper.class,yearMonth,productType);
             //更新yearMonth

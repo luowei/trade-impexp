@@ -26,6 +26,8 @@ tmp/**/*
 *.bak
 *.swp
 *~.nib
+*.eml
+*.userlibraries
 local.properties
 .classpath
 .settings/

@@ -107,8 +107,9 @@ public interface CommonService {
 
     /**
      * 获得未导入的文件列表
+     * @param fileType 文件类型
      * @return   返回记录的Id与文件的全路径组成的Map
      */
-    public Map<Long,String> getUnImportFile();
+    public Map<Long,String> getUnImportFile(String fileType);
 
 }

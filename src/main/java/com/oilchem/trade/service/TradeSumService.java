@@ -23,10 +23,10 @@ public interface TradeSumService {
      * @param excelSource     excel文件全名，含绝对路径
      * @param yearMonth        年月
      * @param productType   产品类型
-     * @param impExpType   进出口类型，1进口/2出口
+     * @param impExpTradeType   进出口类型，1进口/2出口
      * @return
      */
     public Boolean importExcel(String excelSource, Date yearMonth,
-                               String productType,Integer impExpType);
+                               String productType,Integer impExpTradeType);
 
 }

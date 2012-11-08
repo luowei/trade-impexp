@@ -36,11 +36,20 @@ public class Log extends IdEntity implements Serializable {
     //导入文件上传后的路径
     @Column(name = "upload_path")
     private String uploadPath;
+    @Column(name = "extract_path")
+    private String extractPath;
     //导出文件的下载地址
-    Object obj = null;
-
     @Column(name = "download_url")
     private String downLoadUrl;
+    //上传标志
+    @Column(name = "upload_flag")
+    private String uploadFlg;
+    //解压标志
+    @Column(name = "extract_flag")
+    private String extractFlag;
+    //导入标志
+    @Column(name = "import_flag")
+    private String importFlag;
     //是否已完成
     @Column(name = "complete_flag")
     private String completeFlag;
@@ -91,12 +100,44 @@ public class Log extends IdEntity implements Serializable {
         this.uploadPath = uploadPath;
     }
 
+    public String getExtractPath() {
+        return extractPath;
+    }
+
+    public void setExtractPath(String extractPath) {
+        this.extractPath = extractPath;
+    }
+
     public String getDownLoadUrl() {
         return downLoadUrl;
     }
 
     public void setDownLoadUrl(String downLoadUrl) {
         this.downLoadUrl = downLoadUrl;
+    }
+
+    public String getUploadFlg() {
+        return uploadFlg;
+    }
+
+    public void setUploadFlg(String uploadFlg) {
+        this.uploadFlg = uploadFlg;
+    }
+
+    public String getExtractFlag() {
+        return extractFlag;
+    }
+
+    public void setExtractFlag(String extractFlag) {
+        this.extractFlag = extractFlag;
+    }
+
+    public String getImportFlag() {
+        return importFlag;
+    }
+
+    public void setImportFlag(String importFlag) {
+        this.importFlag = importFlag;
     }
 
     public String getCompleteFlag() {

@@ -1,5 +1,6 @@
 package com.oilchem.trade.service;
 
+import java.util.Date;
 import java.util.TimerTask;
 
 /**
@@ -11,5 +12,20 @@ import java.util.TimerTask;
  */
 public interface TaskService {
 
-    public void unPackageAndImportTask(TimerTask timerTask);
+    /**
+     * 解压总表数据包与导入任务
+     * @param yearMonth   年月
+     * @param impExpTradeType
+     */
+    public void unSumPackageAndImportTask(final Date yearMonth,
+                                          final Integer impExpTradeType,final String productType);
+
+    /**
+     * 解压明细数据包与导入任务
+     * @param yearMonth   年月
+     * @param impExpTradeType
+     */
+    public void unDetailPackageAndImportTask(final Date yearMonth,
+                                             final Integer impExpTradeType);
+
 }

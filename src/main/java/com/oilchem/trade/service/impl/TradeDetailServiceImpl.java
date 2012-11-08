@@ -1,26 +1,20 @@
 package com.oilchem.trade.service.impl;
 
-import com.oilchem.trade.config.Config;
-import com.oilchem.trade.config.IMessageCode;
 import com.oilchem.trade.config.ImpExpType;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.ExpTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.ImpTradeDetailRowMapper;
-import com.oilchem.trade.db.AccessDataSource;
-import com.oilchem.trade.domain.*;
-import com.oilchem.trade.domain.abstrac.AbstractTradeDetail;
-import com.oilchem.trade.domain.abstrac.IdEntity;
+import com.oilchem.trade.dao.db.AccessDataSource;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.Repository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.List;
+import static com.oilchem.trade.config.Config.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -51,7 +45,7 @@ public class TradeDetailServiceImpl implements TradeDetailService {
      * @return  上传后的文件路径
      */
     public String uploadPackage(MultipartFile file) {
-        return commonService.uploadFile(file,Config.UPLOAD_ACCESSZIP_DIR);
+        return commonService.uploadFile(file,UPLOAD_DETAILZIP_DIR);
     }
 
     /**
@@ -60,17 +54,17 @@ public class TradeDetailServiceImpl implements TradeDetailService {
      * @return  解包后的文件路径
      */
     public String unPackage(String packageSource) {
-        return commonService.unpackageFile(packageSource, Config.UPLOAD_ACCESSZIP_DIR);
+        return commonService.unpackageFile(packageSource, UPLOAD_DETAILZIP_DIR);
     }
 
     /**
      * 导入Access文件
      * @param accessFileFullName     access文件全名，含绝对路径
      * @param yearMonth        年月
-     * @param impExpType   进出口类型，1进口/2出口
+     * @param impExpTradeType   进出口类型，1进口/2出口
      * @return
      */
-    public Boolean importExcel(String accessFileFullName, Date yearMonth, Integer impExpType) {
+    public Boolean importAccess(String accessFileFullName, Date yearMonth, Integer impExpTradeType) {
 
         Boolean isSuccess = true;
 
@@ -82,7 +76,7 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         commonService.importCriteriaTab(accessJdbcTemplate,sql);
 
         //导入进口明细总表
-        if(impExpType.equals(ImpExpType.进口.getCode())){
+        if(impExpTradeType.equals(ImpExpType.进口.getCode())){
             isSuccess = isSuccess & commonService.importTradeDetail(
                     impTradeDetailDao,impTradeDetailDao,
                     accessJdbcTemplate,new ImpTradeDetailRowMapper(),yearMonth, sql);
@@ -92,7 +86,7 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         }
 
         //导入出口明细表
-        else if(impExpType.equals(ImpExpType.出口.getCode())){
+        else if(impExpTradeType.equals(ImpExpType.出口.getCode())){
             isSuccess = isSuccess & commonService.importTradeDetail(
                     expTradeDetailDao,expTradeDetailDao,
                     accessJdbcTemplate,new ExpTradeDetailRowMapper(),yearMonth, sql);

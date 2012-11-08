@@ -1,14 +1,19 @@
 package com.oilchem.trade.service.impl;
 
-import com.oilchem.trade.config.Config;
+import com.oilchem.trade.dao.LogDao;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TaskService;
+import com.oilchem.trade.service.TradeDetailService;
+import com.oilchem.trade.service.TradeSumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.util.Date;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import static com.oilchem.trade.config.Config.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,43 +27,75 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     CommonService commonService;
+    @Autowired
+    TradeDetailService tradeDetailService;
+    @Autowired
+    TradeSumService tradeSumService;
+
+    @Resource
+    LogDao logDao;
 
     //定时器
     Timer timer = new Timer();
 
     long delay = 0;
 
-    public void unPackageAndImportTask(TimerTask timerTask) {
+    private void unPackageAndImportTask(TimerTask timerTask) {
         timer.schedule(timerTask,delay);
-
     }
 
     /**
-     * 解Acces包与导入任务
-     * @param timerTask 定时任务
+     * 解压明细数据包与导入任务
+     * @param yearMonth   年月
+     * @param impExpTradeType
      */
-    public void unAccessPackageAndImportTask(TimerTask timerTask){
-        unPackageAndImportTask(new TimerTask (){
+    public void unDetailPackageAndImportTask(final Date yearMonth,
+                  final Integer impExpTradeType){
+        unPackageAndImportTask(new TimerTask() {
 
             @Override
             public void run() {
                 //解包
-                Map<Long,String> unExtractMap = commonService.getUnExtractPackage(Config.ACCESS_PACKAGE);
-                for(Map.Entry<Long,String> entry:unExtractMap.entrySet()){
-                    commonService.unpackageFile(entry.getValue(), Config.UNZIP_ACCESS_DIR);
-
+                Map<Long, String> unExtractMap = commonService.getUnExtractPackage(DETAIL);
+                for (Map.Entry<Long, String> entry : unExtractMap.entrySet()) {
+                    commonService.unpackageFile(entry.getValue(), UNZIP_DETAIL_DIR);
                 }
-                //执行解包并导入数据
+
+                //导入数据
+                Map<Long, String> unImportMap = commonService.getUnImportFile(DETAIL);
+                for (Map.Entry<Long, String> entry : unImportMap.entrySet()) {
+                    tradeDetailService.importAccess(entry.getValue(), yearMonth, impExpTradeType);
+                }
 
             }
         });
     }
 
     /**
-     * 解Excel包与导入任务
-     * @param timerTask   定时任务
+     * 解压总表数据包与导入任务
+     * @param yearMonth   年月
+     * @param impExpTradeType
      */
-    public void unExcelPackageAndImportTask(TimerTask timerTask) {
+    public void unSumPackageAndImportTask(final Date yearMonth,
+                  final Integer impExpTradeType,final String productType) {
+        unPackageAndImportTask(new TimerTask() {
+
+            @Override
+            public void run() {
+                //解包
+                Map<Long, String> unExtractMap = commonService.getUnExtractPackage(SUM);
+                for (Map.Entry<Long, String> entry : unExtractMap.entrySet()) {
+                    commonService.unpackageFile(entry.getValue(), UNZIP_SUM_DIR);
+                }
+
+                //导入数据
+                Map<Long, String> unImportMap = commonService.getUnImportFile(SUM);
+                for (Map.Entry<Long, String> entry : unImportMap.entrySet()) {
+                    tradeSumService.importExcel(entry.getValue(), yearMonth,productType,impExpTradeType);
+                }
+
+            }
+        });
 
     }
 
