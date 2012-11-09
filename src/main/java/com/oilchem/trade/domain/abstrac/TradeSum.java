@@ -16,10 +16,13 @@ import java.util.Date;
 @MappedSuperclass
 @Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
 //@DiscriminatorColumn(name="tradeSumType",discriminatorType=DiscriminatorType.STRING)
-public abstract class AbstractTradeSum extends IdEntity implements Serializable {
-    //进出口年月
-    @Column(name = "year_month")
-    private Date yearMonth;
+public  class TradeSum extends IdEntity implements Serializable {
+    //进出口年
+    @Column(name = "year")
+    private Integer year;
+    //进出口月
+    @Column(name = "month")
+    private Integer month;
     //产品类型
     @Column(name = "product_type")
     private String productType;
@@ -54,12 +57,20 @@ public abstract class AbstractTradeSum extends IdEntity implements Serializable 
     @Column(name = "num_preyearsamequarter_incratio")
     private BigDecimal numPreYearSameQuarterInrRatio;
 
-    public Date getYearMonth() {
-        return yearMonth;
+    public Integer getYear() {
+        return year;
     }
 
-    public void setYearMonth(Date yearMonth) {
-        this.yearMonth = yearMonth;
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public Integer getMonth() {
+        return month;
+    }
+
+    public void setMonth(Integer month) {
+        this.month = month;
     }
 
     public String getProductType() {

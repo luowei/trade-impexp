@@ -1,10 +1,9 @@
 package com.oilchem.trade.service;
 
-import com.oilchem.trade.config.ImpExpType;
 import com.oilchem.trade.dao.BaseDao;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.MyRowMapper;
-import com.oilchem.trade.domain.abstrac.AbstractTradeSum;
+import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.Repository;
@@ -32,7 +31,7 @@ public interface CommonService {
      * @param realDir	目标目录的物理路径
      * @return		返回上传之后文件的url
      */
-    public String uploadFile(MultipartFile file,String realDir);
+    String uploadFile(MultipartFile file,String realDir);
 
     /**
      * 解包
@@ -40,7 +39,7 @@ public interface CommonService {
      * @param unPackageDir     解压目录
      * @return   解包后的文件路径
      */
-    public String unpackageFile(String packageSource, String unPackageDir);
+    String unpackageFile(String packageSource, String unPackageDir);
 
     /**
      * 导入查询条件表
@@ -48,7 +47,7 @@ public interface CommonService {
      * @param sql
      * @return
      */
-    public Boolean importCriteriaTab(JdbcTemplate jdbcTemplate,String sql);
+    Boolean importCriteriaTab(JdbcTemplate jdbcTemplate,String sql);
 
     /**
      * 获得有效的查询条件表的记录List
@@ -60,7 +59,7 @@ public interface CommonService {
      * @param <E>   idEntity
      * @return      idEntity列表
      */
-    public <E extends IdEntity> List<E> queryCriteriaRecord(JdbcTemplate jdbcTemplate,
+    <E extends IdEntity> List<E> queryCriteriaRecord(JdbcTemplate jdbcTemplate,
                 final Repository<E,Long> dao, final Class<E> idEntityClass,
                 String sql, final String filedName);
 
@@ -75,7 +74,7 @@ public interface CommonService {
      * @param <T>       ImpTradeDetailRowMapper / ExpTradeDetailRowMapper
      * @return
      */
-    public <T extends AbstractTradeDetailRowMapper> Boolean importTradeDetail(
+    <T extends AbstractTradeDetailRowMapper> Boolean importTradeDetail(
             CrudRepository crudRepository,BaseDao baseDaoDao,JdbcTemplate jdbcTemplate,
             T tradeDetailMapper,Date yearMonth, String sql) ;
 
@@ -91,8 +90,8 @@ public interface CommonService {
      * @param <M>             ImpTradeSumRowMapper / ExpTradeSumRowMapper
      * @return         成功或失败
      */
-    public <E extends AbstractTradeSum,M extends MyRowMapper<E>>
-    Boolean importExcel(CrudRepository<E,Long> repository,
+    <E extends TradeSum,M extends MyRowMapper<E>>
+        Boolean importExcel(CrudRepository<E,Long> repository,
                         String excelSource,
                         Class<E> tradeSumClass,
                         Class<M> tradeSumRowMapClass,
@@ -103,13 +102,20 @@ public interface CommonService {
      * 获得未解压的文件列表
      * @return  返回记录的Id与包的全路径组成的Map
      */
-    public Map<Long,String> getUnExtractPackage(String packageType);
+    Map<Long,String> getUnExtractPackage(String packageType);
 
     /**
      * 获得未导入的文件列表
      * @param fileType 文件类型
      * @return   返回记录的Id与文件的全路径组成的Map
      */
-    public Map<Long,String> getUnImportFile(String fileType);
+    Map<Long,String> getUnImportFile(String fileType);
 
+    /**
+     * 获得Model的list列表
+     * @param tClass  tClass
+     * @param <T>
+     * @return
+     */
+    <T extends IdEntity> List<T> getModelList(Class<T> tClass);
 }

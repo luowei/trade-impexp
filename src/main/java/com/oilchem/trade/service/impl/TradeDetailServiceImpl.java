@@ -5,9 +5,11 @@ import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.ExpTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.ImpTradeDetailRowMapper;
 import com.oilchem.trade.dao.db.AccessDataSource;
+import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -97,6 +99,19 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         //切面更新日志
 
         return isSuccess;
+    }
+
+    /**
+     * 根据条件查询
+     * @param TradeDetail   页面传来的 ExpTradeDetail ，包含查询条件中里面
+     * @param pageNumber     页号
+     * @param <T>
+     * @return
+     */
+    public <T extends  TradeDetail> Page<T>
+    findWithCriteria(T TradeDetail, Integer pageNumber) {
+
+        return null;
     }
 
 

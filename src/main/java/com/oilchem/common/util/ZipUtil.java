@@ -31,7 +31,7 @@ import java.util.zip.ZipException;
  *  @see
  *  @since 2012-2-10
  */
-public class ZipUtil {
+public abstract class ZipUtil {
 
     private static boolean isCreateSrcDir = false;//是否创建源目录
 

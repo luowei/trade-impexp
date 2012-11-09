@@ -1,6 +1,6 @@
 package com.oilchem.trade.domain;
 
-import com.oilchem.trade.domain.abstrac.AbstractTradeDetail;
+import com.oilchem.trade.domain.abstrac.TradeDetail;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -14,5 +14,5 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "t_import_detail")
-public class ImpTradeDetail extends AbstractTradeDetail {
+public class ImpTradeDetail extends TradeDetail {
 }

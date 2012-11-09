@@ -1,7 +1,7 @@
 package com.oilchem.trade.dao.map;
 
 import com.oilchem.common.util.GenericsUtils;
-import com.oilchem.trade.domain.abstrac.AbstractTradeDetail;
+import com.oilchem.trade.domain.abstrac.TradeDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -17,12 +17,12 @@ import static com.oilchem.trade.config.MapperConfig.*;
  * Time: 下午1:31
  * To change this template use File | Settings | File Templates.
  */
-public abstract class AbstractTradeDetailRowMapper<T extends AbstractTradeDetail> implements RowMapper<T> {
+public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implements RowMapper<T> {
 
     Class<T> tClass = GenericsUtils.getSuperClassGenricType(getClass());
     Logger log = LoggerFactory.getLogger(tClass);
 
-    public AbstractTradeDetail setTraddDetail(AbstractTradeDetail tradeDetail,
+    public TradeDetail setTraddDetail(TradeDetail tradeDetail,
          ResultSet rs)  throws SQLException{
         //产品代码
         tradeDetail.setProductCode(rs.getString(PRODUCT_CODE));

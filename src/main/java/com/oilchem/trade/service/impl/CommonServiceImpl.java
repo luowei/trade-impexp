@@ -6,7 +6,7 @@ import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.MyRowMapper;
 import com.oilchem.trade.domain.*;
-import com.oilchem.trade.domain.abstrac.AbstractTradeSum;
+import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.service.CommonService;
 import jxl.Sheet;
@@ -19,6 +19,7 @@ import org.springframework.data.repository.Repository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.ContextLoader;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -212,7 +213,7 @@ public class CommonServiceImpl implements CommonService {
      * @param <M>             ImpTradeSumRowMapper / ExpTradeSumRowMapper
      * @return         成功或失败
      */
-    public <E extends AbstractTradeSum,M extends MyRowMapper<E>>
+    public <E extends TradeSum,M extends MyRowMapper<E>>
         Boolean importExcel(CrudRepository<E,Long> repository,
                             String excelSource,
                             Class<E> tradeSumClass,
@@ -268,9 +269,9 @@ public class CommonServiceImpl implements CommonService {
         List<Log> logList = null;
 
         if(packageType.equals(DETAIL)){
-            logList = logDao.findByExtractFlagAndTableType(UNEXTRACT_FLAG,DETAIL);
+            logList = logDao.findByExtractFlagAndTableType(UNEXTRACT_FLAG, DETAIL);
         }else if(packageType.equals(SUM)){
-            logList = logDao.findByExtractFlagAndTableType(UNEXTRACT_FLAG,SUM);
+            logList = logDao.findByExtractFlagAndTableType(UNEXTRACT_FLAG, SUM);
         }
 
         if(logList!=null && !logList.isEmpty()){
@@ -304,6 +305,28 @@ public class CommonServiceImpl implements CommonService {
         }
 
         return fieMap;
+    }
+
+    /**
+     * 获得数据模型的数据列表
+     * @param tClass  tClass
+     * @param <T>   数据模型映射的java类
+     * @return
+     */
+    public <T extends IdEntity> List<T> getModelList(Class<T> tClass){
+        List<T> idEntityList = null;
+        Class<?>[] classes = IdEntity.class.getClasses();
+        for (Class clz:classes){
+            if(clz.isInstance(tClass)){
+                T t = ContextLoader.getCurrentWebApplicationContext().getBean(tClass);
+                try {
+                    idEntityList= (List<T>) tClass.getMethod("findAll").invoke(t);
+                } catch (Exception e) {
+                    logger.error(e.getMessage(),e);
+                }
+            }
+        }
+        return idEntityList;
     }
 
 }

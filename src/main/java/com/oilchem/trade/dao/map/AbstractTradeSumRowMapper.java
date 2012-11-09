@@ -1,6 +1,6 @@
 package com.oilchem.trade.dao.map;
 
-import com.oilchem.trade.domain.abstrac.AbstractTradeSum;
+import com.oilchem.trade.domain.abstrac.TradeSum;
 import jxl.Sheet;
 
 import java.math.BigDecimal;
@@ -13,7 +13,7 @@ import static com.oilchem.trade.config.MapperConfig.*;
  * Time: 上午9:25
  * To change this template use File | Settings | File Templates.
  */
-public class AbstractTradeSumRowMapper<E extends AbstractTradeSum> implements MyRowMapper{
+public class AbstractTradeSumRowMapper<E extends TradeSum> implements MyRowMapper{
 
     Sheet sheet;
     int rowIdx;

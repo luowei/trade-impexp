@@ -1,6 +1,6 @@
 package com.oilchem.trade.domain;
 
-import com.oilchem.trade.domain.abstrac.AbstractTradeSum;
+import com.oilchem.trade.domain.abstrac.TradeSum;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -14,5 +14,5 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "t_import_sum")
-public class ImpTradeSum extends AbstractTradeSum {
+public class ImpTradeSum extends TradeSum {
 }

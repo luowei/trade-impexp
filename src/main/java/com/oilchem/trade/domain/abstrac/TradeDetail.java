@@ -15,16 +15,14 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 @MappedSuperclass
-public abstract class AbstractTradeDetail extends IdEntity implements Serializable {
-    //进出口年月
-    @Column(name = "year_month")
-    private Date yearMonth;
+public  class TradeDetail
+        extends IdEntity implements Serializable {
     //年
     @Column(name = "col_year")
-    private Integer colYear;
+    private Integer year;
     //月
     @Column(name = "col_month")
-    private Integer colMonth;
+    private Integer month;
     //产品代码
     @Column(name = "product_code")
     private String productCode;
@@ -75,28 +73,20 @@ public abstract class AbstractTradeDetail extends IdEntity implements Serializab
     @Column(name = "country_id")
     private Integer countryId;
 
-    public Date getYearMonth() {
-        return yearMonth;
+    public Integer getYear() {
+        return year;
     }
 
-    public void setYearMonth(Date yearMonth) {
-        this.yearMonth = yearMonth;
+    public void setYear(Integer year) {
+        this.year = year;
     }
 
-    public Integer getColYear() {
-        return colYear;
+    public Integer getMonth() {
+        return month;
     }
 
-    public void setColYear(Integer colYear) {
-        this.colYear = colYear;
-    }
-
-    public Integer getColMonth() {
-        return colMonth;
-    }
-
-    public void setColMonth(Integer colMonth) {
-        this.colMonth = colMonth;
+    public void setMonth(Integer month) {
+        this.month = month;
     }
 
     public String getProductCode() {

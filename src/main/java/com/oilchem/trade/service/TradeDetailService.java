@@ -1,7 +1,7 @@
 package com.oilchem.trade.service;
 
-import com.oilchem.trade.config.IMessageCode;
-import com.oilchem.trade.config.ImpExpType;
+import com.oilchem.trade.domain.abstrac.TradeDetail;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
@@ -41,4 +41,12 @@ public interface TradeDetailService {
                          Date yearMonth, Integer impExpTradeType);
 
 
+    /**
+     * 根据条件查询
+     * @param TradeDetail   页面传来的 ExpTradeDetail ，包含查询条件中里面
+     * @param pageNumber     页号
+     * @return
+     */
+    public <T extends  TradeDetail> Page<T>
+        findWithCriteria(T TradeDetail, Integer pageNumber);
 }

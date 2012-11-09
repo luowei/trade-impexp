@@ -20,7 +20,7 @@ import java.util.Random;
  * Date: 12-5-28
  * Time: 下午12:51
  */
-public class FileUtil {
+public abstract class FileUtil {
 
     private static int YY;//年份的文件夹
     private static int  MM;//月份的文件夹

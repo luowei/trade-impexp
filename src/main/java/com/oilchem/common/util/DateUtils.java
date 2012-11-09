@@ -11,7 +11,7 @@ import java.util.logging.Logger;
  * Date: 12-5-29
  * Time: 下午4:20
  */
-public class DateUtils extends org.apache.commons.lang3.time.DateUtils{
+public abstract class DateUtils extends org.apache.commons.lang3.time.DateUtils{
     public static final SimpleDateFormat DATE_ONLY_NO_DELIM = new SimpleDateFormat("yyyyMMdd");
     public static final SimpleDateFormat DATE_TIME_STAMP_NO_DELIM = new SimpleDateFormat("yyyyMMddHHmmssSSS");
     public static final SimpleDateFormat DATE_TIME_STAMP_SHORT_NO_DELIM = new SimpleDateFormat("yyyyMMddHHmmss");
