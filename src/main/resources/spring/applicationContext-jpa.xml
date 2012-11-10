@@ -15,6 +15,7 @@
     <bean id="entityManagerFactory"
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource" />
+        <!--<property name=""-->
         <property name="packagesToScan" value="com.oilchem.trade.domain" />
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
@@ -47,5 +48,7 @@
         <!--<property name="testConnectionOnCheckin" value="true"/>-->
     <!--</bean>-->
 
-    <jpa:repositories base-package="com.oilchem.trade.dao"/>
+    <jpa:repositories base-package="com.oilchem.trade.dao">
+        <!--<include-filter type="regex" expression="com.oilchem.trade.dao.impl.*"/>-->
+    </jpa:repositories>
 </beans>

@@ -171,7 +171,7 @@ public class DataTable<T> implements Serializable {
     }
 
 
-    public int getLastPage(){
+    public int getLastPage() {
         return (int) getTotalPages();
     }
 

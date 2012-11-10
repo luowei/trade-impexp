@@ -19,11 +19,11 @@ public abstract class CookieUtils {
     public static final String DEFAULT_ENCODING = "UTF-8";
 
 
-    private CookieUtils(){}
+    private CookieUtils() {
+    }
 
 
     /**
-     *
      * @param response
      * @param key
      * @param value
@@ -41,7 +41,6 @@ public abstract class CookieUtils {
     }
 
     /**
-     *
      * @param response
      * @param key
      * @param value
@@ -60,7 +59,6 @@ public abstract class CookieUtils {
     }
 
     /**
-     *
      * @param request
      * @param key
      * @return

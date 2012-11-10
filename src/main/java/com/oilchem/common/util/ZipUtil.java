@@ -21,15 +21,12 @@ import java.util.zip.ZipException;
 
 
 /**
- *
- @brief
-  *   <p><b>Zip file tool class</b></p>
-  *
-  *  &nbsp;&nbsp;&nbsp;&nbsp; compress and decompress file
-  *
-  *  @author wei.luo
- *  @see
- *  @since 2012-2-10
+ * @author wei.luo
+ * @brief <p><b>Zip file tool class</b></p>
+ * <p/>
+ * &nbsp;&nbsp;&nbsp;&nbsp; compress and decompress file
+ * @see
+ * @since 2012-2-10
  */
 public abstract class ZipUtil {
 
@@ -47,7 +44,7 @@ public abstract class ZipUtil {
 //        String archive = "d:/temp/test1.zip";//压缩包路径
 //        String comment = "Java Zip luowei010101@gmail.com";//压缩包注释
 
-        unrar("d:/temp/bbbb.rar","d:/temp/bbbb");
+        unrar("d:/temp/bbbb.rar", "d:/temp/bbbb");
 
 //        //----压缩文件或目录
 //        writeByApacheZipOutputStream(src, archive, comment);
@@ -61,10 +58,11 @@ public abstract class ZipUtil {
 
     /**
      * 压缩文件
-     * @param src  指定压缩源，可以是目录或文件
-     * @param archive  //压缩包路径
+     *
+     * @param src     指定压缩源，可以是目录或文件
+     * @param archive //压缩包路径
      * @param comment
-     * @throws java.io.FileNotFoundException  //压缩包注释
+     * @throws java.io.FileNotFoundException //压缩包注释
      * @throws java.io.IOException
      */
     public static void writeByApacheZipOutputStream(String src, String archive,
@@ -115,7 +113,8 @@ public abstract class ZipUtil {
 
     /**
      * 解压文件
-     * @param file  压缩文件
+     *
+     * @param file          压缩文件
      * @param decompressDir 解压目录
      * @throws java.io.IOException
      * @throws java.io.FileNotFoundException
@@ -133,10 +132,11 @@ public abstract class ZipUtil {
      * 使用 org.apache.tools.zip.ZipFile 解压文件，它与 java 类库中的
      * java.util.zip.ZipFile 使用方式是一致的，只不过多了设置编码方式的
      * 接口。
-     *
+     * <p/>
      * 注，apache 没有提供 ZipInputStream 类，所以只能使用它提供的ZipFile
      * 来读取压缩文件。
-     * @param archive 压缩包路径
+     *
+     * @param archive       压缩包路径
      * @param decompressDir 解压路径
      * @throws java.io.IOException
      * @throws java.io.FileNotFoundException
@@ -151,14 +151,12 @@ public abstract class ZipUtil {
     }
 
     /**
-     * @brief
-     * main extract method
-     *
      * @param decompressDir
      * @param zf
      * @throws java.io.FileNotFoundException
      * @throws java.io.IOException
      * @throws java.util.zip.ZipException
+     * @brief main extract method
      */
     private static void readByApacheZipFile(String decompressDir, ZipFile zf)
             throws FileNotFoundException, IOException, ZipException {
@@ -200,7 +198,7 @@ public abstract class ZipUtil {
 
     /**
      * 递归压缩
-     *
+     * <p/>
      * 使用 org.apache.tools.zip.ZipOutputStream 类进行压缩，它的好处就是支持中文路径，
      * 而Java类库中的 java.util.zip.ZipOutputStream 压缩中文文件名时压缩包会出现乱码。
      * 使用 apache 中的这个类与 java 类库中的用法是一新的，只是能设置编码方式了。
@@ -261,32 +259,33 @@ public abstract class ZipUtil {
 
     /**
      * 把输入流导到输出流
-     * @param inputStream  输入流
+     *
+     * @param inputStream   输入流
      * @param outputStream  输出流
-     * @param readBlockSize   每次读写的块大小(以byte为单位)
-     * @return    成功或失败
+     * @param readBlockSize 每次读写的块大小(以byte为单位)
+     * @return 成功或失败
      */
     public static Boolean inputStream2OutPutStream(InputStream inputStream,
-                                                   OutputStream outputStream, int readBlockSize){
+                                                   OutputStream outputStream, int readBlockSize) {
         Boolean flag = false;
         BufferedInputStream bis = new BufferedInputStream(inputStream);
         BufferedOutputStream bos = new BufferedOutputStream(outputStream);
-        byte [] bytes = new byte[readBlockSize];
+        byte[] bytes = new byte[readBlockSize];
         int count = 0;
         try {
-            while ((count = bis.read(bytes)) != -1){
-                bos.write(bytes,0,count);
+            while ((count = bis.read(bytes)) != -1) {
+                bos.write(bytes, 0, count);
             }
             bos.flush();
             flag = true;
         } catch (IOException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         } finally {
             try {
                 bis.close();
                 bos.close();
             } catch (IOException e) {
-                log.error(e.getMessage(),e);
+                log.error(e.getMessage(), e);
             }
         }
         return flag;
@@ -294,11 +293,12 @@ public abstract class ZipUtil {
 
     /**
      * 解压rar格式的压缩文件到指定目录下
+     *
      * @param rarFileName 压缩文件
-     * @param extPlace 解压目录
+     * @param extPlace    解压目录
      * @throws Exception
      */
-    public static void unrar(String rarFileName, String extPlace){
+    public static void unrar(String rarFileName, String extPlace) {
         File rarFile = null;
         FileOutputStream os = null;
         try {
@@ -309,78 +309,79 @@ public abstract class ZipUtil {
             List<FileHeader> headers = archive.getFileHeaders();
             Iterator<FileHeader> iterator = headers.iterator();
 
-            while ( iterator.hasNext() ){
+            while (iterator.hasNext()) {
                 FileHeader fileHeader = iterator.next();
                 try {
                     //如果是目录
-                    if(fileHeader.isDirectory()) continue;
-                    else{
-                        String fileName = extPlace+"/"+fileHeader.getFileNameString();
+                    if (fileHeader.isDirectory()) continue;
+                    else {
+                        String fileName = extPlace + "/" + fileHeader.getFileNameString();
                         File file = new File(fileName);
-                        if(!file.exists()){  //如果目录不存在
-                            if(fileHeader.getFileNameString().contains(File.separator)){
-                                new File(StringUtils.substringBeforeLast(fileName,File.separator)).mkdirs();
+                        if (!file.exists()) {  //如果目录不存在
+                            if (fileHeader.getFileNameString().contains(File.separator)) {
+                                new File(StringUtils.substringBeforeLast(fileName, File.separator)).mkdirs();
                                 os = new FileOutputStream(file);
                                 archive.extractFile(fileHeader, os);
-                            }else if(!fileHeader.getFileNameString().contains(".")){
+                            } else if (!fileHeader.getFileNameString().contains(".")) {
                                 file.mkdirs();
                                 continue;
                             }
                             os = new FileOutputStream(file);
                             archive.extractFile(fileHeader, os);
-                        }else{
+                        } else {
                             os = new FileOutputStream(file);
                             archive.extractFile(fileHeader, os);
                         }
                     }
-                }catch (Exception e) {
+                } catch (Exception e) {
                     log.error(e.getMessage(), e);
                     try {
                         os.close();
                     } catch (IOException e2) {
-                        log.error(e.getMessage(),e2);
+                        log.error(e.getMessage(), e2);
                     }
                 }
             }
         } catch (Exception e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         }
     }
 
     /**
      * 解压zip
-     * @param zipSource  zip包源路径
-     * @param unZipDir   解压目录
-     * @param encoding 编码,如果传null，默认为UTF-8
+     *
+     * @param zipSource zip包源路径
+     * @param unZipDir  解压目录
+     * @param encoding  编码,如果传null，默认为UTF-8
      * @return
      */
-    public static String unZip(String zipSource,String unZipDir,String encoding){
+    public static String unZip(String zipSource, String unZipDir, String encoding) {
         String unZipFile = null;
         InputStream is = null;
         OutputStream os = null;
         try {
-            ZipFile zipFile = new ZipFile(zipSource,(encoding == null?"utf-8":encoding));
+            ZipFile zipFile = new ZipFile(zipSource, (encoding == null ? "utf-8" : encoding));
             Enumeration<ZipEntry> zipEntrys = zipFile.getEntries();
-            while (zipEntrys.hasMoreElements()){
+            while (zipEntrys.hasMoreElements()) {
                 ZipEntry zipEntry = zipEntrys.nextElement();
-                unZipFile = unZipDir+"/"+zipEntry.getName();
-                if(zipEntry.isDirectory()){
+                unZipFile = unZipDir + "/" + zipEntry.getName();
+                if (zipEntry.isDirectory()) {
                     new File(unZipFile).mkdirs();
                     continue;
-                }else {
+                } else {
                     is = zipFile.getInputStream(zipEntry);
                     os = new FileOutputStream(unZipFile);
-                    ZipUtil.inputStream2OutPutStream(is,os,1024);
+                    ZipUtil.inputStream2OutPutStream(is, os, 1024);
                 }
             }
         } catch (IOException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         } finally {
             try {
                 is.close();
                 os.close();
             } catch (IOException e) {
-                log.error(e.getMessage(),e);
+                log.error(e.getMessage(), e);
             }
         }
         return unZipFile;
@@ -388,12 +389,13 @@ public abstract class ZipUtil {
 
     /**
      * 解压rar
+     *
      * @param rarSource
      * @param unRarDir
-     * @return  最后一个解压的文件的全路径
+     * @return 最后一个解压的文件的全路径
      * @throws Exception
      */
-    public static String unRar(String rarSource,String unRarDir){
+    public static String unRar(String rarSource, String unRarDir) {
         String unRarFile = null;
         OutputStream os = null;
         Archive archive = null;
@@ -401,26 +403,26 @@ public abstract class ZipUtil {
             archive = new Archive(new File(rarSource));
 
             Iterator<FileHeader> fileHeaderIterator = archive.getFileHeaders().iterator();
-            while (fileHeaderIterator.hasNext()){
+            while (fileHeaderIterator.hasNext()) {
                 FileHeader fileHeader = fileHeaderIterator.next();
-                unRarFile = unRarDir+"/"+fileHeader.getFileNameString();
-                if(fileHeader.isDirectory()){
+                unRarFile = unRarDir + "/" + fileHeader.getFileNameString();
+                if (fileHeader.isDirectory()) {
                     new File(unRarFile).mkdirs();
                     continue;
-                }else{
+                } else {
                     os = new FileOutputStream(unRarFile);
-                    archive.extractFile(fileHeader,os);
+                    archive.extractFile(fileHeader, os);
                 }
             }
         } catch (RarException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         } catch (IOException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         } finally {
             try {
                 os.close();
             } catch (IOException e) {
-                log.error(e.getMessage(),e);
+                log.error(e.getMessage(), e);
             }
         }
         return unRarFile;

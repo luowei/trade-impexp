@@ -12,8 +12,8 @@ import java.util.Date;
  * Time: 下午4:55
  * To change this template use File | Settings | File Templates.
  */
-public interface ExpTradeDetailDao extends CrudRepository<ExpTradeDetail,Long>,
-        BaseDao<ExpTradeDetail>{
+public interface ExpTradeDetailDao extends CrudRepository<ExpTradeDetail, Long>,
+        BaseDao<ExpTradeDetail> {
 //    /**
 //     * 查找指年月的明细数量
 //     * @param yearMonth

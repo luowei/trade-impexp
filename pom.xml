@@ -10,7 +10,7 @@
     <packaging>war</packaging>
 
     <properties>
-        <springframework.version>3.1.1.RELEASE</springframework.version>
+        <springframework.version>3.0.7.RELEASE</springframework.version>
         <spring-data-jpa.version>1.1.0.RELEASE</spring-data-jpa.version>
         <slf4j.version>1.6.4</slf4j.version>
         <log4j.version>1.2.16</log4j.version>
@@ -22,6 +22,7 @@
         <hibernate.version>4.1.4.Final</hibernate.version>
         <!--<sqlserver-connector>1.0</sqlserver-connector>-->
         <!--<jtds.version>1.2.4</jtds.version>-->
+        <mysql-connector-java.version>5.1.18</mysql-connector-java.version>
 
         <commons-dbcp.version>1.4</commons-dbcp.version>
         <c3p0.version>0.9.1</c3p0.version>
@@ -164,6 +165,14 @@
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>sqljdbc4</artifactId>
             <version>${sqljdbc4.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!--MySQL JDBC Driver -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql-connector-java.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -330,7 +339,7 @@
                 </dependencies>
 
                 <configuration>
-                    <driver>com.mysql.jdbc.Driver</driver>
+                    <driver>${db.db.driverClass}</driver>
                     <url>jdbc:sqlserver://192.168.1.21:2433</url>
                     <username>oilchemxp</username>
                     <password>${db.password}</password>
@@ -364,16 +373,18 @@
                 <db.url>${test.db.jdbcUrl}</db.url>
                 <db.username>${test.db.username}</db.username>
                 <db.password>${test.db.password}</db.password>
+                <db.dialect>${test.db.dialect}</db.dialect>
             </properties>
         </profile>
 
         <profile>
             <id>test2</id>
             <properties>
-                <db.driver>${test.db.driverClass}</db.driver>
-                <db.url>${test.db.jdbcUrl}</db.url>
-                <db.username>${test.db.username}</db.username>
-                <db.password>${test.db.password}</db.password>
+                <db.driver>${test2.db.driverClass}</db.driver>
+                <db.url>${test2.db.jdbcUrl}</db.url>
+                <db.username>${test2.db.username}</db.username>
+                <db.password>${test2.db.password}</db.password>
+                <db.dialect>${test2.db.dialect}</db.dialect>
             </properties>
         </profile>
 
@@ -384,6 +395,7 @@
                 <db.url>${dev.db.jdbcUrl}</db.url>
                 <db.username>${dev.db.username}</db.username>
                 <db.password>${dev.db.password}</db.password>
+                <db.dialect>${dev.db.dialect}</db.dialect>
             </properties>
         </profile>
 

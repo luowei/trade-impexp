@@ -4,6 +4,7 @@ import com.oilchem.trade.domain.abstrac.TradeSum;
 import jxl.Sheet;
 
 import java.math.BigDecimal;
+
 import static com.oilchem.trade.config.MapperConfig.*;
 
 /**
@@ -13,14 +14,14 @@ import static com.oilchem.trade.config.MapperConfig.*;
  * Time: 上午9:25
  * To change this template use File | Settings | File Templates.
  */
-public class AbstractTradeSumRowMapper<E extends TradeSum> implements MyRowMapper{
+public class AbstractTradeSumRowMapper<E extends TradeSum> implements MyRowMapper {
 
     Sheet sheet;
     int rowIdx;
     E e;
 
 
-    public AbstractTradeSumRowMapper(int rowIdx,E e,Sheet sheet) {
+    public AbstractTradeSumRowMapper(int rowIdx, E e, Sheet sheet) {
         this.sheet = sheet;
         this.rowIdx = rowIdx;
 
@@ -37,8 +38,8 @@ public class AbstractTradeSumRowMapper<E extends TradeSum> implements MyRowMappe
         this.e = e;
     }
 
-    private String getContents(String name){
-        return sheet.getCell(sheet.findCell(name).getColumn(),rowIdx).getContents();
+    private String getContents(String name) {
+        return sheet.getCell(sheet.findCell(name).getColumn(), rowIdx).getContents();
     }
 
     public E getMappingInstance() {

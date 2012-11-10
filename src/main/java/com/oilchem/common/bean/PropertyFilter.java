@@ -48,14 +48,15 @@ public class PropertyFilter {
 
     /**
      * 返回当前条件参数是否有效,字符串不为空,非字符串的不为null
+     *
      * @return
      */
     public boolean isNotBlankOfThisPropertyValue() {
-        if(value instanceof String){
+        if (value instanceof String) {
             String str = (String) value;
 
             return (null != str && !str.trim().isEmpty());
-        }else {
+        } else {
             return (null != value);
         }
 

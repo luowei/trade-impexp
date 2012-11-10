@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import static com.oilchem.trade.config.Config.*;
 
 /**
@@ -41,16 +42,17 @@ public class TaskServiceImpl implements TaskService {
     long delay = 0;
 
     private void unPackageAndImportTask(TimerTask timerTask) {
-        timer.schedule(timerTask,delay);
+        timer.schedule(timerTask, delay);
     }
 
     /**
      * 解压明细数据包与导入任务
-     * @param yearMonth   年月
-     * @param impExpTradeType
+     * @param year                  年
+     * @param month                 月
+     * @param impExpTradeType      impExpTradeType
      */
-    public void unDetailPackageAndImportTask(final Date yearMonth,
-                  final Integer impExpTradeType){
+    public void unDetailPackageAndImportTask(final Integer year,final Integer month,
+                                             final Integer impExpTradeType) {
         unPackageAndImportTask(new TimerTask() {
 
             @Override
@@ -64,7 +66,7 @@ public class TaskServiceImpl implements TaskService {
                 //导入数据
                 Map<Long, String> unImportMap = commonService.getUnImportFile(DETAIL);
                 for (Map.Entry<Long, String> entry : unImportMap.entrySet()) {
-                    tradeDetailService.importAccess(entry.getValue(), yearMonth, impExpTradeType);
+                    tradeDetailService.importAccess(entry.getValue(), year,month, impExpTradeType);
                 }
 
             }
@@ -73,11 +75,13 @@ public class TaskServiceImpl implements TaskService {
 
     /**
      * 解压总表数据包与导入任务
-     * @param yearMonth   年月
-     * @param impExpTradeType
+     * @param year                  年
+     * @param month                 月
+     * @param impExpTradeType     impExpTradeType
+     * @param productType          productType
      */
-    public void unSumPackageAndImportTask(final Date yearMonth,
-                  final Integer impExpTradeType,final String productType) {
+    public void unSumPackageAndImportTask(final Integer year,final Integer month,
+                                          final Integer impExpTradeType, final String productType) {
         unPackageAndImportTask(new TimerTask() {
 
             @Override
@@ -91,7 +95,7 @@ public class TaskServiceImpl implements TaskService {
                 //导入数据
                 Map<Long, String> unImportMap = commonService.getUnImportFile(SUM);
                 for (Map.Entry<Long, String> entry : unImportMap.entrySet()) {
-                    tradeSumService.importExcel(entry.getValue(), yearMonth,productType,impExpTradeType);
+                    tradeSumService.importExcel(entry.getValue(), year,month, productType, impExpTradeType);
                 }
 
             }

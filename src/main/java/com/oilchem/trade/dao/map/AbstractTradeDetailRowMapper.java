@@ -8,7 +8,9 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import static com.oilchem.trade.config.MapperConfig.*;
+
 /**
  * detail与access表中字段映射
  * Created with IntelliJ IDEA.
@@ -23,7 +25,7 @@ public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implem
     Logger log = LoggerFactory.getLogger(tClass);
 
     public TradeDetail setTraddDetail(TradeDetail tradeDetail,
-         ResultSet rs)  throws SQLException{
+                                      ResultSet rs) throws SQLException {
         //产品代码
         tradeDetail.setProductCode(rs.getString(PRODUCT_CODE));
         //产品名称
@@ -54,11 +56,11 @@ public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implem
         T t = null;
         try {
             t = tClass.newInstance();
-            this.setTraddDetail(t,rs);
+            this.setTraddDetail(t, rs);
         } catch (InstantiationException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         } catch (IllegalAccessException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         }
         return t;
     }

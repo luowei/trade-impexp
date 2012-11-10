@@ -1,7 +1,6 @@
 package com.oilchem.trade.dao.map;
 
 
-
 import com.oilchem.trade.domain.ImpTradeDetail;
 
 import java.sql.ResultSet;

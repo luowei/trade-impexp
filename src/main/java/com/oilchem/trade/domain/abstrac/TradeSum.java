@@ -14,9 +14,9 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 @MappedSuperclass
-@Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 //@DiscriminatorColumn(name="tradeSumType",discriminatorType=DiscriminatorType.STRING)
-public  class TradeSum extends IdEntity implements Serializable {
+public class TradeSum extends IdEntity implements Serializable {
     //进出口年
     @Column(name = "year")
     private Integer year;

@@ -12,9 +12,9 @@ import java.util.List;
  * Time: 下午12:44
  * To change this template use File | Settings | File Templates.
  */
-public interface LogDao extends CrudRepository<Log,Long>,BaseDao<Log> {
+public interface LogDao extends CrudRepository<Log, Long>, BaseDao<Log> {
 
-    List<Log> findByExtractFlagAndTableType(String unextract_flag,String tableType);
+    List<Log> findByExtractFlagAndTableType(String unextract_flag, String tableType);
 
     List<Log> findByImportFlagAndTableType(String unimport_flag, String detail);
 }

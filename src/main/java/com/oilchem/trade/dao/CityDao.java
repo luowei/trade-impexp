@@ -16,7 +16,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 //@RepositoryDefinition(domainClass = City.class,idClass = Integer.class)
-public interface CityDao extends CrudRepository<City,Long>,BaseDao<City> {
+public interface CityDao extends CrudRepository<City, Long>, BaseDao<City> {
 
     City findByCity(String city);
 }

@@ -14,18 +14,21 @@ public interface TaskService {
 
     /**
      * 解压总表数据包与导入任务
-     * @param yearMonth   年月
-     * @param impExpTradeType
+     * @param year                  年
+     * @param month                 月
+     * @param impExpTradeType     impExpTradeType
+     * @param productType          productType
      */
-    public void unSumPackageAndImportTask(final Date yearMonth,
-                                          final Integer impExpTradeType,final String productType);
+    void unSumPackageAndImportTask(final Integer year,final Integer month,
+                                          final Integer impExpTradeType, final String productType);
 
     /**
      * 解压明细数据包与导入任务
-     * @param yearMonth   年月
+     * @param year                  年
+     * @param month                 月
      * @param impExpTradeType
      */
-    public void unDetailPackageAndImportTask(final Date yearMonth,
+    void unDetailPackageAndImportTask(final Integer year,final Integer month,
                                              final Integer impExpTradeType);
 
 }

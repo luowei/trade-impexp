@@ -29,7 +29,7 @@
             </c:choose>
         </c:forEach>
         <c:choose>
-            <c:when test="${currentIndex == deploymentLog.totalPages}">
+            <c:when test="${currentIndex == totalPages}">
                 <li class="disabled"><a href="#">&gt;</a></li>
                 <li class="disabled"><a href="#">&gt;&gt;</a></li>
             </c:when>

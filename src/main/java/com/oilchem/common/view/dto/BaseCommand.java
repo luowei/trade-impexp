@@ -70,7 +70,7 @@ public class BaseCommand implements Serializable {
         this.ids = ids;
     }
 
-    @DateTimeFormat(iso= DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     public Date getStartTime() {
         return startTime;
     }

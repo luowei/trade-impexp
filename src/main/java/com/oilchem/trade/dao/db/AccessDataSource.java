@@ -11,17 +11,18 @@ import javax.sql.DataSource;
  * Time: 上午9:24
  * To change this template use File | Settings | File Templates.
  */
-public class AccessDataSource{
+public class AccessDataSource {
 
     /**
      * 因为每一个Access文件都要有对应的dataSource，所以这里不能使用单例
+     *
      * @param accessPath
      * @return
      */
-    public DataSource getAccessDataSource(String accessPath){
+    public DataSource getAccessDataSource(String accessPath) {
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName("sun.jdbc.odbc.JdbcOdbcDriver");
-        dataSource.setUrl("jdbc:odbc:Driver={Microsoft Access Drive (*.mdb)};"+accessPath);
+        dataSource.setUrl("jdbc:odbc:Driver={Microsoft Access Drive (*.mdb)};" + accessPath);
         return dataSource;
 
     }

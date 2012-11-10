@@ -11,22 +11,76 @@ import java.io.Serializable;
  */
 public class CommonDto implements Serializable {
 
-    private Integer year;
-    private Integer month;
+    private Long id;
+    private Long[] ids;
+    private Integer pageNumber;
+    private Integer pageSize;
+    private Comparable<Serializable> lowValue;
+    private Comparable<Serializable> highValue;
+    private String order;
+    private String[] orders;
 
-    public Integer getYear() {
-        return year;
+    public Long getId() {
+        return id;
     }
 
-    public void setYear(Integer year) {
-        this.year = year;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Integer getMonth() {
-        return month;
+    public Long[] getIds() {
+        return ids;
     }
 
-    public void setMonth(Integer month) {
-        this.month = month;
+    public void setIds(Long[] ids) {
+        this.ids = ids;
+    }
+
+    public Integer getPageNumber() {
+        return pageNumber;
+    }
+
+    public void setPageNumber(Integer pageNumber) {
+        this.pageNumber = pageNumber;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public Comparable<Serializable> getLowValue() {
+        return lowValue;
+    }
+
+    public void setLowValue(Comparable<Serializable> lowValue) {
+        this.lowValue = lowValue;
+    }
+
+    public Comparable<Serializable> getHighValue() {
+        return highValue;
+    }
+
+    public void setHighValue(Comparable<Serializable> highValue) {
+        this.highValue = highValue;
+    }
+
+    public String getOrder() {
+        return order;
+    }
+
+    public void setOrder(String order) {
+        this.order = order;
+    }
+
+    public String[] getOrders() {
+        return orders;
+    }
+
+    public void setOrders(String[] orders) {
+        this.orders = orders;
     }
 }

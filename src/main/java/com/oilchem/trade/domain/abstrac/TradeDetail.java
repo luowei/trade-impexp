@@ -15,7 +15,7 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 @MappedSuperclass
-public  class TradeDetail
+public class TradeDetail
         extends IdEntity implements Serializable {
     //年
     @Column(name = "col_year")

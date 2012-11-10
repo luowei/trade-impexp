@@ -17,19 +17,22 @@ import java.util.List;
  * Time: 下午4:18
  * To change this template use File | Settings | File Templates.
  */
-public interface BaseDao<T extends IdEntity>{
+public interface BaseDao<T extends IdEntity> {
 
-    /**
-     * 查找指年月的数量
-     * @param yearMonth
-     * @return
-     */
-    Integer countWithYearMonth(Date yearMonth);
 
     /**
      * 删除指定年月的记录
-     * @param yearMonth
+     * @param year year
+     * @param month month
      * @return
      */
-    Boolean delWithYearMonthRecord(Date yearMonth);
+    Boolean delWithYearMonthRecord(Integer year,Integer month);
+
+    /**
+     * 查找指年月的数量
+     * @param year year
+     * @param month month
+     * @return
+     */
+    Integer countWithYearMonth(Integer year, Integer month);
 }

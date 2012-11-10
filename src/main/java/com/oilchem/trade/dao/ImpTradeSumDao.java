@@ -10,5 +10,5 @@ import org.springframework.data.repository.CrudRepository;
  * Time: 下午5:02
  * To change this template use File | Settings | File Templates.
  */
-public interface ImpTradeSumDao extends CrudRepository<ImpTradeSum,Long>,BaseDao<ImpTradeSum> {
+public interface ImpTradeSumDao extends CrudRepository<ImpTradeSum, Long>, BaseDao<ImpTradeSum> {
 }
