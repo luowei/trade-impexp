@@ -9,12 +9,12 @@ import com.oilchem.trade.domain.*;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.service.CommonService;
+import com.oilchem.trade.view.dto.YearMonthDto;
 import jxl.Sheet;
 import jxl.Workbook;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.Repository;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -68,13 +68,15 @@ public class CommonServiceImpl implements CommonService {
     /**
      * 上传文件
      *
+     *
      * @param file    MultipartFile的文件
      * @param realDir 目标目录的物理路径
+     * @param yearMonthDto
      * @return 返回上传之后文件的url
      * @author wei.luo
      * @createTime 2012-11-7
      */
-    public String uploadFile(MultipartFile file, String realDir) {
+    public String uploadFile(MultipartFile file, String realDir, YearMonthDto yearMonthDto) {
         if(file==null || StringUtils.isBlank(realDir)) return null;
 
         String fileUrl = FileUtil.upload(file, realDir, ROOT_URL);

@@ -1,6 +1,7 @@
 package com.oilchem.trade.dao;
 
 import com.oilchem.trade.domain.ExpTradeSum;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -10,5 +11,6 @@ import org.springframework.data.repository.CrudRepository;
  * Time: 下午4:57
  * To change this template use File | Settings | File Templates.
  */
-public interface ExpTradeSumDao extends CrudRepository<ExpTradeSum, Long>, BaseDao<ExpTradeSum> {
+public interface ExpTradeSumDao extends CrudRepository<ExpTradeSum, Long>,JpaSpecificationExecutor<ExpTradeSum>,
+        BaseDao<ExpTradeSum> {
 }

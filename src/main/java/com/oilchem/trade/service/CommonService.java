@@ -5,6 +5,7 @@ import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.MyRowMapper;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.IdEntity;
+import com.oilchem.trade.view.dto.YearMonthDto;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.Repository;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,12 +27,14 @@ public interface CommonService {
     /**
      * 上传文件
      *
+     *
      * @param file MultipartFile的文件
+     * @param yearMonthDto
      * @author wei.luo
      * @createTime 2012-11-7
      * @return 返回上传之后文件的url
      */
-    String uploadFile(MultipartFile file, String realDir);
+    String uploadFile(MultipartFile file, String realDir, YearMonthDto yearMonthDto);
 
     /**
      * 解包

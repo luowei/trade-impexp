@@ -1,5 +1,6 @@
 package com.oilchem.trade.service.impl;
 
+import com.oilchem.trade.config.Config;
 import com.oilchem.trade.config.ImpExpType;
 import com.oilchem.trade.dao.ExpTradeSumDao;
 import com.oilchem.trade.dao.ImpTradeSumDao;
@@ -12,6 +13,8 @@ import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeSumService;
 import com.oilchem.trade.view.dto.CommonDto;
+import com.oilchem.trade.view.dto.YearMonthDto;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,16 +46,6 @@ public class TradeSumServiceImpl implements TradeSumService {
     LogDao logDao;
 
     /**
-     * 上传文件包
-     *
-     * @param file 文件
-     * @return 上传后的文件路径
-     */
-    public String uploadPackage(MultipartFile file) {
-        return commonService.uploadFile(file, UPLOAD_SUMZIP_DIR);
-    }
-
-    /**
      * 解包
      *
      * @param packageSourcee 源zip文件绝对路径
@@ -77,6 +70,10 @@ public class TradeSumServiceImpl implements TradeSumService {
 
         Boolean isSuccess = true;
 
+        Boolean validate = StringUtils.isNotBlank(excelSource) && year!=null
+                && month!=null && productType!=null && impExpTradeType!=null;
+        if(!validate) return false;
+
         if (impExpTradeType.equals(ImpExpType.进口.getCode())) {
             isSuccess = isSuccess & commonService.importExcel(impTradeSumDao, excelSource,
                     ImpTradeSum.class, ImpTradeSumRowMapper.class, year,month, productType);
@@ -91,8 +88,6 @@ public class TradeSumServiceImpl implements TradeSumService {
 
             //更新yearMonth
         }
-
-        //更新日志记录
 
         return isSuccess;
     }
@@ -112,12 +107,12 @@ public class TradeSumServiceImpl implements TradeSumService {
     }
 
     @Override
-    public String uploadFile(MultipartFile file, Integer year, Integer month) {
+    public String uploadFile(MultipartFile file, YearMonthDto yearMonthDto) {
 
-        //更新年月
+        //更新年月,产品类型
         //...
-
-        return commonService.uploadFile(file,UPLOAD_SUMZIP_DIR);
+        yearMonthDto.setTableType(Config.SUM);
+        return commonService.uploadFile(file,UPLOAD_SUMZIP_DIR, yearMonthDto);
     }
 
 }

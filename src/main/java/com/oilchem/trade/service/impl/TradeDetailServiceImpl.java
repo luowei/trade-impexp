@@ -1,24 +1,35 @@
 package com.oilchem.trade.service.impl;
 
+import com.oilchem.trade.config.Config;
 import com.oilchem.trade.config.ImpExpType;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.ExpTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.ImpTradeDetailRowMapper;
 import com.oilchem.trade.dao.db.AccessDataSource;
+import com.oilchem.trade.domain.ImpTradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.view.dto.CommonDto;
+import com.oilchem.trade.view.dto.YearMonthDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import static com.oilchem.trade.config.Config.*;
+import static org.springframework.data.jpa.domain.Specifications.*;
+import static com.oilchem.trade.dao.spec.ImpTradeDetailSpecification.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -46,17 +57,19 @@ public class TradeDetailServiceImpl implements TradeDetailService {
     /**
      * 上传文件包
      *
+     *
+     *
+     *
      * @param file  文件
-     * @param year  年
-     * @param month 月
+     * @param yearMonthDto
      * @return 上传后的路径
      */
-    public String uploadFile(MultipartFile file, Integer year, Integer month) {
+    public String uploadFile(MultipartFile file, YearMonthDto yearMonthDto) {
 
         //更新日志文件
         //......
-
-        return commonService.uploadFile(file, UPLOAD_DETAILZIP_DIR);
+        yearMonthDto.setTableType(Config.DETAIL);
+        return commonService.uploadFile(file, UPLOAD_DETAILZIP_DIR, yearMonthDto);
     }
 
     /**
@@ -116,16 +129,36 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
     /**
      * 根据条件查询
-     *
-     *
-     *
-     * @param TradeDetail 页面传来的 ExpTradeDetail ，包含查询条件中里面
+     * @param TradeDetail 页面传来的 IxpTradeDetail/ExpTradeDetail ，包含查询条件中里面
      * @param commonDto
      * @param pageRequest
      * @return
      */
     public <T extends TradeDetail> Page<T>
     findWithCriteria(T TradeDetail, CommonDto commonDto, PageRequest pageRequest) {
+
+        final T t;
+
+        Specification<T> speci = new Specification<T>() {
+            public Predicate toPredicate(Root<T> tRoot, CriteriaQuery<?> query, CriteriaBuilder cb) {
+
+//                CriteriaQuery<T> query = cb.createQuery(t.getClass());
+//                Root<T> root = query.from(t.getClass());
+//
+//                Predicate hasBirthday = builder.equal(root.get(Customer_.birthday), today);
+//                Predicate isLongTermCustomer = builder.lessThan(root.get(Customer_.createdAt), today.minusYears(2);
+//                query.where(builder.and(hasBirthday, isLongTermCustomer));
+//                em.createQuery(query.select(root)).getResultList();
+
+
+                return null;
+            }
+        };
+
+        Specification<T> speci2 =null;
+
+
+       Page<ImpTradeDetail> page=impTradeDetailDao.findAll(Specifications.<ImpTradeDetail>where((Specification<ImpTradeDetail>) speci),pageRequest);
 
         return null;
     }

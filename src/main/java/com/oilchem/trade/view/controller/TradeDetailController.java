@@ -3,20 +3,16 @@ package com.oilchem.trade.view.controller;
 import com.oilchem.trade.domain.*;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeDetailService;
-import com.oilchem.trade.util.PageUtil;
 import com.oilchem.trade.view.dto.CommonDto;
+import com.oilchem.trade.view.dto.YearMonthDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -84,20 +80,21 @@ public class TradeDetailController extends CommonController {
      * 导入明细数据
      *
      * @param file  从 DefaultMultipartHttpServletRequest获得的file
-     * @param year  年
-     * @param month 月
+     * @param yearMonthDto  年月。。。
      * @return
      */
     @RequestMapping("/importdetail")
-    public String importTradeDetail(MultipartFile file, Integer year, Integer month) {
+    public String importTradeDetail(MultipartFile file,YearMonthDto yearMonthDto) {
 
         Boolean validate = (file.getOriginalFilename().endsWith(".rar") ||
-                file.getOriginalFilename().endsWith(".zip")) && year != null && month != null;
+                file.getOriginalFilename().endsWith(".zip"))
+                && yearMonthDto!=null;
 
-        if (validate)
-            tradeDetailService.uploadFile(file, year, month);
+        if(!validate) return "/importdetail";
 
-        return "importdetail";
+        tradeDetailService.uploadFile(file, yearMonthDto);
+
+        return "/importdetail";
     }
 
     /**

@@ -2,6 +2,7 @@ package com.oilchem.trade.service;
 
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.view.dto.CommonDto;
+import com.oilchem.trade.view.dto.YearMonthDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,12 +20,14 @@ public interface TradeDetailService {
     /**
      * 上传文件包
      *
+     *
+     *
+     *
      * @param file  文件
-     * @param year  年
-     * @param month 月
+     * @param yearMonthDto
      * @return 上传后的文件路径
      */
-    String uploadFile(MultipartFile file, Integer year, Integer month);
+    String uploadFile(MultipartFile file, YearMonthDto yearMonthDto);
 
     /**
      * 解包

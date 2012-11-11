@@ -3,6 +3,7 @@ package com.oilchem.trade.service;
 import com.oilchem.trade.domain.ImpTradeSum;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.view.dto.CommonDto;
+import com.oilchem.trade.view.dto.YearMonthDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,10 +54,12 @@ public interface TradeSumService {
     /**
      * 上传文件
      *
+     *
+     *
+     *
      * @param file  file
-     * @param year  year
-     * @param month month
+     * @param yearMonthDto
      * @return
      */
-    String uploadFile(MultipartFile file, Integer year, Integer month);
+    String uploadFile(MultipartFile file, YearMonthDto yearMonthDto);
 }

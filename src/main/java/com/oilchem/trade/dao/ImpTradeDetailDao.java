@@ -1,6 +1,7 @@
 package com.oilchem.trade.dao;
 
 import com.oilchem.trade.domain.ImpTradeDetail;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Date;
@@ -12,7 +13,7 @@ import java.util.Date;
  * Time: 下午4:59
  * To change this template use File | Settings | File Templates.
  */
-public interface ImpTradeDetailDao extends CrudRepository<ImpTradeDetail, Long>,
+public interface ImpTradeDetailDao extends CrudRepository<ImpTradeDetail, Long>,JpaSpecificationExecutor<ImpTradeDetail>,
         BaseDao<ImpTradeDetail> {
 
 //    /**

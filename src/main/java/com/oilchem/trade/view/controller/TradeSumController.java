@@ -5,20 +5,16 @@ import com.oilchem.trade.domain.ImpTradeSum;
 import com.oilchem.trade.domain.ProductType;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeSumService;
-import com.oilchem.trade.util.PageUtil;
 import com.oilchem.trade.view.dto.CommonDto;
+import com.oilchem.trade.view.dto.YearMonthDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -84,13 +80,13 @@ public class TradeSumController extends CommonController {
      */
     @RequestMapping("/importsum")
     public String importTradeSum(MultipartFile file, String productType,
-                                 Integer year, Integer month) {
+                                 Integer year, Integer month,Integer impExpType,YearMonthDto yearMonthDto) {
 
         Boolean validate = (file.getOriginalFilename().endsWith(".rar") ||
-                file.getOriginalFilename().endsWith(".zip")) && year != null && month != null;
+                file.getOriginalFilename().endsWith(".zip")) && yearMonthDto!=null;
 
         if (validate == true)
-            tradeSumService.uploadFile(file, year, month);
+            tradeSumService.uploadFile(file, yearMonthDto);
 
         return "importsum";
     }

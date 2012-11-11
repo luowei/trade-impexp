@@ -19,6 +19,9 @@ public class Config {
     public static String DETAIL = "明细表";
     public static String SUM = "总表";
 
+    public static String UPLOADING_FLAG = "正在上传";
+    public static String UPLOADED_FLAG = "上传完毕";
+
     public static String UNEXTRACT_FLAG = "未解压";
     public static String EXTRACTING_FLAG = "正在解压";
     public static String EXTRACTED_FLAG = "解压成功";
@@ -26,4 +29,8 @@ public class Config {
     public static String UNIMPORT_FLAG = "未导入";
     public static String IMPORTING_FLAG = "正在导入";
     public static String IMPORTED_FLAG = "导入成功";
+
+    public static String UPLOAD_FAILD = "上传失败";
+    public static String EXTRACT_FAILD = "解压失败";
+    public static String IMPORT_FAILD ="导入失败";
 }
