@@ -60,33 +60,32 @@ public class TradeSumServiceImpl implements TradeSumService {
 
     /**
      * 导入Excel
+     *
      * @param excelSource     excel文件全名，含绝对路径
-     * @param year             年
-     * @param month            月
-     * @param productType     产品类型
-     * @param impExpTradeType 进出口类型，1进口/2出口
+     * @param yearMonthDto       年月，产品类型
      * @return
      */
-    public Boolean importExcel(String excelSource, Integer year,Integer month,
-                               String productType, Integer impExpTradeType) {
+    public Boolean importExcel(String excelSource, YearMonthDto yearMonthDto) {
 
         Boolean isSuccess = true;
 
-        Boolean validate = StringUtils.isNotBlank(excelSource) && year!=null
-                && month!=null && productType!=null && impExpTradeType!=null;
+        Boolean validate = StringUtils.isNotBlank(excelSource) &&
+                yearMonthDto!=null;
         if(!validate) return false;
 
-        if (impExpTradeType.equals(ImpExpType.进口.getCode())) {
+        if (yearMonthDto.getImpExpType().equals(ImpExpType.进口.getCode())) {
             isSuccess = isSuccess & commonService.importExcel(impTradeSumDao, impTradeSumDao, excelSource,
-                    ImpTradeSum.class, ImpTradeSumRowMapper.class, year,month, productType);
+                    ImpTradeSum.class, ImpTradeSumRowMapper.class,
+                    yearMonthDto.getYear(),yearMonthDto.getMonth(), yearMonthDto.getProductType());
 
             //更新yearMonth
         }
 
 
-        else if (impExpTradeType.equals(ImpExpType.出口.getCode())) {
+        else if (yearMonthDto.getImpExpType().equals(ImpExpType.出口.getCode())) {
             isSuccess = isSuccess & commonService.importExcel(expTradeSumDao, expTradeSumDao, excelSource,
-                    ExpTradeSum.class, ExpTradeSumRowMapper.class, year,month, productType);
+                    ExpTradeSum.class, ExpTradeSumRowMapper.class,
+                    yearMonthDto.getYear(),yearMonthDto.getMonth(), yearMonthDto.getProductType());
 
             //更新yearMonth
         }

@@ -1,14 +1,5 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: luowei
-  Date: 12-11-9
-  Time: 上午8:58
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="p" uri="/WEB-INF/tag/page" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 
@@ -20,12 +11,15 @@
 </head>
 <body>
 <h1>明细导入</h1>
-<c:url var="importDetail" enctype="multipart/form-data" value="/manage/trade/importdetail"
-    <form id="importDetail" action="${importDetail}" method="post">
+
+<h2>上传文件：</h2>
+<c:url var="importDetail" value="/manage/trade/importdetail"/>
+<form id="importDetail" enctype="multipart/form-data" action="${importDetail}" method="post">
     进出口类型:
+    <input type="hidden" name="tableType" value="明细表">
     <select name="impExpType">
-        <option name="1">进口</option>
-        <option name="2">出口</option>
+        <option value="1">进口</option>
+        <option value="2">出口</option>
     </select>
 
     年:
@@ -42,20 +36,23 @@
         </c:forEach>
     </select>
     <br/>
-    zip或rar的Access数据文件包:
+    zip或rar的Access数据文件包: <br/>
     <input name="file" type="file">
-    <br/>
-    <input type="submit" value="提交">
+    <br/> <br/>
+    <input type="submit" value="上传并导入">
 </form>
 
 <hr/>
-<h1>明细导入</h1>
-<c:url var="importSum" value="/manage/trade/importsum"
-    <form id="importSum" enctype="multipart/form-data" action="${importSum}" method="post">
+<h1>总表导入</h1>
+
+<h2>上传文件:</h2>
+<c:url var="importSum" value="/manage/trade/importsum"/>
+<form id="importSum" enctype="multipart/form-data" action="${importSum}" method="post">
     进出口类型:
+    <input type="hidden" name="tableType" value="总表">
     <select name="impExpType">
-        <option name="1">进口</option>
-        <option name="2">出口</option>
+        <option value="1">进口</option>
+        <option value="2">出口</option>
     </select>
 
     年:
@@ -72,10 +69,10 @@
         </c:forEach>
     </select>
     <br/>
-    zip或rar或xsl格式的数据文件:
+    zip或rar或xsl格式的数据文件: <br/>
     <input name="file" type="file">
-    <br/>
-    <input type="submit" value="提交">
+    <br/> <br/>
+    <input type="submit" value="上传并导入">
 </form>
 
 </body>

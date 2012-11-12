@@ -5,11 +5,11 @@ import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.service.TradeSumService;
+import com.oilchem.trade.view.dto.YearMonthDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Date;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -47,12 +47,13 @@ public class TaskServiceImpl implements TaskService {
 
     /**
      * 解压明细数据包与导入任务
-     * @param year                  年
-     * @param month                 月
-     * @param impExpTradeType      impExpTradeType
+     * @param yearMonthDto                  年月
+     *
      */
-    public void unDetailPackageAndImportTask(final Integer year,final Integer month,
-                                             final Integer impExpTradeType) {
+    public void unDetailPackageAndImportTask(final YearMonthDto yearMonthDto) {
+
+        final Boolean isSuccess = true;
+
         unPackageAndImportTask(new TimerTask() {
 
             @Override
@@ -66,7 +67,7 @@ public class TaskServiceImpl implements TaskService {
                 //导入数据
                 Map<Long, String> unImportMap = commonService.getUnImportFile(DETAIL);
                 for (Map.Entry<Long, String> entry : unImportMap.entrySet()) {
-                    tradeDetailService.importAccess(entry.getValue(), year,month, impExpTradeType);
+                    tradeDetailService.importAccess(entry.getValue(), yearMonthDto);
                 }
 
             }
@@ -75,13 +76,10 @@ public class TaskServiceImpl implements TaskService {
 
     /**
      * 解压总表数据包与导入任务
-     * @param year                  年
-     * @param month                 月
-     * @param impExpTradeType     impExpTradeType
-     * @param productType          productType
+     * @param yearMonthDto      年月
+     *
      */
-    public void unSumPackageAndImportTask(final Integer year,final Integer month,
-                                          final Integer impExpTradeType, final String productType) {
+    public void unSumPackageAndImportTask(final YearMonthDto yearMonthDto) {
         unPackageAndImportTask(new TimerTask() {
 
             @Override
@@ -95,7 +93,7 @@ public class TaskServiceImpl implements TaskService {
                 //导入数据
                 Map<Long, String> unImportMap = commonService.getUnImportFile(SUM);
                 for (Map.Entry<Long, String> entry : unImportMap.entrySet()) {
-                    tradeSumService.importExcel(entry.getValue(), year,month, productType, impExpTradeType);
+                    tradeSumService.importExcel(entry.getValue(), yearMonthDto);
                 }
 
             }

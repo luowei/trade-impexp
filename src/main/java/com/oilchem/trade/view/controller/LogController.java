@@ -23,13 +23,14 @@ public class LogController extends CommonController {
     @Autowired
     LogService logService;
 
+    @RequestMapping("/listlog")
     public String listLog(Model model,CommonDto commonDto){
 
         Page<Log> logs = logService.findAll(getPageRequest(commonDto));
         addPageInfo(model,logs,getServletContextPath("/listlog"))
             .addAttribute("logList",logs);
 
-        return "/listlog";
+        return "manage/trade//listlog";
     }
 
 }

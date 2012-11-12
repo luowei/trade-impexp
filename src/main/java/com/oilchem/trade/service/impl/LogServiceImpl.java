@@ -1,6 +1,5 @@
 package com.oilchem.trade.service.impl;
 
-import com.oilchem.trade.config.Config;
 import com.oilchem.trade.config.ImpExpType;
 import com.oilchem.trade.dao.LogDao;
 import com.oilchem.trade.domain.Log;
@@ -10,13 +9,10 @@ import org.aspectj.lang.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-
-import java.util.Date;
 
 import static com.oilchem.trade.config.Config.*;
 
@@ -53,9 +49,9 @@ public class LogServiceImpl implements LogService {
         log.setLogType("导入");
 //        YearMonthDto yearMonthDto = null;
         log.setTableType(yearMonthDto.getTableType());
-        if(yearMonthDto.getImpExportType().equals(ImpExpType.进口.getCode())){
+        if(yearMonthDto.getImpExpType().equals(ImpExpType.进口.getCode())){
              log.setTradeType(ImpExpType.进口.getMessage());
-        }else if(yearMonthDto.getImpExportType().equals(ImpExpType.出口.getCode())){
+        }else if(yearMonthDto.getImpExpType().equals(ImpExpType.出口.getCode())){
             log.setTradeType(ImpExpType.出口.getMessage());
         }
     }
@@ -67,6 +63,16 @@ public class LogServiceImpl implements LogService {
      */
     @Before("cutUploadFile(file,readDir,yearMonthDto)")
     void logUploadingFile(MultipartFile file,String readDir,YearMonthDto yearMonthDto){
+        log = new Log();
+        log.setLogType(yearMonthDto.getTableType());
+        log.setTableType(yearMonthDto.getTableType());
+        if(yearMonthDto.getImpExpType().equals(ImpExpType.进口.getCode())){
+            log.setTradeType(ImpExpType.进口.getMessage());
+        }else if(yearMonthDto.getImpExpType().equals(ImpExpType.出口.getCode())){
+            log.setTradeType(ImpExpType.出口.getMessage());
+        }
+        log.setYear(yearMonthDto.getYear());
+        log.setMonth(yearMonthDto.getMonth());
         log.setUploadFlg(UPLOADING_FLAG);
         logDao.save(log);
     }
@@ -75,12 +81,14 @@ public class LogServiceImpl implements LogService {
      * 上传后更新日志
      * @param file
      * @param readDir
-     * @param uploadPath
+     * @param uploadUrl
      */
-    @AfterReturning(pointcut="cutUploadFile(file,readDir,yearMonthDto)",returning = "uploadPath")
-    void logUploadedFile(MultipartFile file,String readDir,YearMonthDto yearMonthDto,String uploadPath){
-        log.setUploadPath(uploadPath);
+    @AfterReturning(pointcut="cutUploadFile(file,readDir,yearMonthDto)",returning = "uploadUrl")
+    void logUploadedFile(MultipartFile file,String readDir,YearMonthDto yearMonthDto,String uploadUrl){
+        log.setUploadPath(uploadUrl);
+        log.setUploadPath(readDir+uploadUrl.substring(uploadUrl.lastIndexOf("/")));
         log.setUploadFlg(UPLOADED_FLAG);
+        log.setExtractFlag(UNEXTRACT_FLAG);
         logDao.save(log);
         //更新日志 .. 上传完毕
     }

@@ -19,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -76,14 +75,13 @@ public class TradeDetailServiceImpl implements TradeDetailService {
     /**
      * 导入Access文件
      *
+     *
      * @param accessFileFullName access文件全名，含绝对路径
-     * @param year                 年
-     * @param month                月
-     * @param impExpTradeType    进出口类型，1进口/2出口
+     * @param yearMonthDto                 年月
      * @return
      */
     public Boolean importAccess(String accessFileFullName,
-                                Integer year,Integer month, Integer impExpTradeType) {
+                                YearMonthDto yearMonthDto) {
 
         Boolean isSuccess = true;
 
@@ -95,26 +93,28 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         commonService.importCriteriaTab(accessJdbcTemplate, sql);
 
         //导入进口明细总表
-        if (impExpTradeType.equals(ImpExpType.进口.getCode())) {
+        if (yearMonthDto.getImpExpType().equals(ImpExpType.进口.getCode())) {
             isSuccess = isSuccess & commonService.importTradeDetail(
                     impTradeDetailDao,
                     impTradeDetailDao,
                     accessJdbcTemplate,
                     new ImpTradeDetailRowMapper(),
-                    year,month, sql);
+                    yearMonthDto.getYear(),
+                    yearMonthDto.getMonth(), sql);
 
             //切面更新明细表年月
 
         }
 
         //导入出口明细表
-        else if (impExpTradeType.equals(ImpExpType.出口.getCode())) {
+        else if (yearMonthDto.getImpExpType().equals(ImpExpType.出口.getCode())) {
             isSuccess = isSuccess & commonService.importTradeDetail(
                     expTradeDetailDao,
                     expTradeDetailDao,
                     accessJdbcTemplate,
                     new ExpTradeDetailRowMapper(),
-                    year,month, sql);
+                    yearMonthDto.getYear(),
+                    yearMonthDto.getMonth(), sql);
 
             //切面更新明细表年月
         }

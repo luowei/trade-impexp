@@ -1,10 +1,14 @@
 package com.oilchem.trade.view.controller;
 
+import com.oilchem.trade.config.Config;
 import com.oilchem.trade.domain.*;
 import com.oilchem.trade.service.CommonService;
+import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.view.dto.CommonDto;
 import com.oilchem.trade.view.dto.YearMonthDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -26,11 +30,16 @@ import java.util.List;
 @RequestMapping("/manage/trade")
 public class TradeDetailController extends CommonController {
 
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     CommonService commonService;
 
     @Autowired
     TradeDetailService tradeDetailService;
+
+    @Autowired
+    TaskService taskService;
 
 //    @ModelAttribute
 //    public CommonDto  createCommonDto(){
@@ -54,11 +63,11 @@ public class TradeDetailController extends CommonController {
 
         getDetailCriteriaData(addPageInfo(model, tradeDetails, getServletContextPath("/listimpdetail")))
                 .addAttribute("tradeDetailList", tradeDetails);
-        return "listdetail";
+        return "manage/trade/listdetail";
     }
 
     /**
-     * 出口明细列一股
+     * 出口明细列表
      *
      * @param model          model
      * @param commonDto     commonDto
@@ -74,7 +83,16 @@ public class TradeDetailController extends CommonController {
 
         getDetailCriteriaData(addPageInfo(model, tradeDetails, getServletContextPath("/listexpdetail")))
                 .addAttribute("tradeDetailList", tradeDetails);
-        return "listdetail";
+        return "manage/trade/listdetail";
+    }
+
+    /**
+     * 进入导入数据页面
+     * @return
+     */
+    @RequestMapping("/import")
+    public String importpage(){
+        return "manage/trade/import";
     }
 
     /**
@@ -86,17 +104,28 @@ public class TradeDetailController extends CommonController {
      */
     @RequestMapping("/importdetail")
     public String importTradeDetail( @RequestParam("file") MultipartFile file,
-                                    YearMonthDto yearMonthDto) {
+                                    Model model,YearMonthDto yearMonthDto) {
 
         Boolean validate = (file.getOriginalFilename().endsWith(".rar") ||
                 file.getOriginalFilename().endsWith(".zip"))
                 && yearMonthDto!=null;
 
-        if(!validate) return "/importdetail";
+        if(!validate) return "manage/trade//importdetail";
+        StringBuffer message = new StringBuffer();
 
-        tradeDetailService.uploadFile(file, yearMonthDto);
+        try{
+            String uploadUrl = tradeDetailService.uploadFile(file, yearMonthDto);
+            message.append( "文件已上传到："+Config.UPLOAD_DETAILZIP_DIR +
+                    uploadUrl.substring(uploadUrl.lastIndexOf("/")));
+            taskService.unDetailPackageAndImportTask(yearMonthDto);
 
-        return "/importdetail";
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            message.append("文件上传或数据导入发生了错误");
+        }
+
+        model.addAttribute("message",message.toString());
+        return "manage/trade/import";
     }
 
     /**

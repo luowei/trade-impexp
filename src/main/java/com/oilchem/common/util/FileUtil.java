@@ -218,19 +218,23 @@ public abstract class FileUtil {
         }
         // 获取路径，生成完整的文件路径
         String originalFileName = file.getOriginalFilename();
-        String filePrefix = file.getName().substring(0, file.getName().indexOf("."));
+
+        String filePrefix = originalFileName.substring(0, originalFileName.lastIndexOf("."));
         String yyyyMMDDHHMMSS = getYYYYMMDDHHMMSS(new Date());
 
         //生成的文件名为 "物理路径/前缀_日期时间+后缀"
         String fileName = filePrefix + "_" + yyyyMMDDHHMMSS
                 + originalFileName.substring(originalFileName.lastIndexOf("."));
         String readFileName = realDir + "/" + fileName;
+        File dirFile = new File(realDir);
+        if(!dirFile.exists())
+             dirFile.mkdirs();
         File uploadFile = new File(readFileName);
         try {
             // 上传
             FileCopyUtils.copy(file.getBytes(), uploadFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         // 网页端显示的路径的分隔符为/

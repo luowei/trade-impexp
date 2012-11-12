@@ -20,7 +20,7 @@ public class Config {
     public static String SUM = "总表";
 
     public static String UPLOADING_FLAG = "正在上传";
-    public static String UPLOADED_FLAG = "上传完毕";
+    public static String UPLOADED_FLAG = "上传成功";
 
     public static String UNEXTRACT_FLAG = "未解压";
     public static String EXTRACTING_FLAG = "正在解压";

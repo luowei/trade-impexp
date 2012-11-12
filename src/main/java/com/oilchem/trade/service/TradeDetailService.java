@@ -40,14 +40,13 @@ public interface TradeDetailService {
     /**
      * 导入Access文件
      *
+     *
      * @param accessFileFullName access文件全名，含绝对路径
-     * @param year                  年
-     * @param month                 月
-     * @param impExpTradeType    进出口类型，1进口/2出口
+     * @param yearMonthDto                  年月
      * @return
      */
     Boolean importAccess(String accessFileFullName,
-                         Integer year,Integer month, Integer impExpTradeType);
+                         YearMonthDto yearMonthDto);
 
 
     /**

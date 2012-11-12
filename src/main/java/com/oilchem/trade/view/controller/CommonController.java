@@ -8,8 +8,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.ContextLoader;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +27,12 @@ import java.util.Map;
  */
 @Controller
 public class CommonController {
+
+//    @InitBinder
+//    protected void ininBinder(WebDataBinder binder){
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        binder.registerCustomEditor(Date.class, new CustomDateEditor(sdf,true));
+//    }
 
     /**
      * 获得page请求参数
@@ -94,5 +105,6 @@ public class CommonController {
     public String getServletContextPath(String path) {
         return ContextLoader.getCurrentWebApplicationContext().getServletContext().getContext(path).getContextPath();
     }
+
 
 }

@@ -1,5 +1,7 @@
 package com.oilchem.trade.service;
 
+import com.oilchem.trade.view.dto.YearMonthDto;
+
 import java.util.Date;
 import java.util.TimerTask;
 
@@ -14,21 +16,15 @@ public interface TaskService {
 
     /**
      * 解压总表数据包与导入任务
-     * @param year                  年
-     * @param month                 月
-     * @param impExpTradeType     impExpTradeType
-     * @param productType          productType
+     * @param yearMonthDto       年月,产品类型
+     *
      */
-    void unSumPackageAndImportTask(final Integer year,final Integer month,
-                                          final Integer impExpTradeType, final String productType);
+    void unSumPackageAndImportTask(final YearMonthDto yearMonthDto);
 
     /**
      * 解压明细数据包与导入任务
-     * @param year                  年
-     * @param month                 月
-     * @param impExpTradeType
+     * @param yearMonthDto     年月
      */
-    void unDetailPackageAndImportTask(final Integer year,final Integer month,
-                                             final Integer impExpTradeType);
+    void unDetailPackageAndImportTask(final YearMonthDto yearMonthDto);
 
 }

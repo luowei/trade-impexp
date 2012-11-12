@@ -1,5 +1,6 @@
 package com.oilchem.trade.view.controller;
 
+import com.oilchem.trade.config.Config;
 import com.oilchem.trade.domain.ExpTradeSum;
 import com.oilchem.trade.domain.ImpTradeSum;
 import com.oilchem.trade.domain.ProductType;
@@ -50,7 +51,7 @@ public class TradeSumController extends CommonController {
         getDetailCriteriaData(addPageInfo(model, tradeSums, getServletContextPath("/listimpsum")))
                 .addAttribute("tradeSumList", tradeSums);
 
-        return "listsum";
+        return "manage/trade/listsum";
     }
 
     /**
@@ -70,7 +71,7 @@ public class TradeSumController extends CommonController {
         getDetailCriteriaData(addPageInfo(model, tradeSums, getServletContextPath("/listimpsum")))
                 .addAttribute("tradeSumList", tradeSums);
 
-        return "listsum";
+        return "manage/trade/listsum";
     }
 
     /**
@@ -80,16 +81,19 @@ public class TradeSumController extends CommonController {
      */
     @RequestMapping("/importsum")
     public String importTradeSum(MultipartFile file, String productType,
-                                 Integer impExpType,
+                                 Integer impExpType,Model model,
                                  YearMonthDto yearMonthDto) {
 
         Boolean validate = (file.getOriginalFilename().endsWith(".rar") ||
                 file.getOriginalFilename().endsWith(".zip")) && yearMonthDto!=null;
+        if (!validate) return  "manage/trade/importsum";
 
-        if (validate == true)
-            tradeSumService.uploadFile(file, yearMonthDto);
+        String uploadUrl = tradeSumService.uploadFile(file, yearMonthDto);
 
-        return "importsum";
+
+        model.addAttribute("message", Config.UPLOAD_SUMZIP_DIR+uploadUrl.substring(uploadUrl.lastIndexOf("/")));
+
+        return "manage/trade/importsum";
     }
 
     private Model getDetailCriteriaData(Model model) {

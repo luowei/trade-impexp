@@ -15,11 +15,11 @@ public class YearMonthDto {
     /**
      * 进口/出口
      */
-    private Integer impExportType;
+    private Integer impExpType;
     /**
      * 产品类型
      */
-    private Integer productType;
+    private String productType;
     /**
      * 表类型
      */
@@ -41,19 +41,19 @@ public class YearMonthDto {
         this.month = month;
     }
 
-    public Integer getImpExportType() {
-        return impExportType;
+    public Integer getImpExpType() {
+        return impExpType;
     }
 
-    public void setImpExportType(Integer impExportType) {
-        this.impExportType = impExportType;
+    public void setImpExpType(Integer impExpType) {
+        this.impExpType = impExpType;
     }
 
-    public Integer getProductType() {
+    public String getProductType() {
         return productType;
     }
 
-    public void setProductType(Integer productType) {
+    public void setProductType(String productType) {
         this.productType = productType;
     }
 

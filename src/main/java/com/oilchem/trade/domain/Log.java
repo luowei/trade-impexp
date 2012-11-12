@@ -27,7 +27,7 @@ public class Log extends IdEntity implements Serializable {
     //日志时间
     @Column(name = "log_time")
     private Date logTime;
-    //进出口类型
+    //进/出口类型
     @Column(name = "trade_type")
     private String tradeType;
     //表类型
@@ -56,9 +56,21 @@ public class Log extends IdEntity implements Serializable {
     //是否发生了错误
     @Column(name = "error_occur")
     private String errorOccur;
+    //年
+    @Column(name = "col_year")
+    private Integer year;
+    //月
+    @Column(name = "col_month" )
+    private Integer month;
+    //产品类型
+    @Column(name = "product_type")
+    private String productType;
+
     //完成进度
     @Transient
     private Float progress;
+
+
 
     public String getLogType() {
         return logType;
@@ -154,6 +166,30 @@ public class Log extends IdEntity implements Serializable {
 
     public void setErrorOccur(String errorOccur) {
         this.errorOccur = errorOccur;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public Integer getMonth() {
+        return month;
+    }
+
+    public void setMonth(Integer month) {
+        this.month = month;
+    }
+
+    public String getProductType() {
+        return productType;
+    }
+
+    public void setProductType(String productType) {
+        this.productType = productType;
     }
 
     public Float getProgress() {
