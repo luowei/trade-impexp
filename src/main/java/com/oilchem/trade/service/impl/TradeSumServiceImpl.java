@@ -7,6 +7,7 @@ import com.oilchem.trade.dao.ImpTradeSumDao;
 import com.oilchem.trade.dao.LogDao;
 import com.oilchem.trade.dao.map.ExpTradeSumRowMapper;
 import com.oilchem.trade.dao.map.ImpTradeSumRowMapper;
+import com.oilchem.trade.dao.spec.Spec;
 import com.oilchem.trade.domain.ExpTradeSum;
 import com.oilchem.trade.domain.ImpTradeSum;
 import com.oilchem.trade.domain.abstrac.TradeSum;
@@ -18,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -75,7 +77,7 @@ public class TradeSumServiceImpl implements TradeSumService {
         if(!validate) return false;
 
         if (impExpTradeType.equals(ImpExpType.进口.getCode())) {
-            isSuccess = isSuccess & commonService.importExcel(impTradeSumDao, excelSource,
+            isSuccess = isSuccess & commonService.importExcel(impTradeSumDao, impTradeSumDao, excelSource,
                     ImpTradeSum.class, ImpTradeSumRowMapper.class, year,month, productType);
 
             //更新yearMonth
@@ -83,7 +85,7 @@ public class TradeSumServiceImpl implements TradeSumService {
 
 
         else if (impExpTradeType.equals(ImpExpType.出口.getCode())) {
-            isSuccess = isSuccess & commonService.importExcel(expTradeSumDao, excelSource,
+            isSuccess = isSuccess & commonService.importExcel(expTradeSumDao, expTradeSumDao, excelSource,
                     ExpTradeSum.class, ExpTradeSumRowMapper.class, year,month, productType);
 
             //更新yearMonth
@@ -102,6 +104,24 @@ public class TradeSumServiceImpl implements TradeSumService {
      */
     public <T extends TradeSum> Page<T> findWithCriteria(T tradeSum, CommonDto commonDto, PageRequest pageRequest) {
 
+        if(tradeSum instanceof ImpTradeSum){
+            Page<ImpTradeSum> pageImpDetail = impTradeSumDao
+                    .findAll((Specifications
+                            .where(Spec.<ImpTradeSum>hasField("", tradeSum.getYear()))
+                            .and(Spec.<ImpTradeSum>hasField("", tradeSum.getMonth())))
+                            ,pageRequest);
+            return (Page<T>) pageImpDetail;
+        }
+
+
+        if(tradeSum instanceof ExpTradeSum){
+            Page<ExpTradeSum> pageExpDetail = expTradeSumDao
+                    .findAll(Specifications
+                            .where(Spec.<ExpTradeSum>hasField("", tradeSum.getYear()))
+                            .and(Spec.<ExpTradeSum>hasField("", tradeSum.getMonth()))
+                            ,pageRequest);
+            return (Page<T>) pageExpDetail;
+        }
 
         return null;
     }

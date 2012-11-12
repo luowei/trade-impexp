@@ -10,7 +10,7 @@ import org.springframework.data.repository.CrudRepository;
  * Time: 下午5:07
  * To change this template use File | Settings | File Templates.
  */
-public interface TransportationDao extends CrudRepository<Transportation, Long>, BaseDao<Transportation> {
+public interface TransportationDao extends CrudRepository<Transportation, Long>{
 
     Transportation findByTransportation(String transportation);
 }

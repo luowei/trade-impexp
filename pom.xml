@@ -252,7 +252,7 @@
             <version>${ant-zip.version}</version>
         </dependency>
 
-        <!-- Test -->
+        <!-- LogTest -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

@@ -2,6 +2,7 @@ package com.oilchem.trade.dao;
 
 import com.oilchem.trade.domain.Log;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * Time: 下午12:44
  * To change this template use File | Settings | File Templates.
  */
-public interface LogDao extends CrudRepository<Log, Long>, BaseDao<Log> {
+public interface LogDao extends PagingAndSortingRepository<Log, Long>{
 
     List<Log> findByExtractFlagAndTableType(String unextract_flag, String tableType);
 

@@ -3,6 +3,7 @@ package com.oilchem.trade.service;
 import com.oilchem.trade.dao.BaseDao;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.MyRowMapper;
+import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.view.dto.YearMonthDto;
@@ -11,7 +12,6 @@ import org.springframework.data.repository.Repository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -72,52 +72,62 @@ public interface CommonService {
      * @createTime 2012-11-7
      */
     <E extends IdEntity> List<E> queryCriteriaRecord(JdbcTemplate jdbcTemplate,
-                                                     final Repository<E, Long> dao, final Class<E> idEntityClass,
+                                                     final Repository<E, Long> dao,
+                                                     final Class<E> idEntityClass,
                                                      String sql, final String filedName);
 
     /**
      * 导入贸易明细
      *
-     * @param crudRepository    crudRepository与baseDaoDao传相同对象
-     * @param baseDaoDao        crudRepository与baseDaoDao传相同对象
+     *
+     * @param tradeDetailDao
      * @param jdbcTemplate      jdbcTemplate
      * @param tradeDetailMapper tradeDetailMapper
      * @param year              year
      * @param month             month
-     * @param sql               sql
-     * @param <T>               ImpTradeDetailRowMapper / ExpTradeDetailRowMapper
-     * @return
+     * @param sql               sql      @return
      * @author wei.luo
      * @createTime 2012-11-7
      */
-    <T extends AbstractTradeDetailRowMapper> Boolean importTradeDetail(
-            CrudRepository crudRepository, BaseDao baseDaoDao, JdbcTemplate jdbcTemplate,
-            T tradeDetailMapper, Integer year,Integer month, String sql);
+    <E extends TradeDetail,T extends AbstractTradeDetailRowMapper>
+    Boolean importTradeDetail(
+            CrudRepository repository,
+            BaseDao<E> tradeDetailDao,
+            JdbcTemplate jdbcTemplate,
+            T tradeDetailMapper,
+            Integer year,
+            Integer month,
+            String sql);
 
     /**
      * 导入Excel
      *
-     * @param repository          tradeSum Dao，总表持久类
+     *
+     *
+     *
+     *
+     * @param repository
+     * @param tradeSumDao
      * @param excelSource         excel文件源目录
      * @param tradeSumClass       tradeSum Class
      * @param tradeSumRowMapClass tradeSumRowMap Class
      * @param year                数据所在年
      * @param month               数据所在月
      * @param productType         产品类型
-     * @param <E>                 ImpTradeSum / ExpTradeSum
-     * @param <M>                 ImpTradeSumRowMapper / ExpTradeSumRowMapper
      * @return 成功或失败
      * @author wei.luo
      * @createTime 2012-11-7
      */
     <E extends TradeSum, M extends MyRowMapper<E>>
-    Boolean importExcel(CrudRepository<E, Long> repository,
-                        String excelSource,
-                        Class<E> tradeSumClass,
-                        Class<M> tradeSumRowMapClass,
-                        Integer year,
-                        Integer month,
-                        String productType);
+    Boolean importExcel(
+            CrudRepository repository,
+            BaseDao<E> tradeSumDao,
+            String excelSource,
+            Class<E> tradeSumClass,
+            Class<M> tradeSumRowMapClass,
+            Integer year,
+            Integer month,
+            String productType);
 
     /**
      * 获得未解压的文件列表

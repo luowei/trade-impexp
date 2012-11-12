@@ -4,6 +4,9 @@ import com.oilchem.common.util.GenericsUtils;
 import com.oilchem.trade.dao.BaseDao;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Date;
 
 /**
@@ -13,10 +16,17 @@ import java.util.Date;
  * Time: 上午10:13
  * To change this template use File | Settings | File Templates.
  */
+@Resource
 public class BaseDaoImpl<T extends IdEntity> implements BaseDao<T> {
 
     private Class<T> entityClass = GenericsUtils.getSuperClassGenricType(getClass());
 
+    @PersistenceContext
+    private EntityManager em;
+
+    public void setEntityManager(EntityManager em) {
+        this.em = em;
+    }
 
     /**
      * 根据年月删除记录

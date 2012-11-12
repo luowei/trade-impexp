@@ -36,7 +36,7 @@ public class CommonController {
         //形如 id:asc,name:desc,age:asc --> orderMap
         if(orderArr!=null ){
             for (String order:orderArr){
-                String[] ordstr=order.split(",");
+                String[] ordstr=order.split(":");
                 String field=ordstr[1].toUpperCase().trim();
                 if(Sort.Direction.ASC.toString().equals(field)){
                     orderMap.put(ordstr[0].trim(),Sort.Direction.ASC);
@@ -48,7 +48,7 @@ public class CommonController {
             if(orderStr==null || orderStr.equals("")){
                 orderStr = PageUtil.DEFAULT_ORDER;
             }
-            String[] order = orderStr.split(",");
+            String[] order = orderStr.split(":");
             if(Sort.Direction.ASC.toString().equals(order[1])){
                 orderMap.put(order[0].trim(),Sort.Direction.ASC);
             }else if(Sort.Direction.DESC.toString().equals(order[1])){

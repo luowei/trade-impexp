@@ -1,6 +1,10 @@
 package com.oilchem.trade.service;
 
+import com.oilchem.trade.domain.Log;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,5 +16,10 @@ import org.springframework.stereotype.Component;
  */
 public interface LogService {
 
-
+    /**
+     * 列出日志
+     * @param pageable
+     * @return
+     */
+    Page<Log> findAll(Pageable pageable);
 }

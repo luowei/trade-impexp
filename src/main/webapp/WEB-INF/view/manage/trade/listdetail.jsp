@@ -47,23 +47,23 @@
                      cssClass="dropdown-toggle"/>
 
         <label>贸易方式:</label>
-        <form:select path="complanyType" items="${complanyType}" itemValue="complanyType" itemLabel="complanyType"
+        <form:select path="complanyType" items="${tradeType}" itemValue="tradeType" itemLabel="tradeType"
                      cssClass="dropdown-toggle"/>
 
         <label>运输方式:</label>
-        <form:select path="complanyType" items="${complanyType}" itemValue="complanyType" itemLabel="complanyType"
+        <form:select path="complanyType" items="${transportation}" itemValue="transportation" itemLabel="transportation"
                      cssClass="dropdown-toggle"/>
 
         <label>海关:</label>
-        <form:select path="complanyType" items="${complanyType}" itemValue="complanyType" itemLabel="complanyType"
+        <form:select path="complanyType" items="${customs}" itemValue="customs" itemLabel="customs"
                      cssClass="dropdown-toggle"/>
 
         <label>产销国家:</label>
-        <form:select path="complanyType" items="${complanyType}" itemValue="complanyType" itemLabel="complanyType"
+        <form:select path="complanyType" items="${country}" itemValue="country" itemLabel="country"
                      cssClass="dropdown-toggle"/>
 
         <label>城市:</label>
-        <form:select path="complanyType" items="${complanyType}" itemValue="complanyType" itemLabel="complanyType"
+        <form:select path="complanyType" items="${city}" itemValue="city" itemLabel="city"
                      cssClass="dropdown-toggle"/>
 
         <form:select path="impExpType" cssClass="dropdown-toggle" placeholder="进出口类型">
@@ -97,7 +97,7 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${detaillist}" var="detail" varStatus="st">
+        <c:forEach items="${tradeDetailList}" var="detail" varStatus="st">
             <tr>
                 <td>${detail.year}</td>
                 <td>${detail.month}</td>

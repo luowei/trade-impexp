@@ -6,6 +6,7 @@ import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.MyRowMapper;
 import com.oilchem.trade.domain.*;
+import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.service.CommonService;
@@ -88,7 +89,7 @@ public class CommonServiceImpl implements CommonService {
      *
      * @param packageSource 源zip文件绝对路径
      * @param unPackageDir  解压目录
-     * @return 上传后的url
+     * @return 解压后的文件路径
      */
     //@Before加锁
     //@After解锁
@@ -194,30 +195,34 @@ public class CommonServiceImpl implements CommonService {
     /**
      * 导入贸易明细
      *
-     * @param crudRepository    crudRepository与baseDaoDao传相同对象
-     * @param baseDaoDao        crudRepository与baseDaoDao传相同对象
+     *
+     * @param repository
+     * @param tradeDetailDao
      * @param jdbcTemplate      jdbcTemplate
      * @param tradeDetailMapper     tradeDetailMapper
      * @param year               year
      * @param month              month
-     * @param sql                sql
-     * @param <T>
-     * @return
-     */
-    public synchronized <T extends AbstractTradeDetailRowMapper> Boolean importTradeDetail(
-            CrudRepository crudRepository, BaseDao baseDaoDao, JdbcTemplate jdbcTemplate,
-            T tradeDetailMapper, Integer year,Integer month, String sql) {
-        if(crudRepository==null || baseDaoDao==null || jdbcTemplate==null || tradeDetailMapper==null
+     * @param sql                sql      @return          */
+    public synchronized <E extends TradeDetail,T extends AbstractTradeDetailRowMapper>
+    Boolean importTradeDetail(
+            CrudRepository repository,
+            BaseDao<E> tradeDetailDao,
+            JdbcTemplate jdbcTemplate,
+            T tradeDetailMapper,
+            Integer year,
+            Integer month,
+            String sql) {
+        if(tradeDetailDao ==null || jdbcTemplate==null || tradeDetailMapper==null
                 || year==null || month==null || StringUtils.isBlank(sql)) return null;
 
         Boolean success = true;
-        if (baseDaoDao.countWithYearMonth(year,month) > 0) {
-            success = success & baseDaoDao.delWithYearMonthRecord(year,month);
+        if (tradeDetailDao.countWithYearMonth(year,month) > 0) {
+            success = success & tradeDetailDao.delWithYearMonthRecord(year,month);
         }
 
         //查出来然后导入
         List<ExpTradeDetail> expTradeDetailList = jdbcTemplate.query(sql, tradeDetailMapper);
-        crudRepository.save(expTradeDetailList);
+        repository.save(expTradeDetailList);
         return success;
     }
 
@@ -225,26 +230,31 @@ public class CommonServiceImpl implements CommonService {
     /**
      * 导入Excel
      *
-     * @param repository          tradeSum Dao，总表持久类
+     *
+     *
+     *
+     *
+     *
+     * @param repository
+     * @param tradeSumDao
      * @param excelSource         excel文件源目录
      * @param tradeSumClass       tradeSum Class
      * @param tradeSumRowMapClass tradeSumRowMap Class
      * @param year                 数据所在年
      * @param month                数据所有月
      * @param productType         产品类型
-     * @param <E>                 ImpTradeSum / ExpTradeSum
-     * @param <M>                 ImpTradeSumRowMapper / ExpTradeSumRowMapper
      * @return 成功或失败
      */
     public <E extends TradeSum, M extends MyRowMapper<E>>
-    Boolean importExcel(CrudRepository<E, Long> repository,
+    Boolean importExcel(CrudRepository repository,
+                        BaseDao<E> tradeSumDao,
                         String excelSource,
                         Class<E> tradeSumClass,
                         Class<M> tradeSumRowMapClass,
                         Integer year,
                         Integer month,
                         String productType) {
-        if(repository==null || tradeSumClass==null || tradeSumRowMapClass==null || year==null || month==null
+        if(tradeSumDao ==null || tradeSumClass==null || tradeSumRowMapClass==null || year==null || month==null
                 || StringUtils.isBlank(excelSource) || StringUtils.isBlank(productType)) return null;
 
         Boolean isSuccess = true;
@@ -274,8 +284,8 @@ public class CommonServiceImpl implements CommonService {
 
         //判断是否已存在当年当月的数量，执行保存
         synchronized ("synchronized_lock".intern()) {
-            if ((productTypeDao.countWithYearMonth(year,month)) > 0)
-                productTypeDao.delWithYearMonthRecord(year,month);
+            if ((tradeSumDao.countWithYearMonth(year,month)) > 0)
+                tradeSumDao.delWithYearMonthRecord(year,month);
             repository.save(tradeSumList);
         }
 

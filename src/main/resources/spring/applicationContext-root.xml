@@ -20,7 +20,7 @@
     <!-- Enabling @AspectJ Support -->
     <aop:aspectj-autoproxy expose-proxy="true"/>
 
-    <!--<import resource="applicationContext-dataSource.xml"/>-->
+    <import resource="applicationContext-dataSource.xml"/>
     <import resource="applicationContext-jpa.xml"/>
 
 

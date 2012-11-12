@@ -80,7 +80,8 @@ public class TradeSumController extends CommonController {
      */
     @RequestMapping("/importsum")
     public String importTradeSum(MultipartFile file, String productType,
-                                 Integer year, Integer month,Integer impExpType,YearMonthDto yearMonthDto) {
+                                 Integer impExpType,
+                                 YearMonthDto yearMonthDto) {
 
         Boolean validate = (file.getOriginalFilename().endsWith(".rar") ||
                 file.getOriginalFilename().endsWith(".zip")) && yearMonthDto!=null;

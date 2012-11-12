@@ -3,29 +3,32 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:jpa="http://www.springframework.org/schema/data/jpa"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:repository="http://www.springframework.org/schema/data/repository"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context-3.0.xsd
        http://www.springframework.org/schema/data/jpa
-       http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+       http://www.springframework.org/schema/data/jpa/spring-jpa.xsd http://www.springframework.org/schema/data/repository http://www.springframework.org/schema/data/repository/spring-repository-1.0.xsd">
 
     <context:property-placeholder location="classpath:dataSource.properties"/>
 
     <bean id="entityManagerFactory"
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource" />
+        <!--<property name="packagesToScan" value="com.oilchem.trade.domain"/>-->
         <!--<property name=""-->
-        <property name="packagesToScan" value="com.oilchem.trade.domain" />
-        <property name="jpaVendorAdapter">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-                <property name="showSql" value="${hibernate.show_sql}" />
-                <property name="generateDdl" value="true" />
-                <property name="databasePlatform" value="${hibernate.dialect}" />
-            </bean>
-        </property>
-        <property name="persistenceUnitName" value="jpa.trade" />
+        <!--<property name="jpaVendorAdapter">-->
+            <!--<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">-->
+                <!--<property name="showSql" value="${hibernate.show_sql}" />-->
+                <!--<property name="generateDdl" value="true" />-->
+                <!--<property name="databasePlatform" value="${hibernate.dialect}" />-->
+            <!--</bean>-->
+        <!--</property>-->
+        <!--<property name="persistenceUnitName" value="jpa.trade" />-->
+        <property name="persistenceXmlLocation" value="classpath:persistence.xml"/>
     </bean>
+
 
     <bean id="dataSource"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -48,7 +51,10 @@
         <!--<property name="testConnectionOnCheckin" value="true"/>-->
     <!--</bean>-->
 
+
     <jpa:repositories base-package="com.oilchem.trade.dao">
         <!--<include-filter type="regex" expression="com.oilchem.trade.dao.impl.*"/>-->
+        <repository:exclude-filter type="regex" expression="com.oilchem.trade.dao.impl.*"/>
+        <repository:exclude-filter type="regex" expression="com.oilchem.trade.dao.*Custom"/>
     </jpa:repositories>
 </beans>

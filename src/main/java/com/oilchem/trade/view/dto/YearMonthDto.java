@@ -64,4 +64,7 @@ public class YearMonthDto {
     public void setTableType(String tableType) {
         this.tableType = tableType;
     }
+
+
+
 }

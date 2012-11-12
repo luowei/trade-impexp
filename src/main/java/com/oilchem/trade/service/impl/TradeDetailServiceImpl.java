@@ -6,6 +6,8 @@ import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.ExpTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.ImpTradeDetailRowMapper;
 import com.oilchem.trade.dao.db.AccessDataSource;
+import com.oilchem.trade.dao.spec.Spec;
+import com.oilchem.trade.domain.ExpTradeDetail;
 import com.oilchem.trade.domain.ImpTradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.service.CommonService;
@@ -15,21 +17,15 @@ import com.oilchem.trade.view.dto.YearMonthDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 import static com.oilchem.trade.config.Config.*;
-import static org.springframework.data.jpa.domain.Specifications.*;
-import static com.oilchem.trade.dao.spec.ImpTradeDetailSpecification.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -51,14 +47,9 @@ public class TradeDetailServiceImpl implements TradeDetailService {
     ImpTradeDetailDao impTradeDetailDao;
     @Resource
     LogDao logDao;
-    @Resource
-    JdbcTemplate accessJdbcTemplate;
 
     /**
      * 上传文件包
-     *
-     *
-     *
      *
      * @param file  文件
      * @param yearMonthDto
@@ -97,7 +88,7 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         Boolean isSuccess = true;
 
         final String sql = "select * from 结果 ";
-        accessJdbcTemplate.setDataSource((new AccessDataSource())
+        JdbcTemplate accessJdbcTemplate = new JdbcTemplate((new AccessDataSource())
                 .getAccessDataSource(accessFileFullName));
 
         //导入查询条件表
@@ -106,8 +97,11 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         //导入进口明细总表
         if (impExpTradeType.equals(ImpExpType.进口.getCode())) {
             isSuccess = isSuccess & commonService.importTradeDetail(
-                    impTradeDetailDao, impTradeDetailDao,
-                    accessJdbcTemplate, new ImpTradeDetailRowMapper(), year,month, sql);
+                    impTradeDetailDao,
+                    impTradeDetailDao,
+                    accessJdbcTemplate,
+                    new ImpTradeDetailRowMapper(),
+                    year,month, sql);
 
             //切面更新明细表年月
 
@@ -116,8 +110,11 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         //导入出口明细表
         else if (impExpTradeType.equals(ImpExpType.出口.getCode())) {
             isSuccess = isSuccess & commonService.importTradeDetail(
-                    expTradeDetailDao, expTradeDetailDao,
-                    accessJdbcTemplate, new ExpTradeDetailRowMapper(), year,month, sql);
+                    expTradeDetailDao,
+                    expTradeDetailDao,
+                    accessJdbcTemplate,
+                    new ExpTradeDetailRowMapper(),
+                    year,month, sql);
 
             //切面更新明细表年月
         }
@@ -129,36 +126,43 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
     /**
      * 根据条件查询
-     * @param TradeDetail 页面传来的 IxpTradeDetail/ExpTradeDetail ，包含查询条件中里面
+     * @param tradeDetail 页面传来的 IxpTradeDetail/ExpTradeDetail ，包含查询条件中里面
      * @param commonDto
      * @param pageRequest
      * @return
      */
     public <T extends TradeDetail> Page<T>
-    findWithCriteria(T TradeDetail, CommonDto commonDto, PageRequest pageRequest) {
+    findWithCriteria(T tradeDetail, CommonDto commonDto, PageRequest pageRequest) {
 
-        final T t;
+        if(tradeDetail instanceof ImpTradeDetail){
+            Page<ImpTradeDetail> pageImpDetail = impTradeDetailDao
+                    .findAll(Specifications
+                            .where(Spec.<ImpTradeDetail>hasField("", tradeDetail.getCountry()))
+                            .and(Spec.<ImpTradeDetail>hasField("", tradeDetail.getCity()))
+                            .and(Spec.<ImpTradeDetail>hasField("", tradeDetail.getCustoms()))
+                            .and(Spec.<ImpTradeDetail>hasField("", tradeDetail.getCompanyType()))
+                            .and(Spec.<ImpTradeDetail>hasField("", tradeDetail.getTransportation()))
+                            .and(Spec.<ImpTradeDetail>hasField("", tradeDetail.getTradeType()))
+                            .and(Spec.<ImpTradeDetail>hasField("", tradeDetail.getYear()))
+                            .and(Spec.<ImpTradeDetail>hasField("", tradeDetail.getMonth()))
+                            , pageRequest);
+            return (Page<T>) pageImpDetail;
+        }
 
-        Specification<T> speci = new Specification<T>() {
-            public Predicate toPredicate(Root<T> tRoot, CriteriaQuery<?> query, CriteriaBuilder cb) {
-
-//                CriteriaQuery<T> query = cb.createQuery(t.getClass());
-//                Root<T> root = query.from(t.getClass());
-//
-//                Predicate hasBirthday = builder.equal(root.get(Customer_.birthday), today);
-//                Predicate isLongTermCustomer = builder.lessThan(root.get(Customer_.createdAt), today.minusYears(2);
-//                query.where(builder.and(hasBirthday, isLongTermCustomer));
-//                em.createQuery(query.select(root)).getResultList();
-
-
-                return null;
-            }
-        };
-
-        Specification<T> speci2 =null;
-
-
-       Page<ImpTradeDetail> page=impTradeDetailDao.findAll(Specifications.<ImpTradeDetail>where((Specification<ImpTradeDetail>) speci),pageRequest);
+        if(tradeDetail instanceof ExpTradeDetail){
+            Page<ExpTradeDetail> pageExpDetail = expTradeDetailDao
+                    .findAll(Specifications
+                        .where(Spec.<ExpTradeDetail>hasField("", tradeDetail.getCountry()))
+                        .and(Spec.<ExpTradeDetail>hasField("", tradeDetail.getCity()))
+                        .and(Spec.<ExpTradeDetail>hasField("", tradeDetail.getCustoms()))
+                        .and(Spec.<ExpTradeDetail>hasField("", tradeDetail.getCompanyType()))
+                        .and(Spec.<ExpTradeDetail>hasField("", tradeDetail.getTransportation()))
+                        .and(Spec.<ExpTradeDetail>hasField("", tradeDetail.getTradeType()))
+                        .and(Spec.<ExpTradeDetail>hasField("", tradeDetail.getYear()))
+                        .and(Spec.<ExpTradeDetail>hasField("", tradeDetail.getMonth()))
+                    ,pageRequest);
+            return (Page<T>) pageExpDetail;
+        }
 
         return null;
     }

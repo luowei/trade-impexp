@@ -37,9 +37,8 @@
           <!--<property name="dataSource" ref="dataSource"/>-->
     <!--</bean>-->
 
-    <bean id="accessJdbcTemplate"
-          class="org.springframework.jdbc.core.JdbcTemplate">
+    <!--<bean id="accessJdbcTemplate"-->
+          <!--class="org.springframework.jdbc.core.JdbcTemplate"/>-->
         <!--<property name="dataSource" ref="access_dataSource"/>-->
-    </bean>
 
 </beans>
