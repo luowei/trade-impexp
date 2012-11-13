@@ -17,4 +17,8 @@ public enum ImpExpType implements IMessageCode {
     public String getMessage() {
         return this.toString();
     }
+
+    public static void main(String[] args){
+        System.out.println(ImpExpType.出口.getCode());
+    }
 }

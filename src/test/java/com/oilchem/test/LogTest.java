@@ -21,7 +21,7 @@ import java.util.List;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring/applicationContext-root.xml"})
+@ContextConfiguration(locations = {"classpath:test/applicationContext-root.xml"})
 public class LogTest {
 
     @Autowired

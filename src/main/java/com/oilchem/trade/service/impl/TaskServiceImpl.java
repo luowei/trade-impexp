@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.sql.Connection;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,7 +40,7 @@ public class TaskServiceImpl implements TaskService {
     //定时器
     Timer timer = new Timer();
 
-    long delay = 0;
+    long delay = 2L;
 
     private void unPackageAndImportTask(TimerTask timerTask) {
         timer.schedule(timerTask, delay);
@@ -52,26 +53,26 @@ public class TaskServiceImpl implements TaskService {
      */
     public void unDetailPackageAndImportTask(final YearMonthDto yearMonthDto) {
 
-        final Boolean isSuccess = true;
-
-        unPackageAndImportTask(new TimerTask() {
+        TimerTask task = new TimerTask() {
 
             @Override
             public void run() {
                 //解包
                 Map<Long, String> unExtractMap = commonService.getUnExtractPackage(DETAIL);
                 for (Map.Entry<Long, String> entry : unExtractMap.entrySet()) {
-                    commonService.unpackageFile(entry.getValue(), UNZIP_DETAIL_DIR);
+                    commonService.unpackageFile(entry, UNZIP_DETAIL_DIR);
                 }
 
                 //导入数据
                 Map<Long, String> unImportMap = commonService.getUnImportFile(DETAIL);
+                Connection conn=null;
                 for (Map.Entry<Long, String> entry : unImportMap.entrySet()) {
-                    tradeDetailService.importAccess(entry.getValue(), yearMonthDto);
+                    tradeDetailService.importAccess(entry, yearMonthDto, conn);
                 }
-
             }
-        });
+        };
+        timer.schedule(task,delay);
+
     }
 
     /**
@@ -87,7 +88,7 @@ public class TaskServiceImpl implements TaskService {
                 //解包
                 Map<Long, String> unExtractMap = commonService.getUnExtractPackage(SUM);
                 for (Map.Entry<Long, String> entry : unExtractMap.entrySet()) {
-                    commonService.unpackageFile(entry.getValue(), UNZIP_SUM_DIR);
+                    commonService.unpackageFile(entry, UNZIP_SUM_DIR);
                 }
 
                 //导入数据

@@ -33,4 +33,8 @@ public class Config {
     public static String UPLOAD_FAILD = "上传失败";
     public static String EXTRACT_FAILD = "解压失败";
     public static String IMPORT_FAILD ="导入失败";
+
+    public static String IMPORT = "导入";
+    public static String EXPORT = "导出";
+
 }

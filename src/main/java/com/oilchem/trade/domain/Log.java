@@ -36,6 +36,7 @@ public class Log extends IdEntity implements Serializable {
     //导入文件上传后的路径
     @Column(name = "upload_path")
     private String uploadPath;
+    //解压文件路径
     @Column(name = "extract_path")
     private String extractPath;
     //导出文件的下载地址
@@ -50,9 +51,6 @@ public class Log extends IdEntity implements Serializable {
     //导入标志
     @Column(name = "import_flag")
     private String importFlag;
-    //是否已完成
-    @Column(name = "complete_flag")
-    private String completeFlag;
     //是否发生了错误
     @Column(name = "error_occur")
     private String errorOccur;
@@ -150,14 +148,6 @@ public class Log extends IdEntity implements Serializable {
 
     public void setImportFlag(String importFlag) {
         this.importFlag = importFlag;
-    }
-
-    public String getCompleteFlag() {
-        return completeFlag;
-    }
-
-    public void setCompleteFlag(String completeFlag) {
-        this.completeFlag = completeFlag;
     }
 
     public String getErrorOccur() {

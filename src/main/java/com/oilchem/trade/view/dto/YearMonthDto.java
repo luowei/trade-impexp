@@ -24,6 +24,10 @@ public class YearMonthDto {
      * 表类型
      */
     private String tableType;
+    /**
+     * 手动导入还是自动导入
+     */
+    private String importType;
 
     public Integer getYear() {
         return year;
@@ -65,6 +69,11 @@ public class YearMonthDto {
         this.tableType = tableType;
     }
 
+    public String getImportType() {
+        return importType;
+    }
 
-
+    public void setImportType(String importType) {
+        this.importType = importType;
+    }
 }

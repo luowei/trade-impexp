@@ -3,6 +3,7 @@ package com.oilchem.trade.service;
 import com.oilchem.trade.dao.BaseDao;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.MyRowMapper;
+import com.oilchem.trade.domain.ProductType;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.IdEntity;
@@ -12,6 +13,7 @@ import org.springframework.data.repository.Repository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
@@ -27,58 +29,57 @@ public interface CommonService {
     /**
      * 上传文件
      *
-     *
-     * @param file MultipartFile的文件
+     * @param file         MultipartFile的文件
      * @param yearMonthDto
+     * @return 返回上传之后文件的url
      * @author wei.luo
      * @createTime 2012-11-7
-     * @return 返回上传之后文件的url
      */
     String uploadFile(MultipartFile file, String realDir, YearMonthDto yearMonthDto);
 
     /**
      * 解包
      *
-     * @param packageSource 源zip文件绝对路径
-     * @param unPackageDir  解压目录
+     * @param logEntry
+     * @param unPackageDir 解压目录
      * @return 解包后的文件路径
      * @author wei.luo
      * @createTime 2012-11-7
      */
-    String unpackageFile(String packageSource, String unPackageDir);
+    String unpackageFile(Map.Entry<Long, String> logEntry, String unPackageDir);
 
     /**
      * 导入查询条件表
      *
      * @param jdbcTemplate
      * @param sql
+     * @param connection
      * @return
      * @author wei.luo
      * @createTime 2012-11-7
      */
-    Boolean importCriteriaTab(JdbcTemplate jdbcTemplate, String sql);
+    Boolean importCriteriaTab(JdbcTemplate jdbcTemplate, String sql, Connection connection);
 
     /**
      * 获得有效的查询条件表的记录List
      *
-     * @param jdbcTemplate  jdbcTemplate
+     *
      * @param dao           mondel dao
      * @param idEntityClass model bean
      * @param sql           jdbcTemplate's query sql
      * @param filedName     access table's filed name
-     * @param <E>           idEntity
+     * @param conn
      * @return idEntity列表
      * @author wei.luo
      * @createTime 2012-11-7
      */
-    <E extends IdEntity> List<E> queryCriteriaRecord(JdbcTemplate jdbcTemplate,
-                                                     final Repository<E, Long> dao,
-                                                     final Class<E> idEntityClass,
-                                                     String sql, final String filedName);
+    <E extends IdEntity> List<E>
+    queryCriteriaRecord(final Repository<E, Long> dao,
+                        final Class<E> idEntityClass,
+                        String sql, final String filedName, Connection conn);
 
     /**
      * 导入贸易明细
-     *
      *
      * @param tradeDetailDao
      * @param jdbcTemplate      jdbcTemplate
@@ -89,7 +90,7 @@ public interface CommonService {
      * @author wei.luo
      * @createTime 2012-11-7
      */
-    <E extends TradeDetail,T extends AbstractTradeDetailRowMapper>
+    <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
     Boolean importTradeDetail(
             CrudRepository repository,
             BaseDao<E> tradeDetailDao,
@@ -101,10 +102,6 @@ public interface CommonService {
 
     /**
      * 导入Excel
-     *
-     *
-     *
-     *
      *
      * @param repository
      * @param tradeSumDao
@@ -158,4 +155,6 @@ public interface CommonService {
      * @createTime 2012-11-7
      */
     <T extends IdEntity> List<T> getModelList(Class<T> tClass);
+
+    Iterable<ProductType> getProductList();
 }

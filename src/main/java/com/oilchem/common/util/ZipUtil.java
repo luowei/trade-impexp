@@ -280,12 +280,14 @@ public abstract class ZipUtil {
             flag = true;
         } catch (IOException e) {
             log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         } finally {
             try {
                 bis.close();
                 bos.close();
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
+                throw new RuntimeException(e);
             }
         }
         return flag;
@@ -339,11 +341,14 @@ public abstract class ZipUtil {
                         os.close();
                     } catch (IOException e2) {
                         log.error(e.getMessage(), e2);
+                        throw new RuntimeException(e);
                     }
+                    throw new RuntimeException(e);
                 }
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -369,6 +374,9 @@ public abstract class ZipUtil {
                     new File(unZipFile).mkdirs();
                     continue;
                 } else {
+                    File unZipDirFile = new File(unZipDir);
+                    if(!unZipDirFile.exists())
+                        unZipDirFile.mkdirs();
                     is = zipFile.getInputStream(zipEntry);
                     os = new FileOutputStream(unZipFile);
                     ZipUtil.inputStream2OutPutStream(is, os, 1024);
@@ -376,12 +384,14 @@ public abstract class ZipUtil {
             }
         } catch (IOException e) {
             log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         } finally {
             try {
                 is.close();
                 os.close();
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
+                throw new RuntimeException(e);
             }
         }
         return unZipFile;
@@ -410,19 +420,24 @@ public abstract class ZipUtil {
                     new File(unRarFile).mkdirs();
                     continue;
                 } else {
+                    File unRarDirFile = new File(unRarDir);
+                    if(!unRarDirFile.exists()) unRarDirFile.mkdirs();
                     os = new FileOutputStream(unRarFile);
                     archive.extractFile(fileHeader, os);
                 }
             }
         } catch (RarException e) {
             log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         } finally {
             try {
                 os.close();
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
+                throw new RuntimeException(e);
             }
         }
         return unRarFile;

@@ -91,7 +91,8 @@ public class TradeDetailController extends CommonController {
      * @return
      */
     @RequestMapping("/import")
-    public String importpage(){
+    public String importpage(Model model){
+        model.addAttribute("productTypeList",commonService.getProductList());
         return "manage/trade/import";
     }
 
@@ -109,10 +110,9 @@ public class TradeDetailController extends CommonController {
         Boolean validate = (file.getOriginalFilename().endsWith(".rar") ||
                 file.getOriginalFilename().endsWith(".zip"))
                 && yearMonthDto!=null;
+        if(!validate) return "manage/trade/import";
 
-        if(!validate) return "manage/trade//importdetail";
         StringBuffer message = new StringBuffer();
-
         try{
             String uploadUrl = tradeDetailService.uploadFile(file, yearMonthDto);
             message.append( "文件已上传到："+Config.UPLOAD_DETAILZIP_DIR +
@@ -121,7 +121,7 @@ public class TradeDetailController extends CommonController {
 
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            message.append("文件上传或数据导入发生了错误");
+            message.append("<br/>文件上传或数据导入发生了错误");
         }
 
         model.addAttribute("message",message.toString());

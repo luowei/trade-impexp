@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -80,20 +81,19 @@ public class TradeSumController extends CommonController {
      * @return
      */
     @RequestMapping("/importsum")
-    public String importTradeSum(MultipartFile file, String productType,
+    public String importTradeSum(@RequestParam("file") MultipartFile file, String productType,
                                  Integer impExpType,Model model,
                                  YearMonthDto yearMonthDto) {
-
         Boolean validate = (file.getOriginalFilename().endsWith(".rar") ||
                 file.getOriginalFilename().endsWith(".zip")) && yearMonthDto!=null;
-        if (!validate) return  "manage/trade/importsum";
+        if (!validate) return  "manage/trade/import";
 
         String uploadUrl = tradeSumService.uploadFile(file, yearMonthDto);
 
 
         model.addAttribute("message", Config.UPLOAD_SUMZIP_DIR+uploadUrl.substring(uploadUrl.lastIndexOf("/")));
 
-        return "manage/trade/importsum";
+        return "manage/trade/import";
     }
 
     private Model getDetailCriteriaData(Model model) {

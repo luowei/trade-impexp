@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.Repository;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,8 +27,10 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 
 import static com.oilchem.trade.config.Config.*;
@@ -69,16 +70,15 @@ public class CommonServiceImpl implements CommonService {
     /**
      * 上传文件
      *
-     *
-     * @param file    MultipartFile的文件
-     * @param realDir 目标目录的物理路径
+     * @param file         MultipartFile的文件
+     * @param realDir      目标目录的物理路径
      * @param yearMonthDto
      * @return 返回上传之后文件的url
      * @author wei.luo
      * @createTime 2012-11-7
      */
     public String uploadFile(MultipartFile file, String realDir, YearMonthDto yearMonthDto) {
-        if(file==null || StringUtils.isBlank(realDir)) return null;
+        if (file == null || StringUtils.isBlank(realDir)) return null;
 
         String fileUrl = FileUtil.upload(file, realDir, ROOT_URL);
         return fileUrl;
@@ -87,24 +87,24 @@ public class CommonServiceImpl implements CommonService {
     /**
      * 解包
      *
-     * @param packageSource 源zip文件绝对路径
-     * @param unPackageDir  解压目录
+     * @param logEntry
+     * @param unPackageDir 解压目录
      * @return 解压后的文件路径
      */
     //@Before加锁
     //@After解锁
-    public String unpackageFile(String packageSource, String unPackageDir) {
+    public String unpackageFile(Map.Entry<Long, String> logEntry, String unPackageDir) {
 
-        if (StringUtils.isBlank(packageSource) || StringUtils.isBlank(unPackageDir))
+        if (logEntry == null || StringUtils.isBlank(unPackageDir))
             return null;
 
-        String type = FileUtil.getFileSuffix(packageSource);
+        String type = FileUtil.getFileSuffix(logEntry.getValue());
 
         //判断文件类型
         if (type.equals(".zip")) {
-            return ZipUtil.unRar(packageSource, unPackageDir);
+            return ZipUtil.unZip(logEntry.getValue(), unPackageDir, null);
         } else if (type.equals(".rar")) {
-            return ZipUtil.unZip(packageSource, unPackageDir, null);
+            return ZipUtil.unRar(logEntry.getValue(), unPackageDir);
         } else return null;
     }
 
@@ -113,97 +113,150 @@ public class CommonServiceImpl implements CommonService {
      *
      * @param jdbcTemplate
      * @param sql
+     * @param conn
      * @return
      */
-    public Boolean importCriteriaTab(JdbcTemplate jdbcTemplate, String sql) {
-        if(jdbcTemplate==null || StringUtils.isBlank(sql)) return null;
+    public Boolean importCriteriaTab(JdbcTemplate jdbcTemplate, String sql, Connection conn) {
+        if (StringUtils.isBlank(sql)) return null;
 
         Boolean isSuccess = true;
 
         //导入城市
-        List<City> cityList = (List<City>) queryCriteriaRecord(jdbcTemplate,
-                cityDao, City.class, sql, CITY);
+        List<City> cityList = (List<City>) queryCriteriaRecord(
+                cityDao, City.class, sql, CITY, conn);
         cityDao.save(cityList);
 
         //导入企业性质
-        List<ComplanyType> complanyTypeList = (List<ComplanyType>) queryCriteriaRecord(jdbcTemplate,
-                companyTypeDao, ComplanyType.class, sql, COMPANY_TYPE);
+        List<ComplanyType> complanyTypeList = (List<ComplanyType>) queryCriteriaRecord(
+                companyTypeDao, ComplanyType.class, sql, COMPANY_TYPE, conn);
         companyTypeDao.save(complanyTypeList);
 
         //导入海关
-        List<Customs> customsList = (List<Customs>) queryCriteriaRecord(jdbcTemplate,
-                customsDao, Customs.class, sql, CUSTOMS);
+        List<Customs> customsList = (List<Customs>) queryCriteriaRecord(
+                customsDao, Customs.class, sql, CUSTOMS, conn);
         customsDao.save(customsList);
 
         //导入贸易方式
-        List<TradeType> tradeTypeList = (List<TradeType>) queryCriteriaRecord(jdbcTemplate,
-                tradeTypeDao, TradeType.class, sql, TRADE_TYPE);
+        List<TradeType> tradeTypeList = (List<TradeType>) queryCriteriaRecord(
+                tradeTypeDao, TradeType.class, sql, TRADE_TYPE, conn);
         tradeTypeDao.save(tradeTypeList);
 
         //导入运输方式
-        List<Transportation> transportationList = (List<Transportation>) queryCriteriaRecord(jdbcTemplate,
-                transportationDao, Transportation.class, sql, TRANSPORTATION);
+        List<Transportation> transportationList = (List<Transportation>) queryCriteriaRecord(
+                transportationDao, Transportation.class, sql, TRANSPORTATION, conn);
         transportationDao.save(transportationList);
 
         return isSuccess;
     }
 
-    /**
-     * 获得有效的查询条件表的记录List
-     *
-     * @param jdbcTemplate  jdbcTemplate
-     * @param dao           mondel dao
-     * @param idEntityClass model bean
-     * @param sql           jdbcTemplate's query sql
-     * @param filedName     access table's filed name
-     * @param <E>           idEntity
-     * @return idEntity列表
-     */
-    public <E extends IdEntity> List<E>
-    queryCriteriaRecord(JdbcTemplate jdbcTemplate,final Repository<E, Long> dao,
-                        final Class<E> idEntityClass,String sql, final String filedName) {
 
-        if(jdbcTemplate==null || dao==null || idEntityClass==null
+    public <E extends IdEntity> List<E>
+    queryCriteriaRecord(Repository<E, Long> dao,
+                        Class<E> idEntityClass, String sql,
+                        String filedName, Connection conn){
+
+        if (conn == null || dao == null || idEntityClass == null
                 || StringUtils.isBlank(sql) || StringUtils.isBlank(filedName)) return null;
 
-        List<E> eList = jdbcTemplate.query(sql, new RowMapper<E>() {
-            public E mapRow(ResultSet rs, int rowNum) throws SQLException {
+        Statement statement = null;
+        List<E> tradeList = new ArrayList<E>();
+
+        ResultSet rs = null;
+        try {
+            statement = conn.createStatement();
+            rs = statement.executeQuery(sql);
+
+            while (rs.next()) {
                 String name = rs.getString(filedName);
                 String suffix = dao.getClass().getSimpleName();
                 String methodName = "getBy" + suffix;
+
+                //获得根据名字查找的方法，并执行查找
+    //            WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
+    //            Repository<E,Long> dao = context.getBean(daoClass);
                 try {
-                    //获得根据名字查找的方法，并执行查找
-//                    WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
-//                    Repository<E,Long> dao = context.getBean(daoClass);
                     Method method = dao.getClass().getDeclaredMethod(methodName, String.class);
                     E findByMethodRet = (E) method.invoke(dao, name);
 
-                    //如果没有找到相同记录，则指导name字段保存到IdEntity引用的对象中
+                    //如果没有找到相同记录，则把name字段保存到IdEntity引用的对象中
                     if (findByMethodRet.getId() == null) {
-                        E idEntity = idEntityClass.getConstructor(String.class).newInstance(name);
-                        return idEntity;
+                        E tradeDetail = idEntityClass.getConstructor(String.class).newInstance(name);
+                        tradeList.add(tradeDetail);
                     }
+
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
+                    throw new RuntimeException();
                 }
-                return null;
             }
-        });
-        return eList;
+        } catch (SQLException e) {
+            logger.error(e.getMessage(),e);
+            throw new RuntimeException();
+        }
+
+        return tradeList;
     }
 
-    /**
-     * 导入贸易明细
-     *
-     *
-     * @param repository
-     * @param tradeDetailDao
-     * @param jdbcTemplate      jdbcTemplate
-     * @param tradeDetailMapper     tradeDetailMapper
-     * @param year               year
-     * @param month              month
-     * @param sql                sql      @return          */
-    public synchronized <E extends TradeDetail,T extends AbstractTradeDetailRowMapper>
+
+        /**
+         * 获得有效的查询条件表的记录List
+         *
+         *
+         * @param jdbcTemplate  jdbcTemplate
+         * @param dao           mondel dao
+         * @param idEntityClass model bean
+         * @param sql           jdbcTemplate's query sql
+         * @param filedName     access table's filed name
+         * @param conn
+         * @return idEntity列表
+         */
+//        public<E extends IdEntity>List<E>
+//        queryCriteriaRecord(JdbcTemplate jdbcTemplate, final Repository<E, Long> dao,
+//        final Class<E> idEntityClass, String sql,final String filedName, Connection conn){
+//
+//            if (jdbcTemplate == null || dao == null || idEntityClass == null
+//                    || StringUtils.isBlank(sql) || StringUtils.isBlank(filedName)) return null;
+//
+//            List<E> eList = jdbcTemplate.query(sql, new RowMapper<E>() {
+//                public E mapRow(ResultSet rs, int rowNum) throws SQLException {
+//                    String name = rs.getString(filedName);
+//                    String suffix = dao.getClass().getSimpleName();
+//                    String methodName = "getBy" + suffix;
+//                    try {
+//                        //获得根据名字查找的方法，并执行查找
+////                    WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
+////                    Repository<E,Long> dao = context.getBean(daoClass);
+//                        Method method = dao.getClass().getDeclaredMethod(methodName, String.class);
+//                        E findByMethodRet = (E) method.invoke(dao, name);
+//
+//                        //如果没有找到相同记录，则指导name字段保存到IdEntity引用的对象中
+//                        if (findByMethodRet.getId() == null) {
+//                            E idEntity = idEntityClass.getConstructor(String.class).newInstance(name);
+//                            return idEntity;
+//                        }
+//                    } catch (Exception e) {
+//                        logger.error(e.getMessage(), e);
+//                        throw new RuntimeException(e);
+//                    }
+//                    return null;
+//                }
+//            });
+//            return eList;
+//        }
+
+        /**
+         * 导入贸易明细
+         *
+         *
+         * @param repository
+         * @param tradeDetailDao
+         * @param jdbcTemplate      jdbcTemplate
+         * @param tradeDetailMapper     tradeDetailMapper
+         * @param year               year
+         * @param month              month
+         * @param sql                sql      @return          */
+
+    public synchronized <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
     Boolean importTradeDetail(
             CrudRepository repository,
             BaseDao<E> tradeDetailDao,
@@ -212,12 +265,12 @@ public class CommonServiceImpl implements CommonService {
             Integer year,
             Integer month,
             String sql) {
-        if(tradeDetailDao ==null || jdbcTemplate==null || tradeDetailMapper==null
-                || year==null || month==null || StringUtils.isBlank(sql)) return null;
+        if (tradeDetailDao == null || jdbcTemplate == null || tradeDetailMapper == null
+                || year == null || month == null || StringUtils.isBlank(sql)) return null;
 
         Boolean success = true;
-        if (tradeDetailDao.countWithYearMonth(year,month) > 0) {
-            success = success & tradeDetailDao.delWithYearMonthRecord(year,month);
+        if (tradeDetailDao.countWithYearMonth(year, month) > 0) {
+            success = success & tradeDetailDao.delWithYearMonthRecord(year, month);
         }
 
         //查出来然后导入
@@ -230,18 +283,13 @@ public class CommonServiceImpl implements CommonService {
     /**
      * 导入Excel
      *
-     *
-     *
-     *
-     *
-     *
      * @param repository
      * @param tradeSumDao
      * @param excelSource         excel文件源目录
      * @param tradeSumClass       tradeSum Class
      * @param tradeSumRowMapClass tradeSumRowMap Class
-     * @param year                 数据所在年
-     * @param month                数据所有月
+     * @param year                数据所在年
+     * @param month               数据所有月
      * @param productType         产品类型
      * @return 成功或失败
      */
@@ -254,7 +302,7 @@ public class CommonServiceImpl implements CommonService {
                         Integer year,
                         Integer month,
                         String productType) {
-        if(tradeSumDao ==null || tradeSumClass==null || tradeSumRowMapClass==null || year==null || month==null
+        if (tradeSumDao == null || tradeSumClass == null || tradeSumRowMapClass == null || year == null || month == null
                 || StringUtils.isBlank(excelSource) || StringUtils.isBlank(productType)) return null;
 
         Boolean isSuccess = true;
@@ -280,12 +328,13 @@ public class CommonServiceImpl implements CommonService {
         } catch (Exception e) {
             isSuccess = false;
             logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         }
 
         //判断是否已存在当年当月的数量，执行保存
         synchronized ("synchronized_lock".intern()) {
-            if ((tradeSumDao.countWithYearMonth(year,month)) > 0)
-                tradeSumDao.delWithYearMonthRecord(year,month);
+            if ((tradeSumDao.countWithYearMonth(year, month)) > 0)
+                tradeSumDao.delWithYearMonthRecord(year, month);
             repository.save(tradeSumList);
         }
 
@@ -303,7 +352,7 @@ public class CommonServiceImpl implements CommonService {
      * @return 返回记录的Id与包的全路径组成的Map
      */
     public Map<Long, String> getUnExtractPackage(String packageType) {
-        if(packageType==null) return null;
+        if (packageType == null) return null;
 
         Map<Long, String> packaeMap = new HashMap<Long, String>();
         List<Log> logList = null;
@@ -330,7 +379,7 @@ public class CommonServiceImpl implements CommonService {
      * @return 返回记录的Id与文件的全路径组成的Map
      */
     public Map<Long, String> getUnImportFile(String fileType) {
-        if(StringUtils.isBlank(fileType)) return null;
+        if (StringUtils.isBlank(fileType)) return null;
 
         Map<Long, String> fieMap = new HashMap<Long, String>();
         List<Log> logList = null;
@@ -358,7 +407,7 @@ public class CommonServiceImpl implements CommonService {
      * @return
      */
     public <T extends IdEntity> List<T> getModelList(Class<T> tClass) {
-        if(tClass==null) return null;
+        if (tClass == null) return null;
 
         List<T> idEntityList = null;
         Class<?>[] classes = IdEntity.class.getClasses();
@@ -369,10 +418,20 @@ public class CommonServiceImpl implements CommonService {
                     idEntityList = (List<T>) tClass.getMethod("findAll").invoke(t);
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
+                    throw new RuntimeException(e);
                 }
             }
         }
         return idEntityList;
+    }
+
+    /**
+     * 获得productType列表
+     *
+     * @return
+     */
+    public Iterable<ProductType> getProductList() {
+        return productTypeDao.findAll();
     }
 
 }

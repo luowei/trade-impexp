@@ -7,6 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.Connection;
+import java.util.Map;
+
 /**
  * 进出口明细service接口
  * Created with IntelliJ IDEA.
@@ -32,21 +35,27 @@ public interface TradeDetailService {
     /**
      * 解包
      *
-     * @param packageSource 源zip文件绝对路径
-     * @return 解包后的文件路径
+     *
+     * @param logId@return 解包后的文件路径
      */
-    String unPackage(String packageSource);
+    String unPackage(Long logId);
 
     /**
      * 导入Access文件
      *
      *
-     * @param accessFileFullName access文件全名，含绝对路径
+     *
+     *
+     *
+     *
+     *
+     * @param logEntry
      * @param yearMonthDto                  年月
+     * @param conn
      * @return
      */
-    Boolean importAccess(String accessFileFullName,
-                         YearMonthDto yearMonthDto);
+    Boolean importAccess(Map.Entry<Long, String> logEntry,
+                         YearMonthDto yearMonthDto, Connection conn);
 
 
     /**

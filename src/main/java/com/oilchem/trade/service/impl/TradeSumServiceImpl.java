@@ -10,6 +10,7 @@ import com.oilchem.trade.dao.map.ImpTradeSumRowMapper;
 import com.oilchem.trade.dao.spec.Spec;
 import com.oilchem.trade.domain.ExpTradeSum;
 import com.oilchem.trade.domain.ImpTradeSum;
+import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeSumService;
@@ -24,6 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.oilchem.trade.config.Config.*;
 
@@ -50,11 +54,18 @@ public class TradeSumServiceImpl implements TradeSumService {
     /**
      * 解包
      *
-     * @param packageSourcee 源zip文件绝对路径
-     * @return 解包后的文件路径
+     *
+     * @param logId@return 解包后的文件路径
      */
-    public String unPackage(String packageSourcee) {
-        return commonService.unpackageFile(packageSourcee, UPLOAD_SUMZIP_DIR);
+    public String unPackage(Long logId) {
+        Log log = logDao.findOne(logId);
+        if(log!=null){
+            Map<Long,String> map = new HashMap<Long, String>();
+            map.put(log.getId(),log.getExtractPath());
+            return commonService.unpackageFile(map.entrySet().iterator().next()
+                    , UPLOAD_DETAILZIP_DIR);
+        }
+        return null;
     }
 
 

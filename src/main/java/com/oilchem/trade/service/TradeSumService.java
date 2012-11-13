@@ -1,14 +1,11 @@
 package com.oilchem.trade.service;
 
-import com.oilchem.trade.domain.ImpTradeSum;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.view.dto.CommonDto;
 import com.oilchem.trade.view.dto.YearMonthDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,10 +19,10 @@ public interface TradeSumService {
     /**
      * 解包
      *
-     * @param packageSourcee 源zip文件绝对路径
-     * @return 解包后的文件路径
+     *
+     * @param logId@return 解包后的文件路径
      */
-    String unPackage(String packageSourcee);
+    String unPackage(Long logId);
 
     /**
      * 导入Excel

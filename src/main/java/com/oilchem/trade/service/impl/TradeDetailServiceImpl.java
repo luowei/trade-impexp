@@ -5,15 +5,17 @@ import com.oilchem.trade.config.ImpExpType;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.ExpTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.ImpTradeDetailRowMapper;
-import com.oilchem.trade.dao.db.AccessDataSource;
 import com.oilchem.trade.dao.spec.Spec;
 import com.oilchem.trade.domain.ExpTradeDetail;
 import com.oilchem.trade.domain.ImpTradeDetail;
+import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.view.dto.CommonDto;
 import com.oilchem.trade.view.dto.YearMonthDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +25,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.oilchem.trade.config.Config.*;
 
@@ -35,6 +41,8 @@ import static com.oilchem.trade.config.Config.*;
  */
 @Service("tradeDetailService")
 public class TradeDetailServiceImpl implements TradeDetailService {
+
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     CommonService commonService;
@@ -65,32 +73,47 @@ public class TradeDetailServiceImpl implements TradeDetailService {
     /**
      * 解包
      *
-     * @param packageSource 源zip文件绝对路径
-     * @return 解包后的文件路径
+     *
+     * @param logId@return 解包后的文件路径
      */
-    public String unPackage(String packageSource) {
-        return commonService.unpackageFile(packageSource, UPLOAD_DETAILZIP_DIR);
+    public String unPackage(Long logId) {
+        Log log = logDao.findOne(logId);
+        if(log!=null){
+            Map<Long,String> map = new HashMap<Long, String>();
+            map.put(log.getId(),log.getExtractPath());
+            return commonService.unpackageFile(map.entrySet().iterator().next()
+                    , UPLOAD_DETAILZIP_DIR);
+        }
+        return null;
     }
 
     /**
      * 导入Access文件
      *
      *
-     * @param accessFileFullName access文件全名，含绝对路径
+     *
+     *
+     *
+     *
+     *
+     * @param logEntry
      * @param yearMonthDto                 年月
+     * @param conn
      * @return
      */
-    public Boolean importAccess(String accessFileFullName,
-                                YearMonthDto yearMonthDto) {
+    public Boolean importAccess(Map.Entry<Long, String> logEntry,
+                                YearMonthDto yearMonthDto,
+                                Connection conn) {
 
         Boolean isSuccess = true;
 
         final String sql = "select * from 结果 ";
-        JdbcTemplate accessJdbcTemplate = new JdbcTemplate((new AccessDataSource())
-                .getAccessDataSource(accessFileFullName));
+        JdbcTemplate accessJdbcTemplate = null;
+//                new JdbcTemplate((new AccessDataSource())
+//                .getAccessDataSource(logEntry.getValue()));
 
         //导入查询条件表
-        commonService.importCriteriaTab(accessJdbcTemplate, sql);
+        commonService.importCriteriaTab(accessJdbcTemplate, sql, conn);
 
         //导入进口明细总表
         if (yearMonthDto.getImpExpType().equals(ImpExpType.进口.getCode())) {
