@@ -9,6 +9,8 @@ import com.oilchem.trade.view.dto.YearMonthDto;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
@@ -16,7 +18,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.FileInputStream;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.Map;
+import java.util.Properties;
 
 import static com.oilchem.trade.config.Config.DETAIL;
 import static com.oilchem.trade.config.Config.UNZIP_DETAIL_DIR;
@@ -32,6 +36,8 @@ import static junit.framework.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:test/applicationContext-root.xml"})
 public class ExtractTest {
+
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     TaskService taskService;
@@ -56,8 +62,8 @@ public class ExtractTest {
         yearMonth.setYear(2012);
         yearMonth.setMonth(11);
 
-        file = new MockMultipartFile("idb_20121113143200.zip",
-                new FileInputStream("D:/aaaa/upload/detailzip/idb_20121113143200.zip"));
+//        file = new MockMultipartFile("idb_20121113143200.zip",
+//                new FileInputStream("D:/aaaa/upload/detailzip/idb_20121113143200.zip"));
     }
 
     /**
@@ -100,7 +106,7 @@ public class ExtractTest {
             Map<Long, String> unImportMap = commonService.getUnImportFile(DETAIL);
             Connection conn = null;
             for (Map.Entry<Long, String> entry : unImportMap.entrySet()) {
-                isSuccess = isSuccess && tradeDetailService.importAccess(entry, yearMonth, conn);
+                isSuccess = isSuccess && tradeDetailService.importAccess(entry, yearMonth, createAccessConnect(entry.getValue()));
             }
             assertTrue(isSuccess);
         } catch (Exception e) {
@@ -109,4 +115,26 @@ public class ExtractTest {
         }
 
     }
+
+    private Connection createAccessConnect(String accessPath) {
+        Connection conn;//连接参数
+        Properties prop = new Properties();
+        prop.put("charSet", "GBK");
+        prop.put("user", "");
+        prop.put("password", "");
+        String url = "jdbc:odbc:driver={Microsoft Access Driver (*.mdb)};DBQ="
+                + accessPath;
+
+        //创建连接
+        try {
+            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+            conn = DriverManager.getConnection(url, prop);
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+            throw new RuntimeException(e);
+        }
+        return conn;
+    }
+
+
 }

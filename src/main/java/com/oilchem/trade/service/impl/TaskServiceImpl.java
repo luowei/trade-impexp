@@ -6,12 +6,16 @@ import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.service.TradeSumService;
 import com.oilchem.trade.view.dto.YearMonthDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -27,6 +31,8 @@ import static com.oilchem.trade.config.Config.*;
 @Service("taskService")
 public class TaskServiceImpl implements TaskService {
 
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     CommonService commonService;
     @Autowired
@@ -37,14 +43,8 @@ public class TaskServiceImpl implements TaskService {
     @Resource
     LogDao logDao;
 
-    //定时器
-    Timer timer = new Timer();
 
     long delay = 2L;
-
-    private void unPackageAndImportTask(TimerTask timerTask) {
-        timer.schedule(timerTask, delay);
-    }
 
     /**
      * 解压明细数据包与导入任务
@@ -65,14 +65,33 @@ public class TaskServiceImpl implements TaskService {
 
                 //导入数据
                 Map<Long, String> unImportMap = commonService.getUnImportFile(DETAIL);
-                Connection conn=null;
                 for (Map.Entry<Long, String> entry : unImportMap.entrySet()) {
-                    tradeDetailService.importAccess(entry, yearMonthDto, conn);
+                    tradeDetailService.importAccess(entry, yearMonthDto, createAccessConnect(entry.getValue()));
                 }
             }
         };
-        timer.schedule(task,delay);
+        new Timer().schedule(task, delay);
 
+    }
+
+    private Connection createAccessConnect(String accessPath) {
+        Connection conn;//连接参数
+        Properties prop = new Properties();
+        prop.put("charSet", "GBK");
+        prop.put("user", "");
+        prop.put("password", "");
+        String url = "jdbc:odbc:driver={Microsoft Access Driver (*.mdb)};DBQ="
+                + accessPath;
+
+        //创建连接
+        try {
+            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+            conn = DriverManager.getConnection(url, prop);
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+            throw new RuntimeException(e);
+        }
+        return conn;
     }
 
     /**
@@ -81,7 +100,7 @@ public class TaskServiceImpl implements TaskService {
      *
      */
     public void unSumPackageAndImportTask(final YearMonthDto yearMonthDto) {
-        unPackageAndImportTask(new TimerTask() {
+        TimerTask task = new TimerTask() {
 
             @Override
             public void run() {
@@ -98,8 +117,8 @@ public class TaskServiceImpl implements TaskService {
                 }
 
             }
-        });
-
+        };
+        new Timer().schedule(task,delay);
     }
 
 

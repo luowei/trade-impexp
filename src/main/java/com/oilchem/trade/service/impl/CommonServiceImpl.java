@@ -10,14 +10,15 @@ import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.service.CommonService;
+import com.oilchem.trade.util.DetailCriteria;
 import com.oilchem.trade.view.dto.YearMonthDto;
 import jxl.Sheet;
 import jxl.Workbook;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.Repository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.ContextLoader;
@@ -26,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.File;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -49,7 +49,7 @@ public class CommonServiceImpl implements CommonService {
     @Resource
     CityDao cityDao;
     @Resource
-    ComplanyTypeDao companyTypeDao;
+    CompanyTypeDao companyTypeDao;
     @Resource
     CountryDao countryDao;
     @Resource
@@ -116,100 +116,174 @@ public class CommonServiceImpl implements CommonService {
      * @param conn
      * @return
      */
-    public Boolean importCriteriaTab(JdbcTemplate jdbcTemplate, String sql, Connection conn) {
+    public Boolean
+    importCriteriaTab(JdbcTemplate jdbcTemplate, String sql, Connection conn){
         if (StringUtils.isBlank(sql)) return null;
 
         Boolean isSuccess = true;
 
-        //导入城市
-        List<City> cityList = (List<City>) queryCriteriaRecord(
-                cityDao, City.class, sql, CITY, conn);
-        cityDao.save(cityList);
+        ApplicationContext ctx = AppContextManager.getAppContext();
+        List<DetailCriteria> detailCriteriaList = new ArrayList<com.oilchem.trade.util.DetailCriteria>();
 
-        //导入企业性质
-        List<ComplanyType> complanyTypeList = (List<ComplanyType>) queryCriteriaRecord(
-                companyTypeDao, ComplanyType.class, sql, COMPANY_TYPE, conn);
-        companyTypeDao.save(complanyTypeList);
+        try {
+            //城市
+            DetailCriteria cityCri = new DetailCriteria(
+                    CITY,
+                    City.class,
+                    CityDao.class,
+                    CityDao.class.getDeclaredMethod("findByCity",String.class),
+                    ctx.getBean(CityDao.class),
+                    new ArrayList<String>());
+            detailCriteriaList.add(cityCri);
 
-        //导入海关
-        List<Customs> customsList = (List<Customs>) queryCriteriaRecord(
-                customsDao, Customs.class, sql, CUSTOMS, conn);
-        customsDao.save(customsList);
+            //国家
+            DetailCriteria countryCri = new DetailCriteria(
+                    COUNTRY,
+                    Country.class,
+                    CountryDao.class,
+                    CountryDao.class.getDeclaredMethod("findByCountry",String.class),
+                    ctx.getBean(CountryDao.class),
+                    new ArrayList<String>());
+            detailCriteriaList.add(countryCri);
 
-        //导入贸易方式
-        List<TradeType> tradeTypeList = (List<TradeType>) queryCriteriaRecord(
-                tradeTypeDao, TradeType.class, sql, TRADE_TYPE, conn);
-        tradeTypeDao.save(tradeTypeList);
+            //企业性质
+            DetailCriteria companyTypeCri = new DetailCriteria(
+                    COMPANY_TYPE
+                    ,CompanyType.class,
+                    CompanyTypeDao.class,
+                    CompanyTypeDao.class.getDeclaredMethod("findByCompanyType",String.class),
+                    ctx.getBean(CompanyTypeDao.class),
+                    new ArrayList<String>());
+            detailCriteriaList.add(companyTypeCri);
 
-        //导入运输方式
-        List<Transportation> transportationList = (List<Transportation>) queryCriteriaRecord(
-                transportationDao, Transportation.class, sql, TRANSPORTATION, conn);
-        transportationDao.save(transportationList);
+            //海关
+            DetailCriteria customsCri = new DetailCriteria(
+                    CUSTOMS,
+                    Customs.class,
+                    CustomsDao.class,
+                    CustomsDao.class.getDeclaredMethod("findByCustoms",String.class),
+                    ctx.getBean(CustomsDao.class),
+                    new ArrayList<String>());
+            detailCriteriaList.add(customsCri);
+
+            //贸易类型
+            DetailCriteria tradeTypeCri = new DetailCriteria(
+                    TRADE_TYPE,
+                    TradeType.class,
+                    TradeTypeDao.class,
+                    TradeTypeDao.class.getDeclaredMethod("findByTradeType",String.class),
+                    ctx.getBean(TradeTypeDao.class),
+                    new ArrayList<String>());
+            detailCriteriaList.add(tradeTypeCri);
+
+            //运输方式
+            DetailCriteria transportationCri = new DetailCriteria(
+                    TRANSPORTATION,
+                    Transportation.class,
+                    TransportationDao.class,
+                    TransportationDao.class.getDeclaredMethod("findByTransportation",String.class),
+                    ctx.getBean(TransportationDao.class),
+                    new ArrayList<String>());
+            detailCriteriaList.add(transportationCri);
+        } catch (NoSuchMethodException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+
+        queryCriteriaRecord(detailCriteriaList, sql, conn);
+
+        //导入
+        cityDao.save(nameList2IdEntityList(detailCriteriaList.get(0).getRetName(), City.class));
+        countryDao.save(nameList2IdEntityList(detailCriteriaList.get(1).getRetName(), Country.class));
+        companyTypeDao.save(nameList2IdEntityList(detailCriteriaList.get(2).getRetName() , CompanyType.class));
+        customsDao.save(nameList2IdEntityList(detailCriteriaList.get(3).getRetName(), Customs.class));
+        tradeTypeDao.save(nameList2IdEntityList(detailCriteriaList.get(4).getRetName(), TradeType.class));
+        transportationDao.save(nameList2IdEntityList(detailCriteriaList.get(5).getRetName(), Transportation.class));
 
         return isSuccess;
     }
 
+    private <E extends IdEntity> List<E>
+    nameList2IdEntityList(List<String> nameList, Class<E> idEntityClass) {
+        List<E> idEntityList = new ArrayList<E>();
+        for (String name : nameList) {
+            try {
+                idEntityList.add(idEntityClass.getConstructor(String.class).newInstance(name));
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+                throw new RuntimeException(e);
+            }
+        }
+        return idEntityList;
+    }
 
-    public <E extends IdEntity> List<E>
-    queryCriteriaRecord(Repository<E, Long> dao,
-                        Class<E> idEntityClass, String sql,
-                        String filedName, Connection conn){
+    /**
+     * 过滤条件
+     *
+     * @param detailCriteriaList
+     * @param sql
+     * @param conn
+     * @return
+     */
+    public <E extends IdEntity> void
+    queryCriteriaRecord(List<DetailCriteria> detailCriteriaList,
+                        String sql,
+                        Connection conn) {
 
-        if (conn == null || dao == null || idEntityClass == null
-                || StringUtils.isBlank(sql) || StringUtils.isBlank(filedName)) return null;
+        if (conn == null || detailCriteriaList == null
+                || StringUtils.isBlank(sql)) return ;
 
         Statement statement = null;
-        List<E> tradeList = new ArrayList<E>();
-
         ResultSet rs = null;
+
         try {
             statement = conn.createStatement();
             rs = statement.executeQuery(sql);
 
             while (rs.next()) {
-                String name = rs.getString(filedName);
-                String suffix = dao.getClass().getSimpleName();
-                String methodName = "getBy" + suffix;
+                //取出每条记录中的条件字段，与条件表对应
+                for (DetailCriteria detailCriteria : detailCriteriaList) {
 
-                //获得根据名字查找的方法，并执行查找
-    //            WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
-    //            Repository<E,Long> dao = context.getBean(daoClass);
-                try {
-                    Method method = dao.getClass().getDeclaredMethod(methodName, String.class);
-                    E findByMethodRet = (E) method.invoke(dao, name);
+                    String name = rs.getString(detailCriteria.getFieldName());
+                    E findByMethodRet = (E) detailCriteria.getFindByMethod().invoke(detailCriteria.getDao(), name);
+
+                    List<String> nameList = detailCriteria.getRetName();
 
                     //如果没有找到相同记录，则把name字段保存到IdEntity引用的对象中
-                    if (findByMethodRet.getId() == null) {
-                        E tradeDetail = idEntityClass.getConstructor(String.class).newInstance(name);
-                        tradeList.add(tradeDetail);
+                    if (findByMethodRet == null || findByMethodRet.getId() == null ||
+                            !nameList.contains(name)) {
+                        nameList.add(name);
                     }
-
-                } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
-                    throw new RuntimeException();
                 }
             }
-        } catch (SQLException e) {
-            logger.error(e.getMessage(),e);
-            throw new RuntimeException();
-        }
 
-        return tradeList;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException();
+        } finally {
+            try {
+                statement.close();
+                rs.close();
+            } catch (SQLException e) {
+                logger.error(e.getMessage(), e);
+                throw new RuntimeException();
+            }
+        }
     }
 
 
-        /**
-         * 获得有效的查询条件表的记录List
-         *
-         *
-         * @param jdbcTemplate  jdbcTemplate
-         * @param dao           mondel dao
-         * @param idEntityClass model bean
-         * @param sql           jdbcTemplate's query sql
-         * @param filedName     access table's filed name
-         * @param conn
-         * @return idEntity列表
-         */
+    /**
+     * 获得有效的查询条件表的记录List
+     *
+     *
+     * @param jdbcTemplate  jdbcTemplate
+     * @param dao           mondel dao
+     * @param idEntityClass model bean
+     * @param sql           jdbcTemplate's query sql
+     * @param filedName     access table's filed name
+     * @param conn
+     * @return idEntity列表
+     */
 //        public<E extends IdEntity>List<E>
 //        queryCriteriaRecord(JdbcTemplate jdbcTemplate, final Repository<E, Long> dao,
 //        final Class<E> idEntityClass, String sql,final String filedName, Connection conn){
@@ -244,17 +318,17 @@ public class CommonServiceImpl implements CommonService {
 //            return eList;
 //        }
 
-        /**
-         * 导入贸易明细
-         *
-         *
-         * @param repository
-         * @param tradeDetailDao
-         * @param jdbcTemplate      jdbcTemplate
-         * @param tradeDetailMapper     tradeDetailMapper
-         * @param year               year
-         * @param month              month
-         * @param sql                sql      @return          */
+    /**
+     * 导入贸易明细
+     *
+     * @param repository
+     * @param tradeDetailDao
+     * @param jdbcTemplate      jdbcTemplate
+     * @param tradeDetailMapper tradeDetailMapper
+     * @param year              year
+     * @param month             month
+     * @param sql               sql      @return
+     */
 
     public synchronized <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
     Boolean importTradeDetail(

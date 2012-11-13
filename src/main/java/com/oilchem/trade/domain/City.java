@@ -1,6 +1,7 @@
 package com.oilchem.trade.domain;
 
 import com.oilchem.trade.domain.abstrac.IdEntity;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,4 +35,5 @@ public class City extends IdEntity implements Serializable {
     public void setCity(String city) {
         this.city = city;
     }
+
 }

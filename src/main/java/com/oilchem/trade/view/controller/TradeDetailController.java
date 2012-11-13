@@ -137,14 +137,14 @@ public class TradeDetailController extends CommonController {
     private Model getDetailCriteriaData(Model model) {
 
         List<City> cityList = commonService.getModelList(City.class);
-        List<ComplanyType> complanyTypeList = commonService.getModelList(ComplanyType.class);
+        List<CompanyType> companyTypeList = commonService.getModelList(CompanyType.class);
         List<Country> countryList = commonService.getModelList(Country.class);
         List<Customs> customsList = commonService.getModelList(Customs.class);
         List<TradeType> tradeTypeList = commonService.getModelList(TradeType.class);
         List<Transportation> transportationList = commonService.getModelList(Transportation.class);
 
         model.addAttribute(cityList)
-                .addAttribute(complanyTypeList)
+                .addAttribute(companyTypeList)
                 .addAttribute(countryList)
                 .addAttribute(customsList)
                 .addAttribute(tradeTypeList)

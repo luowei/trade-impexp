@@ -7,9 +7,9 @@ import com.oilchem.trade.domain.ProductType;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.IdEntity;
+import com.oilchem.trade.util.DetailCriteria;
 import com.oilchem.trade.view.dto.YearMonthDto;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.Repository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,25 +58,21 @@ public interface CommonService {
      * @author wei.luo
      * @createTime 2012-11-7
      */
-    Boolean importCriteriaTab(JdbcTemplate jdbcTemplate, String sql, Connection connection);
+    <E extends IdEntity> Boolean
+    importCriteriaTab(JdbcTemplate jdbcTemplate, String sql, Connection connection);
 
     /**
-     * 获得有效的查询条件表的记录List
+     * 过滤条件
      *
-     *
-     * @param dao           mondel dao
-     * @param idEntityClass model bean
-     * @param sql           jdbcTemplate's query sql
-     * @param filedName     access table's filed name
+     * @param detailCriteriaList
+     * @param sql
      * @param conn
-     * @return idEntity列表
-     * @author wei.luo
-     * @createTime 2012-11-7
+     * @return
      */
-    <E extends IdEntity> List<E>
-    queryCriteriaRecord(final Repository<E, Long> dao,
-                        final Class<E> idEntityClass,
-                        String sql, final String filedName, Connection conn);
+    public <E extends IdEntity> void
+    queryCriteriaRecord(List<DetailCriteria> detailCriteriaList,
+                        String sql,
+                        Connection conn);
 
     /**
      * 导入贸易明细

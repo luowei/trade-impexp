@@ -8,7 +8,7 @@
     <persistence-unit name="jpa.trade" >
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <class>com.oilchem.trade.domain.City</class>
-        <class>com.oilchem.trade.domain.ComplanyType</class>
+        <class>com.oilchem.trade.domain.CompanyType</class>
         <class>com.oilchem.trade.domain.Country</class>
         <class>com.oilchem.trade.domain.Customs</class>
         <class>com.oilchem.trade.domain.ExpTradeDetail</class>

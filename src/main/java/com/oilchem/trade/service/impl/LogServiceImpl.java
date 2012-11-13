@@ -199,7 +199,7 @@ public class LogServiceImpl implements LogService {
     void logImportingTradeDetail(Map.Entry<Long, String> logEntry,
                                  YearMonthDto yearMonthDto,
                                  Connection conn) {
-        conn = createAccessConnect(logEntry.getValue());
+
     }
 
     /**
@@ -257,24 +257,5 @@ public class LogServiceImpl implements LogService {
         return null;
     }
 
-    private Connection createAccessConnect(String accessPath) {
-        Connection conn;//连接参数
-        Properties prop = new Properties();
-        prop.put("charSet", "GBK");
-        prop.put("user", "");
-        prop.put("password", "");
-        String url = "jdbc:odbc:driver={Microsoft Access Driver (*.mdb)};DBQ="
-                + accessPath;
-
-        //创建连接
-        try {
-            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            conn = DriverManager.getConnection(url, prop);
-        } catch (Exception e) {
-            logger.error(e.getMessage(),e);
-            throw new RuntimeException(e);
-        }
-        return conn;
-    }
 
 }
