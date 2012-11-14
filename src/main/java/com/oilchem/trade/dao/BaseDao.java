@@ -30,10 +30,12 @@ public interface BaseDao<T extends IdEntity> {
 
     /**
      * 查找指年月的数量
+     *
      * @param year year
      * @param month month
+     * @param clazz
      * @return
      */
-    Integer countWithYearMonth(Integer year, Integer month);
+    Integer countWithYearMonth(Integer year, Integer month, Class clazz);
 
 }

@@ -21,7 +21,7 @@ public class ExpTradeDetailDaoImpl
         return super.delWithYearMonthRecord(year,month);
     }
 
-    public Integer countWithYearMonth(Integer year, Integer month) {
-        return super.countWithYearMonth(year,month);
+    public Integer countWithYearMonth(Integer year, Integer month, Class clazz) {
+        return super.countWithYearMonth(year,month, clazz);
     }
 }

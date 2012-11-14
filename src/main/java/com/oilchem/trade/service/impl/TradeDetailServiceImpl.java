@@ -9,6 +9,7 @@ import com.oilchem.trade.dao.spec.Spec;
 import com.oilchem.trade.domain.ExpTradeDetail;
 import com.oilchem.trade.domain.ImpTradeDetail;
 import com.oilchem.trade.domain.Log;
+import com.oilchem.trade.domain.ProductType;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeDetailService;
@@ -24,14 +25,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.management.RuntimeMBeanException;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import static com.oilchem.trade.config.Config.*;
 
@@ -102,45 +99,33 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         Boolean isSuccess = false;
         final String sql = "select top 200 * from 结果 ";
 
-        Connection conn = createAccessConnect(logEntry.getValue());
-        try {
+        //导入查询条件表
+        commonService.importCriteriaTab(sql, logEntry.getValue());
 
-            //导入查询条件表
-            commonService.importCriteriaTab(sql, conn);
-
-            //导入进口明细总表
-            if (yearMonthDto.getImpExpType().equals(ImpExpType.进口.getCode())) {
-                commonService.importTradeDetail(
-                        impTradeDetailDao,
-                        impTradeDetailDao,
-                        new ImpTradeDetailRowMapper(),
-                        yearMonthDto.getYear(),
-                        yearMonthDto.getMonth(),
-                        conn, sql,
-                        ImpTradeDetail.class);
-                isSuccess = true;
-            }
-
-            //导入出口明细表
-            else if (yearMonthDto.getImpExpType().equals(ImpExpType.出口.getCode())) {
-                commonService.importTradeDetail(
-                        expTradeDetailDao,
-                        expTradeDetailDao,
-                        new ExpTradeDetailRowMapper(),
-                        yearMonthDto.getYear(),
-                        yearMonthDto.getMonth(),
-                        conn, sql,
-                        ExpTradeDetail.class);
-                isSuccess = true;
-            }
-
-
-        } catch (Exception e) {
-            logger.error(e.getMessage(),e);
-            throw new RuntimeException(e);
-        } finally {
-            closeDbConn(conn);
+        //导入进口明细总表
+        if (yearMonthDto.getImpExpType().equals(ImpExpType.进口.getCode())) {
+            commonService.importTradeDetail(
+                    impTradeDetailDao,
+                    impTradeDetailDao,
+                    new ImpTradeDetailRowMapper(),
+                    yearMonthDto,
+                    logEntry.getValue(), sql,
+                    ImpTradeDetail.class);
+            isSuccess = true;
         }
+
+        //导入出口明细表
+        else if (yearMonthDto.getImpExpType().equals(ImpExpType.出口.getCode())) {
+            commonService.importTradeDetail(
+                    expTradeDetailDao,
+                    expTradeDetailDao,
+                    new ExpTradeDetailRowMapper(),
+                    yearMonthDto,
+                    logEntry.getValue(), sql,
+                    ExpTradeDetail.class);
+            isSuccess = true;
+        }
+
         return isSuccess;
     }
 
@@ -188,47 +173,16 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         return null;
     }
 
+
+    @Resource
+    ProductTypeDao productTypeDao;
     /**
-     * 建立Access连接
+     * 获得productType列表
      *
-     * @param accessPath
      * @return
      */
-    private Connection createAccessConnect(String accessPath) {
-        Connection conn;//连接参数
-        Properties prop = new Properties();
-        prop.put("charSet", "GBK");
-        prop.put("user", "");
-        prop.put("password", "");
-        String url = "jdbc:odbc:driver={Microsoft Access Driver (*.mdb)};DBQ="
-                + accessPath;
-
-        //创建连接
-        try {
-            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            conn = DriverManager.getConnection(url, prop);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
-        return conn;
-    }
-
-    /**
-     * 关闭access连接
-     *
-     * @param conn
-     */
-    private void closeDbConn(Connection conn) {
-        //关闭access连接
-        try {
-            if (conn != null) {
-                conn.close();
-            }
-        } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
+    public List<ProductType> getProductList() {
+        return (List<ProductType>)productTypeDao.findAll();
     }
 
 

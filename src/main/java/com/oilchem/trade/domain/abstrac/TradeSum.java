@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * 进出口总表
  * Created with IntelliJ IDEA.
- * User: Administrator
+ * User: luowei
  * Date: 12-11-5
  * Time: 上午10:27
  * To change this template use File | Settings | File Templates.

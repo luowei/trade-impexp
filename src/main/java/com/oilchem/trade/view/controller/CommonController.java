@@ -1,10 +1,13 @@
 package com.oilchem.trade.view.controller;
 
+import com.oilchem.trade.domain.ProductType;
 import com.oilchem.trade.domain.abstrac.IdEntity;
+import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.util.PageUtil;
 import com.oilchem.trade.view.dto.CommonDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -18,6 +21,7 @@ import org.springframework.web.context.ContextLoader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +35,10 @@ import java.util.Map;
 public class CommonController {
 
     Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Autowired
+    CommonService commonService;
+
 
 //    @InitBinder
 //    protected void ininBinder(WebDataBinder binder){
@@ -108,6 +116,20 @@ public class CommonController {
      */
     public String getServletContextPath(String path) {
         return ContextLoader.getCurrentWebApplicationContext().getServletContext().getContext(path).getContextPath();
+    }
+
+    /**
+     * 获得查询条件数据
+     * @param model
+     * @param tClass
+     * @param <E>
+     * @return
+     */
+    public <E extends IdEntity> Model
+    findAllIdEntity(Model model, Class<E> tClass) {
+        List<E> productTypeList = commonService.findAllIdEntityList(tClass);
+        model.addAttribute(productTypeList);
+        return model;
     }
 
 

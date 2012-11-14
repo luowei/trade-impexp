@@ -3,14 +3,11 @@ package com.oilchem.trade.view.controller;
 import com.oilchem.trade.config.Config;
 import com.oilchem.trade.domain.ExpTradeSum;
 import com.oilchem.trade.domain.ImpTradeSum;
-import com.oilchem.trade.domain.ProductType;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeSumService;
 import com.oilchem.trade.view.dto.CommonDto;
 import com.oilchem.trade.view.dto.YearMonthDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -18,8 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -55,7 +50,7 @@ public class TradeSumController extends CommonController {
         Page<ImpTradeSum> tradeSums = tradeSumService
                 .findWithCriteria(tradeSum, commonDto, getPageRequest(commonDto));
 
-        getDetailCriteriaData(addPageInfo(model, tradeSums, getServletContextPath("/listimpsum")))
+        findAllIdEntity(addPageInfo(model, tradeSums, getServletContextPath("/listimpsum")),ImpTradeSum.class)
                 .addAttribute("tradeSumList", tradeSums);
 
         return "manage/trade/listsum";
@@ -75,7 +70,7 @@ public class TradeSumController extends CommonController {
         Page<ExpTradeSum> tradeSums = tradeSumService
                 .findWithCriteria(tradeSum, commonDto, getPageRequest(commonDto));
 
-        getDetailCriteriaData(addPageInfo(model, tradeSums, getServletContextPath("/listimpsum")))
+        findAllIdEntity(addPageInfo(model, tradeSums, getServletContextPath("/listimpsum")),ExpTradeSum.class)
                 .addAttribute("tradeSumList", tradeSums);
 
         return "manage/trade/listsum";
@@ -110,12 +105,6 @@ public class TradeSumController extends CommonController {
         model.addAttribute("message",message.toString());
 
         return "manage/trade/import";
-    }
-
-    private Model getDetailCriteriaData(Model model) {
-        List<ProductType> productTypeList = commonService.getModelList(ProductType.class);
-        model.addAttribute(productTypeList);
-        return model;
     }
 
 

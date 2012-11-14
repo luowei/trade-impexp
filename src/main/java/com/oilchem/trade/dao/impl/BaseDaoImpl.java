@@ -7,7 +7,6 @@ import com.oilchem.trade.domain.abstrac.IdEntity;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
@@ -42,11 +41,14 @@ public class BaseDaoImpl<T extends IdEntity> implements BaseDao<T> {
 
     /**
      * 查出指定年月的记录数
+     *
      * @param year year
      * @param month month
+     * @param clazz
      * @return
      */
-    public Integer countWithYearMonth(Integer year, Integer month) {
+    public Integer countWithYearMonth(Integer year, Integer month, Class clazz) {
+
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

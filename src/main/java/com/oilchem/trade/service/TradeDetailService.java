@@ -1,5 +1,6 @@
 package com.oilchem.trade.service;
 
+import com.oilchem.trade.domain.ProductType;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.view.dto.CommonDto;
 import com.oilchem.trade.view.dto.YearMonthDto;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Connection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -62,4 +64,6 @@ public interface TradeDetailService {
      */
     public <T extends TradeDetail> Page<T>
     findWithCriteria(T TradeDetail, CommonDto commonDto, PageRequest pageRequest);
+
+    List<ProductType> getProductList();
 }

@@ -26,7 +26,8 @@ public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implem
 
     public TradeDetail setTraddDetail(TradeDetail tradeDetail,
                                       ResultSet rs,
-                                      Integer year, Integer month) throws SQLException {
+                                      Integer year,
+                                      Integer month) throws SQLException {
         //产品代码
         tradeDetail.setProductCode(rs.getString(PRODUCT_CODE));
         //产品名称

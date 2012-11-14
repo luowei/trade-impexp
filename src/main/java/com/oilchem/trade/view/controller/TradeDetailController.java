@@ -7,8 +7,6 @@ import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.view.dto.CommonDto;
 import com.oilchem.trade.view.dto.YearMonthDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -90,7 +88,7 @@ public class TradeDetailController extends CommonController {
      */
     @RequestMapping("/import")
     public String importpage(Model model){
-        model.addAttribute("productTypeList",commonService.getProductList());
+        model.addAttribute("productTypeList",tradeDetailService.getProductList());
         return "manage/trade/import";
     }
 
@@ -134,12 +132,12 @@ public class TradeDetailController extends CommonController {
      */
     private Model getDetailCriteriaData(Model model) {
 
-        List<City> cityList = commonService.getModelList(City.class);
-        List<CompanyType> companyTypeList = commonService.getModelList(CompanyType.class);
-        List<Country> countryList = commonService.getModelList(Country.class);
-        List<Customs> customsList = commonService.getModelList(Customs.class);
-        List<TradeType> tradeTypeList = commonService.getModelList(TradeType.class);
-        List<Transportation> transportationList = commonService.getModelList(Transportation.class);
+        List<City> cityList = commonService.findAllIdEntityList(City.class);
+        List<CompanyType> companyTypeList = commonService.findAllIdEntityList(CompanyType.class);
+        List<Country> countryList = commonService.findAllIdEntityList(Country.class);
+        List<Customs> customsList = commonService.findAllIdEntityList(Customs.class);
+        List<TradeType> tradeTypeList = commonService.findAllIdEntityList(TradeType.class);
+        List<Transportation> transportationList = commonService.findAllIdEntityList(Transportation.class);
 
         model.addAttribute(cityList)
                 .addAttribute(companyTypeList)

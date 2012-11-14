@@ -12,7 +12,6 @@ import com.oilchem.trade.view.dto.YearMonthDto;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
@@ -52,60 +51,39 @@ public interface CommonService {
      *
      *
      *
+     *
+     *
      * @param sql
-     * @param connection
+     * @param accessPath
      * @return
      * @author wei.luo
      * @createTime 2012-11-7
      */
     <E extends IdEntity> void
-    importCriteriaTab(String sql, Connection connection);
+    importCriteriaTab(String sql, String accessPath);
 
-    /**
-     * 过滤条件
-     *
-     * @param detailCriteriaList
-     * @param sql
-     * @param conn
-     * @return
-     */
-    public void
-    queryCriteriaRecord(List<DetailCriteria> detailCriteriaList,
-                        String sql,
-                        Connection conn);
 
     /**
      * 导入贸易明细
      *
-     *
-     *
-     *
-     *
      * @param tradeDetailDao
      * @param tradeDetailMapper tradeDetailMapper
-     * @param year              year
-     * @param month             month
-     * @param conn
+     * @param yearMonthDto
+     * @param accessPath
      * @param sql               sql      @return  @author wei.luo
-     * @param detailClz
-     * @createTime 2012-11-7
-     */
+     * @param detailClz     @createTime 2012-11-7       */
     <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
     void importTradeDetail(
             CrudRepository repository,
             BaseDao<E> tradeDetailDao,
             T tradeDetailMapper,
-            Integer year,
-            Integer month,
-            Connection conn, String sql,
+            YearMonthDto yearMonthDto,
+            String accessPath, String sql,
             Class detailClz);
+
 
     /**
      * 导入Excel
-     *
-     *
-     *
-     *
      * @param repository
      * @param tradeSumDao
      * @param logEntry
@@ -134,8 +112,6 @@ public interface CommonService {
 
     /**
      * 获得未导入的文件列表
-     *
-     *
      * @param tableType@return 返回记录的Id与文件的全路径组成的Map
      * @author wei.luo
      * @createTime 2012-11-7
@@ -151,7 +127,6 @@ public interface CommonService {
      * @author wei.luo
      * @createTime 2012-11-7
      */
-    <T extends IdEntity> List<T> getModelList(Class<T> tClass);
+    <T extends IdEntity> List<T> findAllIdEntityList(Class<T> tClass);
 
-    Iterable<ProductType> getProductList();
 }

@@ -7,6 +7,7 @@ import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.service.TradeSumService;
 import com.oilchem.trade.view.dto.YearMonthDto;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,14 +30,14 @@ import static junit.framework.Assert.*;
 
 /**
  * Created with IntelliJ IDEA.
- * User: Administrator
+ * User: luowei
  * Date: 12-11-13
  * Time: 上午9:42
  * To change this template use File | Settings | File Templates.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:test/applicationContext-root.xml"})
-public class ExtractTest {
+public class ImportTest {
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -68,6 +69,11 @@ public class ExtractTest {
 
 //        file = new MockMultipartFile("idb_20121113143200.zip",
 //                new FileInputStream("D:/aaaa/upload/detailzip/idb_20121113143200.zip"));
+    }
+
+    @After
+    public void tearDown() throws Exception {
+
     }
 
     /**

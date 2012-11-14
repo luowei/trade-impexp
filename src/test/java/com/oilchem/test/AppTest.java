@@ -22,7 +22,7 @@ import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:test/applicationContext-root.xml"})
-public class LogTest {
+public class AppTest {
 
     @Autowired
     private TradeDetailService tradeDetailService;
@@ -31,7 +31,7 @@ public class LogTest {
     private TradeSumService tradeSumService;
 
     @Test
-    public void testUploadFile(){
+    public void testComplieAndLunch(){
          assertTrue(true);
     }
 

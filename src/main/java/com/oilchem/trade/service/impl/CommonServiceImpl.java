@@ -27,10 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.File;
 import java.lang.reflect.Constructor;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
 
 import static com.oilchem.trade.config.Config.*;
@@ -114,13 +111,14 @@ public class CommonServiceImpl implements CommonService {
      *
      *
      * @param sql
-     * @param conn
+     * @param accessPath
      * @return
      */
     @Transactional
     public void
-    importCriteriaTab(String sql, Connection conn) {
-        if (StringUtils.isBlank(sql)) return ;
+    importCriteriaTab(String sql, String accessPath) {
+        if (StringUtils.isBlank(sql) || StringUtils.isBlank(accessPath))
+            return;
 
         ApplicationContext ctx = AppContextManager.getAppContext();
         List<DetailCriteria> detailCriteriaList = new ArrayList<com.oilchem.trade.util.DetailCriteria>();
@@ -191,7 +189,7 @@ public class CommonServiceImpl implements CommonService {
         }
 
         //匹配
-        queryCriteriaRecord(detailCriteriaList, sql, conn);
+        queryCriteriaRecord(detailCriteriaList, sql, accessPath);
 
         //导入
         cityDao.save(nameList2IdEntityList(detailCriteriaList.get(0).getRetName(), City.class));
@@ -203,6 +201,13 @@ public class CommonServiceImpl implements CommonService {
 
     }
 
+    /**
+     * name list 到 实例类 list的转换
+     * @param nameSet
+     * @param idEntityClass
+     * @param <E>
+     * @return
+     */
     private <E extends IdEntity> List<E>
     nameList2IdEntityList(Set<String> nameSet, Class<E> idEntityClass) {
         List<E> idEntityList = new ArrayList<E>();
@@ -217,108 +222,39 @@ public class CommonServiceImpl implements CommonService {
         return idEntityList;
     }
 
-    /**
-     * 从Access获得过滤后查询条件数据
-     *
-     * @param detailCriteriaList
-     * @param sql
-     * @param conn
-     * @return
-     */
-    public void
-    queryCriteriaRecord(List<DetailCriteria> detailCriteriaList,
-                        String sql,
-                        Connection conn) {
-
-        if (conn == null || detailCriteriaList == null
-                || StringUtils.isBlank(sql)) return;
-
-        Statement statement = null;
-        ResultSet rs = null;
-
-        try {
-            statement = conn.createStatement();
-            rs = statement.executeQuery(sql);
-
-            while (rs.next()) {
-                //取出每条记录中的条件字段，与条件表对应
-                for (DetailCriteria detailCriteria : detailCriteriaList) {
-
-                    String name = rs.getString(detailCriteria.getFieldName());
-                    if(StringUtils.isBlank(name)){
-                        continue;
-                    }
-                    Object findByMethodRet = detailCriteria.getFindByMethod().invoke(detailCriteria.getDao(), name);
-
-                    Set<String> nameSet = detailCriteria.getRetName();
-                    //如果没有找到相同记录，则把name字段保存到IdEntity引用的对象中
-                    if (findByMethodRet == null) {
-                            nameSet.add(name);
-                    }
-
-                }
-            }
-
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException();
-        } finally {
-            closeStatementAndResultSet(statement, rs);
-        }
-    }
-
 
     /**
      * 导入明细数据
+     *
      * @param repository
      * @param tradeDetailDao
      * @param tradeDetailMapper tradeDetailMapper
-     * @param year              year
-     * @param month             month
-     * @param conn
+     * @param yearMonthDto
+     * @param accessPath
      * @param sql               sql      @return  @author wei.luo
      * @param detailClz         明细抽象类
-     * @param <E>
-     * @param <T>
      */
-    public synchronized <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
+    public <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
     void importTradeDetail(
             CrudRepository repository,
             BaseDao<E> tradeDetailDao,
             T tradeDetailMapper,
-            Integer year,
-            Integer month,
-            Connection conn, String sql, Class detailClz) {
+            YearMonthDto yearMonthDto,
+            String accessPath, String sql,
+            Class detailClz) {
         if (tradeDetailDao == null || tradeDetailMapper == null
-                || year == null || month == null || StringUtils.isBlank(sql)) return ;
+                || yearMonthDto == null ||StringUtils.isBlank(sql)) return;
 
-
-        Integer count = tradeDetailDao.countWithYearMonth(year, month);
-        if (count!=null && count > 0) {
-            tradeDetailDao.delWithYearMonthRecord(year, month);
-        }
-
-        //查出来然后导入
-        Statement statement = null;
-        ResultSet rs = null;
-        List<E> tradeDetailList = new ArrayList<E>();
-        try {
-            statement = conn.createStatement();
-            rs = statement.executeQuery(sql);
-
-            while (rs.next()) {
-                E e = (E) detailClz.cast(detailClz.newInstance());
-                tradeDetailMapper.setTraddDetail(e,rs, year, month);
-                tradeDetailList.add(e);
-
+        synchronized ("tradeDetail_del_lock") {
+            Integer count = tradeDetailDao.countWithYearMonth(
+                    yearMonthDto.getYear(), yearMonthDto.getMonth(), detailClz);
+            if (count != null && count > 0) {
+                tradeDetailDao.delWithYearMonthRecord(yearMonthDto.getYear(), yearMonthDto.getMonth());
             }
-        }catch (Exception e){
-            logger.error(e.getMessage(),e);
-            throw new RuntimeException(e);
-        } finally {
-            closeStatementAndResultSet(statement, rs);
         }
 
+        List<E> tradeDetailList = getListFormDB(
+                tradeDetailMapper, yearMonthDto, accessPath, sql, detailClz);
         repository.save(tradeDetailList);
     }
 
@@ -326,15 +262,12 @@ public class CommonServiceImpl implements CommonService {
     /**
      * 导入Excel
      *
-     *
-     *
-     *
      * @param repository
      * @param tradeSumDao
      * @param logEntry
-     *@param tradeSumClass       tradeSum Class
+     * @param tradeSumClass       tradeSum Class
      * @param tradeSumRowMapClass tradeSumRowMap Class
-     * @param yearMonthDto    @return 成功或失败
+     * @param yearMonthDto        @return 成功或失败
      */
     public <E extends TradeSum, M extends MyRowMapper<E>>
     Boolean importExcel(CrudRepository repository,
@@ -343,56 +276,32 @@ public class CommonServiceImpl implements CommonService {
                         Class<E> tradeSumClass,
                         Class<M> tradeSumRowMapClass, YearMonthDto yearMonthDto) {
         if (tradeSumDao == null || tradeSumClass == null
-                || tradeSumRowMapClass == null || yearMonthDto==null
+                || tradeSumRowMapClass == null || yearMonthDto == null
                 || logEntry == null)
             return null;
 
         Boolean isSuccess = true;
 
-        //待导入的总表记录List
-        List<E> tradeSumList = new ArrayList<E>();
+        List<E> tradeSumList = getListFromExcel(logEntry,
+                tradeSumClass, tradeSumRowMapClass, yearMonthDto);
+        isSuccess = isSuccess && (tradeSumList!=null && !tradeSumList.isEmpty());
 
-        try {
-            //从excel中取得eList
-            Workbook workbook = Workbook.getWorkbook(new File(logEntry.getValue()));
-            Sheet sheet = workbook.getSheet(0);
-            int rows = sheet.getRows();
-            int rowIdx = sheet.findCell(PRODUCT_XNAME).getRow() + 1;
-
-            //遍历excel
-            for (; rowIdx < rows; rowIdx++) {
-                E tradeSum = tradeSumClass.getConstructor(
-                        Integer.class,Integer.class,String.class)
-                        .newInstance(yearMonthDto.getYear(),
-                                yearMonthDto.getMonth(),
-                                yearMonthDto.getProductType());
-
-                Constructor<M> constructor = tradeSumRowMapClass.getConstructor(
-                        int.class, tradeSumClass, Sheet.class);
-                M tradeSumMyRowMapper = constructor.newInstance(rowIdx, tradeSum, sheet);
-                tradeSumList.add(tradeSumMyRowMapper.getMappingInstance());
-            }
-        } catch (Exception e) {
-            isSuccess = false;
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
 
         //判断是否已存在当年当月的数量，执行保存
         synchronized ("synchronized_lock".intern()) {
             Integer count = (tradeSumDao.countWithYearMonth(
-                    yearMonthDto.getYear(), yearMonthDto.getMonth()));
-            if ( count!=null && count > 0)
+                    yearMonthDto.getYear(), yearMonthDto.getMonth(), tradeSumClass));
+            if (count != null && count > 0)
                 tradeSumDao.delWithYearMonthRecord(
                         yearMonthDto.getYear(), yearMonthDto.getMonth());
-            repository.save(tradeSumList);
+            isSuccess = isSuccess && repository.save(tradeSumList) != null;
         }
 
         //导入产品类型
         if (productTypeDao.findByProductType(
                 yearMonthDto.getProductType()) == null)
-            productTypeDao.save(
-                    new ProductType(yearMonthDto.getProductType()));
+            isSuccess = isSuccess && productTypeDao.save(
+                    new ProductType(yearMonthDto.getProductType())) !=null;
 
         return isSuccess;
     }
@@ -429,7 +338,6 @@ public class CommonServiceImpl implements CommonService {
     /**
      * 获得未导入的文件列表
      *
-     *
      * @param tableType@return 返回记录的Id与文件的全路径组成的Map
      */
     public Map<Long, String> getUnImportFile(String tableType) {
@@ -460,7 +368,7 @@ public class CommonServiceImpl implements CommonService {
      * @param <T>    数据模型映射的java类
      * @return
      */
-    public <T extends IdEntity> List<T> getModelList(Class<T> tClass) {
+    public <T extends IdEntity> List<T> findAllIdEntityList(Class<T> tClass) {
         if (tClass == null) return null;
 
         List<T> idEntityList = null;
@@ -480,26 +388,184 @@ public class CommonServiceImpl implements CommonService {
     }
 
     /**
-     * 获得productType列表
-     *
+     * 从Access获得过滤后查询条件数据
+     * @param detailCriteriaList
+     * @param sql
+     * @param accessPath
      * @return
      */
-    public Iterable<ProductType> getProductList() {
-        return productTypeDao.findAll();
+    private void
+    queryCriteriaRecord(List<DetailCriteria> detailCriteriaList,
+                        String sql,
+                        String accessPath) {
+
+        if (accessPath == null || detailCriteriaList == null
+                || StringUtils.isBlank(sql)) return;
+
+        Connection conn = getDBConnect(accessPath);
+        Statement statement = null;
+        ResultSet rs = null;
+
+        try {
+            statement = conn.createStatement();
+            rs = statement.executeQuery(sql);
+            while (rs.next()) {
+
+                //取出每条记录中的条件字段，与条件表对应
+                for (DetailCriteria detailCriteria : detailCriteriaList) {
+
+                    String name = rs.getString(detailCriteria.getFieldName());
+                    if (StringUtils.isBlank(name)) {
+                        continue;
+                    }
+                    Object findByMethodRet = detailCriteria.getFindByMethod().invoke(detailCriteria.getDao(), name);
+
+                    Set<String> nameSet = detailCriteria.getRetName();
+                    //如果没有找到相同记录，则把name字段保存到IdEntity引用的对象中
+                    if (findByMethodRet == null) {
+                        nameSet.add(name);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException();
+        } finally {
+            closeDBResource(conn,statement, rs);
+        }
     }
 
     /**
+     * 从Access表中获得明细数据list
+     *
+     * @param tradeDetailMapper     tradeDetailMapper
+     * @param yearMonthDto
+     * @param accessPath
+     * @param sql        sql
+     * @param detailClz        detailClz   @return    */
+    private   <E extends TradeDetail, T extends AbstractTradeDetailRowMapper> List<E>
+    getListFormDB(T tradeDetailMapper, YearMonthDto yearMonthDto,
+                  String accessPath, String sql, Class detailClz) {
+        //查出来然后导入
+        Connection conn = getDBConnect(accessPath);
+        Statement statement = null;
+        ResultSet rs = null;
+        List<E> tradeDetailList = new ArrayList<E>();
+        try {
+            statement = conn.createStatement();
+            rs = statement.executeQuery(sql);
+            while (rs.next()) {
+
+                //中间的这一段采用回调抽出来-------------------------------
+
+                E e = (E) detailClz.cast(detailClz.newInstance());
+                tradeDetailMapper.setTraddDetail(e, rs,
+                        yearMonthDto.getYear(), yearMonthDto.getMonth());
+                tradeDetailList.add(e);
+
+                //中间的这一段采用回调抽出来-------------------------------
+
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        } finally {
+            closeDBResource(conn,statement, rs);
+        }
+        return tradeDetailList;
+    }
+
+    /**
+     * 获得excel数据中的list
+     * @param logEntry
+     * @param tradeSumClass
+     * @param tradeSumRowMapClass
+     * @param yearMonthDto
+     * @param <E>
+     * @param <M>
+     * @return
+     */
+    private <E extends TradeSum, M extends MyRowMapper<E>> List<E>
+    getListFromExcel(Map.Entry<Long, String> logEntry,
+                     Class<E> tradeSumClass,
+                     Class<M> tradeSumRowMapClass,
+                     YearMonthDto yearMonthDto) {
+
+        //待导入的总表记录List
+        List<E> tradeSumList = new ArrayList<E>();
+
+        try {
+            //从excel中取得eList
+            Workbook workbook = Workbook.getWorkbook(new File(logEntry.getValue()));
+            Sheet sheet = workbook.getSheet(0);
+            int rows = sheet.getRows();
+            int rowIdx = sheet.findCell(PRODUCT_XNAME).getRow() + 1;
+
+            //遍历excel
+            for (; rowIdx < rows; rowIdx++) {
+                E tradeSum = tradeSumClass.getConstructor(
+                        Integer.class, Integer.class, String.class)
+                        .newInstance(yearMonthDto.getYear(),
+                                yearMonthDto.getMonth(),
+                                yearMonthDto.getProductType());
+
+                Constructor<M> constructor = tradeSumRowMapClass.getConstructor(
+                        int.class, tradeSumClass, Sheet.class);
+                M tradeSumMyRowMapper = constructor.newInstance(rowIdx, tradeSum, sheet);
+                tradeSumList.add(tradeSumMyRowMapper.getMappingInstance());
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+        return tradeSumList;
+    }
+
+    /**
+     * 建立Access连接
+     *
+     * @param accessPath
+     * @return
+     */
+    private Connection getDBConnect(String accessPath) {
+        Connection conn;//连接参数
+        Properties prop = new Properties();
+        prop.put("charSet", "GBK");
+        prop.put("user", "");
+        prop.put("password", "");
+        String url = "jdbc:odbc:driver={Microsoft Access Driver (*.mdb)};DBQ="
+                + accessPath;
+
+        //创建连接
+        try {
+            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+            conn = DriverManager.getConnection(url, prop);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+        return conn;
+    }
+
+
+    /**
      * 关闭statement与ResultSet
+     *
      * @param statement
      * @param rs
      */
-    private void closeStatementAndResultSet(Statement statement, ResultSet rs) {
+    private void closeDBResource(
+            Connection conn, Statement statement, ResultSet rs) {
         try {
+            if (rs == null) {
+                rs.close();
+            }
             if (statement == null) {
                 statement.close();
             }
-            if (rs == null) {
-                rs.close();
+            if (conn != null) {
+                conn.close();
             }
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
