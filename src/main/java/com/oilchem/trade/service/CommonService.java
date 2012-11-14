@@ -107,8 +107,9 @@ public interface CommonService {
      * @return 返回记录的Id与包的全路径组成的Map
      * @author wei.luo
      * @createTime 2012-11-7
+     * @param tableType
      */
-    Map<Long, String> getUnExtractPackage(String packageType);
+    Map<Long, String> getUnExtractPackage(String tableType);
 
     /**
      * 获得未导入的文件列表

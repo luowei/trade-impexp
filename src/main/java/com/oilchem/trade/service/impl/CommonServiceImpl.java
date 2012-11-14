@@ -27,6 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.*;
 
@@ -107,8 +109,6 @@ public class CommonServiceImpl implements CommonService {
 
     /**
      * 导入查询条件表
-     *
-     *
      *
      * @param sql
      * @param accessPath
@@ -203,6 +203,7 @@ public class CommonServiceImpl implements CommonService {
 
     /**
      * name list 到 实例类 list的转换
+     *
      * @param nameSet
      * @param idEntityClass
      * @param <E>
@@ -243,7 +244,7 @@ public class CommonServiceImpl implements CommonService {
             String accessPath, String sql,
             Class detailClz) {
         if (tradeDetailDao == null || tradeDetailMapper == null
-                || yearMonthDto == null ||StringUtils.isBlank(sql)) return;
+                || yearMonthDto == null || StringUtils.isBlank(sql)) return;
 
         synchronized ("tradeDetail_del_lock") {
             Integer count = tradeDetailDao.countWithYearMonth(
@@ -251,11 +252,11 @@ public class CommonServiceImpl implements CommonService {
             if (count != null && count > 0) {
                 tradeDetailDao.delWithYearMonthRecord(yearMonthDto.getYear(), yearMonthDto.getMonth());
             }
+            List<E> tradeDetailList = getListFormDB(
+                    tradeDetailMapper, yearMonthDto, accessPath, sql, detailClz);
+            repository.save(tradeDetailList);
         }
 
-        List<E> tradeDetailList = getListFormDB(
-                tradeDetailMapper, yearMonthDto, accessPath, sql, detailClz);
-        repository.save(tradeDetailList);
     }
 
 
@@ -284,7 +285,7 @@ public class CommonServiceImpl implements CommonService {
 
         List<E> tradeSumList = getListFromExcel(logEntry,
                 tradeSumClass, tradeSumRowMapClass, yearMonthDto);
-        isSuccess = isSuccess && (tradeSumList!=null && !tradeSumList.isEmpty());
+        isSuccess = isSuccess && (tradeSumList != null && !tradeSumList.isEmpty());
 
 
         //判断是否已存在当年当月的数量，执行保存
@@ -301,7 +302,7 @@ public class CommonServiceImpl implements CommonService {
         if (productTypeDao.findByProductType(
                 yearMonthDto.getProductType()) == null)
             isSuccess = isSuccess && productTypeDao.save(
-                    new ProductType(yearMonthDto.getProductType())) !=null;
+                    new ProductType(yearMonthDto.getProductType())) != null;
 
         return isSuccess;
     }
@@ -309,30 +310,22 @@ public class CommonServiceImpl implements CommonService {
     /**
      * 获得未解压的文件列表
      *
-     * @param packageType 包类型
-     * @return 返回记录的Id与包的全路径组成的Map
+     * @param tableType@return 返回记录的Id与包的全路径组成的Map
      */
-    public Map<Long, String> getUnExtractPackage(String packageType) {
-        if (packageType == null) return null;
+    public Map<Long, String> getUnExtractPackage(String tableType) {
+        if (tableType == null) return null;
 
-        Map<Long, String> packaeMap = new HashMap<Long, String>();
-        List<Log> logList = null;
+        Method findByMethod = null;
+        try {
 
-        //找出未解压的包
-        if (packageType.equals(DETAIL)) {
-            logList = logDao.findByExtractFlagAndTableType(UNEXTRACT_FLAG, DETAIL);
-        } else if (packageType.equals(SUM)) {
-            logList = logDao.findByExtractFlagAndTableType(UNEXTRACT_FLAG, SUM);
+            findByMethod = LogDao.class.getDeclaredMethod(
+                    "findByExtractFlagAndTableType", String.class, String.class);
+
+        } catch (NoSuchMethodException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         }
-
-        //把未解压的包放到map中
-        if (logList != null && !logList.isEmpty()) {
-            for (Log log : logList) {
-                packaeMap.put(log.getId(), log.getUploadPath());
-            }
-        }
-
-        return packaeMap;
+        return getLogMap(tableType, UNEXTRACT_FLAG, findByMethod);
     }
 
     /**
@@ -342,23 +335,61 @@ public class CommonServiceImpl implements CommonService {
      */
     public Map<Long, String> getUnImportFile(String tableType) {
         if (StringUtils.isBlank(tableType)) return null;
+        Method findByMethod = null;
+        try {
 
-        Map<Long, String> fieMap = new HashMap<Long, String>();
+            findByMethod = LogDao.class.getDeclaredMethod(
+                    "findByImportFlagAndTableType", String.class, String.class);
+
+        } catch (NoSuchMethodException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+        return getLogMap(tableType, UNIMPORT_FLAG, findByMethod);
+    }
+
+    /**
+     * 获得logMap
+     *
+     * @param tableType
+     * @param process_flag
+     * @param findByMethod
+     * @return
+     * @throws Exception
+     */
+    private Map<Long, String> getLogMap(String tableType, String process_flag,
+                                        Method findByMethod) {
+
+        if (StringUtils.isBlank(tableType) || StringUtils.isBlank(process_flag))
+            return null;
+
+        Map<Long, String> packaeMap = new HashMap<Long, String>();
         List<Log> logList = null;
+        Object obj = null;
 
-        if (tableType.equals(DETAIL)) {
-            logList = logDao.findByImportFlagAndTableType(UNIMPORT_FLAG, DETAIL);
-        } else if (tableType.equals(SUM)) {
-            logList = logDao.findByImportFlagAndTableType(UNIMPORT_FLAG, SUM);
+        //查找操作
+        try {
+            if (tableType.equals(DETAIL)) {
+                obj = findByMethod.invoke(logDao, process_flag, DETAIL);
+            } else if (tableType.equals(SUM)) {
+                obj = findByMethod.invoke(logDao, process_flag, SUM);
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         }
 
+        if (obj != null)
+            logList = (List<Log>) obj;
+
+        //把记录放到map中
         if (logList != null && !logList.isEmpty()) {
             for (Log log : logList) {
-                fieMap.put(log.getId(), log.getExtractPath());
+                packaeMap.put(log.getId(), log.getUploadPath());
             }
         }
 
-        return fieMap;
+        return packaeMap;
     }
 
     /**
@@ -389,6 +420,7 @@ public class CommonServiceImpl implements CommonService {
 
     /**
      * 从Access获得过滤后查询条件数据
+     *
      * @param detailCriteriaList
      * @param sql
      * @param accessPath
@@ -411,40 +443,28 @@ public class CommonServiceImpl implements CommonService {
             rs = statement.executeQuery(sql);
             while (rs.next()) {
 
-                //取出每条记录中的条件字段，与条件表对应
-                for (DetailCriteria detailCriteria : detailCriteriaList) {
+                fillDetailCriteriaList(detailCriteriaList, rs);
 
-                    String name = rs.getString(detailCriteria.getFieldName());
-                    if (StringUtils.isBlank(name)) {
-                        continue;
-                    }
-                    Object findByMethodRet = detailCriteria.getFindByMethod().invoke(detailCriteria.getDao(), name);
-
-                    Set<String> nameSet = detailCriteria.getRetName();
-                    //如果没有找到相同记录，则把name字段保存到IdEntity引用的对象中
-                    if (findByMethodRet == null) {
-                        nameSet.add(name);
-                    }
-                }
             }
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException();
         } finally {
-            closeDBResource(conn,statement, rs);
+            closeDBResource(conn, statement, rs);
         }
     }
 
     /**
      * 从Access表中获得明细数据list
      *
-     * @param tradeDetailMapper     tradeDetailMapper
+     * @param tradeDetailMapper tradeDetailMapper
      * @param yearMonthDto
      * @param accessPath
-     * @param sql        sql
-     * @param detailClz        detailClz   @return    */
-    private   <E extends TradeDetail, T extends AbstractTradeDetailRowMapper> List<E>
+     * @param sql               sql
+     * @param detailClz         detailClz   @return
+     */
+    private <E extends TradeDetail, T extends AbstractTradeDetailRowMapper> List<E>
     getListFormDB(T tradeDetailMapper, YearMonthDto yearMonthDto,
                   String accessPath, String sql, Class detailClz) {
         //查出来然后导入
@@ -457,27 +477,76 @@ public class CommonServiceImpl implements CommonService {
             rs = statement.executeQuery(sql);
             while (rs.next()) {
 
-                //中间的这一段采用回调抽出来-------------------------------
-
-                E e = (E) detailClz.cast(detailClz.newInstance());
-                tradeDetailMapper.setTraddDetail(e, rs,
-                        yearMonthDto.getYear(), yearMonthDto.getMonth());
-                tradeDetailList.add(e);
-
-                //中间的这一段采用回调抽出来-------------------------------
+                fillTradeDetailList(rs, tradeDetailMapper, yearMonthDto, detailClz, tradeDetailList);
 
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         } finally {
-            closeDBResource(conn,statement, rs);
+            closeDBResource(conn, statement, rs);
         }
         return tradeDetailList;
     }
 
     /**
+     * 填充  tradeDetailList
+     *
+     * @param rs
+     * @param tradeDetailMapper
+     * @param yearMonthDto
+     * @param detailClz
+     * @param tradeDetailList
+     * @param <E>
+     * @param <T>
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws SQLException
+     */
+    private <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
+    void fillTradeDetailList(ResultSet rs, T tradeDetailMapper,
+                             YearMonthDto yearMonthDto, Class detailClz,
+                             List<E> tradeDetailList)
+            throws InstantiationException, IllegalAccessException, SQLException {
+
+        E e = (E) detailClz.cast(detailClz.newInstance());
+        tradeDetailMapper.setTraddDetail(e, rs,
+                yearMonthDto.getYear(), yearMonthDto.getMonth());
+        tradeDetailList.add(e);
+    }
+
+    /**
+     * 填充 detailCriteriaList
+     *
+     * @param detailCriteriaList
+     * @param rs
+     * @throws SQLException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+    private void fillDetailCriteriaList(List<DetailCriteria> detailCriteriaList, ResultSet rs)
+            throws SQLException, IllegalAccessException, InvocationTargetException {
+        //取出每条记录中的条件字段，与条件表对应
+        for (DetailCriteria detailCriteria : detailCriteriaList) {
+
+            String name = rs.getString(detailCriteria.getFieldName());
+            if (StringUtils.isBlank(name)) {
+                continue;
+            }
+            Object findByMethodRet = detailCriteria.getFindByMethod()
+                    .invoke(detailCriteria.getDao(), name);
+
+            Set<String> nameSet = detailCriteria.getRetName();
+            //如果没有找到相同记录，则把name字段保存到IdEntity引用的对象中
+            if (findByMethodRet == null) {
+                nameSet.add(name);
+            }
+        }
+    }
+
+    /**
      * 获得excel数据中的list
+     *
      * @param logEntry
      * @param tradeSumClass
      * @param tradeSumRowMapClass
