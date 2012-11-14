@@ -5,6 +5,7 @@ import com.oilchem.trade.config.ImpExpType;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
+import com.oilchem.trade.service.TradeSumService;
 import com.oilchem.trade.view.dto.YearMonthDto;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,13 +17,13 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Map;
 import java.util.Properties;
 
 import static com.oilchem.trade.config.Config.DETAIL;
+import static com.oilchem.trade.config.Config.SUM;
 import static com.oilchem.trade.config.Config.UNZIP_DETAIL_DIR;
 import static junit.framework.Assert.*;
 
@@ -48,6 +49,9 @@ public class ExtractTest {
     @Autowired
     TradeDetailService tradeDetailService;
 
+    @Autowired
+    TradeSumService tradeSumService;
+
     YearMonthDto yearMonth;
     MockMultipartFile file;
 
@@ -68,16 +72,17 @@ public class ExtractTest {
 
     /**
      * 上传测试
+     *
      * @throws Exception
      */
     @Test
     public void testUploadFile() throws Exception {
-
         assertNotNull(tradeDetailService.uploadFile(file, yearMonth));
     }
 
     /**
      * 解压测试
+     *
      * @throws Exception
      */
     @Test
@@ -97,17 +102,18 @@ public class ExtractTest {
 
     /**
      * 导入Access测试
+     *
      * @throws Exception
      */
     @Test
     public void testImportAccess() throws Exception {
-        Boolean isSuccess = true;
+        Boolean isSuccess = false;
         try {
             Map<Long, String> unImportMap = commonService.getUnImportFile(DETAIL);
-            Connection conn = null;
-            for (Map.Entry<Long, String> entry : unImportMap.entrySet()) {
-                isSuccess = isSuccess && tradeDetailService.importAccess(entry, yearMonth, createAccessConnect(entry.getValue()));
-            }
+            if (unImportMap != null)
+                for (Map.Entry<Long, String> entry : unImportMap.entrySet()) {
+                    isSuccess = isSuccess && tradeDetailService.importAccess(entry, yearMonth);
+                }
             assertTrue(isSuccess);
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,24 +122,28 @@ public class ExtractTest {
 
     }
 
-    private Connection createAccessConnect(String accessPath) {
-        Connection conn;//连接参数
-        Properties prop = new Properties();
-        prop.put("charSet", "GBK");
-        prop.put("user", "");
-        prop.put("password", "");
-        String url = "jdbc:odbc:driver={Microsoft Access Driver (*.mdb)};DBQ="
-                + accessPath;
+    /**
+     * 导入excel
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testImportExcel() throws Exception {
 
-        //创建连接
+        Boolean isSuccess = false;
         try {
-            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            conn = DriverManager.getConnection(url, prop);
+            String excelSource = "d:/aaaa/进口20121有机化工.xls";
+            Map<Long, String> unImportMap = commonService.getUnImportFile(SUM);
+            if (unImportMap != null)
+                for (Map.Entry<Long, String> logEntry : unImportMap.entrySet()) {
+                    isSuccess = tradeSumService.importExcel(logEntry, yearMonth);
+                }
+            assertTrue(isSuccess);
         } catch (Exception e) {
-            logger.error(e.getMessage(),e);
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            assertTrue(isSuccess);
         }
-        return conn;
+
     }
 
 

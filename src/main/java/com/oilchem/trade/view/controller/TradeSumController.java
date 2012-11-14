@@ -5,9 +5,12 @@ import com.oilchem.trade.domain.ExpTradeSum;
 import com.oilchem.trade.domain.ImpTradeSum;
 import com.oilchem.trade.domain.ProductType;
 import com.oilchem.trade.service.CommonService;
+import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeSumService;
 import com.oilchem.trade.view.dto.CommonDto;
 import com.oilchem.trade.view.dto.YearMonthDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -34,6 +37,9 @@ public class TradeSumController extends CommonController {
 
     @Autowired
     TradeSumService tradeSumService;
+
+    @Autowired
+    TaskService taskService;
 
     /**
      * 获得进口总表的一页数据
@@ -82,16 +88,26 @@ public class TradeSumController extends CommonController {
      */
     @RequestMapping("/importsum")
     public String importTradeSum(@RequestParam("file") MultipartFile file, String productType,
-                                 Integer impExpType,Model model,
+                                 Integer impExpType, Model model,
                                  YearMonthDto yearMonthDto) {
         Boolean validate = (file.getOriginalFilename().endsWith(".rar") ||
-                file.getOriginalFilename().endsWith(".zip")) && yearMonthDto!=null;
-        if (!validate) return  "manage/trade/import";
+                file.getOriginalFilename().endsWith(".zip")) && yearMonthDto != null;
+        if (!validate) return "manage/trade/import";
 
-        String uploadUrl = tradeSumService.uploadFile(file, yearMonthDto);
+        String uploadUrl = null;
+        StringBuffer message = new StringBuffer();
+        try {
+            uploadUrl = tradeSumService.uploadFile(file, yearMonthDto);
+            message.append("文件已上传到：" + Config.UPLOAD_DETAILZIP_DIR +
+                    uploadUrl.substring(uploadUrl.lastIndexOf("/")));
+            taskService.unSumPackageAndImportTask(yearMonthDto);
 
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            message.append("<br/>文件上传或数据导入发生了错误");
+        }
 
-        model.addAttribute("message", Config.UPLOAD_SUMZIP_DIR+uploadUrl.substring(uploadUrl.lastIndexOf("/")));
+        model.addAttribute("message",message.toString());
 
         return "manage/trade/import";
     }

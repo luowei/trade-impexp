@@ -35,7 +35,9 @@ public class BaseDaoImpl<T extends IdEntity> implements BaseDao<T> {
      * @return
      */
     public Boolean delWithYearMonthRecord(Integer year, Integer month) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+//        em.createNativeQuery("delete from ");
+
+        return null;
     }
 
     /**
@@ -47,4 +49,5 @@ public class BaseDaoImpl<T extends IdEntity> implements BaseDao<T> {
     public Integer countWithYearMonth(Integer year, Integer month) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
 }

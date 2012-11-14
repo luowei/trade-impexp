@@ -15,4 +15,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_import_sum")
 public class ImpTradeSum extends TradeSum {
+
+    public ImpTradeSum() {
+    }
+
+    public ImpTradeSum(Integer year,
+                       Integer month,
+                       String productType) {
+        super(year, month, productType);
+    }
 }

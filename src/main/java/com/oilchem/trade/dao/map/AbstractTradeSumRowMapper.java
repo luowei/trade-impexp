@@ -2,10 +2,13 @@ package com.oilchem.trade.dao.map;
 
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import jxl.Sheet;
+import org.apache.commons.lang3.CharUtils;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 
 import static com.oilchem.trade.config.MapperConfig.*;
+import static org.springframework.util.StringUtils.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,26 +23,72 @@ public class AbstractTradeSumRowMapper<E extends TradeSum> implements MyRowMappe
     int rowIdx;
     E e;
 
+    public AbstractTradeSumRowMapper() {
+    }
+
 
     public AbstractTradeSumRowMapper(int rowIdx, E e, Sheet sheet) {
         this.sheet = sheet;
         this.rowIdx = rowIdx;
 
         e.setProductName(getContents(PRODUCT_XNAME));
-        e.setNumMonth(BigDecimal.valueOf(Double.parseDouble(getContents(NUM_MONTH))));
-        e.setNumSum(BigDecimal.valueOf(Double.parseDouble(getContents(NUM_SUM))));
-        e.setMoneyMonth(BigDecimal.valueOf(Double.parseDouble(getContents(MONTH_MONEY))));
-        e.setMoneySum(BigDecimal.valueOf(Double.parseDouble(getContents(MONTH_SUM))));
-        e.setAvgPriceMonth(BigDecimal.valueOf(Double.parseDouble(getContents(AVG_PRICE_MONTH))));
-        e.setAvgPriceSum(BigDecimal.valueOf(Double.parseDouble(getContents(AVG_PRICE_SUM))));
-        e.setNumPreMonthIncRadio(BigDecimal.valueOf(Double.parseDouble(getContents(NUM_PREMONTH_INCRADIO))));
-        e.setNumPreYearSameMonthIncRatio(BigDecimal.valueOf(Double.parseDouble(getContents(NUM_PREYEARSAMEMONTH_INCRADIO))));
-        e.setNumPreYearSameQuarterInrRatio(BigDecimal.valueOf(Double.parseDouble(getContents(NUM_PREYEARSAMEQUARTER_INCRATIO))));
+        e.setNumMonth(getDecimal(NUM_MONTH));
+        e.setNumSum(getDecimal(NUM_SUM));
+        e.setMoneyMonth(getDecimal(MONTH_MONEY));
+        e.setMoneySum(getDecimal(MONTH_SUM));
+        e.setAvgPriceMonth(getDecimal(AVG_PRICE_MONTH));
+        e.setAvgPriceSum(getDecimal(AVG_PRICE_SUM));
+        e.setNumPreMonthIncRadio(getDecimal(NUM_PREMONTH_INCRADIO));
+        e.setNumPreYearSameMonthIncRatio(getDecimal(NUM_PREYEARSAMEMONTH_INCRADIO));
+        e.setNumPreYearSameQuarterInrRatio(getDecimal(NUM_PREYEARSAMEQUARTER_INCRATIO));
         this.e = e;
     }
 
+    /**
+     * 获得decimal数据
+     *
+     * @param fieldName
+     * @return
+     */
+    private BigDecimal getDecimal(String fieldName) {
+        if (fieldName == null || fieldName.equals(""))
+            return null;
+
+        String content = getContents(fieldName);
+        if (content == null || content.equals(""))
+            return null;
+
+
+        CharUtils.isAsciiAlphanumeric('$');  //$%-
+
+        return BigDecimal.valueOf(
+                Double.parseDouble(setContent(content)
+                        .delSymbols(",").delSymbols("$")
+                        .delSymbols("%").delSymbols("-")
+                        .delSymbols("[").delSymbols("]")
+                        .getRetStr()
+                )
+        );
+    }
+
+
     private String getContents(String name) {
         return sheet.getCell(sheet.findCell(name).getColumn(), rowIdx).getContents();
+    }
+
+    //特殊字符串处理
+    private String sourceString;
+    private AbstractTradeSumRowMapper setContent(String sourceString) {
+        this.sourceString = sourceString;
+        return this;
+    }
+    private String getRetStr() {
+        return sourceString;
+    }
+    private AbstractTradeSumRowMapper delSymbols(String symbol) {
+        if (sourceString != null)
+            this.sourceString = deleteAny(sourceString, symbol);
+        return this;
     }
 
     public E getMappingInstance() {

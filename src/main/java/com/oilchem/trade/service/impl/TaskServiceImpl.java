@@ -66,32 +66,12 @@ public class TaskServiceImpl implements TaskService {
                 //导入数据
                 Map<Long, String> unImportMap = commonService.getUnImportFile(DETAIL);
                 for (Map.Entry<Long, String> entry : unImportMap.entrySet()) {
-                    tradeDetailService.importAccess(entry, yearMonthDto, createAccessConnect(entry.getValue()));
+                    tradeDetailService.importAccess(entry, yearMonthDto);
                 }
             }
         };
         new Timer().schedule(task, delay);
 
-    }
-
-    private Connection createAccessConnect(String accessPath) {
-        Connection conn;//连接参数
-        Properties prop = new Properties();
-        prop.put("charSet", "GBK");
-        prop.put("user", "");
-        prop.put("password", "");
-        String url = "jdbc:odbc:driver={Microsoft Access Driver (*.mdb)};DBQ="
-                + accessPath;
-
-        //创建连接
-        try {
-            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            conn = DriverManager.getConnection(url, prop);
-        } catch (Exception e) {
-            logger.error(e.getMessage(),e);
-            throw new RuntimeException(e);
-        }
-        return conn;
     }
 
     /**
@@ -113,7 +93,7 @@ public class TaskServiceImpl implements TaskService {
                 //导入数据
                 Map<Long, String> unImportMap = commonService.getUnImportFile(SUM);
                 for (Map.Entry<Long, String> entry : unImportMap.entrySet()) {
-                    tradeSumService.importExcel(entry.getValue(), yearMonthDto);
+                    tradeSumService.importExcel(entry, yearMonthDto);
                 }
 
             }

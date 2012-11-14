@@ -4,6 +4,7 @@ import com.oilchem.trade.domain.abstrac.IdEntity;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 中间参数据类
@@ -19,7 +20,7 @@ public class DetailCriteria{
     private Class daoClass;
     private Method findByMethod;
     private Object dao;
-    private List<String> retName;
+    private Set<String> retName;
 
     public DetailCriteria() {
     }
@@ -34,7 +35,7 @@ public class DetailCriteria{
     }
 
     public DetailCriteria(String fieldName, Class idEntityClass, Class daoClass,
-                          Method findByMethod, Object dao, List<String> retName) {
+                          Method findByMethod, Object dao, Set<String> retName) {
         this.fieldName = fieldName;
         this.idEntityClass = idEntityClass;
         this.daoClass = daoClass;
@@ -83,11 +84,11 @@ public class DetailCriteria{
         this.dao = dao;
     }
 
-    public List<String> getRetName() {
+    public Set<String> getRetName() {
         return retName;
     }
 
-    public void setRetName(List<String> retName) {
+    public void setRetName(Set<String> retName) {
         this.retName = retName;
     }
 }

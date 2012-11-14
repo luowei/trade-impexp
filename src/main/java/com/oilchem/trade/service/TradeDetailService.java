@@ -43,19 +43,12 @@ public interface TradeDetailService {
     /**
      * 导入Access文件
      *
-     *
-     *
-     *
-     *
-     *
-     *
      * @param logEntry
      * @param yearMonthDto                  年月
-     * @param conn
      * @return
      */
     Boolean importAccess(Map.Entry<Long, String> logEntry,
-                         YearMonthDto yearMonthDto, Connection conn);
+                         YearMonthDto yearMonthDto);
 
 
     /**

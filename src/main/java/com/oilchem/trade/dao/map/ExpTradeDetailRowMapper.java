@@ -14,9 +14,4 @@ import java.sql.SQLException;
  * To change this template use File | Settings | File Templates.
  */
 public class ExpTradeDetailRowMapper extends AbstractTradeDetailRowMapper<ExpTradeDetail> {
-
-    @Override
-    public ExpTradeDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return super.mapRow(rs, rowNum);
-    }
 }

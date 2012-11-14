@@ -16,9 +16,4 @@ import java.sql.SQLException;
  */
 public class ImpTradeDetailRowMapper
         extends AbstractTradeDetailRowMapper<ImpTradeDetail> {
-
-    @Override
-    public ImpTradeDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return super.mapRow(rs, rowNum);
-    }
 }

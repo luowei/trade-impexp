@@ -10,7 +10,6 @@ import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.util.DetailCriteria;
 import com.oilchem.trade.view.dto.YearMonthDto;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Connection;
@@ -51,15 +50,16 @@ public interface CommonService {
     /**
      * 导入查询条件表
      *
-     * @param jdbcTemplate
+     *
+     *
      * @param sql
      * @param connection
      * @return
      * @author wei.luo
      * @createTime 2012-11-7
      */
-    <E extends IdEntity> Boolean
-    importCriteriaTab(JdbcTemplate jdbcTemplate, String sql, Connection connection);
+    <E extends IdEntity> void
+    importCriteriaTab(String sql, Connection connection);
 
     /**
      * 过滤条件
@@ -69,7 +69,7 @@ public interface CommonService {
      * @param conn
      * @return
      */
-    public <E extends IdEntity> void
+    public void
     queryCriteriaRecord(List<DetailCriteria> detailCriteriaList,
                         String sql,
                         Connection conn);
@@ -77,37 +77,41 @@ public interface CommonService {
     /**
      * 导入贸易明细
      *
+     *
+     *
+     *
+     *
      * @param tradeDetailDao
-     * @param jdbcTemplate      jdbcTemplate
      * @param tradeDetailMapper tradeDetailMapper
      * @param year              year
      * @param month             month
-     * @param sql               sql      @return
-     * @author wei.luo
+     * @param conn
+     * @param sql               sql      @return  @author wei.luo
+     * @param detailClz
      * @createTime 2012-11-7
      */
     <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
-    Boolean importTradeDetail(
+    void importTradeDetail(
             CrudRepository repository,
             BaseDao<E> tradeDetailDao,
-            JdbcTemplate jdbcTemplate,
             T tradeDetailMapper,
             Integer year,
             Integer month,
-            String sql);
+            Connection conn, String sql,
+            Class detailClz);
 
     /**
      * 导入Excel
      *
+     *
+     *
+     *
      * @param repository
      * @param tradeSumDao
-     * @param excelSource         excel文件源目录
-     * @param tradeSumClass       tradeSum Class
+     * @param logEntry
+     *@param tradeSumClass       tradeSum Class
      * @param tradeSumRowMapClass tradeSumRowMap Class
-     * @param year                数据所在年
-     * @param month               数据所在月
-     * @param productType         产品类型
-     * @return 成功或失败
+     * @param yearMonthDto    @return 成功或失败
      * @author wei.luo
      * @createTime 2012-11-7
      */
@@ -115,12 +119,9 @@ public interface CommonService {
     Boolean importExcel(
             CrudRepository repository,
             BaseDao<E> tradeSumDao,
-            String excelSource,
+            Map.Entry<Long, String> logEntry,
             Class<E> tradeSumClass,
-            Class<M> tradeSumRowMapClass,
-            Integer year,
-            Integer month,
-            String productType);
+            Class<M> tradeSumRowMapClass, YearMonthDto yearMonthDto);
 
     /**
      * 获得未解压的文件列表
@@ -134,12 +135,12 @@ public interface CommonService {
     /**
      * 获得未导入的文件列表
      *
-     * @param fileType 文件类型
-     * @return 返回记录的Id与文件的全路径组成的Map
+     *
+     * @param tableType@return 返回记录的Id与文件的全路径组成的Map
      * @author wei.luo
      * @createTime 2012-11-7
      */
-    Map<Long, String> getUnImportFile(String fileType);
+    Map<Long, String> getUnImportFile(String tableType);
 
     /**
      * 获得Model的list列表

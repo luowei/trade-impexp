@@ -52,7 +52,8 @@ create table t_country(
 --进口明细表
 create table t_import_detail(
 	id bigint identity(1,1) not null, --主键的关键字primary key
-	year_month nvarchar(20) not null, --进口年月--
+	col_year int,      --年
+	col_year int,      --月
 	single_year int check(single_year>2000 and single_year<2500), --年
 	single_month int check(single_month>0 and single_month<13), --月
 	product_code nvarchar(20) not null, --产品代码
@@ -115,7 +116,8 @@ go
 --出口明细表
 create table t_export_detail(
 	id bigint identity(1,1) not null, --主键的关键字primary key
-	year_month nvarchar(20) not null, --进口年月--
+	col_year int,      --年
+	col_year int,      --月
 	single_year int check(single_year>2000 and single_year<2500), --年
 	single_moth int check(single_moth>0 and single_moth<13), --月
 	product_code nvarchar(20) not null, --产品代码
@@ -181,7 +183,8 @@ go
 --进口总表
 create table t_import_sum(
 	id bigint identity(1,1) not null, --主键的关键字primary key--
-	year_month nvarchar(20) not null, --进口年月--
+	col_year int,      --年
+	col_year int,      --月
 	product_type nvarchar(20) not null, --产品类型
 	product_name nvarchar(50) not null, --产品名称
 	num_month numeric(20,3) not null, --当月数量
@@ -212,7 +215,8 @@ go
 --出口总表---
 create table t_export_sum(
 	id bigint identity(1,1) not null, --主键的关键字primary key--
-	year_month nvarchar(20) not null, --进口年月--
+	col_year int,      --年
+	col_year int,      --月
 	product_type nvarchar(20) not null, --产品类型
 	product_name nvarchar(50) not null, --产品名称
 	num_month numeric(20,3) not null, --当月数量

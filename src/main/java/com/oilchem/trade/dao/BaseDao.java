@@ -35,4 +35,5 @@ public interface BaseDao<T extends IdEntity> {
      * @return
      */
     Integer countWithYearMonth(Integer year, Integer month);
+
 }

@@ -18,10 +18,10 @@ import java.util.Date;
 //@DiscriminatorColumn(name="tradeSumType",discriminatorType=DiscriminatorType.STRING)
 public class TradeSum extends IdEntity implements Serializable {
     //进出口年
-    @Column(name = "year")
+    @Column(name = "col_year")
     private Integer year;
     //进出口月
-    @Column(name = "month")
+    @Column(name = "col_month")
     private Integer month;
     //产品类型
     @Column(name = "product_type")
@@ -48,7 +48,7 @@ public class TradeSum extends IdEntity implements Serializable {
     @Column(name = "avgprice_sum")
     private BigDecimal avgPriceSum;
     //与上月数量增长比
-    @Column(name = "num_premonth_incradio")
+    @Column(name = "num_premonth_incratio")
     private BigDecimal numPreMonthIncRadio;
     //与上年同月数量增长比
     @Column(name = "num_preyearsamemonth_incratio")
@@ -56,6 +56,15 @@ public class TradeSum extends IdEntity implements Serializable {
     //与上年同期数量增长比
     @Column(name = "num_preyearsamequarter_incratio")
     private BigDecimal numPreYearSameQuarterInrRatio;
+
+    public TradeSum() {
+    }
+
+    public TradeSum(Integer year, Integer month, String productType) {
+        this.year = year;
+        this.month = month;
+        this.productType = productType;
+    }
 
     public Integer getYear() {
         return year;

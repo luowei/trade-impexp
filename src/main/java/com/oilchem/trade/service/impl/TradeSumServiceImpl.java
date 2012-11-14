@@ -5,6 +5,7 @@ import com.oilchem.trade.config.ImpExpType;
 import com.oilchem.trade.dao.ExpTradeSumDao;
 import com.oilchem.trade.dao.ImpTradeSumDao;
 import com.oilchem.trade.dao.LogDao;
+import com.oilchem.trade.dao.ProductTypeDao;
 import com.oilchem.trade.dao.map.ExpTradeSumRowMapper;
 import com.oilchem.trade.dao.map.ImpTradeSumRowMapper;
 import com.oilchem.trade.dao.spec.Spec;
@@ -49,6 +50,9 @@ public class TradeSumServiceImpl implements TradeSumService {
     @Resource
     ExpTradeSumDao expTradeSumDao;
     @Resource
+    ProductTypeDao productTypeDao;
+
+    @Resource
     LogDao logDao;
 
     /**
@@ -72,33 +76,37 @@ public class TradeSumServiceImpl implements TradeSumService {
     /**
      * 导入Excel
      *
-     * @param excelSource     excel文件全名，含绝对路径
+     *
+     *
+     * @param logEntry
      * @param yearMonthDto       年月，产品类型
      * @return
      */
-    public Boolean importExcel(String excelSource, YearMonthDto yearMonthDto) {
-
+    public Boolean importExcel(Map.Entry<Long, String> logEntry, YearMonthDto yearMonthDto) {
+        if(logEntry == null && yearMonthDto == null)
+            return false;
         Boolean isSuccess = true;
 
-        Boolean validate = StringUtils.isNotBlank(excelSource) &&
-                yearMonthDto!=null;
-        if(!validate) return false;
-
+        //进口
         if (yearMonthDto.getImpExpType().equals(ImpExpType.进口.getCode())) {
-            isSuccess = isSuccess & commonService.importExcel(impTradeSumDao, impTradeSumDao, excelSource,
-                    ImpTradeSum.class, ImpTradeSumRowMapper.class,
-                    yearMonthDto.getYear(),yearMonthDto.getMonth(), yearMonthDto.getProductType());
-
-            //更新yearMonth
+            isSuccess = isSuccess & commonService.importExcel(
+                    impTradeSumDao,
+                    impTradeSumDao,
+                    logEntry,
+                    ImpTradeSum.class,
+                    ImpTradeSumRowMapper.class,
+                    yearMonthDto);
         }
 
-
+        //出口
         else if (yearMonthDto.getImpExpType().equals(ImpExpType.出口.getCode())) {
-            isSuccess = isSuccess & commonService.importExcel(expTradeSumDao, expTradeSumDao, excelSource,
-                    ExpTradeSum.class, ExpTradeSumRowMapper.class,
-                    yearMonthDto.getYear(),yearMonthDto.getMonth(), yearMonthDto.getProductType());
-
-            //更新yearMonth
+            isSuccess = isSuccess & commonService.importExcel(
+                    expTradeSumDao,
+                    expTradeSumDao,
+                    logEntry,
+                    ExpTradeSum.class,
+                    ExpTradeSumRowMapper.class,
+                    yearMonthDto);
         }
 
         return isSuccess;
@@ -112,7 +120,9 @@ public class TradeSumServiceImpl implements TradeSumService {
      * @param pageRequest
      * @return
      */
-    public <T extends TradeSum> Page<T> findWithCriteria(T tradeSum, CommonDto commonDto, PageRequest pageRequest) {
+    public <T extends TradeSum> Page<T> findWithCriteria(
+            T tradeSum, CommonDto commonDto,
+            PageRequest pageRequest) {
 
         if(tradeSum instanceof ImpTradeSum){
             Page<ImpTradeSum> pageImpDetail = impTradeSumDao
@@ -137,12 +147,12 @@ public class TradeSumServiceImpl implements TradeSumService {
     }
 
     @Override
-    public String uploadFile(MultipartFile file, YearMonthDto yearMonthDto) {
+    public String uploadFile(MultipartFile file,
+                             YearMonthDto yearMonthDto) {
 
-        //更新年月,产品类型
-        //...
         yearMonthDto.setTableType(Config.SUM);
-        return commonService.uploadFile(file,UPLOAD_SUMZIP_DIR, yearMonthDto);
+        return commonService.uploadFile(file,
+                UPLOAD_SUMZIP_DIR, yearMonthDto);
     }
 
 }

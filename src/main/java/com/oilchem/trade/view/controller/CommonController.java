@@ -3,6 +3,8 @@ package com.oilchem.trade.view.controller;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.util.PageUtil;
 import com.oilchem.trade.view.dto.CommonDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -27,6 +29,8 @@ import java.util.Map;
  */
 @Controller
 public class CommonController {
+
+    Logger logger = LoggerFactory.getLogger(getClass());
 
 //    @InitBinder
 //    protected void ininBinder(WebDataBinder binder){

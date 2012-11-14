@@ -13,10 +13,13 @@
         <property name="jdbcUrl" value="${db.jdbcUrl}"/>
         <property name="user" value="${db.username}"/>
         <property name="password" value="${db.password}"/>
-        <property name="minPoolSize" value="5"/>
-        <property name="maxPoolSize" value="20"/>
+        <property name="minPoolSize" value="10"/>
+        <property name="maxPoolSize" value="50"/>
+        <property name="unreturnedConnectionTimeout" value="1800"/>
+        <property name="maxConnectionAge" value="3600"/>
+        <property name="checkoutTimeout" value="7200"/>
         <!-- 最大空闲时间,3600秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
-        <property name="maxIdleTime" value="3600" />
+        <property name="maxIdleTime" value="36000" />
         <property name="preferredTestQuery" value="select now()"/>
         <property name="testConnectionOnCheckin" value="true"/>
     </bean>

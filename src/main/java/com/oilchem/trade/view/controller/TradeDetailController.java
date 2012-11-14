@@ -30,8 +30,6 @@ import java.util.List;
 @RequestMapping("/manage/trade")
 public class TradeDetailController extends CommonController {
 
-    Logger logger = LoggerFactory.getLogger(getClass());
-
     @Autowired
     CommonService commonService;
 

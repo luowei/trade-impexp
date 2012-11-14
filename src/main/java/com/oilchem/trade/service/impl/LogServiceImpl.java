@@ -76,10 +76,10 @@ public class LogServiceImpl implements LogService {
         } else if (yearMonthDto.getImpExpType().equals(ImpExpType.出口.getCode())) {
             log.setTradeType(ImpExpType.出口.getMessage());
         }
-        log.setLogTime(new Date());
         log.setYear(yearMonthDto.getYear());
         log.setMonth(yearMonthDto.getMonth());
         log.setUploadFlg(UPLOADING_FLAG);
+        log.setLogTime(new Date());
         logDao.save(log);
     }
 
@@ -92,11 +92,11 @@ public class LogServiceImpl implements LogService {
      */
     @AfterReturning(pointcut = "cutUploadFile(file,readDir,yearMonthDto)", returning = "uploadUrl")
     void logUploadedFile(MultipartFile file, String readDir, YearMonthDto yearMonthDto, String uploadUrl) {
-        log.setLogTime(new Date());
         log.setUploadPath(uploadUrl);
         log.setUploadPath(readDir + uploadUrl.substring(uploadUrl.lastIndexOf("/")));
         log.setUploadFlg(UPLOADED_FLAG);
         log.setExtractFlag(UNEXTRACT_FLAG);
+        log.setLogTime(new Date());
         logDao.save(log);
         //更新日志 .. 上传完毕
     }
@@ -109,9 +109,9 @@ public class LogServiceImpl implements LogService {
      */
     @AfterThrowing("cutUploadFile(file,readDir,yearMonthDto)")
     void logUploadFileThrowing(MultipartFile file, String readDir, YearMonthDto yearMonthDto) {
-        log.setLogTime(new Date());
         log.setUploadFlg(UPLOAD_FAILD);
         log.setErrorOccur(UPLOAD_FAILD);
+        log.setLogTime(new Date());
         logDao.save(log);
     }
 
@@ -139,8 +139,8 @@ public class LogServiceImpl implements LogService {
     @Before("cutUnpackageFile(logEntry,unPackageDir)")
     void logUnpackagingFile(Map.Entry<Long, String> logEntry, String unPackageDir) {
         log = logDao.findOne(logEntry.getKey());
-        log.setLogTime(new Date());
         log.setExtractFlag(EXTRACTING_FLAG);
+        log.setLogTime(new Date());
         logDao.save(log);
     }
 
@@ -154,94 +154,147 @@ public class LogServiceImpl implements LogService {
             returning = "unPackagePath")
     void logUnpackagedFile(Map.Entry<Long, String> logEntry, String unPackageDir, String unPackagePath) {
         log = logDao.findOne(logEntry.getKey());
-        log.setLogTime(new Date());
         log.setExtractFlag(EXTRACTED_FLAG);
         log.setExtractPath(unPackagePath);
         log.setImportFlag(UNIMPORT_FLAG);
+        log.setLogTime(new Date());
         logDao.save(log);
     }
 
     /**
      * 解压发生异常
-     *
      * @param logEntry
      * @param unPackageDir
      */
     @AfterThrowing("cutUnpackageFile(logEntry,unPackageDir)")
     void logUnpackageFileThrowing(Map.Entry<Long, String> logEntry, String unPackageDir) {
         log = logDao.findOne(logEntry.getKey());
-        log.setLogTime(new Date());
         log.setExtractFlag(EXTRACT_FAILD);
         log.setImportFlag(UNIMPORT_FLAG);
+        log.setLogTime(new Date());
         logDao.save(log);
     }
 
 
     /**
      * 导入详细表日志记录切入点
-     *
      * @param logEntry     logEntry
      * @param yearMonthDto yearMonthDto
      */
     @Pointcut(value = "execution(" +
             "Boolean com.oilchem.trade.service.impl.TradeDetailServiceImpl.importAccess(" +
             "java.util.Map.Entry<Long, String>," +
-            "com.oilchem.trade.view.dto.YearMonthDto," +
-            "java.sql.Connection))" +
-            "&& args(logEntry,yearMonthDto,conn)",
-            argNames = "logEntry,yearMonthDto,conn")
+            "com.oilchem.trade.view.dto.YearMonthDto))" +
+            "&& args(logEntry,yearMonthDto)",
+            argNames = "logEntry,yearMonthDto")
     void cutImportTradeDetail(Map.Entry<Long, String> logEntry,
-                              YearMonthDto yearMonthDto,
-                              Connection conn) {
+                              YearMonthDto yearMonthDto) {
     }
 
-    @Before("cutImportTradeDetail(logEntry,yearMonthDto,conn)")
+    /**
+     * 导入详细表数据时更新日志
+     * @param logEntry
+     * @param yearMonthDto
+     */
+    @Before("cutImportTradeDetail(logEntry,yearMonthDto)")
     void logImportingTradeDetail(Map.Entry<Long, String> logEntry,
-                                 YearMonthDto yearMonthDto,
-                                 Connection conn) {
+                                 YearMonthDto yearMonthDto) {
+        log = logDao.findOne(logEntry.getKey());
+        log.setImportFlag(IMPORTING_FLAG);
+        log.setLogTime(new Date());
+        logDao.save(log);
 
     }
 
     /**
-     * 更新日志与更新年月
-     *
+     * 成功导入详细表后更新日志
      * @param logEntry
      * @param yearMonthDto
      * @param isSuccess
      */
-    @AfterReturning(pointcut = "cutImportTradeDetail(logEntry,yearMonthDto,conn)",
+    @AfterReturning(pointcut = "cutImportTradeDetail(logEntry,yearMonthDto)",
             returning = "isSuccess")
     void logImportedTradeDetail(Map.Entry<Long, String> logEntry,
                                 YearMonthDto yearMonthDto,
-                                Connection conn,
                                 Boolean isSuccess) {
-
-        //关闭access连接
-        try {
-            if (conn != null) {
-                conn.close();
-            }
-        } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
+        log = logDao.findOne(logEntry.getKey());
+        log.setImportFlag(IMPORTED_FLAG);
+        log.setLogTime(new Date());
+        logDao.save(log);
     }
 
-    @AfterThrowing("cutImportTradeDetail(logEntry,yearMonthDto,conn)")
+
+
+    @AfterThrowing("cutImportTradeDetail(logEntry,yearMonthDto)")
     void logImportTradeDetailThrowing(Map.Entry<Long, String> logEntry,
-                                      YearMonthDto yearMonthDto,
-                                      Connection conn) {
-        //关闭access连接
-        try {
-            if (conn != null) {
-                conn.close();
-            }
-        } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
+                                      YearMonthDto yearMonthDto) {
+        log = logDao.findOne(logEntry.getKey());
+        log.setImportFlag(IMPORT_FAILD);
+        log.setLogTime(new Date());
+        logDao.save(log);
+    }
+
+    /**
+     * 导入excel时记录日志
+     * @param logEntry
+     * @param yearMonthDto
+     * @return
+     */
+    @Pointcut(value = "execution(Boolean com.oilchem.trade.service.impl.TradeSumServiceImpl.importExcel(" +
+            "java.util.Map.Entry<Long, String>," +
+            "com.oilchem.trade.view.dto.YearMonthDto))" +
+            "&& args(logEntry,yearMonthDto)"
+            ,argNames = "logEntry,yearMonthDto")
+    void cutImportTradeSum(Map.Entry<Long, String> logEntry, YearMonthDto yearMonthDto){
+    }
+
+    /**
+     * 导入Excel前更新日志
+     * @param logEntry
+     * @param yearMonthDto
+     */
+    @Before("cutImportTradeSum(logEntry,yearMonthDto)")
+    void logImportingTradeSum(Map.Entry<Long, String> logEntry,
+                              YearMonthDto yearMonthDto){
+        log = logDao.findOne(logEntry.getKey());
+        log.setImportFlag(IMPORTING_FLAG);
+        log.setLogTime(new Date());
+        logDao.save(log);
 
     }
+
+    /**
+     * 导入Excel后更新报日志
+     * @param logEntry
+     * @param yearMonthDto
+     * @param isSuccess
+     */
+    @AfterReturning(pointcut = "cutImportTradeSum(logEntry,yearMonthDto)",
+            returning = "isSuccess")
+    void logImportedTradeSum(Map.Entry<Long, String> logEntry, YearMonthDto yearMonthDto,Boolean isSuccess){
+        log = logDao.findOne(logEntry.getKey());
+        log.setImportFlag(IMPORTED_FLAG);
+        log.setLogTime(new Date());
+        logDao.save(log);
+    }
+
+    /**
+     * 导入Excel发生异常更新日志
+     * @param logEntry
+     * @param yearMonthDto
+     */
+    @AfterThrowing("cutImportTradeSum(logEntry,yearMonthDto)")
+    void logImportTradeSumThrowing(Map.Entry<Long, String> logEntry, YearMonthDto yearMonthDto){
+        log = logDao.findOne(logEntry.getKey());
+        log.setImportFlag(IMPORT_FAILD);
+        log.setLogTime(new Date());
+        logDao.save(log);
+    }
+
+
+
+
+
 
 
     /**

@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Administrator
@@ -28,11 +30,13 @@ public interface TradeSumService {
      * 导入Excel
      *
      *
-     * @param excelSource     excel文件全名，含绝对路径
+     *
+     *
+     * @param logEntry
      * @param yearMonthDto              年月,产品类型
      * @return
      */
-    Boolean importExcel(String excelSource, YearMonthDto yearMonthDto);
+    Boolean importExcel(Map.Entry<Long, String> logEntry, YearMonthDto yearMonthDto);
 
     /**
      * 根据条件查询总表记录

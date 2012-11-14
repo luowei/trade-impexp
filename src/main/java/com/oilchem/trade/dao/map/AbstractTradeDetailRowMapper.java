@@ -25,7 +25,8 @@ public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implem
     Logger log = LoggerFactory.getLogger(tClass);
 
     public TradeDetail setTraddDetail(TradeDetail tradeDetail,
-                                      ResultSet rs) throws SQLException {
+                                      ResultSet rs,
+                                      Integer year, Integer month) throws SQLException {
         //产品代码
         tradeDetail.setProductCode(rs.getString(PRODUCT_CODE));
         //产品名称
@@ -48,6 +49,10 @@ public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implem
         tradeDetail.setAmount(rs.getBigDecimal(AMOUNT));
         //金额
         tradeDetail.setAmountMoney(rs.getBigDecimal(ACOUNTMONEY));
+        //年
+        tradeDetail.setYear(year);
+        //月
+        tradeDetail.setMonth(month);
         return tradeDetail;
     }
 
@@ -56,11 +61,10 @@ public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implem
         T t = null;
         try {
             t = tClass.newInstance();
-            this.setTraddDetail(t, rs);
-        } catch (InstantiationException e) {
+            this.setTraddDetail(t, rs, null, null);
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
-        } catch (IllegalAccessException e) {
-            log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         }
         return t;
     }
