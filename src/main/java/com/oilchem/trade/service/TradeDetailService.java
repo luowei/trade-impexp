@@ -1,5 +1,6 @@
 package com.oilchem.trade.service;
 
+import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.domain.ProductType;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.view.dto.CommonDto;
@@ -45,11 +46,12 @@ public interface TradeDetailService {
     /**
      * 导入Access文件
      *
+     *
      * @param logEntry
      * @param yearMonthDto                  年月
      * @return
      */
-    Boolean importAccess(Map.Entry<Long, String> logEntry,
+    Boolean importAccess(Map.Entry<Long, Log> logEntry,
                          YearMonthDto yearMonthDto);
 
 

@@ -17,6 +17,10 @@
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
+    <!--<context:annotation-config/>-->
+    <!--<tx:annotation-driven />-->
+
+
     <!-- Enabling @AspectJ Support -->
     <aop:aspectj-autoproxy expose-proxy="true"/>
 

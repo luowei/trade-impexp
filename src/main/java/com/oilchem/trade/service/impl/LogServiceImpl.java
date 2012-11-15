@@ -123,11 +123,11 @@ public class LogServiceImpl implements LogService {
      */
     @Pointcut(value = "execution(" +
             "String com.oilchem.trade.service.impl.CommonServiceImpl.unpackageFile(" +
-            "java.util.Map.Entry<Long, String>," +
-            "java.lang.String))" +
+            "java.util.Map.Entry<Long, com.oilchem.trade.domain.Log>," +
+            "com.oilchem.trade.domain.Log))" +
             "&& args(logEntry,unPackageDir)",
             argNames = "logEntry,unPackageDir")
-    void cutUnpackageFile(Map.Entry<Long, String> logEntry, String unPackageDir) {
+    void cutUnpackageFile(Map.Entry<Long, Log> logEntry, String unPackageDir) {
     }
 
     /**
@@ -137,7 +137,7 @@ public class LogServiceImpl implements LogService {
      * @param unPackageDir
      */
     @Before("cutUnpackageFile(logEntry,unPackageDir)")
-    void logUnpackagingFile(Map.Entry<Long, String> logEntry, String unPackageDir) {
+    void logUnpackagingFile(Map.Entry<Long, Log> logEntry, String unPackageDir) {
         log = logDao.findOne(logEntry.getKey());
         log.setExtractFlag(EXTRACTING_FLAG);
         log.setLogTime(new Date());
@@ -152,7 +152,7 @@ public class LogServiceImpl implements LogService {
      */
     @AfterReturning(pointcut = "cutUnpackageFile(logEntry,unPackageDir)",
             returning = "unPackagePath")
-    void logUnpackagedFile(Map.Entry<Long, String> logEntry, String unPackageDir, String unPackagePath) {
+    void logUnpackagedFile(Map.Entry<Long, Log> logEntry, String unPackageDir, String unPackagePath) {
         log = logDao.findOne(logEntry.getKey());
         log.setExtractFlag(EXTRACTED_FLAG);
         log.setExtractPath(unPackagePath);
@@ -167,7 +167,7 @@ public class LogServiceImpl implements LogService {
      * @param unPackageDir
      */
     @AfterThrowing("cutUnpackageFile(logEntry,unPackageDir)")
-    void logUnpackageFileThrowing(Map.Entry<Long, String> logEntry, String unPackageDir) {
+    void logUnpackageFileThrowing(Map.Entry<Long, Log> logEntry, String unPackageDir) {
         log = logDao.findOne(logEntry.getKey());
         log.setExtractFlag(EXTRACT_FAILD);
         log.setImportFlag(UNIMPORT_FLAG);
@@ -183,11 +183,11 @@ public class LogServiceImpl implements LogService {
      */
     @Pointcut(value = "execution(" +
             "Boolean com.oilchem.trade.service.impl.TradeDetailServiceImpl.importAccess(" +
-            "java.util.Map.Entry<Long, String>," +
+            "java.util.Map.Entry<Long, com.oilchem.trade.domain.Log>," +
             "com.oilchem.trade.view.dto.YearMonthDto))" +
             "&& args(logEntry,yearMonthDto)",
             argNames = "logEntry,yearMonthDto")
-    void cutImportTradeDetail(Map.Entry<Long, String> logEntry,
+    void cutImportTradeDetail(Map.Entry<Long, Log> logEntry,
                               YearMonthDto yearMonthDto) {
     }
 
@@ -197,7 +197,7 @@ public class LogServiceImpl implements LogService {
      * @param yearMonthDto
      */
     @Before("cutImportTradeDetail(logEntry,yearMonthDto)")
-    void logImportingTradeDetail(Map.Entry<Long, String> logEntry,
+    void logImportingTradeDetail(Map.Entry<Long, Log> logEntry,
                                  YearMonthDto yearMonthDto) {
         log = logDao.findOne(logEntry.getKey());
         log.setImportFlag(IMPORTING_FLAG);
@@ -214,7 +214,7 @@ public class LogServiceImpl implements LogService {
      */
     @AfterReturning(pointcut = "cutImportTradeDetail(logEntry,yearMonthDto)",
             returning = "isSuccess")
-    void logImportedTradeDetail(Map.Entry<Long, String> logEntry,
+    void logImportedTradeDetail(Map.Entry<Long, Log> logEntry,
                                 YearMonthDto yearMonthDto,
                                 Boolean isSuccess) {
         log = logDao.findOne(logEntry.getKey());
@@ -226,7 +226,7 @@ public class LogServiceImpl implements LogService {
 
 
     @AfterThrowing("cutImportTradeDetail(logEntry,yearMonthDto)")
-    void logImportTradeDetailThrowing(Map.Entry<Long, String> logEntry,
+    void logImportTradeDetailThrowing(Map.Entry<Long, Log> logEntry,
                                       YearMonthDto yearMonthDto) {
         log = logDao.findOne(logEntry.getKey());
         log.setImportFlag(IMPORT_FAILD);
@@ -241,11 +241,11 @@ public class LogServiceImpl implements LogService {
      * @return
      */
     @Pointcut(value = "execution(Boolean com.oilchem.trade.service.impl.TradeSumServiceImpl.importExcel(" +
-            "java.util.Map.Entry<Long, String>," +
+            "java.util.Map.Entry<Long, com.oilchem.trade.domain.Log>," +
             "com.oilchem.trade.view.dto.YearMonthDto))" +
             "&& args(logEntry,yearMonthDto)"
             ,argNames = "logEntry,yearMonthDto")
-    void cutImportTradeSum(Map.Entry<Long, String> logEntry, YearMonthDto yearMonthDto){
+    void cutImportTradeSum(Map.Entry<Long, Log> logEntry, YearMonthDto yearMonthDto){
     }
 
     /**
@@ -254,7 +254,7 @@ public class LogServiceImpl implements LogService {
      * @param yearMonthDto
      */
     @Before("cutImportTradeSum(logEntry,yearMonthDto)")
-    void logImportingTradeSum(Map.Entry<Long, String> logEntry,
+    void logImportingTradeSum(Map.Entry<Long, Log> logEntry,
                               YearMonthDto yearMonthDto){
         log = logDao.findOne(logEntry.getKey());
         log.setImportFlag(IMPORTING_FLAG);
@@ -271,7 +271,8 @@ public class LogServiceImpl implements LogService {
      */
     @AfterReturning(pointcut = "cutImportTradeSum(logEntry,yearMonthDto)",
             returning = "isSuccess")
-    void logImportedTradeSum(Map.Entry<Long, String> logEntry, YearMonthDto yearMonthDto,Boolean isSuccess){
+    void logImportedTradeSum(Map.Entry<Long, Log> logEntry,
+                             YearMonthDto yearMonthDto,Boolean isSuccess){
         log = logDao.findOne(logEntry.getKey());
         log.setImportFlag(IMPORTED_FLAG);
         log.setLogTime(new Date());
@@ -284,17 +285,12 @@ public class LogServiceImpl implements LogService {
      * @param yearMonthDto
      */
     @AfterThrowing("cutImportTradeSum(logEntry,yearMonthDto)")
-    void logImportTradeSumThrowing(Map.Entry<Long, String> logEntry, YearMonthDto yearMonthDto){
+    void logImportTradeSumThrowing(Map.Entry<Long, Log> logEntry, YearMonthDto yearMonthDto){
         log = logDao.findOne(logEntry.getKey());
         log.setImportFlag(IMPORT_FAILD);
         log.setLogTime(new Date());
         logDao.save(log);
     }
-
-
-
-
-
 
 
     /**

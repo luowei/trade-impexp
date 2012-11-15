@@ -3,6 +3,7 @@ package com.oilchem.trade.service;
 import com.oilchem.trade.dao.BaseDao;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.MyRowMapper;
+import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.domain.ProductType;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeSum;
@@ -38,13 +39,14 @@ public interface CommonService {
     /**
      * 解包
      *
+     *
      * @param logEntry
      * @param unPackageDir 解压目录
      * @return 解包后的文件路径
      * @author wei.luo
      * @createTime 2012-11-7
      */
-    String unpackageFile(Map.Entry<Long, String> logEntry, String unPackageDir);
+    String unpackageFile(Map.Entry<Long, Log> logEntry, String unPackageDir);
 
     /**
      * 导入查询条件表
@@ -71,7 +73,7 @@ public interface CommonService {
      * @param yearMonthDto
      * @param accessPath
      * @param sql               sql      @return  @author wei.luo
-     * @param detailClz     @createTime 2012-11-7       */
+     * @param detailClz     @createTime 2012-11-7           */
     <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
     void importTradeDetail(
             CrudRepository repository,
@@ -87,7 +89,7 @@ public interface CommonService {
      * @param repository
      * @param tradeSumDao
      * @param logEntry
-     *@param tradeSumClass       tradeSum Class
+     * @param tradeSumClass       tradeSum Class
      * @param tradeSumRowMapClass tradeSumRowMap Class
      * @param yearMonthDto    @return 成功或失败
      * @author wei.luo
@@ -97,7 +99,7 @@ public interface CommonService {
     Boolean importExcel(
             CrudRepository repository,
             BaseDao<E> tradeSumDao,
-            Map.Entry<Long, String> logEntry,
+            Map.Entry<Long, Log> logEntry,
             Class<E> tradeSumClass,
             Class<M> tradeSumRowMapClass, YearMonthDto yearMonthDto);
 
@@ -109,15 +111,16 @@ public interface CommonService {
      * @createTime 2012-11-7
      * @param tableType
      */
-    Map<Long, String> getUnExtractPackage(String tableType);
+    Map<Long, Log> getUnExtractPackage(String tableType);
 
     /**
      * 获得未导入的文件列表
+     *
      * @param tableType@return 返回记录的Id与文件的全路径组成的Map
      * @author wei.luo
      * @createTime 2012-11-7
      */
-    Map<Long, String> getUnImportFile(String tableType);
+    Map<Long,Log> getUnImportFile(String tableType);
 
     /**
      * 获得Model的list列表

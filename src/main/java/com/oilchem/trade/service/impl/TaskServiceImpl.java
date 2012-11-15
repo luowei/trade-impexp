@@ -1,6 +1,7 @@
 package com.oilchem.trade.service.impl;
 
 import com.oilchem.trade.dao.LogDao;
+import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
@@ -58,14 +59,14 @@ public class TaskServiceImpl implements TaskService {
             @Override
             public void run() {
                 //解包
-                Map<Long, String> unExtractMap = commonService.getUnExtractPackage(DETAIL);
-                for (Map.Entry<Long, String> entry : unExtractMap.entrySet()) {
+                Map<Long, Log> unExtractMap = commonService.getUnExtractPackage(DETAIL);
+                for (Map.Entry<Long, Log> entry : unExtractMap.entrySet()) {
                     commonService.unpackageFile(entry, UNZIP_DETAIL_DIR);
                 }
 
                 //导入数据
-                Map<Long, String> unImportMap = commonService.getUnImportFile(DETAIL);
-                for (Map.Entry<Long, String> entry : unImportMap.entrySet()) {
+                Map<Long, Log> unImportMap = commonService.getUnImportFile(DETAIL);
+                for (Map.Entry<Long, Log> entry : unImportMap.entrySet()) {
                     tradeDetailService.importAccess(entry, yearMonthDto);
                 }
             }
@@ -85,14 +86,14 @@ public class TaskServiceImpl implements TaskService {
             @Override
             public void run() {
                 //解包
-                Map<Long, String> unExtractMap = commonService.getUnExtractPackage(SUM);
-                for (Map.Entry<Long, String> entry : unExtractMap.entrySet()) {
+                Map<Long, Log> unExtractMap = commonService.getUnExtractPackage(SUM);
+                for (Map.Entry<Long, Log> entry : unExtractMap.entrySet()) {
                     commonService.unpackageFile(entry, UNZIP_SUM_DIR);
                 }
 
                 //导入数据
-                Map<Long, String> unImportMap = commonService.getUnImportFile(SUM);
-                for (Map.Entry<Long, String> entry : unImportMap.entrySet()) {
+                Map<Long, Log> unImportMap = commonService.getUnImportFile(SUM);
+                for (Map.Entry<Long, Log> entry : unImportMap.entrySet()) {
                     tradeSumService.importExcel(entry, yearMonthDto);
                 }
 

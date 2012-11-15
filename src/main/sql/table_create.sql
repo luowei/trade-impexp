@@ -157,9 +157,9 @@ create table t_log(
 	upload_path nvarchar(200), --上传包的路径
 	extract_path nvarchar(200),--导入文件的路径
 	download_url nvarchar(200), --导出文件下载地址
-	upload_flag nvarchar(10) check(upload_flag in('上传成功','正在上传')), --是否已完成
-	extract_flag nvarchar(10) check(extract_flag in('解压成功','正在解压','未解压')),--是否解压完成
-	import_flag nvarchar(10) check(import_flag in('导入成功','正在导入','未导入')),
+	upload_flag nvarchar(10) check(upload_flag in('上传成功','正在上传','上传失败')), --是否已完成
+	extract_flag nvarchar(10) check(extract_flag in('解压成功','正在解压','未解压','解压失败')),--是否解压完成
+	import_flag nvarchar(10) check(import_flag in('导入成功','正在导入','未导入','导入失败')),
 	error_occur nvarchar(2000), --是否发生错误
 	col_year int ,             --年
 	col_month int,             --月

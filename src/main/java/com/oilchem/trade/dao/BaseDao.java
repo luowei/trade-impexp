@@ -22,20 +22,26 @@ public interface BaseDao<T extends IdEntity> {
 
     /**
      * 删除指定年月的记录
+     *
+     *
      * @param year year
      * @param month month
+     * @param idEntityClz
      * @return
      */
-    Boolean delWithYearMonthRecord(Integer year,Integer month);
+    Integer delWithYearMonthRecord(Integer year, Integer month, Class<T> idEntityClz);
 
     /**
      * 查找指年月的数量
      *
+     *
+     *
+     *
      * @param year year
      * @param month month
-     * @param clazz
+     * @param idEntityClz
      * @return
      */
-    Integer countWithYearMonth(Integer year, Integer month, Class clazz);
+    Long countWithYearMonth(Integer year, Integer month, Class<T> idEntityClz);
 
 }

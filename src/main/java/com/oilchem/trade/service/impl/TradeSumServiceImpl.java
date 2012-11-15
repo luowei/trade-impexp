@@ -12,12 +12,12 @@ import com.oilchem.trade.dao.spec.Spec;
 import com.oilchem.trade.domain.ExpTradeSum;
 import com.oilchem.trade.domain.ImpTradeSum;
 import com.oilchem.trade.domain.Log;
+import com.oilchem.trade.domain.ProductType;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeSumService;
 import com.oilchem.trade.view.dto.CommonDto;
 import com.oilchem.trade.view.dto.YearMonthDto;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -58,14 +58,13 @@ public class TradeSumServiceImpl implements TradeSumService {
     /**
      * 解包
      *
-     *
      * @param logId@return 解包后的文件路径
      */
     public String unPackage(Long logId) {
         Log log = logDao.findOne(logId);
-        if(log!=null){
-            Map<Long,String> map = new HashMap<Long, String>();
-            map.put(log.getId(),log.getExtractPath());
+        if (log != null) {
+            Map<Long, Log> map = new HashMap<Long, Log>();
+            map.put(log.getId(), log);
             return commonService.unpackageFile(map.entrySet().iterator().next()
                     , UPLOAD_DETAILZIP_DIR);
         }
@@ -77,37 +76,66 @@ public class TradeSumServiceImpl implements TradeSumService {
      * 导入Excel
      *
      *
-     *
      * @param logEntry
-     * @param yearMonthDto       年月，产品类型
+     * @param yearMonthDto 年月，产品类型
      * @return
      */
-    public Boolean importExcel(Map.Entry<Long, String> logEntry, YearMonthDto yearMonthDto) {
-        if(logEntry == null && yearMonthDto == null)
+    public Boolean importExcel(Map.Entry<Long, Log> logEntry,
+                               YearMonthDto yearMonthDto) {
+        if (logEntry == null && yearMonthDto == null)
             return false;
         Boolean isSuccess = true;
 
+
+        Boolean isImp = yearMonthDto.getImpExpType().equals(ImpExpType.进口.getCode());
+        Boolean isExp = yearMonthDto.getImpExpType().equals(ImpExpType.出口.getCode());
         //进口
-        if (yearMonthDto.getImpExpType().equals(ImpExpType.进口.getCode())) {
-            isSuccess = isSuccess & commonService.importExcel(
-                    impTradeSumDao,
-                    impTradeSumDao,
-                    logEntry,
-                    ImpTradeSum.class,
-                    ImpTradeSumRowMapper.class,
-                    yearMonthDto);
+        if (isImp) {
+
+            //判断是否已存在当年当月的数量，执行保存
+            synchronized ("synchronized_sumimp_lock".intern()) {
+
+                //处理重复数据
+                Long count = impTradeSumDao.countWithYearMonth(
+                        yearMonthDto.getYear(), yearMonthDto.getMonth(), ImpTradeSum.class);
+                if (count != null && count > 0)
+                    impTradeSumDao.delRepeatImpTradeSum(
+                            yearMonthDto.getYear(), yearMonthDto.getMonth());
+
+                //导入
+                isSuccess = isSuccess & commonService.importExcel(
+                        impTradeSumDao,  impTradeSumDao,
+                        logEntry,  ImpTradeSum.class,
+                        ImpTradeSumRowMapper.class, yearMonthDto);
+            }
         }
 
         //出口
-        else if (yearMonthDto.getImpExpType().equals(ImpExpType.出口.getCode())) {
-            isSuccess = isSuccess & commonService.importExcel(
-                    expTradeSumDao,
-                    expTradeSumDao,
-                    logEntry,
-                    ExpTradeSum.class,
-                    ExpTradeSumRowMapper.class,
-                    yearMonthDto);
+        else if (isExp) {
+
+            //判断是否已存在当年当月的数量，执行保存
+            synchronized ("synchronized_sumexp_lock".intern()) {
+
+                //处理重复数据
+                Long count = expTradeSumDao.countWithYearMonth(
+                        yearMonthDto.getYear(), yearMonthDto.getMonth(), ExpTradeSum.class);
+                if (count != null && count > 0)
+                    expTradeSumDao.delRepeatExpTradeSum(
+                            yearMonthDto.getYear(), yearMonthDto.getMonth());
+
+                //导入数据
+                isSuccess = isSuccess & commonService.importExcel(
+                        expTradeSumDao,  expTradeSumDao,
+                        logEntry,  ExpTradeSum.class,
+                        ExpTradeSumRowMapper.class, yearMonthDto);
+            }
         }
+
+        //导入产品类型
+        if (productTypeDao.findByProductType(
+                yearMonthDto.getProductType()) == null)
+            isSuccess = isSuccess && productTypeDao.save(
+                    new ProductType(yearMonthDto.getProductType())) != null;
 
         return isSuccess;
     }
@@ -115,8 +143,8 @@ public class TradeSumServiceImpl implements TradeSumService {
     /**
      * 根据条件查找
      *
-     * @param tradeSum  总表实例
-     * @param commonDto 条件
+     * @param tradeSum    总表实例
+     * @param commonDto   条件
      * @param pageRequest
      * @return
      */
@@ -124,22 +152,22 @@ public class TradeSumServiceImpl implements TradeSumService {
             T tradeSum, CommonDto commonDto,
             PageRequest pageRequest) {
 
-        if(tradeSum instanceof ImpTradeSum){
+        if (tradeSum instanceof ImpTradeSum) {
             Page<ImpTradeSum> pageImpDetail = impTradeSumDao
                     .findAll((Specifications
                             .where(Spec.<ImpTradeSum>hasField("", tradeSum.getYear()))
                             .and(Spec.<ImpTradeSum>hasField("", tradeSum.getMonth())))
-                            ,pageRequest);
+                            , pageRequest);
             return (Page<T>) pageImpDetail;
         }
 
 
-        if(tradeSum instanceof ExpTradeSum){
+        if (tradeSum instanceof ExpTradeSum) {
             Page<ExpTradeSum> pageExpDetail = expTradeSumDao
                     .findAll(Specifications
                             .where(Spec.<ExpTradeSum>hasField("", tradeSum.getYear()))
                             .and(Spec.<ExpTradeSum>hasField("", tradeSum.getMonth()))
-                            ,pageRequest);
+                            , pageRequest);
             return (Page<T>) pageExpDetail;
         }
 

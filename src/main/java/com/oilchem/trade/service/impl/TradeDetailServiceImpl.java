@@ -78,8 +78,8 @@ public class TradeDetailServiceImpl implements TradeDetailService {
     public String unPackage(Long logId) {
         Log log = logDao.findOne(logId);
         if (log != null) {
-            Map<Long, String> map = new HashMap<Long, String>();
-            map.put(log.getId(), log.getExtractPath());
+            Map<Long, Log> map = new HashMap<Long, Log>();
+            map.put(log.getId(), log);
             return commonService.unpackageFile(map.entrySet().iterator().next()
                     , UPLOAD_DETAILZIP_DIR);
         }
@@ -93,37 +93,56 @@ public class TradeDetailServiceImpl implements TradeDetailService {
      * @param yearMonthDto 年月
      * @return
      */
-    public Boolean importAccess(Map.Entry<Long, String> logEntry,
+    public Boolean importAccess(Map.Entry<Long, Log> logEntry,
                                 YearMonthDto yearMonthDto) {
 
         Boolean isSuccess = false;
         final String sql = "select top 200 * from 结果 ";
 
         //导入查询条件表
-        commonService.importCriteriaTab(sql, logEntry.getValue());
+        commonService.importCriteriaTab(sql, logEntry.getValue().getExtractPath());
 
         //导入进口明细总表
         if (yearMonthDto.getImpExpType().equals(ImpExpType.进口.getCode())) {
-            commonService.importTradeDetail(
-                    impTradeDetailDao,
-                    impTradeDetailDao,
-                    new ImpTradeDetailRowMapper(),
-                    yearMonthDto,
-                    logEntry.getValue(), sql,
-                    ImpTradeDetail.class);
-            isSuccess = true;
+
+            synchronized ("synchronized_detailimp_lock".intern()) {
+                Long count = impTradeDetailDao.countWithYearMonth(
+                        yearMonthDto.getYear(), yearMonthDto.getMonth(), ImpTradeDetail.class);
+                if (count != null && count > 0) {
+                    impTradeDetailDao.delRepeatImpTradeDetail(
+                            yearMonthDto.getYear(), yearMonthDto.getMonth());
+                }
+
+                commonService.importTradeDetail(
+                        impTradeDetailDao,
+                        impTradeDetailDao,
+                        new ImpTradeDetailRowMapper(),
+                        yearMonthDto,
+                        logEntry.getValue().getExtractPath(), sql,
+                        ImpTradeDetail.class);
+                isSuccess = true;
+            }
         }
 
         //导入出口明细表
         else if (yearMonthDto.getImpExpType().equals(ImpExpType.出口.getCode())) {
-            commonService.importTradeDetail(
-                    expTradeDetailDao,
-                    expTradeDetailDao,
-                    new ExpTradeDetailRowMapper(),
-                    yearMonthDto,
-                    logEntry.getValue(), sql,
-                    ExpTradeDetail.class);
-            isSuccess = true;
+            synchronized ("synchronized_detailexp_lock".intern()) {
+                Long count = impTradeDetailDao.countWithYearMonth(
+                        yearMonthDto.getYear(), yearMonthDto.getMonth(), ImpTradeDetail.class);
+                if (count != null && count > 0) {
+                    impTradeDetailDao.delRepeatImpTradeDetail(
+                            yearMonthDto.getYear(), yearMonthDto.getMonth());
+                }
+
+                commonService.importTradeDetail(
+                        expTradeDetailDao,
+                        expTradeDetailDao,
+                        new ExpTradeDetailRowMapper(),
+                        yearMonthDto,
+                        logEntry.getValue().getExtractPath(), sql,
+                        ExpTradeDetail.class);
+                isSuccess = true;
+            }
         }
 
         return isSuccess;
@@ -176,13 +195,14 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
     @Resource
     ProductTypeDao productTypeDao;
+
     /**
      * 获得productType列表
      *
      * @return
      */
     public List<ProductType> getProductList() {
-        return (List<ProductType>)productTypeDao.findAll();
+        return (List<ProductType>) productTypeDao.findAll();
     }
 
 

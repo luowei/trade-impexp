@@ -2,10 +2,14 @@ package com.oilchem.test;
 
 import com.oilchem.trade.config.Config;
 import com.oilchem.trade.config.ImpExpType;
+import com.oilchem.trade.domain.ImpTradeDetail;
+import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.service.TradeSumService;
+import com.oilchem.trade.view.controller.CommonController;
+import com.oilchem.trade.view.dto.CommonDto;
 import com.oilchem.trade.view.dto.YearMonthDto;
 import org.junit.After;
 import org.junit.Before;
@@ -14,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -59,8 +64,8 @@ public class ImportTest {
     @Before
     public void setUp() throws Exception {
         yearMonth = new YearMonthDto();
-//        yearMonth.setImpExpType(ImpExpType.进口.getCode());
-        yearMonth.setImpExpType(ImpExpType.出口.getCode());
+        yearMonth.setImpExpType(ImpExpType.进口.getCode());
+//        yearMonth.setImpExpType(ImpExpType.出口.getCode());
         yearMonth.setImportType(Config.IMPORT);
         yearMonth.setProductType("有机化工");
         yearMonth.setTableType(Config.DETAIL);
@@ -95,8 +100,8 @@ public class ImportTest {
 //    @Test(expected = Exception.class)
     public void testUnpackageFile() throws Exception {
         try {
-            Map<Long, String> unExtractMap = commonService.getUnExtractPackage(DETAIL);
-            for (Map.Entry<Long, String> entry : unExtractMap.entrySet()) {
+            Map<Long, Log> unExtractMap = commonService.getUnExtractPackage(DETAIL);
+            for (Map.Entry<Long, Log> entry : unExtractMap.entrySet()) {
                 commonService.unpackageFile(
                         entry, UNZIP_DETAIL_DIR);
             }
@@ -115,9 +120,9 @@ public class ImportTest {
     public void testImportAccess() throws Exception {
         Boolean isSuccess = false;
         try {
-            Map<Long, String> unImportMap = commonService.getUnImportFile(DETAIL);
+            Map<Long, Log> unImportMap = commonService.getUnImportFile(DETAIL);
             if (unImportMap != null)
-                for (Map.Entry<Long, String> entry : unImportMap.entrySet()) {
+                for (Map.Entry<Long, Log> entry : unImportMap.entrySet()) {
                     isSuccess = isSuccess && tradeDetailService.importAccess(entry, yearMonth);
                 }
             assertTrue(isSuccess);
@@ -138,10 +143,9 @@ public class ImportTest {
 
         Boolean isSuccess = false;
         try {
-            String excelSource = "d:/aaaa/进口20121有机化工.xls";
-            Map<Long, String> unImportMap = commonService.getUnImportFile(SUM);
+            Map<Long, Log> unImportMap = commonService.getUnImportFile(SUM);
             if (unImportMap != null)
-                for (Map.Entry<Long, String> logEntry : unImportMap.entrySet()) {
+                for (Map.Entry<Long, Log> logEntry : unImportMap.entrySet()) {
                     isSuccess = tradeSumService.importExcel(logEntry, yearMonth);
                 }
             assertTrue(isSuccess);
@@ -152,5 +156,29 @@ public class ImportTest {
 
     }
 
+    /**
+     * 测试查询明细表
+     * @throws Exception
+     */
+    @Test
+    public void testFindDetailListWithCriteria() throws Exception {
+
+        CommonDto commonDto = new CommonDto();
+        ImpTradeDetail impTradeDetail = new ImpTradeDetail();
+
+        Page<ImpTradeDetail> tradeDetails = tradeDetailService
+                .findWithCriteria(impTradeDetail, commonDto,
+                        new CommonController().getPageRequest(commonDto));
+
+    }
+
+    /**
+     * 测试查询明细表
+     * @throws Exception
+     */
+    @Test
+    public void testFindSumListWithCriteria() throws Exception {
+
+    }
 
 }

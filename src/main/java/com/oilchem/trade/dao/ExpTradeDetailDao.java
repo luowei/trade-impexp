@@ -2,7 +2,11 @@ package com.oilchem.trade.dao;
 
 import com.oilchem.trade.domain.ExpTradeDetail;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,5 +18,10 @@ import org.springframework.data.repository.CrudRepository;
 public interface ExpTradeDetailDao extends CrudRepository<ExpTradeDetail,Long>,
         JpaSpecificationExecutor<ExpTradeDetail>,
         ExpTradeDetailDaoCustom {
+
+    @Modifying
+    @Transactional
+    @Query("delete from ExpTradeDetail t where t.year = ?1 and t.month = ?2")
+    void delRepeatImpTradeSum(Integer year,Integer month);
 
 }

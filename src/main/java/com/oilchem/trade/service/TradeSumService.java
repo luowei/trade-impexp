@@ -1,5 +1,6 @@
 package com.oilchem.trade.service;
 
+import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.view.dto.CommonDto;
 import com.oilchem.trade.view.dto.YearMonthDto;
@@ -32,11 +33,12 @@ public interface TradeSumService {
      *
      *
      *
+     *
      * @param logEntry
      * @param yearMonthDto              年月,产品类型
      * @return
      */
-    Boolean importExcel(Map.Entry<Long, String> logEntry, YearMonthDto yearMonthDto);
+    Boolean importExcel(Map.Entry<Long, Log> logEntry, YearMonthDto yearMonthDto);
 
     /**
      * 根据条件查询总表记录

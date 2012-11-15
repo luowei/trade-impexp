@@ -2,6 +2,7 @@ package com.oilchem.trade.service.impl;
 
 import com.oilchem.common.util.FileUtil;
 import com.oilchem.common.util.ZipUtil;
+import com.oilchem.trade.config.FileType;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.MyRowMapper;
@@ -86,24 +87,26 @@ public class CommonServiceImpl implements CommonService {
     /**
      * 解包
      *
+     *
      * @param logEntry
      * @param unPackageDir 解压目录
      * @return 解压后的文件路径
      */
     //@Before加锁
     //@After解锁
-    public String unpackageFile(Map.Entry<Long, String> logEntry, String unPackageDir) {
+    public String unpackageFile(Map.Entry<Long, Log> logEntry, String unPackageDir) {
 
         if (logEntry == null || StringUtils.isBlank(unPackageDir))
             return null;
 
-        String type = FileUtil.getFileSuffix(logEntry.getValue());
+        String uploadPath = logEntry.getValue().getUploadPath();
+        String type = FileUtil.getFileSuffix(uploadPath);
 
         //判断文件类型
         if (type.equals(".zip")) {
-            return ZipUtil.unZip(logEntry.getValue(), unPackageDir, null);
+            return ZipUtil.unZip(uploadPath, unPackageDir, null);
         } else if (type.equals(".rar")) {
-            return ZipUtil.unRar(logEntry.getValue(), unPackageDir);
+            return ZipUtil.unRar(uploadPath, unPackageDir);
         } else return null;
     }
 
@@ -237,25 +240,16 @@ public class CommonServiceImpl implements CommonService {
      */
     public <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
     void importTradeDetail(
-            CrudRepository repository,
-            BaseDao<E> tradeDetailDao,
-            T tradeDetailMapper,
-            YearMonthDto yearMonthDto,
-            String accessPath, String sql,
-            Class detailClz) {
+            CrudRepository repository,BaseDao<E> tradeDetailDao,
+            T tradeDetailMapper,YearMonthDto yearMonthDto,
+            String accessPath, String sql,Class detailClz) {
+
         if (tradeDetailDao == null || tradeDetailMapper == null
                 || yearMonthDto == null || StringUtils.isBlank(sql)) return;
 
-        synchronized ("tradeDetail_del_lock") {
-            Integer count = tradeDetailDao.countWithYearMonth(
-                    yearMonthDto.getYear(), yearMonthDto.getMonth(), detailClz);
-            if (count != null && count > 0) {
-                tradeDetailDao.delWithYearMonthRecord(yearMonthDto.getYear(), yearMonthDto.getMonth());
-            }
             List<E> tradeDetailList = getListFormDB(
                     tradeDetailMapper, yearMonthDto, accessPath, sql, detailClz);
             repository.save(tradeDetailList);
-        }
 
     }
 
@@ -273,9 +267,10 @@ public class CommonServiceImpl implements CommonService {
     public <E extends TradeSum, M extends MyRowMapper<E>>
     Boolean importExcel(CrudRepository repository,
                         BaseDao<E> tradeSumDao,
-                        Map.Entry<Long, String> logEntry,
+                        Map.Entry<Long, Log> logEntry,
                         Class<E> tradeSumClass,
-                        Class<M> tradeSumRowMapClass, YearMonthDto yearMonthDto) {
+                        Class<M> tradeSumRowMapClass,
+                        YearMonthDto yearMonthDto) {
         if (tradeSumDao == null || tradeSumClass == null
                 || tradeSumRowMapClass == null || yearMonthDto == null
                 || logEntry == null)
@@ -283,26 +278,13 @@ public class CommonServiceImpl implements CommonService {
 
         Boolean isSuccess = true;
 
+        //excel取数据
         List<E> tradeSumList = getListFromExcel(logEntry,
                 tradeSumClass, tradeSumRowMapClass, yearMonthDto);
         isSuccess = isSuccess && (tradeSumList != null && !tradeSumList.isEmpty());
 
-
-        //判断是否已存在当年当月的数量，执行保存
-        synchronized ("synchronized_lock".intern()) {
-            Integer count = (tradeSumDao.countWithYearMonth(
-                    yearMonthDto.getYear(), yearMonthDto.getMonth(), tradeSumClass));
-            if (count != null && count > 0)
-                tradeSumDao.delWithYearMonthRecord(
-                        yearMonthDto.getYear(), yearMonthDto.getMonth());
-            isSuccess = isSuccess && repository.save(tradeSumList) != null;
-        }
-
-        //导入产品类型
-        if (productTypeDao.findByProductType(
-                yearMonthDto.getProductType()) == null)
-            isSuccess = isSuccess && productTypeDao.save(
-                    new ProductType(yearMonthDto.getProductType())) != null;
+        //保存数据
+        isSuccess = isSuccess && repository.save(tradeSumList) != null;
 
         return isSuccess;
     }
@@ -312,7 +294,7 @@ public class CommonServiceImpl implements CommonService {
      *
      * @param tableType@return 返回记录的Id与包的全路径组成的Map
      */
-    public Map<Long, String> getUnExtractPackage(String tableType) {
+    public Map<Long, Log> getUnExtractPackage(String tableType) {
         if (tableType == null) return null;
 
         Method findByMethod = null;
@@ -325,7 +307,8 @@ public class CommonServiceImpl implements CommonService {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
-        return getLogMap(tableType, UNEXTRACT_FLAG, findByMethod);
+        return getLogMap(tableType, UNEXTRACT_FLAG,
+                findByMethod, FileType.UPLOAD_FILE);
     }
 
     /**
@@ -333,7 +316,7 @@ public class CommonServiceImpl implements CommonService {
      *
      * @param tableType@return 返回记录的Id与文件的全路径组成的Map
      */
-    public Map<Long, String> getUnImportFile(String tableType) {
+    public Map<Long, Log> getUnImportFile(String tableType) {
         if (StringUtils.isBlank(tableType)) return null;
         Method findByMethod = null;
         try {
@@ -345,25 +328,29 @@ public class CommonServiceImpl implements CommonService {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
-        return getLogMap(tableType, UNIMPORT_FLAG, findByMethod);
+        return getLogMap(tableType, UNIMPORT_FLAG,
+                findByMethod,FileType.IMPORT_FILE);
     }
 
     /**
      * 获得logMap
      *
+     *
+     *
      * @param tableType
      * @param process_flag
      * @param findByMethod
+     * @param fileType
      * @return
      * @throws Exception
      */
-    private Map<Long, String> getLogMap(String tableType, String process_flag,
-                                        Method findByMethod) {
+    private Map<Long, Log> getLogMap(String tableType, String process_flag,
+                                     Method findByMethod, FileType fileType) {
 
         if (StringUtils.isBlank(tableType) || StringUtils.isBlank(process_flag))
             return null;
 
-        Map<Long, String> packaeMap = new HashMap<Long, String>();
+        Map<Long, Log> packaeMap = new HashMap<Long, Log>();
         List<Log> logList = null;
         Object obj = null;
 
@@ -385,7 +372,10 @@ public class CommonServiceImpl implements CommonService {
         //把记录放到map中
         if (logList != null && !logList.isEmpty()) {
             for (Log log : logList) {
-                packaeMap.put(log.getId(), log.getUploadPath());
+                if (fileType.equals(FileType.UPLOAD_FILE))
+                    packaeMap.put(log.getId(), log);
+                if (fileType.equals(FileType.IMPORT_FILE))
+                    packaeMap.put(log.getId(), log);
             }
         }
 
@@ -547,16 +537,15 @@ public class CommonServiceImpl implements CommonService {
     /**
      * 获得excel数据中的list
      *
+     *
      * @param logEntry
      * @param tradeSumClass
      * @param tradeSumRowMapClass
      * @param yearMonthDto
-     * @param <E>
-     * @param <M>
      * @return
      */
     private <E extends TradeSum, M extends MyRowMapper<E>> List<E>
-    getListFromExcel(Map.Entry<Long, String> logEntry,
+    getListFromExcel(Map.Entry<Long, Log> logEntry,
                      Class<E> tradeSumClass,
                      Class<M> tradeSumRowMapClass,
                      YearMonthDto yearMonthDto) {
@@ -566,7 +555,8 @@ public class CommonServiceImpl implements CommonService {
 
         try {
             //从excel中取得eList
-            Workbook workbook = Workbook.getWorkbook(new File(logEntry.getValue()));
+            Workbook workbook = Workbook.getWorkbook(
+                    new File(logEntry.getValue().getExtractPath()));
             Sheet sheet = workbook.getSheet(0);
             int rows = sheet.getRows();
             int rowIdx = sheet.findCell(PRODUCT_XNAME).getRow() + 1;

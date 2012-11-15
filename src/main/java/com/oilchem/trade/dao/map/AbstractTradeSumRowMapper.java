@@ -64,7 +64,7 @@ public class AbstractTradeSumRowMapper<E extends TradeSum> implements MyRowMappe
         return BigDecimal.valueOf(
                 Double.parseDouble(setContent(content)
                         .delSymbols(",").delSymbols("$")
-                        .delSymbols("%").delSymbols("-")
+                        .delSymbols("%").delSymbols("0-")
                         .delSymbols("[").delSymbols("]")
                         .getRetStr()
                 )

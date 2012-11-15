@@ -2,6 +2,7 @@ package com.oilchem.trade.dao.impl;
 
 import com.oilchem.trade.dao.ExpTradeSumDaoCustom;
 import com.oilchem.trade.domain.ExpTradeSum;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -12,16 +13,16 @@ import javax.annotation.Resource;
  * Time: 下午3:09
  * To change this template use File | Settings | File Templates.
  */
-@Resource
+@Resource   @Transactional
 public class ExpTradeSumDaoImpl
         extends BaseDaoImpl<ExpTradeSum>
         implements ExpTradeSumDaoCustom {
 
-    public Boolean delWithYearMonthRecord(Integer year, Integer month) {
-        return super.delWithYearMonthRecord(year,month);
+    public Integer delWithYearMonthRecord(Integer year, Integer month, Class<ExpTradeSum> idEntityClz) {
+        return super.delWithYearMonthRecord(year,month, idEntityClz);
     }
 
-    public Integer countWithYearMonth(Integer year, Integer month, Class clazz) {
-        return super.countWithYearMonth(year,month, clazz);
+    public Long countWithYearMonth(Integer year, Integer month, Class<ExpTradeSum> idEntityClz) {
+        return super.countWithYearMonth(year,month, idEntityClz);
     }
 }
