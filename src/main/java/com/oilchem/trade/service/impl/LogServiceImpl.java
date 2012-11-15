@@ -71,11 +71,13 @@ public class LogServiceImpl implements LogService {
         log = new Log();
         log.setLogType(Config.IMPORT);
         log.setTableType(yearMonthDto.getTableType());
+
         if (yearMonthDto.getImpExpType().equals(ImpExpType.进口.getCode())) {
             log.setTradeType(ImpExpType.进口.getMessage());
         } else if (yearMonthDto.getImpExpType().equals(ImpExpType.出口.getCode())) {
             log.setTradeType(ImpExpType.出口.getMessage());
         }
+
         log.setYear(yearMonthDto.getYear());
         log.setMonth(yearMonthDto.getMonth());
         log.setUploadFlg(UPLOADING_FLAG);
@@ -90,10 +92,13 @@ public class LogServiceImpl implements LogService {
      * @param readDir
      * @param uploadUrl
      */
-    @AfterReturning(pointcut = "cutUploadFile(file,readDir,yearMonthDto)", returning = "uploadUrl")
-    void logUploadedFile(MultipartFile file, String readDir, YearMonthDto yearMonthDto, String uploadUrl) {
+    @AfterReturning(pointcut = "cutUploadFile(file,readDir,yearMonthDto)",
+            returning = "uploadUrl")
+    void logUploadedFile(MultipartFile file, String readDir,
+                         YearMonthDto yearMonthDto, String uploadUrl) {
         log.setUploadPath(uploadUrl);
         log.setUploadPath(readDir + uploadUrl.substring(uploadUrl.lastIndexOf("/")));
+
         log.setUploadFlg(UPLOADED_FLAG);
         log.setExtractFlag(UNEXTRACT_FLAG);
         log.setLogTime(new Date());
@@ -108,7 +113,9 @@ public class LogServiceImpl implements LogService {
      * @param readDir
      */
     @AfterThrowing("cutUploadFile(file,readDir,yearMonthDto)")
-    void logUploadFileThrowing(MultipartFile file, String readDir, YearMonthDto yearMonthDto) {
+    void logUploadFileThrowing(MultipartFile file, String readDir,
+                               YearMonthDto yearMonthDto) {
+
         log.setUploadFlg(UPLOAD_FAILD);
         log.setErrorOccur(UPLOAD_FAILD);
         log.setLogTime(new Date());
@@ -138,6 +145,7 @@ public class LogServiceImpl implements LogService {
      */
     @Before("cutUnpackageFile(logEntry,unPackageDir)")
     void logUnpackagingFile(Map.Entry<Long, Log> logEntry, String unPackageDir) {
+
         log = logDao.findOne(logEntry.getKey());
         log.setExtractFlag(EXTRACTING_FLAG);
         log.setLogTime(new Date());
@@ -152,7 +160,9 @@ public class LogServiceImpl implements LogService {
      */
     @AfterReturning(pointcut = "cutUnpackageFile(logEntry,unPackageDir)",
             returning = "unPackagePath")
-    void logUnpackagedFile(Map.Entry<Long, Log> logEntry, String unPackageDir, String unPackagePath) {
+    void logUnpackagedFile(Map.Entry<Long, Log> logEntry,
+                           String unPackageDir, String unPackagePath) {
+
         log = logDao.findOne(logEntry.getKey());
         log.setExtractFlag(EXTRACTED_FLAG);
         log.setExtractPath(unPackagePath);
@@ -167,7 +177,9 @@ public class LogServiceImpl implements LogService {
      * @param unPackageDir
      */
     @AfterThrowing("cutUnpackageFile(logEntry,unPackageDir)")
-    void logUnpackageFileThrowing(Map.Entry<Long, Log> logEntry, String unPackageDir) {
+    void logUnpackageFileThrowing(Map.Entry<Long, Log> logEntry,
+                                  String unPackageDir) {
+
         log = logDao.findOne(logEntry.getKey());
         log.setExtractFlag(EXTRACT_FAILD);
         log.setImportFlag(UNIMPORT_FLAG);
@@ -199,6 +211,7 @@ public class LogServiceImpl implements LogService {
     @Before("cutImportTradeDetail(logEntry,yearMonthDto)")
     void logImportingTradeDetail(Map.Entry<Long, Log> logEntry,
                                  YearMonthDto yearMonthDto) {
+
         log = logDao.findOne(logEntry.getKey());
         log.setImportFlag(IMPORTING_FLAG);
         log.setLogTime(new Date());
@@ -217,6 +230,7 @@ public class LogServiceImpl implements LogService {
     void logImportedTradeDetail(Map.Entry<Long, Log> logEntry,
                                 YearMonthDto yearMonthDto,
                                 Boolean isSuccess) {
+
         log = logDao.findOne(logEntry.getKey());
         log.setImportFlag(IMPORTED_FLAG);
         log.setLogTime(new Date());
@@ -273,6 +287,7 @@ public class LogServiceImpl implements LogService {
             returning = "isSuccess")
     void logImportedTradeSum(Map.Entry<Long, Log> logEntry,
                              YearMonthDto yearMonthDto,Boolean isSuccess){
+
         log = logDao.findOne(logEntry.getKey());
         log.setImportFlag(IMPORTED_FLAG);
         log.setLogTime(new Date());
@@ -286,6 +301,7 @@ public class LogServiceImpl implements LogService {
      */
     @AfterThrowing("cutImportTradeSum(logEntry,yearMonthDto)")
     void logImportTradeSumThrowing(Map.Entry<Long, Log> logEntry, YearMonthDto yearMonthDto){
+
         log = logDao.findOne(logEntry.getKey());
         log.setImportFlag(IMPORT_FAILD);
         log.setLogTime(new Date());

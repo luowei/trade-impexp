@@ -77,159 +77,179 @@ public class TradeDetail
         return year;
     }
 
-    public void setYear(Integer year) {
+    public TradeDetail setYear(Integer year) {
         this.year = year;
+        return this;
     }
 
     public Integer getMonth() {
         return month;
     }
 
-    public void setMonth(Integer month) {
+    public TradeDetail setMonth(Integer month) {
         this.month = month;
+        return this;
     }
 
     public String getProductCode() {
         return productCode;
     }
 
-    public void setProductCode(String productCode) {
+    public TradeDetail setProductCode(String productCode) {
         this.productCode = productCode;
+        return this;
     }
 
     public String getProductName() {
         return productName;
     }
 
-    public void setProductName(String productName) {
+    public TradeDetail setProductName(String productName) {
         this.productName = productName;
+        return this;
     }
 
     public String getCompanyType() {
         return companyType;
     }
 
-    public void setCompanyType(String companyType) {
+    public TradeDetail setCompanyType(String companyType) {
         this.companyType = companyType;
+        return this;
     }
 
     public String getTradeType() {
         return tradeType;
     }
 
-    public void setTradeType(String tradeType) {
+    public TradeDetail setTradeType(String tradeType) {
         this.tradeType = tradeType;
+        return this;
     }
 
     public String getTransportation() {
         return transportation;
     }
 
-    public void setTransportation(String transportation) {
+    public TradeDetail setTransportation(String transportation) {
         this.transportation = transportation;
+        return this;
     }
 
     public String getCustoms() {
         return customs;
     }
 
-    public void setCustoms(String customs) {
+    public TradeDetail setCustoms(String customs) {
         this.customs = customs;
+        return this;
     }
 
     public String getCity() {
         return city;
     }
 
-    public void setCity(String city) {
+    public TradeDetail setCity(String city) {
         this.city = city;
+        return this;
     }
 
     public String getCountry() {
         return country;
     }
 
-    public void setCountry(String country) {
+    public TradeDetail setCountry(String country) {
         this.country = country;
+        return this;
     }
 
     public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public TradeDetail setAmount(BigDecimal amount) {
         this.amount = amount;
+        return this;
     }
 
     public String getUnit() {
         return unit;
     }
 
-    public void setUnit(String unit) {
+    public TradeDetail setUnit(String unit) {
         this.unit = unit;
+        return this;
     }
 
     public BigDecimal getAmountMoney() {
         return amountMoney;
     }
 
-    public void setAmountMoney(BigDecimal amountMoney) {
+    public TradeDetail setAmountMoney(BigDecimal amountMoney) {
         this.amountMoney = amountMoney;
+        return this;
     }
 
     public BigDecimal getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(BigDecimal unitPrice) {
+    public TradeDetail setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
+        return this;
     }
 
     public Integer getCompanyTypeId() {
         return companyTypeId;
     }
 
-    public void setCompanyTypeId(Integer companyTypeId) {
+    public TradeDetail setCompanyTypeId(Integer companyTypeId) {
         this.companyTypeId = companyTypeId;
+        return this;
     }
 
     public Integer getTradeTypeId() {
         return tradeTypeId;
     }
 
-    public void setTradeTypeId(Integer tradeTypeId) {
+    public TradeDetail setTradeTypeId(Integer tradeTypeId) {
         this.tradeTypeId = tradeTypeId;
+        return this;
     }
 
     public Integer getTransportaionId() {
         return transportaionId;
     }
 
-    public void setTransportaionId(Integer transportaionId) {
+    public TradeDetail setTransportaionId(Integer transportaionId) {
         this.transportaionId = transportaionId;
+        return this;
     }
 
     public Integer getCustomsId() {
         return customsId;
     }
 
-    public void setCustomsId(Integer customsId) {
+    public TradeDetail setCustomsId(Integer customsId) {
         this.customsId = customsId;
+        return this;
     }
 
     public Integer getCityId() {
         return cityId;
     }
 
-    public void setCityId(Integer cityId) {
+    public TradeDetail setCityId(Integer cityId) {
         this.cityId = cityId;
+        return this;
     }
 
     public Integer getCountryId() {
         return countryId;
     }
 
-    public void setCountryId(Integer countryId) {
+    public TradeDetail setCountryId(Integer countryId) {
         this.countryId = countryId;
+        return this;
     }
 }

@@ -29,21 +29,50 @@ import static org.springframework.data.jpa.domain.Specifications.*;
  * Time: 下午10:06
  * To change this template use File | Settings | File Templates.
  */
-public class Spec {
+public class Spec<T> {
 
     /**
      * 是否有字段
-     * @param colum       表字段
-     * @param field       java对象字段
+     * @param fieldName       表字段
+     * @param fieldValue       java对象字段
      * @param <T>          参数
      * @return
      */
-    public static <T> org.springframework.data.jpa.domain.Specification<T> hasField(final String colum,final Serializable field){
+    public  Specification<T>
+    hasField(final String fieldName,final Comparable fieldValue){
 
-        return new org.springframework.data.jpa.domain.Specification<T>() {
-            @Override
+        return new Specification<T>() {
             public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                return cb.equal(root.get(colum),field);
+                if(fieldName==null){
+                    return toPredicate(root,query,cb);
+                }
+                return cb.equal(root.get(fieldName),fieldValue);
+            }
+
+        };
+    }
+
+    public static Specification<ImpTradeDetail> hasCity(
+            final String fieldName,final String fieldValue) {
+        return new Specification<ImpTradeDetail>() {
+
+            @Override
+            public javax.persistence.criteria.Predicate
+            toPredicate(Root<ImpTradeDetail> impTradeDetailRoot,
+                        CriteriaQuery<?> query, CriteriaBuilder cb) {
+                if(fieldValue==null) return null;
+                return cb.equal(impTradeDetailRoot.get(fieldName),fieldValue);
+            }
+        };
+    }
+
+    public Specification<ImpTradeDetail> hasCity2() {
+        return new Specification<ImpTradeDetail>() {
+
+            @Override
+            public javax.persistence.criteria.Predicate
+            toPredicate(Root<ImpTradeDetail> impTradeDetailRoot, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                return cb.equal(impTradeDetailRoot.get("city"),"广东广州市");
             }
         };
     }

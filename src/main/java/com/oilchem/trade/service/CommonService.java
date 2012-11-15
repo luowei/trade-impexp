@@ -10,6 +10,7 @@ import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.util.DetailCriteria;
 import com.oilchem.trade.view.dto.YearMonthDto;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -132,5 +133,15 @@ public interface CommonService {
      * @createTime 2012-11-7
      */
     <T extends IdEntity> List<T> findAllIdEntityList(Class<T> tClass);
+
+    /**
+     * 传入这个字段作为条件查询
+     * @param fieldName    java对象中字段的名
+     * @param fieldValue   字段的值
+     * @param <T>
+     * @return
+     */
+    public  <T  extends TradeDetail> Specification<T> hasField(
+            String fieldName,String fieldValue);
 
 }

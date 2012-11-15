@@ -22,6 +22,6 @@ public interface ExpTradeDetailDao extends CrudRepository<ExpTradeDetail,Long>,
     @Modifying
     @Transactional
     @Query("delete from ExpTradeDetail t where t.year = ?1 and t.month = ?2")
-    void delRepeatImpTradeSum(Integer year,Integer month);
+    void delRepeatImpTradeDetail(Integer year,Integer month);
 
 }

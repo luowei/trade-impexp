@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,9 @@ import org.springframework.web.context.ContextLoader;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -384,7 +388,6 @@ public class CommonServiceImpl implements CommonService {
 
     /**
      * 获得数据模型的数据列表
-     *
      * @param tClass tClass
      * @param <T>    数据模型映射的java类
      * @return
@@ -406,6 +409,32 @@ public class CommonServiceImpl implements CommonService {
             }
         }
         return idEntityList;
+    }
+
+    /**
+     * 传入这个字段作为条件查询
+     * @param fieldName    java对象中字段的名
+     * @param fieldValue   字段的值
+     * @param <T>
+     * @return
+     */
+    public  <T  extends TradeDetail> Specification<T> hasField(
+            String fieldName,String fieldValue) {
+        return newSpecHasField(fieldName, fieldValue);
+    }
+
+    private <T extends TradeDetail> Specification<T> newSpecHasField(
+            final String fieldName, final String fieldValue) {
+        return new Specification<T>() {
+
+            @Override
+            public javax.persistence.criteria.Predicate
+            toPredicate(Root<T> impTradeDetailRoot,
+                        CriteriaQuery<?> query, CriteriaBuilder cb) {
+                if(fieldValue==null) return null;
+                return cb.equal(impTradeDetailRoot.get(fieldName),fieldValue);
+            }
+        };
     }
 
     /**

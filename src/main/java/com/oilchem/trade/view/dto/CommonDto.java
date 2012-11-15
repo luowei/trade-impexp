@@ -15,8 +15,8 @@ public class CommonDto implements Serializable {
     private Long[] ids;
     private Integer pageNumber;
     private Integer pageSize;
-    private Comparable<Serializable> lowValue;
-    private Comparable<Serializable> highValue;
+    private Comparable lowValue;
+    private Comparable highValue;
     private String order;
     private String[] orders;
 
@@ -24,63 +24,71 @@ public class CommonDto implements Serializable {
         return id;
     }
 
-    public void setId(Long id) {
+    public CommonDto setId(Long id) {
         this.id = id;
+        return this;
     }
 
     public Long[] getIds() {
         return ids;
     }
 
-    public void setIds(Long[] ids) {
+    public CommonDto setIds(Long[] ids) {
         this.ids = ids;
+        return this;
     }
 
     public Integer getPageNumber() {
         return pageNumber;
     }
 
-    public void setPageNumber(Integer pageNumber) {
+    public CommonDto setPageNumber(Integer pageNumber) {
         this.pageNumber = pageNumber;
+        return this;
     }
 
     public Integer getPageSize() {
         return pageSize;
     }
 
-    public void setPageSize(Integer pageSize) {
+    public CommonDto setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
+        return this;
     }
 
-    public Comparable<Serializable> getLowValue() {
+    public Comparable getLowValue() {
         return lowValue;
     }
 
-    public void setLowValue(Comparable<Serializable> lowValue) {
+    public CommonDto setLowValue(Comparable lowValue) {
         this.lowValue = lowValue;
+        return this;
     }
 
-    public Comparable<Serializable> getHighValue() {
+    public Comparable getHighValue() {
         return highValue;
     }
 
-    public void setHighValue(Comparable<Serializable> highValue) {
+    public CommonDto setHighValue(Comparable highValue) {
         this.highValue = highValue;
+        return this;
     }
 
     public String getOrder() {
         return order;
     }
 
-    public void setOrder(String order) {
+    public CommonDto setOrder(String order) {
         this.order = order;
+        return this;
     }
 
     public String[] getOrders() {
         return orders;
     }
 
-    public void setOrders(String[] orders) {
+    public CommonDto setOrders(String[] orders) {
         this.orders = orders;
+        return this;
     }
 }

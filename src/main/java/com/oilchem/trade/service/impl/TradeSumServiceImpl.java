@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.oilchem.trade.config.Config.*;
+import static org.springframework.data.jpa.domain.Specifications.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -154,9 +155,8 @@ public class TradeSumServiceImpl implements TradeSumService {
 
         if (tradeSum instanceof ImpTradeSum) {
             Page<ImpTradeSum> pageImpDetail = impTradeSumDao
-                    .findAll((Specifications
-                            .where(Spec.<ImpTradeSum>hasField("", tradeSum.getYear()))
-                            .and(Spec.<ImpTradeSum>hasField("", tradeSum.getMonth())))
+                    .findAll(where(new Spec< ImpTradeSum >().hasField("", tradeSum.getYear()))
+                            .and(new Spec<ImpTradeSum>().hasField("", tradeSum.getMonth()))
                             , pageRequest);
             return (Page<T>) pageImpDetail;
         }
@@ -164,9 +164,8 @@ public class TradeSumServiceImpl implements TradeSumService {
 
         if (tradeSum instanceof ExpTradeSum) {
             Page<ExpTradeSum> pageExpDetail = expTradeSumDao
-                    .findAll(Specifications
-                            .where(Spec.<ExpTradeSum>hasField("", tradeSum.getYear()))
-                            .and(Spec.<ExpTradeSum>hasField("", tradeSum.getMonth()))
+                    .findAll(where(new Spec<ExpTradeSum>().hasField("", tradeSum.getYear()))
+                            .and(new Spec<ExpTradeSum>().hasField("", tradeSum.getMonth()))
                             , pageRequest);
             return (Page<T>) pageExpDetail;
         }

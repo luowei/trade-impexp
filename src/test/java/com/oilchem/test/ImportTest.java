@@ -23,6 +23,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Map;
@@ -149,6 +150,7 @@ public class ImportTest {
                     isSuccess = tradeSumService.importExcel(logEntry, yearMonth);
                 }
             assertTrue(isSuccess);
+
         } catch (Exception e) {
             e.printStackTrace();
             assertTrue(isSuccess);
@@ -163,12 +165,19 @@ public class ImportTest {
     @Test
     public void testFindDetailListWithCriteria() throws Exception {
 
-        CommonDto commonDto = new CommonDto();
         ImpTradeDetail impTradeDetail = new ImpTradeDetail();
+        impTradeDetail.setCity("广东广州市").setProductName("阿拉伯胶").setTradeType("一般贸易");
+
+        CommonDto commonDto = new CommonDto();
+        commonDto.setPageNumber(1).setPageSize(20).setOrder("city:asc")
+        .setLowValue("2011.9").setHighValue("2012.12");
+
 
         Page<ImpTradeDetail> tradeDetails = tradeDetailService
                 .findWithCriteria(impTradeDetail, commonDto,
                         new CommonController().getPageRequest(commonDto));
+
+        assertEquals(true,tradeDetails.getContent().size() > 0);
 
     }
 

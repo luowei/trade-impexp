@@ -20,17 +20,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specifications;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.oilchem.trade.config.Config.*;
+import static org.springframework.data.jpa.domain.Specifications.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -64,8 +68,6 @@ public class TradeDetailServiceImpl implements TradeDetailService {
      */
     public String uploadFile(MultipartFile file, YearMonthDto yearMonthDto) {
 
-        //更新日志文件
-        //......
         yearMonthDto.setTableType(Config.DETAIL);
         return commonService.uploadFile(file, UPLOAD_DETAILZIP_DIR, yearMonthDto);
     }
@@ -105,7 +107,7 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         //导入进口明细总表
         if (yearMonthDto.getImpExpType().equals(ImpExpType.进口.getCode())) {
 
-            synchronized ("synchronized_detailimp_lock".intern()) {
+            synchronized ("detailimp_lock".intern()) {
                 Long count = impTradeDetailDao.countWithYearMonth(
                         yearMonthDto.getYear(), yearMonthDto.getMonth(), ImpTradeDetail.class);
                 if (count != null && count > 0) {
@@ -126,11 +128,11 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
         //导入出口明细表
         else if (yearMonthDto.getImpExpType().equals(ImpExpType.出口.getCode())) {
-            synchronized ("synchronized_detailexp_lock".intern()) {
-                Long count = impTradeDetailDao.countWithYearMonth(
-                        yearMonthDto.getYear(), yearMonthDto.getMonth(), ImpTradeDetail.class);
+            synchronized ("detailexp_lock".intern()) {
+                Long count = expTradeDetailDao.countWithYearMonth(
+                        yearMonthDto.getYear(), yearMonthDto.getMonth(), ExpTradeDetail.class);
                 if (count != null && count > 0) {
-                    impTradeDetailDao.delRepeatImpTradeDetail(
+                    expTradeDetailDao.delRepeatImpTradeDetail(
                             yearMonthDto.getYear(), yearMonthDto.getMonth());
                 }
 
@@ -148,48 +150,30 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         return isSuccess;
     }
 
-    /**
-     * 根据条件查询
-     *
-     * @param tradeDetail 页面传来的 IxpTradeDetail/ExpTradeDetail ，包含查询条件中里面
-     * @param commonDto
-     * @param pageRequest
-     * @return
-     */
+
+        /**
+        * 根据条件查询
+        *
+        * @param tradeDetail 页面传来的 IxpTradeDetail/ExpTradeDetail ，包含查询条件中里面
+        * @param commonDto
+        * @param pageRequest
+        * @return
+        */
     public <T extends TradeDetail> Page<T>
     findWithCriteria(T tradeDetail, CommonDto commonDto, PageRequest pageRequest) {
 
-        if (tradeDetail instanceof ImpTradeDetail) {
-            Page<ImpTradeDetail> pageImpDetail = impTradeDetailDao
-                    .findAll(Specifications
-                            .where(Spec.<ImpTradeDetail>hasField("", tradeDetail.getCountry()))
-                            .and(Spec.<ImpTradeDetail>hasField("", tradeDetail.getCity()))
-                            .and(Spec.<ImpTradeDetail>hasField("", tradeDetail.getCustoms()))
-                            .and(Spec.<ImpTradeDetail>hasField("", tradeDetail.getCompanyType()))
-                            .and(Spec.<ImpTradeDetail>hasField("", tradeDetail.getTransportation()))
-                            .and(Spec.<ImpTradeDetail>hasField("", tradeDetail.getTradeType()))
-                            .and(Spec.<ImpTradeDetail>hasField("", tradeDetail.getYear()))
-                            .and(Spec.<ImpTradeDetail>hasField("", tradeDetail.getMonth()))
-                            , pageRequest);
-            return (Page<T>) pageImpDetail;
-        }
 
-        if (tradeDetail instanceof ExpTradeDetail) {
-            Page<ExpTradeDetail> pageExpDetail = expTradeDetailDao
-                    .findAll(Specifications
-                            .where(Spec.<ExpTradeDetail>hasField("", tradeDetail.getCountry()))
-                            .and(Spec.<ExpTradeDetail>hasField("", tradeDetail.getCity()))
-                            .and(Spec.<ExpTradeDetail>hasField("", tradeDetail.getCustoms()))
-                            .and(Spec.<ExpTradeDetail>hasField("", tradeDetail.getCompanyType()))
-                            .and(Spec.<ExpTradeDetail>hasField("", tradeDetail.getTransportation()))
-                            .and(Spec.<ExpTradeDetail>hasField("", tradeDetail.getTradeType()))
-                            .and(Spec.<ExpTradeDetail>hasField("", tradeDetail.getYear()))
-                            .and(Spec.<ExpTradeDetail>hasField("", tradeDetail.getMonth()))
-                            , pageRequest);
-            return (Page<T>) pageExpDetail;
-        }
+            Page<ImpTradeDetail> impDetailPage = impTradeDetailDao
+                    .findAll( where(new Spec<ImpTradeDetail>().hasField("city",tradeDetail.getCity()))
+                            .and(new Spec<ImpTradeDetail>().hasField("country", tradeDetail.getCountry()))
+//                            .and(new Spec<ImpTradeDetail>().hasField("customs", tradeDetail.getCustoms()))
+//                            .and(new Spec<ImpTradeDetail>().hasField("companyType", tradeDetail.getCompanyType()))
+//                            .and(new Spec<ImpTradeDetail>().hasField("transportation", tradeDetail.getTransportation()))
+                            .and(new Spec<ImpTradeDetail>().hasField("tradeType", tradeDetail.getTradeType()))
+                            ,pageRequest);
 
-        return null;
+            return (Page<T>) impDetailPage;
+
     }
 
 

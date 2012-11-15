@@ -72,9 +72,9 @@ public class CommonController {
                 orderStr = PageUtil.DEFAULT_ORDER;
             }
             String[] order = orderStr.split(":");
-            if(Sort.Direction.ASC.toString().equals(order[1])){
+            if(Sort.Direction.ASC.toString().toLowerCase().equals(order[1].toLowerCase())){
                 orderMap.put(order[0].trim(),Sort.Direction.ASC);
-            }else if(Sort.Direction.DESC.toString().equals(order[1])){
+            }else if(Sort.Direction.DESC.toString().toLowerCase().equals(order[1].toLowerCase())){
                 orderMap.put(order[0].trim(),Sort.Direction.DESC);
             }
         }
