@@ -1,28 +1,23 @@
 package com.oilchem.trade.service.impl;
 
 import com.oilchem.trade.config.Config;
-import com.oilchem.trade.config.ImpExpType;
+import com.oilchem.trade.config.Message;
 import com.oilchem.trade.dao.LogDao;
 import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.service.LogService;
-import com.oilchem.trade.view.dto.YearMonthDto;
+import com.oilchem.trade.bean.YearMonthDto;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.Map;
-import java.util.Properties;
 
 import static com.oilchem.trade.config.Config.*;
 
@@ -54,7 +49,7 @@ public class LogServiceImpl implements LogService {
     @Pointcut(value = "execution(String com.oilchem.trade.service.impl.CommonServiceImpl.uploadFile(" +
             "org.springframework.web.multipart.MultipartFile," +
             "java.lang.String," +
-            "com.oilchem.trade.view.dto.YearMonthDto)) " +
+            "com.oilchem.trade.bean.YearMonthDto)) " +
             "&& args(file,realDir,yearMonthDto)",
             argNames = "file,realDir,yearMonthDto")
     void cutUploadFile(MultipartFile file, String realDir, YearMonthDto yearMonthDto) {
@@ -72,10 +67,10 @@ public class LogServiceImpl implements LogService {
         log.setLogType(Config.IMPORT);
         log.setTableType(yearMonthDto.getTableType());
 
-        if (yearMonthDto.getImpExpType().equals(ImpExpType.进口.getCode())) {
-            log.setTradeType(ImpExpType.进口.getMessage());
-        } else if (yearMonthDto.getImpExpType().equals(ImpExpType.出口.getCode())) {
-            log.setTradeType(ImpExpType.出口.getMessage());
+        if (yearMonthDto.getImpExpType().equals(Message.ImpExpType.进口.getCode())) {
+            log.setTradeType(Message.ImpExpType.进口.getMessage());
+        } else if (yearMonthDto.getImpExpType().equals(Message.ImpExpType.出口.getCode())) {
+            log.setTradeType(Message.ImpExpType.出口.getMessage());
         }
 
         log.setYear(yearMonthDto.getYear());
@@ -196,7 +191,7 @@ public class LogServiceImpl implements LogService {
     @Pointcut(value = "execution(" +
             "Boolean com.oilchem.trade.service.impl.TradeDetailServiceImpl.importAccess(" +
             "java.util.Map.Entry<Long, com.oilchem.trade.domain.Log>," +
-            "com.oilchem.trade.view.dto.YearMonthDto))" +
+            "com.oilchem.trade.bean.YearMonthDto))" +
             "&& args(logEntry,yearMonthDto)",
             argNames = "logEntry,yearMonthDto")
     void cutImportTradeDetail(Map.Entry<Long, Log> logEntry,
@@ -256,7 +251,7 @@ public class LogServiceImpl implements LogService {
      */
     @Pointcut(value = "execution(Boolean com.oilchem.trade.service.impl.TradeSumServiceImpl.importExcel(" +
             "java.util.Map.Entry<Long, com.oilchem.trade.domain.Log>," +
-            "com.oilchem.trade.view.dto.YearMonthDto))" +
+            "com.oilchem.trade.bean.YearMonthDto))" +
             "&& args(logEntry,yearMonthDto)"
             ,argNames = "logEntry,yearMonthDto")
     void cutImportTradeSum(Map.Entry<Long, Log> logEntry, YearMonthDto yearMonthDto){

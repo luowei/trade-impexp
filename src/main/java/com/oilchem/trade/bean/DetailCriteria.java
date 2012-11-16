@@ -1,4 +1,4 @@
-package com.oilchem.trade.util;
+package com.oilchem.trade.bean;
 
 import com.oilchem.trade.domain.abstrac.IdEntity;
 

@@ -1,10 +1,8 @@
 package com.oilchem.trade.dao.impl;
 
-import com.oilchem.common.util.GenericsUtils;
+import com.oilchem.trade.util.GenericsUtils;
 import com.oilchem.trade.dao.BaseDao;
 import com.oilchem.trade.domain.abstrac.IdEntity;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -13,7 +11,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
-import java.sql.SQLException;
 
 
 /**

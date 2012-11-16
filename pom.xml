@@ -252,6 +252,13 @@
             <version>${ant-zip.version}</version>
         </dependency>
 
+        <!-- springside -->
+        <dependency>
+            <groupId>org.springside</groupId>
+            <artifactId>springside-core</artifactId>
+            <version>4.0.1.GA-SNAPSHOT</version>
+        </dependency>
+
         <!-- LogTest -->
         <dependency>
             <groupId>junit</groupId>

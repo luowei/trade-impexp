@@ -2,7 +2,7 @@ package com.oilchem.trade.view.controller;
 
 import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.service.LogService;
-import com.oilchem.trade.view.dto.CommonDto;
+import com.oilchem.trade.bean.CommonDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;

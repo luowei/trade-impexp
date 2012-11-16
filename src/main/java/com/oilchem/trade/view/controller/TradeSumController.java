@@ -6,8 +6,8 @@ import com.oilchem.trade.domain.ImpTradeSum;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeSumService;
-import com.oilchem.trade.view.dto.CommonDto;
-import com.oilchem.trade.view.dto.YearMonthDto;
+import com.oilchem.trade.bean.CommonDto;
+import com.oilchem.trade.bean.YearMonthDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -50,7 +50,7 @@ public class TradeSumController extends CommonController {
         Page<ImpTradeSum> tradeSums = tradeSumService
                 .findWithCriteria(tradeSum, commonDto, getPageRequest(commonDto));
 
-        findAllIdEntity(addPageInfo(model, tradeSums, getServletContextPath("/listimpsum")),ImpTradeSum.class)
+        findAllIdEntity(addPageInfo(model, tradeSums, getServletContextPath("/listimpsum")), ImpTradeSum.class)
                 .addAttribute("tradeSumList", tradeSums);
 
         return "manage/trade/listsum";

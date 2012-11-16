@@ -2,8 +2,8 @@ package com.oilchem.trade.service;
 
 import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.domain.abstrac.TradeSum;
-import com.oilchem.trade.view.dto.CommonDto;
-import com.oilchem.trade.view.dto.YearMonthDto;
+import com.oilchem.trade.bean.CommonDto;
+import com.oilchem.trade.bean.YearMonthDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;

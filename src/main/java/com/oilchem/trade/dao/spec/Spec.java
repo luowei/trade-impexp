@@ -35,7 +35,6 @@ public class Spec<T> {
      * 是否有字段
      * @param fieldName       表字段
      * @param fieldValue       java对象字段
-     * @param <T>          参数
      * @return
      */
     public  Specification<T>

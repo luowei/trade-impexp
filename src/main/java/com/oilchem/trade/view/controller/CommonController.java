@@ -1,10 +1,9 @@
 package com.oilchem.trade.view.controller;
 
-import com.oilchem.trade.domain.ProductType;
+import com.oilchem.trade.util.QueryUtils;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.service.CommonService;
-import com.oilchem.trade.util.PageUtil;
-import com.oilchem.trade.view.dto.CommonDto;
+import com.oilchem.trade.bean.CommonDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.ContextLoader;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +63,7 @@ public class CommonController {
             }
         } else{    //形如:id:asc
             if(orderStr==null || orderStr.equals("")){
-                orderStr = PageUtil.DEFAULT_ORDER;
+                orderStr = QueryUtils.DEFAULT_ORDER;
             }
             String[] order = orderStr.split(":");
             if(Sort.Direction.ASC.toString().toLowerCase().equals(order[1].toLowerCase())){
@@ -80,7 +74,7 @@ public class CommonController {
         }
 
         //构建pagerequest对象
-        Sort sort = PageUtil.sortByOrderFiled(orderMap);
+        Sort sort = QueryUtils.sortByOrderFiled(orderMap);
         return new PageRequest(commonDto.getPageNumber(),commonDto.getPageSize(),sort);
     }
 
@@ -131,6 +125,8 @@ public class CommonController {
         model.addAttribute(productTypeList);
         return model;
     }
+
+
 
 
 }

@@ -38,4 +38,5 @@ public class Config {
     public static String EXPORT = "导出";
 
 
+    public static String YEARMONTH_SPLIT = "-";
 }

@@ -6,17 +6,14 @@ import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.service.TradeSumService;
-import com.oilchem.trade.view.dto.YearMonthDto;
+import com.oilchem.trade.bean.YearMonthDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 

@@ -1,4 +1,4 @@
-package com.oilchem.trade.view.dto;
+package com.oilchem.trade.bean;
 
 /**
  * Created with IntelliJ IDEA.

@@ -1,4 +1,4 @@
-package com.oilchem.common.util;
+package com.oilchem.trade.util;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;

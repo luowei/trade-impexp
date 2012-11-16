@@ -1,4 +1,4 @@
-package com.oilchem.common.util;
+package com.oilchem.trade.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tools.ant.util.FileUtils;

@@ -1,8 +1,8 @@
 package com.oilchem.trade.service.impl;
 
-import com.oilchem.common.util.FileUtil;
-import com.oilchem.common.util.ZipUtil;
-import com.oilchem.trade.config.FileType;
+import com.oilchem.trade.config.Message;
+import com.oilchem.trade.util.FileUtil;
+import com.oilchem.trade.util.ZipUtil;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.MyRowMapper;
@@ -11,8 +11,8 @@ import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.service.CommonService;
-import com.oilchem.trade.util.DetailCriteria;
-import com.oilchem.trade.view.dto.YearMonthDto;
+import com.oilchem.trade.bean.DetailCriteria;
+import com.oilchem.trade.bean.YearMonthDto;
 import jxl.Sheet;
 import jxl.Workbook;
 import org.apache.commons.lang3.StringUtils;
@@ -128,7 +128,7 @@ public class CommonServiceImpl implements CommonService {
             return;
 
         ApplicationContext ctx = AppContextManager.getAppContext();
-        List<DetailCriteria> detailCriteriaList = new ArrayList<com.oilchem.trade.util.DetailCriteria>();
+        List<DetailCriteria> detailCriteriaList = new ArrayList<DetailCriteria>();
 
         try {
             //城市
@@ -312,7 +312,7 @@ public class CommonServiceImpl implements CommonService {
             throw new RuntimeException(e);
         }
         return getLogMap(tableType, UNEXTRACT_FLAG,
-                findByMethod, FileType.UPLOAD_FILE);
+                findByMethod, Message.FileType.UPLOAD_FILE);
     }
 
     /**
@@ -333,7 +333,7 @@ public class CommonServiceImpl implements CommonService {
             throw new RuntimeException(e);
         }
         return getLogMap(tableType, UNIMPORT_FLAG,
-                findByMethod,FileType.IMPORT_FILE);
+                findByMethod, Message.FileType.IMPORT_FILE);
     }
 
     /**
@@ -349,7 +349,7 @@ public class CommonServiceImpl implements CommonService {
      * @throws Exception
      */
     private Map<Long, Log> getLogMap(String tableType, String process_flag,
-                                     Method findByMethod, FileType fileType) {
+                                     Method findByMethod, Message.FileType fileType) {
 
         if (StringUtils.isBlank(tableType) || StringUtils.isBlank(process_flag))
             return null;
@@ -376,9 +376,9 @@ public class CommonServiceImpl implements CommonService {
         //把记录放到map中
         if (logList != null && !logList.isEmpty()) {
             for (Log log : logList) {
-                if (fileType.equals(FileType.UPLOAD_FILE))
+                if (fileType.equals(Message.FileType.UPLOAD_FILE))
                     packaeMap.put(log.getId(), log);
-                if (fileType.equals(FileType.IMPORT_FILE))
+                if (fileType.equals(Message.FileType.IMPORT_FILE))
                     packaeMap.put(log.getId(), log);
             }
         }

@@ -1,6 +1,6 @@
 package com.oilchem.test;
 
-import com.oilchem.common.util.GenericsUtils;
+import com.oilchem.trade.util.GenericsUtils;
 import com.oilchem.trade.domain.City;
 
 /**

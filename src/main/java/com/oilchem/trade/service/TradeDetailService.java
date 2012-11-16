@@ -1,15 +1,15 @@
 package com.oilchem.trade.service;
 
+import com.oilchem.trade.domain.ExpTradeDetail;
+import com.oilchem.trade.domain.ImpTradeDetail;
 import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.domain.ProductType;
-import com.oilchem.trade.domain.abstrac.TradeDetail;
-import com.oilchem.trade.view.dto.CommonDto;
-import com.oilchem.trade.view.dto.YearMonthDto;
+import com.oilchem.trade.bean.CommonDto;
+import com.oilchem.trade.bean.YearMonthDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
@@ -56,16 +56,26 @@ public interface TradeDetailService {
 
 
     /**
-     * 根据条件查询
+     * 根据条件查询进口明细
      *
-     *
-     * @param TradeDetail 页面传来的 ExpTradeDetail ，包含查询条件中里面
+     * @param tradeDetail 页面传来的 IxpTradeDetail/ExpTradeDetail ，包含查询条件中里面
      * @param commonDto
      * @param pageRequest
      * @return
      */
-    public <T extends TradeDetail> Page<T>
-    findWithCriteria(T TradeDetail, CommonDto commonDto, PageRequest pageRequest);
+    public  Page<ImpTradeDetail>
+    findWithCriteria(ImpTradeDetail tradeDetail, CommonDto commonDto, PageRequest pageRequest);
+
+    /**
+     * 根据条件查询出口明细
+     *
+     * @param tradeDetail 页面传来的 IxpTradeDetail/ExpTradeDetail ，包含查询条件中里面
+     * @param commonDto
+     * @param pageRequest
+     * @return
+     */
+    public  Page<ExpTradeDetail>
+    findWithCriteria(ExpTradeDetail tradeDetail, CommonDto commonDto, PageRequest pageRequest);
 
     List<ProductType> getProductList();
 }

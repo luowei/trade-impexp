@@ -1,4 +1,4 @@
-package com.oilchem.common.util;
+package com.oilchem.trade.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

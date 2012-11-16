@@ -1,4 +1,4 @@
-package com.oilchem.trade.view.dto;
+package com.oilchem.trade.bean;
 
 import java.io.Serializable;
 
@@ -15,8 +15,9 @@ public class CommonDto implements Serializable {
     private Long[] ids;
     private Integer pageNumber;
     private Integer pageSize;
-    private Comparable lowValue;
-    private Comparable highValue;
+    private String keyword;
+    private String lowValue;
+    private String highValue;
     private String order;
     private String[] orders;
 
@@ -56,20 +57,28 @@ public class CommonDto implements Serializable {
         return this;
     }
 
-    public Comparable getLowValue() {
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public String getLowValue() {
         return lowValue;
     }
 
-    public CommonDto setLowValue(Comparable lowValue) {
+    public CommonDto setLowValue(String lowValue) {
         this.lowValue = lowValue;
         return this;
     }
 
-    public Comparable getHighValue() {
+    public String getHighValue() {
         return highValue;
     }
 
-    public CommonDto setHighValue(Comparable highValue) {
+    public CommonDto setHighValue(String highValue) {
         this.highValue = highValue;
         return this;
     }

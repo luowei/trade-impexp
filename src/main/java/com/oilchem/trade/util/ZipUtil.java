@@ -1,4 +1,4 @@
-package com.oilchem.common.util;
+package com.oilchem.trade.util;
 
 import de.innosystec.unrar.Archive;
 import de.innosystec.unrar.exception.RarException;

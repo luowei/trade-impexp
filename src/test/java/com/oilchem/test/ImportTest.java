@@ -1,7 +1,7 @@
 package com.oilchem.test;
 
 import com.oilchem.trade.config.Config;
-import com.oilchem.trade.config.ImpExpType;
+import com.oilchem.trade.config.Message;
 import com.oilchem.trade.domain.ImpTradeDetail;
 import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.service.CommonService;
@@ -9,8 +9,8 @@ import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.service.TradeSumService;
 import com.oilchem.trade.view.controller.CommonController;
-import com.oilchem.trade.view.dto.CommonDto;
-import com.oilchem.trade.view.dto.YearMonthDto;
+import com.oilchem.trade.bean.CommonDto;
+import com.oilchem.trade.bean.YearMonthDto;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,11 +23,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.Map;
-import java.util.Properties;
 
 import static com.oilchem.trade.config.Config.DETAIL;
 import static com.oilchem.trade.config.Config.SUM;
@@ -65,7 +61,7 @@ public class ImportTest {
     @Before
     public void setUp() throws Exception {
         yearMonth = new YearMonthDto();
-        yearMonth.setImpExpType(ImpExpType.进口.getCode());
+        yearMonth.setImpExpType(Message.ImpExpType.进口.getCode());
 //        yearMonth.setImpExpType(ImpExpType.出口.getCode());
         yearMonth.setImportType(Config.IMPORT);
         yearMonth.setProductType("有机化工");
@@ -124,7 +120,7 @@ public class ImportTest {
             Map<Long, Log> unImportMap = commonService.getUnImportFile(DETAIL);
             if (unImportMap != null)
                 for (Map.Entry<Long, Log> entry : unImportMap.entrySet()) {
-                    isSuccess = isSuccess && tradeDetailService.importAccess(entry, yearMonth);
+                    tradeDetailService.importAccess(entry, yearMonth);
                 }
             assertTrue(isSuccess);
         } catch (Exception e) {
@@ -169,8 +165,8 @@ public class ImportTest {
         impTradeDetail.setCity("广东广州市").setProductName("阿拉伯胶").setTradeType("一般贸易");
 
         CommonDto commonDto = new CommonDto();
-        commonDto.setPageNumber(1).setPageSize(20).setOrder("city:asc")
-        .setLowValue("2011.9").setHighValue("2012.12");
+        commonDto.setPageNumber(1).setPageSize(20).setOrder("city:asc");
+//        .setLowValue("2011-9").setHighValue("2012-12");
 
 
         Page<ImpTradeDetail> tradeDetails = tradeDetailService

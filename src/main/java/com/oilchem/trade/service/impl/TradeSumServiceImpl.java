@@ -1,7 +1,7 @@
 package com.oilchem.trade.service.impl;
 
 import com.oilchem.trade.config.Config;
-import com.oilchem.trade.config.ImpExpType;
+import com.oilchem.trade.config.Message;
 import com.oilchem.trade.dao.ExpTradeSumDao;
 import com.oilchem.trade.dao.ImpTradeSumDao;
 import com.oilchem.trade.dao.LogDao;
@@ -16,12 +16,11 @@ import com.oilchem.trade.domain.ProductType;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeSumService;
-import com.oilchem.trade.view.dto.CommonDto;
-import com.oilchem.trade.view.dto.YearMonthDto;
+import com.oilchem.trade.bean.CommonDto;
+import com.oilchem.trade.bean.YearMonthDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -88,8 +87,8 @@ public class TradeSumServiceImpl implements TradeSumService {
         Boolean isSuccess = true;
 
 
-        Boolean isImp = yearMonthDto.getImpExpType().equals(ImpExpType.进口.getCode());
-        Boolean isExp = yearMonthDto.getImpExpType().equals(ImpExpType.出口.getCode());
+        Boolean isImp = yearMonthDto.getImpExpType().equals(Message.ImpExpType.进口.getCode());
+        Boolean isExp = yearMonthDto.getImpExpType().equals(Message.ImpExpType.出口.getCode());
         //进口
         if (isImp) {
 

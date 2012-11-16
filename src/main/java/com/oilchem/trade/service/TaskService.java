@@ -1,9 +1,6 @@
 package com.oilchem.trade.service;
 
-import com.oilchem.trade.view.dto.YearMonthDto;
-
-import java.util.Date;
-import java.util.TimerTask;
+import com.oilchem.trade.bean.YearMonthDto;
 
 /**
  * Created with IntelliJ IDEA.
