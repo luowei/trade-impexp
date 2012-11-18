@@ -14,6 +14,7 @@ import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
+import com.oilchem.trade.util.DynamicSpecifications;
 import com.oilchem.trade.util.QueryUtils;
 import com.sun.jndi.toolkit.dir.SearchFilter;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +27,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.expression.spel.ast.Operator;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springside.modules.persistence.DynamicSpecifications;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.*;
@@ -157,100 +157,57 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         return isSuccess;
     }
 
-
     /**
-     * 根据条件查询
-     *
-     * @param tradeDetail 页面传来的 IxpTradeDetail/ExpTradeDetail ，包含查询条件中里面
+     * 进口明细
+     * @param tradeDetail 页面传来的 IxpTradeDetail包含查询条件中里面
      * @param commonDto
      * @param pageRequest
      * @return
      */
     public Page<ImpTradeDetail>
-    findWithCriteria(ImpTradeDetail tradeDetail, CommonDto commonDto, PageRequest pageRequest) {
+    findImpWithCriteria(ImpTradeDetail tradeDetail, CommonDto commonDto,
+                        PageRequest pageRequest) {
+        final List<PropertyFilter> filterList = getdetailQueryProps(tradeDetail, commonDto);
 
-//        Map<String, String> equalFieldMap = getEqualFieldMap(tradeDetail);
-//        Page<ImpTradeDetail> impDetailPage = impTradeDetailDao
-//                .findAll(where(
-//                        this.<ImpTradeDetail>hasField(ImpTradeDetail.class,
-//                                equalFieldMap, commonDto.getLowValue(), commonDto.getHighValue()))
-//                        , pageRequest);
+        Specification<ImpTradeDetail> spec = DynamicSpecifications.byPropertyFilter(filterList, ImpTradeDetail.class);
+        Page<ImpTradeDetail> tradeDetailPage = impTradeDetailDao.findAll(spec, pageRequest);
 
-
-
-
-        Page<ImpTradeDetail> impDetailPage = impTradeDetailDao
-                .pageByCriteria(, pageRequest);
-        return impDetailPage;
+        return tradeDetailPage;
     }
 
-//    /**
-//     * 创建动态查询条件组合.
-//     */
-//    private <T> Specification<T> buildSpecification(
-//            Long userId, Map<String, Object> searchParams,Class<T> clazz) {
-//        Map<String, SearchFilter> filters = SearchFilter.parse(searchParams);
-//        filters.put("user.id", new SearchFilter("user.id", Operator.EQ, userId));
-//        Specification<T> spec = DynamicSpecifications.bySearchFilter(filters.values(), clazz);
-//        return spec;
-//    }
+    /**
+     * 出口明细
+     * @param tradeDetail 页面传来的 ExpTradeDetail，包含查询条件中里面
+     * @param commonDto
+     * @param pageRequest
+     * @return
+     */
+    public Page<ExpTradeDetail>
+    findExpWithCriteria(ExpTradeDetail tradeDetail, CommonDto commonDto,
+                        PageRequest pageRequest) {
+        final List<PropertyFilter> filterList = getdetailQueryProps(tradeDetail, commonDto);
 
+        Specification<ExpTradeDetail> spec = DynamicSpecifications.byPropertyFilter(filterList, ExpTradeDetail.class);
+        Page<ExpTradeDetail> tradeDetailPage = expTradeDetailDao.findAll(spec, pageRequest);
 
-
-
-
-
-    void queryOption(ImpTradeDetail tradeDetail, CommonDto commonDto){
-
-        String productCode = tradeDetail.getProductCode();
-        String productName = tradeDetail.getProductName();
-        String city = tradeDetail.getCity();
-        String country = tradeDetail.getCountry();
-        String companyType = tradeDetail.getCompanyType();
-        String tradeType = tradeDetail.getTradeType();
-        String transportation = tradeDetail.getTransportation();
-        String customs = tradeDetail.getTransportation();
-        String lowValue = commonDto.getLowValue();
-        String highValue = commonDto.getHighValue();
-        Integer lowYear = 0;
-        Integer lowMonth = 0;
-        Integer highYear = 2100;
-        Integer highMonth = 13;
-
-
-        if(isBlank(productCode))
-            productCode = "%";
-        if (isBlank(city))
-            city = "%";
-        if ( isBlank(country))
-            country = "%";
-        if (isBlank(companyType))
-            companyType = "%";
-        if (isBlank(tradeType))
-            tradeType = "%";
-        if (isBlank(transportation))
-            transportation = "%";
-        if (isBlank(customs))
-            customs = "%";
-        if(isBlank(productName))
-            productName = "%";
-
-        if (isNotBlank(lowValue)) {
-            String[] lows = commonDto.getLowValue().split(YEARMONTH_SPLIT);
-            lowYear = Integer.parseInt(lows[0]);
-            lowMonth = Integer.parseInt(lows[1]);
-        }
-        if (isNotBlank(highValue)) {
-            String[] highs = commonDto.getLowValue().split(YEARMONTH_SPLIT);
-            highYear = Integer.parseInt(highs[0]);
-            highMonth = Integer.parseInt(highs[1]);
-        }
-
+        return tradeDetailPage;
     }
 
-    private void getdetailQueryProps(ImpTradeDetail tradeDetail,
-                                     CommonDto commonDto,
-                                     List<PropertyFilter> propList) {
+
+    @Resource
+    ProductTypeDao productTypeDao;
+
+    /**
+     * 获得productType列表
+     * @return
+     */
+    public List<ProductType> getProductList() {
+        return (List<ProductType>) productTypeDao.findAll();
+    }
+
+    private List<PropertyFilter>
+    getdetailQueryProps(TradeDetail tradeDetail, CommonDto commonDto) {
+        List<PropertyFilter> propList = new ArrayList<PropertyFilter>();
         if (isNotBlank(tradeDetail.getCity())) {
             propList.add(new PropertyFilter("city", tradeDetail.getCity()));
         }
@@ -261,136 +218,40 @@ public class TradeDetailServiceImpl implements TradeDetailService {
             propList.add(new PropertyFilter("productName", tradeDetail.getProductName(), LIKE));
         }
         if (isNotBlank(tradeDetail.getCountry())) {
-            propList.add(new PropertyFilter("country", tradeDetail.getCountry(), null));
-        }
-        if (isNotBlank(tradeDetail.getCountry())) {
-            propList.add(new PropertyFilter("country", tradeDetail.getCountry(), null));
+            propList.add(new PropertyFilter("country", tradeDetail.getCountry()));
         }
         if (isNotBlank(tradeDetail.getCompanyType())) {
-            propList.add(new PropertyFilter("companyType", tradeDetail.getCompanyType(), null));
+            propList.add(new PropertyFilter("companyType", tradeDetail.getCompanyType()));
         }
-        if (isNotBlank(tradeDetail.getCompanyType())) {
-            propList.add(new PropertyFilter("tradeType", tradeDetail.getCompanyType(), null));
+        if (isNotBlank(tradeDetail.getTradeType())) {
+            propList.add(new PropertyFilter("tradeType", tradeDetail.getTradeType()));
         }
-        if (isNotBlank(tradeDetail.getCompanyType())) {
-            propList.add(new PropertyFilter("transportation", tradeDetail.getCompanyType(), null));
+        if (isNotBlank(tradeDetail.getTransportation())) {
+            propList.add(new PropertyFilter("transportation", tradeDetail.getTransportation()));
         }
-        if (isNotBlank(tradeDetail.getCompanyType())) {
-            propList.add(new PropertyFilter("customs", tradeDetail.getCompanyType(), null));
+        if (isNotBlank(tradeDetail.getCustoms())) {
+            propList.add(new PropertyFilter("customs", tradeDetail.getCustoms()));
+        }
+        if (tradeDetail.getMonth() != null && tradeDetail.getMonth() != 0) {
+            propList.add(new PropertyFilter("month", tradeDetail.getMonth()));
         }
         if (isNotBlank(commonDto.getLowValue())) {
-            String[] lows = commonDto.getLowValue().split(YEARMONTH_SPLIT);
-            propList.add(new PropertyFilter("year", lows[0], GE).add("month", lows[1], GE));
+            propList.add(new PropertyFilter("yearMonth", commonDto.getLowValue(), GE));
         }
         if (isNotBlank(commonDto.getHighValue())) {
-            String[] highs = commonDto.getLowValue().split(YEARMONTH_SPLIT);
-            propList.add(new PropertyFilter("year", highs[0], LT).add("month", highs[1], LT));
+            propList.add(new PropertyFilter("yearMonth", commonDto.getHighValue(), LT));
         }
-    }
-
-    /**
-     * 根据条件查询出口明细
-     *
-     * @param tradeDetail 页面传来的 IxpTradeDetail/ExpTradeDetail ，包含查询条件中里面
-     * @param commonDto
-     * @param pageRequest
-     * @return
-     */
-    public Page<ExpTradeDetail>
-    findWithCriteria(ExpTradeDetail tradeDetail, CommonDto commonDto,
-                     PageRequest pageRequest) {
-
-        Map<String, String> equalFieldMap = getEqualFieldMap(tradeDetail);
-
-        Page<ExpTradeDetail> expDetailPage = expTradeDetailDao
-                .findAll(where(
-                        this.<ExpTradeDetail>hasField(ExpTradeDetail.class,
-                                equalFieldMap, commonDto.getLowValue(), commonDto.getHighValue()))
-                        , pageRequest);
-
-        return expDetailPage;
-    }
-
-
-    public <T extends TradeDetail> Specification<T>
-    hasField(final Class<T> clazz, final Map<String, String> equalFieldMap,
-             final String lowValue, final String highValue) {
-
-        return new Specification<T>() {
-            public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                root = query.from(clazz);
-                //设置一个条件
-//                return cb.equal(root.get("city"),city);
-
-                List<Predicate> predicates = new ArrayList<Predicate>();
-//                Predicate[] predicates = new Predicate[equalFieldMap.size()+1];
-                for (Map.Entry<String, String> entry : equalFieldMap.entrySet()) {
-                    predicates.add(cb.equal(root.get(entry.getKey()), entry.getValue()));
-                }
-
-//                if (StringUtils.isNotBlank(lowValue)) {
-//                    String[] lows = lowValue.split(YEARMONTH_SPLIT);
-//                    Predicate lowYear = cb.ge((Expression<? extends Number>)
-//                            root.get("year"), Integer.parseInt(lows[0]));
-//                    Predicate lowMonth = cb.ge((Expression<? extends Number>)
-//                            root.get("month"), Integer.parseInt(lows[1]));
-//                    predicates.add(lowYear);
-//                    predicates.add(lowMonth);
-//                }
-//                if (StringUtils.isNotBlank(highValue)) {
-//                    String[] highs = highValue.split(YEARMONTH_SPLIT);
-//                    Predicate highYear = cb.ge((Expression<? extends Number>)
-//                            root.get("year"), Integer.parseInt(highs[0]));
-//                    Predicate highMonth = cb.ge((Expression<? extends Number>)
-//                            root.get("month"), Integer.parseInt(highs[1]));
-//                    predicates.add(highYear);
-//                    predicates.add(highMonth);
-//                }
-
-                //设置多个条件
-                query.where((Predicate[]) predicates.toArray());
-                return null;
-            }
-
-        };
-    }
-
-    private <T extends TradeDetail> Map<String, String>
-    getEqualFieldMap(T tradeDetail) {
-        Map<String, String> fieldValueMap = new HashMap<String, String>();
-        String city = tradeDetail.getCity();
-        String country = tradeDetail.getCountry();
-        String companyType = tradeDetail.getCompanyType();
-        String tradeType = tradeDetail.getTradeType();
-        String transportation = tradeDetail.getTransportation();
-        String customs = tradeDetail.getTransportation();
-
-        if (city != null) {
-            fieldValueMap.put("city", city);
-            if (country != null)
-                fieldValueMap.put("country", country);
-            if (companyType != null)
-                fieldValueMap.put("companyType", companyType);
-            if (tradeType != null)
-                fieldValueMap.put("tradeType", tradeType);
-            if (transportation != null)
-                fieldValueMap.put("transportation", transportation);
-            if (customs != null)
-                fieldValueMap.put("customs", customs);
-        }
-        return fieldValueMap;
-    }
-
-    @Resource
-    ProductTypeDao productTypeDao;
-
-    /**
-     * 获得productType列表
-     *
-     * @return
-     */
-    public List<ProductType> getProductList() {
-        return (List<ProductType>) productTypeDao.findAll();
+//        if (isNotBlank(commonDto.getLowValue())) {
+//            String[] lows = commonDto.getLowValue().split(YEARMONTH_SPLIT);
+//            propList.add(new PropertyFilter("year", lows[0], GE));
+//            propList.add(new PropertyFilter("month", lows[1], GE));
+//        }
+//        if (isNotBlank(commonDto.getHighValue())) {
+//            String[] highs = commonDto.getHighValue().split(YEARMONTH_SPLIT);
+//            propList.add(new PropertyFilter("year", highs[0], LT));
+//            propList.add(new PropertyFilter("month", highs[1], LT));
+//        }
+        return propList;
     }
 
 

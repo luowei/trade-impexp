@@ -18,19 +18,28 @@ import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeSumService;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
+import com.oilchem.trade.util.DynamicSpecifications;
+import com.oilchem.trade.util.QueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.oilchem.trade.config.Config.*;
+import static com.oilchem.trade.util.QueryUtils.Type.GE;
+import static com.oilchem.trade.util.QueryUtils.Type.LT;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.data.jpa.domain.Specifications.*;
+import static com.oilchem.trade.util.QueryUtils.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -75,7 +84,6 @@ public class TradeSumServiceImpl implements TradeSumService {
     /**
      * 导入Excel
      *
-     *
      * @param logEntry
      * @param yearMonthDto 年月，产品类型
      * @return
@@ -104,8 +112,8 @@ public class TradeSumServiceImpl implements TradeSumService {
 
                 //导入
                 isSuccess = isSuccess & commonService.importExcel(
-                        impTradeSumDao,  impTradeSumDao,
-                        logEntry,  ImpTradeSum.class,
+                        impTradeSumDao, impTradeSumDao,
+                        logEntry, ImpTradeSum.class,
                         ImpTradeSumRowMapper.class, yearMonthDto);
             }
         }
@@ -125,8 +133,8 @@ public class TradeSumServiceImpl implements TradeSumService {
 
                 //导入数据
                 isSuccess = isSuccess & commonService.importExcel(
-                        expTradeSumDao,  expTradeSumDao,
-                        logEntry,  ExpTradeSum.class,
+                        expTradeSumDao, expTradeSumDao,
+                        logEntry, ExpTradeSum.class,
                         ExpTradeSumRowMapper.class, yearMonthDto);
             }
         }
@@ -141,37 +149,12 @@ public class TradeSumServiceImpl implements TradeSumService {
     }
 
     /**
-     * 根据条件查找
+     * 上传文件
      *
-     * @param tradeSum    总表实例
-     * @param commonDto   条件
-     * @param pageRequest
+     * @param file         file
+     * @param yearMonthDto
      * @return
      */
-    public <T extends TradeSum> Page<T> findWithCriteria(
-            T tradeSum, CommonDto commonDto,
-            PageRequest pageRequest) {
-
-        if (tradeSum instanceof ImpTradeSum) {
-            Page<ImpTradeSum> pageImpDetail = impTradeSumDao
-                    .findAll(where(new Spec< ImpTradeSum >().hasField("", tradeSum.getYear()))
-                            .and(new Spec<ImpTradeSum>().hasField("", tradeSum.getMonth()))
-                            , pageRequest);
-            return (Page<T>) pageImpDetail;
-        }
-
-
-        if (tradeSum instanceof ExpTradeSum) {
-            Page<ExpTradeSum> pageExpDetail = expTradeSumDao
-                    .findAll(where(new Spec<ExpTradeSum>().hasField("", tradeSum.getYear()))
-                            .and(new Spec<ExpTradeSum>().hasField("", tradeSum.getMonth()))
-                            , pageRequest);
-            return (Page<T>) pageExpDetail;
-        }
-
-        return null;
-    }
-
     @Override
     public String uploadFile(MultipartFile file,
                              YearMonthDto yearMonthDto) {
@@ -179,6 +162,44 @@ public class TradeSumServiceImpl implements TradeSumService {
         yearMonthDto.setTableType(Config.SUM);
         return commonService.uploadFile(file,
                 UPLOAD_SUMZIP_DIR, yearMonthDto);
+    }
+
+    public Page<ExpTradeSum> findExpWithCriteria(
+            ExpTradeSum tradeSum,CommonDto commonDto,PageRequest pageRequest) {
+        final List<QueryUtils.PropertyFilter> filterList = getSumQueryProps(tradeSum, commonDto);
+        Specification<ExpTradeSum> spec = DynamicSpecifications
+                .byPropertyFilter(filterList, ExpTradeSum.class);
+        return expTradeSumDao.findAll(spec, pageRequest);
+    }
+
+    public Page<ImpTradeSum> findImpWithCriteria(
+            ImpTradeSum tradeSum,CommonDto commonDto,PageRequest pageRequest) {
+        final List<QueryUtils.PropertyFilter> filterList = getSumQueryProps(tradeSum, commonDto);
+        Specification<ImpTradeSum> spec = DynamicSpecifications
+                .byPropertyFilter(filterList, ImpTradeSum.class);
+        return impTradeSumDao.findAll(spec, pageRequest);
+    }
+
+    private List<QueryUtils.PropertyFilter>
+    getSumQueryProps(TradeSum tradeSum, CommonDto commonDto) {
+        List<QueryUtils.PropertyFilter> propList = new ArrayList<QueryUtils.PropertyFilter>();
+        if (isNotBlank(tradeSum.getProductName())) {
+            propList.add(new QueryUtils.PropertyFilter("productName", tradeSum.getProductName(), Type.LIKE));
+        }
+        if (isNotBlank(tradeSum.getProductType())) {
+            propList.add(new PropertyFilter("productType", tradeSum.getProductType()));
+        }
+        if (tradeSum.getMonth() != null && tradeSum.getMonth() != 0) {
+            propList.add(new PropertyFilter("month", tradeSum.getMonth()));
+        }
+        if (isNotBlank(commonDto.getLowValue())) {
+            propList.add(new PropertyFilter("yearMonth", commonDto.getLowValue(), GE));
+        }
+        if (isNotBlank(commonDto.getHighValue())) {
+            propList.add(new PropertyFilter("yearMonth", commonDto.getHighValue(), LT));
+        }
+
+        return null;
     }
 
 }

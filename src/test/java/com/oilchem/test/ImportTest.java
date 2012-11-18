@@ -4,6 +4,7 @@ import com.oilchem.trade.config.Config;
 import com.oilchem.trade.config.Message;
 import com.oilchem.trade.domain.ImpTradeDetail;
 import com.oilchem.trade.domain.Log;
+import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
@@ -162,15 +163,19 @@ public class ImportTest {
     public void testFindDetailListWithCriteria() throws Exception {
 
         ImpTradeDetail impTradeDetail = new ImpTradeDetail();
-        impTradeDetail.setCity("广东广州市").setProductName("阿拉伯胶").setTradeType("一般贸易");
+        impTradeDetail.setProductName("阿拉伯胶") ;
+        impTradeDetail.setProductCode("13012");
+        impTradeDetail.setCity("广东广州市");
+        impTradeDetail.setTradeType("一般贸易");
+        impTradeDetail.setCompanyType("私人企业");
 
         CommonDto commonDto = new CommonDto();
         commonDto.setPageNumber(1).setPageSize(20).setOrder("city:asc");
-//        .setLowValue("2011-9").setHighValue("2012-12");
+//        commonDto .setLowValue("2003-9").setHighValue("2012-12");
 
 
         Page<ImpTradeDetail> tradeDetails = tradeDetailService
-                .findWithCriteria(impTradeDetail, commonDto,
+                .findImpWithCriteria(impTradeDetail, commonDto,
                         new CommonController().getPageRequest(commonDto));
 
         assertEquals(true,tradeDetails.getContent().size() > 0);

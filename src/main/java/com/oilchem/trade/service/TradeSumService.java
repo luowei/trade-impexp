@@ -1,6 +1,9 @@
 package com.oilchem.trade.service;
 
+import com.oilchem.trade.domain.ExpTradeSum;
+import com.oilchem.trade.domain.ImpTradeSum;
 import com.oilchem.trade.domain.Log;
+import com.oilchem.trade.domain.ProductType;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
@@ -8,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,19 +25,12 @@ public interface TradeSumService {
 
     /**
      * 解包
-     *
-     *
      * @param logId@return 解包后的文件路径
      */
     String unPackage(Long logId);
 
     /**
      * 导入Excel
-     *
-     *
-     *
-     *
-     *
      * @param logEntry
      * @param yearMonthDto              年月,产品类型
      * @return
@@ -41,25 +38,31 @@ public interface TradeSumService {
     Boolean importExcel(Map.Entry<Long, Log> logEntry, YearMonthDto yearMonthDto);
 
     /**
-     * 根据条件查询总表记录
-     *
-     *
-     * @param tradeSum  总表实例
-     * @param commonDto 条件
-     * @param pageRequest
-     * @return
-     */
-    <T extends TradeSum> Page<T> findWithCriteria(T tradeSum, CommonDto commonDto, PageRequest pageRequest);
-
-    /**
      * 上传文件
-     *
-     *
-     *
-     *
      * @param file  file
      * @param yearMonthDto
      * @return
      */
     String uploadFile(MultipartFile file, YearMonthDto yearMonthDto);
+
+    /**
+     * 进口列表
+     * @param tradeSum
+     * @param commonDto
+     * @param pageRequest
+     * @return
+     */
+    public Page<ImpTradeSum> findImpWithCriteria(
+            ImpTradeSum tradeSum,CommonDto commonDto,PageRequest pageRequest) ;
+
+    /**
+     * 出口列表
+     * @param tradeSum
+     * @param commonDto
+     * @param pageRequest
+     * @return
+     */
+    public Page<ExpTradeSum> findExpWithCriteria(
+            ExpTradeSum tradeSum,CommonDto commonDto,PageRequest pageRequest);
+
 }

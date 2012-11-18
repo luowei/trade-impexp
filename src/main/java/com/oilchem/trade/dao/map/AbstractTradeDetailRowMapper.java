@@ -54,6 +54,8 @@ public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implem
         tradeDetail.setYear(year);
         //月
         tradeDetail.setMonth(month);
+        //年月
+        tradeDetail.setYearMonth(year+"-"+(month<10 ? "0"+month:month));
         return tradeDetail;
     }
 

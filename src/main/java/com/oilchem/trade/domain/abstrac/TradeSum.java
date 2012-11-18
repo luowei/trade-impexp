@@ -23,6 +23,8 @@ public class TradeSum extends IdEntity implements Serializable {
     //进出口月
     @Column(name = "col_month")
     private Integer month;
+    @Column(name = "year_month")
+    private String yearMonth;
     //产品类型
     @Column(name = "product_type")
     private String productType;
@@ -60,9 +62,11 @@ public class TradeSum extends IdEntity implements Serializable {
     public TradeSum() {
     }
 
-    public TradeSum(Integer year, Integer month, String productType) {
+    public TradeSum(Integer year, Integer month,
+                    String yearMonth, String productType) {
         this.year = year;
         this.month = month;
+        this.yearMonth = yearMonth;
         this.productType = productType;
     }
 
@@ -80,6 +84,14 @@ public class TradeSum extends IdEntity implements Serializable {
 
     public void setMonth(Integer month) {
         this.month = month;
+    }
+
+    public String getYearMonth() {
+        return yearMonth;
+    }
+
+    public void setYearMonth(String yearMonth) {
+        this.yearMonth = yearMonth;
     }
 
     public String getProductType() {

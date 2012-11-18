@@ -67,8 +67,8 @@
                      cssClass="dropdown-toggle"/>
 
         <form:select path="impExpType" cssClass="dropdown-toggle" placeholder="进出口类型">
-            <form:option value="1" label="进口"/>
-            <form:option value="2" label="出口"/>
+            <form:option value="0" label="进口"/>
+            <form:option value="1" label="出口"/>
         </form:select>
 
         <form:input path="searchKey1" cssClass="input-medium search-query" placeholder="关键字:"/>

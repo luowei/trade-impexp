@@ -1,8 +1,11 @@
 package com.oilchem.trade.view.controller;
 
 import com.oilchem.trade.config.Config;
+import com.oilchem.trade.config.Message;
 import com.oilchem.trade.domain.ExpTradeSum;
 import com.oilchem.trade.domain.ImpTradeSum;
+import com.oilchem.trade.domain.ProductType;
+import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeSumService;
@@ -24,7 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
  * To change this template use File | Settings | File Templates.
  */
 @Controller
-@RequestMapping("/manage/trade")
+@RequestMapping("/manage")
 public class TradeSumController extends CommonController {
 
     @Autowired
@@ -44,34 +47,21 @@ public class TradeSumController extends CommonController {
      * @param commonDto commonDto
      * @return
      */
-    @RequestMapping("/listimpsum")
-    public String listTradeImpSum(Model model, ImpTradeSum tradeSum, CommonDto commonDto) {
+    @RequestMapping("/listsum")
+    public String listTradeImpSum(Model model, TradeSum tradeSum,Integer impExp, CommonDto commonDto) {
 
-        Page<ImpTradeSum> tradeSums = tradeSumService
-                .findWithCriteria(tradeSum, commonDto, getPageRequest(commonDto));
-
-        findAllIdEntity(addPageInfo(model, tradeSums, getServletContextPath("/listimpsum")), ImpTradeSum.class)
-                .addAttribute("tradeSumList", tradeSums);
-
-        return "manage/trade/listsum";
-    }
-
-    /**
-     * 获得出口总表的一页数据
-     *
-     * @param model     model
-     * @param tradeSum  tradeSum
-     * @param commonDto commonDto
-     * @return
-     */
-    @RequestMapping("/listexpsum")
-    public String listTradeExpSum(Model model, ExpTradeSum tradeSum, CommonDto commonDto) {
-
-        Page<ExpTradeSum> tradeSums = tradeSumService
-                .findWithCriteria(tradeSum, commonDto, getPageRequest(commonDto));
-
-        findAllIdEntity(addPageInfo(model, tradeSums, getServletContextPath("/listimpsum")),ExpTradeSum.class)
-                .addAttribute("tradeSumList", tradeSums);
+        if (impExp.equals(Message.ImpExpType.进口.getCode())) {
+            Page<ImpTradeSum> impTradeSums = tradeSumService
+                    .findImpWithCriteria((ImpTradeSum)tradeSum, commonDto, getPageRequest(commonDto));
+            findAllIdEntity(addPageInfo(model, impTradeSums, getServletContextPath("/listsum")), ProductType.class)
+                    .addAttribute("tradeSumList",impTradeSums);
+        }
+        if (impExp.equals(Message.ImpExpType.出口.getCode())) {
+            Page<ExpTradeSum> expTradeSums = tradeSumService
+                    .findExpWithCriteria((ExpTradeSum)tradeSum, commonDto, getPageRequest(commonDto));
+            findAllIdEntity(addPageInfo(model, expTradeSums, getServletContextPath("/listsum")), ProductType.class)
+                    .addAttribute("tradeSumList",expTradeSums);
+        }
 
         return "manage/trade/listsum";
     }

@@ -77,7 +77,7 @@ public abstract class QueryUtils {
                         case LT:
                             sb.append(" < ");
                             break;
-                        case LG:
+                        case LE:
                             sb.append(" <= ");
                             break;
                         case LIKE:
@@ -193,7 +193,7 @@ public abstract class QueryUtils {
      * @createTime:12-1--12
      */
     public static enum Type {
-        EQ, GT, GE, LT, LG, LIKE
+        EQ, GT, GE, LT, LE, LIKE
     }
 }
 

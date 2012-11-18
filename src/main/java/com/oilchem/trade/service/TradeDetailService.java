@@ -6,6 +6,7 @@ import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.domain.ProductType;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
+import com.oilchem.trade.domain.abstrac.TradeDetail;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,28 +55,31 @@ public interface TradeDetailService {
     Boolean importAccess(Map.Entry<Long, Log> logEntry,
                          YearMonthDto yearMonthDto);
 
-
     /**
-     * 根据条件查询进口明细
-     *
-     * @param tradeDetail 页面传来的 IxpTradeDetail/ExpTradeDetail ，包含查询条件中里面
+     * 进口明细
+     * @param tradeDetail 页面传来的 IxpTradeDetail包含查询条件中里面
      * @param commonDto
      * @param pageRequest
      * @return
      */
-    public  Page<ImpTradeDetail>
-    findWithCriteria(ImpTradeDetail tradeDetail, CommonDto commonDto, PageRequest pageRequest);
+    public Page<ImpTradeDetail>
+    findImpWithCriteria(ImpTradeDetail tradeDetail, CommonDto commonDto,
+                        PageRequest pageRequest);
 
     /**
-     * 根据条件查询出口明细
-     *
-     * @param tradeDetail 页面传来的 IxpTradeDetail/ExpTradeDetail ，包含查询条件中里面
+     * 出口明细
+     * @param tradeDetail 页面传来的 ExpTradeDetail，包含查询条件中里面
      * @param commonDto
      * @param pageRequest
      * @return
      */
-    public  Page<ExpTradeDetail>
-    findWithCriteria(ExpTradeDetail tradeDetail, CommonDto commonDto, PageRequest pageRequest);
+    public Page<ExpTradeDetail>
+    findExpWithCriteria(ExpTradeDetail tradeDetail, CommonDto commonDto,
+                        PageRequest pageRequest);
 
-    List<ProductType> getProductList();
+    /**
+     * 获得productType列表
+     * @return
+     */
+    public List<ProductType> getProductList();
 }

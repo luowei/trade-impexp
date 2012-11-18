@@ -1,7 +1,9 @@
 package com.oilchem.trade.view.controller;
 
 import com.oilchem.trade.config.Config;
+import com.oilchem.trade.config.Message;
 import com.oilchem.trade.domain.*;
+import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
@@ -25,7 +27,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 @Controller
-@RequestMapping("/manage/trade")
+@RequestMapping("/manage")
 public class TradeDetailController extends CommonController {
 
     @Autowired
@@ -43,42 +45,30 @@ public class TradeDetailController extends CommonController {
 //    }
 
     /**
-     * 进口明细列表
-     *
-     * @param model          model
-     * @commmonDto          commonDto
-     * @param impTradeDetail impTradeDetail
+     * 明细列表
+     * @param model
+     * @param commonDto
+     * @param tradeDetail
+     * @param impExp
      * @return
      */
-    @RequestMapping("/listimpdetail")
-    public String listImpTradeDetail(Model model, CommonDto commonDto,
-                                     ImpTradeDetail impTradeDetail) {
+    @RequestMapping("/listdetail")
+    public String listexpTradeDetail(Model model ,CommonDto commonDto,
+                                     TradeDetail tradeDetail,Integer impExp) {
 
-        Page<ImpTradeDetail> tradeDetails = tradeDetailService
-                .findWithCriteria(impTradeDetail, commonDto, getPageRequest(commonDto));
+        if (impExp.equals(Message.ImpExpType.进口.getCode())) {
+            Page<ImpTradeDetail> impTradeDetails = tradeDetailService
+                    .findImpWithCriteria((ImpTradeDetail)tradeDetail, commonDto, getPageRequest(commonDto));
+            getDetailCriteriaData(addPageInfo(model, impTradeDetails, getServletContextPath("/listexpdetail")))
+                    .addAttribute("tradeDetailList",impTradeDetails);
+        }
+        if (impExp.equals(Message.ImpExpType.出口.getCode())) {
+            Page<ExpTradeDetail> expTradeDetails = tradeDetailService
+                    .findExpWithCriteria((ExpTradeDetail)tradeDetail, commonDto, getPageRequest(commonDto));
+            getDetailCriteriaData(addPageInfo(model, expTradeDetails, getServletContextPath("/listexpdetail")))
+                    .addAttribute("tradeDetailList",expTradeDetails);
+        }
 
-        getDetailCriteriaData(addPageInfo(model, tradeDetails, getServletContextPath("/listimpdetail")))
-                .addAttribute("tradeDetailList", tradeDetails);
-        return "manage/trade/listdetail";
-    }
-
-    /**
-     * 出口明细列表
-     *
-     * @param model          model
-     * @param commonDto     commonDto
-     * @param expTradeDetail expTradeDetail
-     * @return
-     */
-    @RequestMapping("/listexpdetail")
-    public String listexpTradeDetail(Model model ,YearMonthDto yearMonthDto,CommonDto commonDto,
-                                     ExpTradeDetail expTradeDetail) {
-
-        Page<ExpTradeDetail> tradeDetails = tradeDetailService
-                .findWithCriteria(expTradeDetail,commonDto, getPageRequest(commonDto));
-
-        getDetailCriteriaData(addPageInfo(model, tradeDetails, getServletContextPath("/listexpdetail")))
-                .addAttribute("tradeDetailList", tradeDetails);
         return "manage/trade/listdetail";
     }
 

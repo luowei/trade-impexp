@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * To change this template use File | Settings | File Templates.
  */
 @Controller
-@RequestMapping("/manage/trade")
+@RequestMapping("/manage")
 public class LogController extends CommonController {
 
     @Autowired
@@ -30,7 +30,7 @@ public class LogController extends CommonController {
         addPageInfo(model,logs,getServletContextPath("/listlog"))
             .addAttribute("logList",logs);
 
-        return "manage/trade//listlog";
+        return "manage/trade/listlog";
     }
 
 }

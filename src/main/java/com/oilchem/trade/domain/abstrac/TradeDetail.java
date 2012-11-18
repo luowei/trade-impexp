@@ -23,6 +23,8 @@ public class TradeDetail
     //月
     @Column(name = "col_month")
     private Integer month;
+    @Column(name = "year_month")
+    private String yearMonth;
     //产品代码
     @Column(name = "product_code")
     private String productCode;
@@ -89,6 +91,14 @@ public class TradeDetail
     public TradeDetail setMonth(Integer month) {
         this.month = month;
         return this;
+    }
+
+    public String getYearMonth() {
+        return yearMonth;
+    }
+
+    public void setYearMonth(String yearMonth) {
+        this.yearMonth = yearMonth;
     }
 
     public String getProductCode() {

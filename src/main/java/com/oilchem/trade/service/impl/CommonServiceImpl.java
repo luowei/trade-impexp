@@ -589,13 +589,15 @@ public class CommonServiceImpl implements CommonService {
             Sheet sheet = workbook.getSheet(0);
             int rows = sheet.getRows();
             int rowIdx = sheet.findCell(PRODUCT_XNAME).getRow() + 1;
+            Integer year = yearMonthDto.getYear();
+            Integer month = yearMonthDto.getMonth();
+            String yearMonth = year+"-"+(month<10 ? "0"+month:month);
 
             //遍历excel
             for (; rowIdx < rows; rowIdx++) {
                 E tradeSum = tradeSumClass.getConstructor(
-                        Integer.class, Integer.class, String.class)
-                        .newInstance(yearMonthDto.getYear(),
-                                yearMonthDto.getMonth(),
+                        Integer.class, Integer.class,String.class, String.class)
+                        .newInstance(year,month,yearMonth,
                                 yearMonthDto.getProductType());
 
                 Constructor<M> constructor = tradeSumRowMapClass.getConstructor(

@@ -21,7 +21,8 @@ public class ImpTradeSum extends TradeSum {
 
     public ImpTradeSum(Integer year,
                        Integer month,
+                       String yearMonth,
                        String productType) {
-        super(year, month, productType);
+        super(year, month,yearMonth, productType);
     }
 }
