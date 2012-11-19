@@ -163,11 +163,11 @@ public class ImportTest {
     public void testFindDetailListWithCriteria() throws Exception {
 
         ImpTradeDetail impTradeDetail = new ImpTradeDetail();
-        impTradeDetail.setProductName("阿拉伯胶") ;
-        impTradeDetail.setProductCode("13012");
+//        impTradeDetail.setProductName("阿拉伯胶") ;
+//        impTradeDetail.setProductCode("13012");
         impTradeDetail.setCity("广东广州市");
-        impTradeDetail.setTradeType("一般贸易");
-        impTradeDetail.setCompanyType("私人企业");
+//        impTradeDetail.setTradeType("一般贸易");
+//        impTradeDetail.setCompanyType("私人企业");
 
         CommonDto commonDto = new CommonDto();
         commonDto.setPageNumber(1).setPageSize(20).setOrder("city:asc");

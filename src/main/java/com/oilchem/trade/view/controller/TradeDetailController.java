@@ -2,6 +2,7 @@ package com.oilchem.trade.view.controller;
 
 import com.oilchem.trade.config.Config;
 import com.oilchem.trade.config.Message;
+import com.oilchem.trade.dao.*;
 import com.oilchem.trade.domain.*;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.service.CommonService;
@@ -56,17 +57,20 @@ public class TradeDetailController extends CommonController {
     public String listexpTradeDetail(Model model ,CommonDto commonDto,
                                      TradeDetail tradeDetail,Integer impExp) {
 
+        if(impExp==null)
+            impExp = 0;
+
         if (impExp.equals(Message.ImpExpType.进口.getCode())) {
             Page<ImpTradeDetail> impTradeDetails = tradeDetailService
-                    .findImpWithCriteria((ImpTradeDetail)tradeDetail, commonDto, getPageRequest(commonDto));
-            getDetailCriteriaData(addPageInfo(model, impTradeDetails, getServletContextPath("/listexpdetail")))
-                    .addAttribute("tradeDetailList",impTradeDetails);
+                    .findImpWithCriteria(new ImpTradeDetail(tradeDetail), commonDto, getPageRequest(commonDto));
+            getDetailCriteriaData(addPageInfo(model, impTradeDetails, getServletContextPath()+"/manage/listdetail"))
+                    .addAttribute("tradeDetailList", impTradeDetails);
         }
         if (impExp.equals(Message.ImpExpType.出口.getCode())) {
             Page<ExpTradeDetail> expTradeDetails = tradeDetailService
-                    .findExpWithCriteria((ExpTradeDetail)tradeDetail, commonDto, getPageRequest(commonDto));
-            getDetailCriteriaData(addPageInfo(model, expTradeDetails, getServletContextPath("/listexpdetail")))
-                    .addAttribute("tradeDetailList",expTradeDetails);
+                    .findExpWithCriteria(new ExpTradeDetail(tradeDetail), commonDto, getPageRequest(commonDto));
+            getDetailCriteriaData(addPageInfo(model, expTradeDetails, getServletContextPath()+"/manage/listdetail"))
+                    .addAttribute("tradeDetailList", expTradeDetails);
         }
 
         return "manage/trade/listdetail";
@@ -111,7 +115,7 @@ public class TradeDetailController extends CommonController {
         }
 
         model.addAttribute("message",message.toString());
-        return "manage/trade/import";
+        return "forward:/manage/import";
     }
 
     /**
@@ -122,12 +126,12 @@ public class TradeDetailController extends CommonController {
      */
     private Model getDetailCriteriaData(Model model) {
 
-        List<City> cityList = commonService.findAllIdEntityList(City.class);
-        List<CompanyType> companyTypeList = commonService.findAllIdEntityList(CompanyType.class);
-        List<Country> countryList = commonService.findAllIdEntityList(Country.class);
-        List<Customs> customsList = commonService.findAllIdEntityList(Customs.class);
-        List<TradeType> tradeTypeList = commonService.findAllIdEntityList(TradeType.class);
-        List<Transportation> transportationList = commonService.findAllIdEntityList(Transportation.class);
+        List<City> cityList = commonService.findAllIdEntityList(CityDao.class, City.class.getSimpleName());
+        List<CompanyType> companyTypeList = commonService.findAllIdEntityList(CompanyTypeDao.class, CompanyType.class.getSimpleName());
+        List<Country> countryList = commonService.findAllIdEntityList(CountryDao.class, Country.class.getSimpleName());
+        List<Customs> customsList = commonService.findAllIdEntityList(CustomsDao.class, Customs.class.getSimpleName());
+        List<TradeType> tradeTypeList = commonService.findAllIdEntityList(TradeTypeDao.class, TradeType.class.getSimpleName());
+        List<Transportation> transportationList = commonService.findAllIdEntityList(TransportationDao.class, Transportation.class.getSimpleName());
 
         model.addAttribute(cityList)
                 .addAttribute(companyTypeList)

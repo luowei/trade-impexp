@@ -74,111 +74,125 @@ public class TradeSum extends IdEntity implements Serializable {
         return year;
     }
 
-    public void setYear(Integer year) {
+    public TradeSum setYear(Integer year) {
         this.year = year;
+        return this;
     }
 
     public Integer getMonth() {
         return month;
     }
 
-    public void setMonth(Integer month) {
+    public TradeSum setMonth(Integer month) {
         this.month = month;
+        return this;
     }
 
     public String getYearMonth() {
         return yearMonth;
     }
 
-    public void setYearMonth(String yearMonth) {
+    public TradeSum setYearMonth(String yearMonth) {
         this.yearMonth = yearMonth;
+        return this;
     }
 
     public String getProductType() {
         return productType;
     }
 
-    public void setProductType(String productType) {
+    public TradeSum setProductType(String productType) {
         this.productType = productType;
+        return this;
     }
 
     public String getProductName() {
         return productName;
     }
 
-    public void setProductName(String productName) {
+    public TradeSum setProductName(String productName) {
         this.productName = productName;
+        return this;
     }
 
     public BigDecimal getNumMonth() {
         return numMonth;
     }
 
-    public void setNumMonth(BigDecimal numMonth) {
+    public TradeSum setNumMonth(BigDecimal numMonth) {
         this.numMonth = numMonth;
+        return this;
     }
 
     public BigDecimal getNumSum() {
         return numSum;
     }
 
-    public void setNumSum(BigDecimal numSum) {
+    public TradeSum setNumSum(BigDecimal numSum) {
         this.numSum = numSum;
+        return this;
     }
 
     public BigDecimal getMoneyMonth() {
         return moneyMonth;
     }
 
-    public void setMoneyMonth(BigDecimal moneyMonth) {
+    public TradeSum setMoneyMonth(BigDecimal moneyMonth) {
         this.moneyMonth = moneyMonth;
+        return this;
     }
 
     public BigDecimal getMoneySum() {
         return moneySum;
     }
 
-    public void setMoneySum(BigDecimal moneySum) {
+    public TradeSum setMoneySum(BigDecimal moneySum) {
         this.moneySum = moneySum;
+        return this;
     }
 
     public BigDecimal getAvgPriceMonth() {
         return avgPriceMonth;
     }
 
-    public void setAvgPriceMonth(BigDecimal avgPriceMonth) {
+    public TradeSum setAvgPriceMonth(BigDecimal avgPriceMonth) {
         this.avgPriceMonth = avgPriceMonth;
+        return this;
     }
 
     public BigDecimal getAvgPriceSum() {
         return avgPriceSum;
     }
 
-    public void setAvgPriceSum(BigDecimal avgPriceSum) {
+    public TradeSum setAvgPriceSum(BigDecimal avgPriceSum) {
         this.avgPriceSum = avgPriceSum;
+        return this;
     }
 
     public BigDecimal getNumPreMonthIncRadio() {
         return numPreMonthIncRadio;
     }
 
-    public void setNumPreMonthIncRadio(BigDecimal numPreMonthIncRadio) {
+    public TradeSum setNumPreMonthIncRadio(BigDecimal numPreMonthIncRadio) {
         this.numPreMonthIncRadio = numPreMonthIncRadio;
+        return this;
     }
 
     public BigDecimal getNumPreYearSameMonthIncRatio() {
         return numPreYearSameMonthIncRatio;
     }
 
-    public void setNumPreYearSameMonthIncRatio(BigDecimal numPreYearSameMonthIncRatio) {
+    public TradeSum setNumPreYearSameMonthIncRatio(BigDecimal numPreYearSameMonthIncRatio) {
         this.numPreYearSameMonthIncRatio = numPreYearSameMonthIncRatio;
+        return this;
     }
 
     public BigDecimal getNumPreYearSameQuarterInrRatio() {
         return numPreYearSameQuarterInrRatio;
     }
 
-    public void setNumPreYearSameQuarterInrRatio(BigDecimal numPreYearSameQuarterInrRatio) {
+    public TradeSum setNumPreYearSameQuarterInrRatio(BigDecimal numPreYearSameQuarterInrRatio) {
         this.numPreYearSameQuarterInrRatio = numPreYearSameQuarterInrRatio;
+        return this;
     }
 }

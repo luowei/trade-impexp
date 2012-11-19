@@ -2,6 +2,7 @@ package com.oilchem.trade.view.controller;
 
 import com.oilchem.trade.config.Config;
 import com.oilchem.trade.config.Message;
+import com.oilchem.trade.dao.ProductTypeDao;
 import com.oilchem.trade.domain.ExpTradeSum;
 import com.oilchem.trade.domain.ImpTradeSum;
 import com.oilchem.trade.domain.ProductType;
@@ -48,19 +49,23 @@ public class TradeSumController extends CommonController {
      * @return
      */
     @RequestMapping("/listsum")
-    public String listTradeImpSum(Model model, TradeSum tradeSum,Integer impExp, CommonDto commonDto) {
-
+    public String listTradeImpSum(Model model, TradeSum tradeSum,
+                                  Integer impExp, CommonDto commonDto) {
+        if(impExp==null)
+            impExp=0;
         if (impExp.equals(Message.ImpExpType.进口.getCode())) {
             Page<ImpTradeSum> impTradeSums = tradeSumService
-                    .findImpWithCriteria((ImpTradeSum)tradeSum, commonDto, getPageRequest(commonDto));
-            findAllIdEntity(addPageInfo(model, impTradeSums, getServletContextPath("/listsum")), ProductType.class)
-                    .addAttribute("tradeSumList",impTradeSums);
+                    .findImpWithCriteria(new ImpTradeSum(tradeSum), commonDto, getPageRequest(commonDto));
+            findAllIdEntity(addPageInfo(model, impTradeSums, getServletContextPath()+"/manage/listsum"),
+                    ProductTypeDao.class, ImpTradeSum.class.getSimpleName())
+                    .addAttribute("tradeSumList", impTradeSums);
         }
         if (impExp.equals(Message.ImpExpType.出口.getCode())) {
             Page<ExpTradeSum> expTradeSums = tradeSumService
-                    .findExpWithCriteria((ExpTradeSum)tradeSum, commonDto, getPageRequest(commonDto));
-            findAllIdEntity(addPageInfo(model, expTradeSums, getServletContextPath("/listsum")), ProductType.class)
-                    .addAttribute("tradeSumList",expTradeSums);
+                    .findExpWithCriteria(new ExpTradeSum(tradeSum), commonDto, getPageRequest(commonDto));
+            findAllIdEntity(addPageInfo(model, expTradeSums, getServletContextPath()+"/manage/listsum"),
+                    ProductTypeDao.class, ProductType.class.getSimpleName())
+                    .addAttribute("tradeSumList", expTradeSums);
         }
 
         return "manage/trade/listsum";
@@ -94,7 +99,7 @@ public class TradeSumController extends CommonController {
 
         model.addAttribute("message",message.toString());
 
-        return "manage/trade/import";
+        return "forward:/manage/import";
     }
 
 

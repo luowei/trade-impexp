@@ -27,7 +27,7 @@ public class LogController extends CommonController {
     public String listLog(Model model,CommonDto commonDto){
 
         Page<Log> logs = logService.findAll(getPageRequest(commonDto));
-        addPageInfo(model,logs,getServletContextPath("/listlog"))
+        addPageInfo(model,logs,getServletContextPath()+"/listlog")
             .addAttribute("logList",logs);
 
         return "manage/trade/listlog";

@@ -17,6 +17,7 @@ import java.util.Map;
 public abstract class QueryUtils {
 
     public static String DEFAULT_ORDER = "id: asc";
+    public static Integer DEFAULT_PAGESIZE = 100;
 
     /**
      * 获得排序条件

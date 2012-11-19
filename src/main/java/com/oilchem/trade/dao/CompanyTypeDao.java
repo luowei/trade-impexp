@@ -2,6 +2,7 @@ package com.oilchem.trade.dao;
 
 import com.oilchem.trade.domain.CompanyType;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,7 +12,7 @@ import org.springframework.data.repository.CrudRepository;
  * To change this template use File | Settings | File Templates.
  */
 //@RepositoryDefinition(domainClass = CompanyType.class,idClass = Integer.class)
-public interface CompanyTypeDao extends CrudRepository<CompanyType, Long> {
+public interface CompanyTypeDao extends PagingAndSortingRepository<CompanyType, Long> {
 
     CompanyType findByCompanyType(String complanyType);
 

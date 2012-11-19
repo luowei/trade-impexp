@@ -46,6 +46,11 @@ public class CommonController {
      * @return
      */
     public PageRequest getPageRequest(CommonDto commonDto) {
+
+        if(commonDto.getPageNumber()==null || commonDto.getPageSize()==null){
+            commonDto.setPageNumber(1).setPageSize(QueryUtils.DEFAULT_PAGESIZE);
+        }
+
         Map<String,Sort.Direction> orderMap = new HashMap<String,Sort.Direction>();
         String orderStr = commonDto.getOrder();
         String[] orderArr = commonDto.getOrders();
@@ -65,10 +70,15 @@ public class CommonController {
             if(orderStr==null || orderStr.equals("")){
                 orderStr = QueryUtils.DEFAULT_ORDER;
             }
+
             String[] order = orderStr.split(":");
-            if(Sort.Direction.ASC.toString().toLowerCase().equals(order[1].toLowerCase())){
+            String str1 = order[1].toLowerCase().trim();
+            String asc_str = Sort.Direction.ASC.name().toLowerCase();
+            String desc_str = Sort.Direction.DESC.name().toLowerCase();
+
+            if(str1.equals(asc_str)){
                 orderMap.put(order[0].trim(),Sort.Direction.ASC);
-            }else if(Sort.Direction.DESC.toString().toLowerCase().equals(order[1].toLowerCase())){
+            }else if(str1.equals(desc_str)){
                 orderMap.put(order[0].trim(),Sort.Direction.DESC);
             }
         }
@@ -103,25 +113,25 @@ public class CommonController {
     }
 
     /**
-     * 获得servlet的指定context的rootUrl+path
-     *
-     * @param path path+
+     * 获得servlet的指定context的rootUrl
      * @return rootUrl+path
      */
-    public String getServletContextPath(String path) {
-        return ContextLoader.getCurrentWebApplicationContext().getServletContext().getContext(path).getContextPath();
+    public String getServletContextPath() {
+        return ContextLoader.getCurrentWebApplicationContext().getServletContext().getContextPath();
     }
 
     /**
      * 获得查询条件数据
+     *
+     *
+     *
      * @param model
-     * @param tClass
-     * @param <E>
-     * @return
+     * @param daoClass
+     *@param idEntityName  @return
      */
     public <E extends IdEntity> Model
-    findAllIdEntity(Model model, Class<E> tClass) {
-        List<E> productTypeList = commonService.findAllIdEntityList(tClass);
+    findAllIdEntity(Model model, Class daoClass, String idEntityName) {
+        List<E> productTypeList = commonService.findAllIdEntityList(daoClass, idEntityName);
         model.addAttribute(productTypeList);
         return model;
     }

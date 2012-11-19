@@ -28,6 +28,7 @@ public class DynamicSpecifications {
             @Override
             public Predicate toPredicate(Root<T> tRoot, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 List<Predicate> predicates = new ArrayList<Predicate>();
+//                query = cb.createQuery(clazz);
                 tRoot = query.from(clazz);
                 for(PropertyFilter filter:filterList){
                     Path expression = tRoot.get(filter.getName());
@@ -36,6 +37,7 @@ public class DynamicSpecifications {
                             && conversionService.canConvert(String.class, attributeClass)) {
                         filter.setValue(conversionService.convert(filter.getValue(), attributeClass));
                     }
+
 
                     switch(filter.getType()){
 
@@ -64,6 +66,54 @@ public class DynamicSpecifications {
                     return cb.and(predicates.toArray(new Predicate[predicates.size()]));
                 }
                 return cb.conjunction();
+//                return cb.createQuery(clazz).where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
+
+            }
+        };
+    }
+
+    public static <T> Specification<T> byPropertyFilter2(final Collection<PropertyFilter> filterList, final Class<T> clazz) {
+
+        return new Specification<T>() {
+            @Override
+            public Predicate toPredicate(Root<T> tRoot, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Predicate where = cb.conjunction();
+                query = cb.createQuery(clazz);
+                tRoot = query.from(clazz);
+                for(PropertyFilter filter:filterList){
+                    Path expression = tRoot.get(filter.getName());
+                    Class attributeClass = expression.getJavaType();
+                    if (!attributeClass.equals(String.class) && filter.getValue() instanceof String
+                            && conversionService.canConvert(String.class, attributeClass)) {
+                        filter.setValue(conversionService.convert(filter.getValue(), attributeClass));
+                    }
+
+
+                    switch(filter.getType()){
+
+                        case EQ:
+                            where = cb.and(where, cb.equal(expression,filter.getValue()));
+                            break;
+                        case LIKE:
+                            where = cb.and(where, (cb.like(expression,"%"+filter.getValue()+"%")));
+                            break;
+                        case GT:
+                            where = cb.and(where, cb.greaterThan(expression,(Comparable)filter.getValue()));
+                            break;
+                        case GE:
+                            where = cb.and(where, cb.greaterThanOrEqualTo(expression,(Comparable)filter.getValue()));
+                            break;
+                        case LT:
+                            where = cb.and(where, cb.lessThan(expression,(Comparable)filter.getValue()));
+                            break;
+                        case LE:
+                            where = cb.and(where, cb.lessThanOrEqualTo(expression,(Comparable)filter.getValue()));
+                            break;
+                    }
+
+                }
+//                query.where(where);
+                return where;
 //                return cb.createQuery(clazz).where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
 
             }

@@ -2,6 +2,7 @@ package com.oilchem.trade.dao;
 
 import com.oilchem.trade.domain.TradeType;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,7 +11,7 @@ import org.springframework.data.repository.CrudRepository;
  * Time: 下午5:05
  * To change this template use File | Settings | File Templates.
  */
-public interface TradeTypeDao extends CrudRepository<TradeType, Long>{
+public interface TradeTypeDao extends PagingAndSortingRepository<TradeType, Long> {
 
     TradeType findByTradeType(String tradeType);
 }

@@ -1,8 +1,10 @@
 package com.oilchem.trade.dao;
 
 import com.oilchem.trade.domain.City;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.RepositoryDefinition;
 
@@ -16,7 +18,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 //@RepositoryDefinition(domainClass = City.class,idClass = Integer.class)
-public interface CityDao extends CrudRepository<City, Long> {
+public interface CityDao extends PagingAndSortingRepository<City, Long> {
 
     City findByCity(String city);
 }

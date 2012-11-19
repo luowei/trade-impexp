@@ -3,6 +3,7 @@ package com.oilchem.trade.dao;
 import com.oilchem.trade.domain.Country;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
@@ -12,7 +13,7 @@ import org.springframework.data.repository.query.Param;
  * Time: 下午4:40
  * To change this template use File | Settings | File Templates.
  */
-public interface CountryDao extends CrudRepository<Country, Long>{
+public interface CountryDao extends PagingAndSortingRepository<Country, Long> {
 
     Country findByCountry(String country);
 }

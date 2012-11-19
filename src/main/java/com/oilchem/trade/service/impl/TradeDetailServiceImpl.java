@@ -171,7 +171,6 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
         Specification<ImpTradeDetail> spec = DynamicSpecifications.byPropertyFilter(filterList, ImpTradeDetail.class);
         Page<ImpTradeDetail> tradeDetailPage = impTradeDetailDao.findAll(spec, pageRequest);
-
         return tradeDetailPage;
     }
 

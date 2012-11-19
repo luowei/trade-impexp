@@ -122,15 +122,13 @@ public interface CommonService {
     Map<Long,Log> getUnImportFile(String tableType);
 
     /**
-     * 获得Model的list列表
+     * 获得数据模型的数据列表
      *
-     * @param tClass tClass
-     * @param <T>
+     * @param daoClass daoClass
+     * @param idEntityName
      * @return
-     * @author wei.luo
-     * @createTime 2012-11-7
      */
-    <T extends IdEntity> List<T> findAllIdEntityList(Class<T> tClass);
+    public <T extends IdEntity> List<T> findAllIdEntityList(Class daoClass, String idEntityName);
 
     /**
      * 传入这个字段作为条件查询

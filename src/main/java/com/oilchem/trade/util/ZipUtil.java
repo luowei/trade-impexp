@@ -364,8 +364,9 @@ public abstract class ZipUtil {
         String unZipFile = null;
         InputStream is = null;
         OutputStream os = null;
+        ZipFile zipFile = null;
         try {
-            ZipFile zipFile = new ZipFile(zipSource, (encoding == null ? "utf-8" : encoding));
+            zipFile = new ZipFile(zipSource, (encoding == null ? "utf-8" : encoding));
             Enumeration<ZipEntry> zipEntrys = zipFile.getEntries();
             while (zipEntrys.hasMoreElements()) {
                 ZipEntry zipEntry = zipEntrys.nextElement();
@@ -375,20 +376,25 @@ public abstract class ZipUtil {
                     continue;
                 } else {
                     File unZipDirFile = new File(unZipDir);
-                    if(!unZipDirFile.exists())
+                    if (!unZipDirFile.exists())
                         unZipDirFile.mkdirs();
                     is = zipFile.getInputStream(zipEntry);
                     os = new FileOutputStream(unZipFile);
                     ZipUtil.inputStream2OutPutStream(is, os, 1024);
                 }
             }
+
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         } finally {
             try {
-                is.close();
-                os.close();
+                if (zipFile != null)
+                    zipFile.close();
+                if (is != null)
+                    is.close();
+                if (os != null)
+                    os.close();
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
                 throw new RuntimeException(e);
@@ -421,7 +427,7 @@ public abstract class ZipUtil {
                     continue;
                 } else {
                     File unRarDirFile = new File(unRarDir);
-                    if(!unRarDirFile.exists()) unRarDirFile.mkdirs();
+                    if (!unRarDirFile.exists()) unRarDirFile.mkdirs();
                     os = new FileOutputStream(unRarFile);
                     archive.extractFile(fileHeader, os);
                 }
@@ -434,7 +440,10 @@ public abstract class ZipUtil {
             throw new RuntimeException(e);
         } finally {
             try {
-                os.close();
+                if (archive != null)
+                    archive.close();
+                if (os != null)
+                    os.close();
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
                 throw new RuntimeException(e);

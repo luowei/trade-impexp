@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
@@ -90,7 +91,6 @@ public class CommonServiceImpl implements CommonService {
 
     /**
      * 解包
-     *
      *
      * @param logEntry
      * @param unPackageDir 解压目录
@@ -244,16 +244,16 @@ public class CommonServiceImpl implements CommonService {
      */
     public <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
     void importTradeDetail(
-            CrudRepository repository,BaseDao<E> tradeDetailDao,
-            T tradeDetailMapper,YearMonthDto yearMonthDto,
-            String accessPath, String sql,Class detailClz) {
+            CrudRepository repository, BaseDao<E> tradeDetailDao,
+            T tradeDetailMapper, YearMonthDto yearMonthDto,
+            String accessPath, String sql, Class detailClz) {
 
         if (tradeDetailDao == null || tradeDetailMapper == null
                 || yearMonthDto == null || StringUtils.isBlank(sql)) return;
 
-            List<E> tradeDetailList = getListFormDB(
-                    tradeDetailMapper, yearMonthDto, accessPath, sql, detailClz);
-            repository.save(tradeDetailList);
+        List<E> tradeDetailList = getListFormDB(
+                tradeDetailMapper, yearMonthDto, accessPath, sql, detailClz);
+        repository.save(tradeDetailList);
 
     }
 
@@ -339,8 +339,6 @@ public class CommonServiceImpl implements CommonService {
     /**
      * 获得logMap
      *
-     *
-     *
      * @param tableType
      * @param process_flag
      * @param findByMethod
@@ -388,38 +386,42 @@ public class CommonServiceImpl implements CommonService {
 
     /**
      * 获得数据模型的数据列表
-     * @param tClass tClass
-     * @param <T>    数据模型映射的java类
+     *
+     *
+     * @param daoClass daoClass
+     * @param idEntityName
      * @return
      */
-    public <T extends IdEntity> List<T> findAllIdEntityList(Class<T> tClass) {
-        if (tClass == null) return null;
+    public <T extends IdEntity> List<T> findAllIdEntityList(
+            Class daoClass, String idEntityName) {
+        if (daoClass == null) return null;
+
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC,idEntityName));
 
         List<T> idEntityList = null;
-        Class<?>[] classes = IdEntity.class.getClasses();
-        for (Class clz : classes) {
-            if (clz.isInstance(tClass)) {
-                T t = ContextLoader.getCurrentWebApplicationContext().getBean(tClass);
-                try {
-                    idEntityList = (List<T>) tClass.getMethod("findAll").invoke(t);
-                } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
-                    throw new RuntimeException(e);
-                }
+        Object t = ContextLoader.getCurrentWebApplicationContext().getBean(daoClass);
+        try {
+            Object obj = daoClass.getMethod("findAll",Sort.class).invoke(t,sort);
+            if (obj != null) {
+                idEntityList = (List<T>) obj;
             }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         }
         return idEntityList;
     }
 
     /**
      * 传入这个字段作为条件查询
-     * @param fieldName    java对象中字段的名
-     * @param fieldValue   字段的值
+     *
+     * @param fieldName  java对象中字段的名
+     * @param fieldValue 字段的值
      * @param <T>
      * @return
      */
-    public  <T  extends TradeDetail> Specification<T> hasField(
-            String fieldName,String fieldValue) {
+    public <T extends TradeDetail> Specification<T> hasField(
+            String fieldName, String fieldValue) {
         return newSpecHasField(fieldName, fieldValue);
     }
 
@@ -431,8 +433,8 @@ public class CommonServiceImpl implements CommonService {
             public javax.persistence.criteria.Predicate
             toPredicate(Root<T> impTradeDetailRoot,
                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-                if(fieldValue==null) return null;
-                return cb.equal(impTradeDetailRoot.get(fieldName),fieldValue);
+                if (fieldValue == null) return null;
+                return cb.equal(impTradeDetailRoot.get(fieldName), fieldValue);
             }
         };
     }
@@ -566,7 +568,6 @@ public class CommonServiceImpl implements CommonService {
     /**
      * 获得excel数据中的list
      *
-     *
      * @param logEntry
      * @param tradeSumClass
      * @param tradeSumRowMapClass
@@ -591,13 +592,13 @@ public class CommonServiceImpl implements CommonService {
             int rowIdx = sheet.findCell(PRODUCT_XNAME).getRow() + 1;
             Integer year = yearMonthDto.getYear();
             Integer month = yearMonthDto.getMonth();
-            String yearMonth = year+"-"+(month<10 ? "0"+month:month);
+            String yearMonth = year + "-" + (month < 10 ? "0" + month : month);
 
             //遍历excel
             for (; rowIdx < rows; rowIdx++) {
                 E tradeSum = tradeSumClass.getConstructor(
-                        Integer.class, Integer.class,String.class, String.class)
-                        .newInstance(year,month,yearMonth,
+                        Integer.class, Integer.class, String.class, String.class)
+                        .newInstance(year, month, yearMonth,
                                 yearMonthDto.getProductType());
 
                 Constructor<M> constructor = tradeSumRowMapClass.getConstructor(

@@ -6,9 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="p" uri="/WEB-INF/tag/page" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 
@@ -23,26 +21,50 @@
 <body>
 
 <div class="wrapper">
-    <c:url var="action" value="/manage/trade/listdetail"/>
-    <form:form id="form1" modelAttribute="tradeSumDto" action="${action}" method="post" cssClass="well form-inline">
+    <c:url var="action" value="/manage/listsum"/>
+    <form:form id="form1" modelAttribute="tradeSum" action="${action}" method="post" cssClass="well form-inline">
 
-        <label>起始年月:</label>
-        <form:select path="beginYear" items="${year}" itemValue="key" itemLabel="value" cssClass="dropdown-toggle"
-                     placeholder="年"/>
-        <form:select path="beginMonth" items="${month}" itemValue="key" itemLabel="value" cssClass="dropdown-toggle"
-                     placeholder="月"/>
+        <label>起始年月:
+           <select name="lowyear">
+               <option value="" selected="selected">--</option>
+               <c:forEach var="yr" begin="2000" end="2050" step="1">
+                   <option value="${yr}">${yr}</option>
+               </c:forEach>
+           </select> 年&nbsp;
+           <select name="lowmonth">
+               <option value="" selected="selected">--</option>
+               <c:forEach var="mth" begin="1" end="12" step="1">
+                   <option value="${mth}">${mth}</option>
+               </c:forEach>
+           </select>月
+        </label>
+
 
         <label>结束年月:</label>
-        <form:select path="endYear" items="${year}" itemValue="key" itemLabel="value" cssClass="dropdown-toggle"
-                     placeholder="年"/>
-        <form:select path="endMonth" items="${month}" itemValue="key" itemLabel="value" cssClass="dropdown-toggle"
-                     placeholder="月"/>
+        <select name="highyear">
+            <option value="" selected="selected">--</option>
+            <c:forEach var="yr" begin="2000" end="2050" step="1">
+                <option value="${yr}">${yr}</option>
+            </c:forEach>
+        </select> 年&nbsp;
+        <select name="highmonth">
+            <option value="" selected="selected">--</option>
+            <c:forEach var="mth" begin="1" end="12" step="1">
+                <option value="${mth}">${mth}</option>
+            </c:forEach>
+        </select>月
 
         <label>月同期查询:</label>
-        <form:select path="sameMonth" items="${month}" itemValue="complanyType" itemLabel="complanyType"
-                     cssClass="dropdown-toggle"/>
+        <select name="month">
+            <option value="" selected="selected">--</option>
+            <c:forEach var="mth" begin="1" end="12" step="1">
+                <option value="${mth}">${mth}</option>
+            </c:forEach>
+        </select>月
 
-        <form:input path="searchKey1" cssClass="input-medium search-query" placeholder="关键字:"/>
+        <br/>
+        <form:input path="productName" cssClass="input-medium search-query" placeholder="产品名称:"/>
+        <form:input path="productCode" cssClass="input-medium search-query" placeholder="产品代码:"/>
 
         <button type="submit" class="btn btn-success">
             <i class="icon-search icon-white"></i>查询

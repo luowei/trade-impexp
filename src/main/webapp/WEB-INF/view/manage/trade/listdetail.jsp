@@ -6,9 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="p" uri="/WEB-INF/tag/page" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 
@@ -18,63 +16,133 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>进出口明细</title>
+
+    <link rel="stylesheet" type="text/css" href="<c:url value='/resources/bootstrap/css/bootstrap.min.css' />"/>
+    <link rel="stylesheet" type="text/css"
+          href="<c:url value='/resources/bootstrap/css/bootstrap-responsive.min.css' />"/>
 </head>
 <body>
 
 <div class="wrapper">
-    <c:url var="action" value="/manage/trade/listdetail"/>
-    <form:form id="form1" modelAttribute="tradeSumDto" action="${action}" method="post" cssClass="well form-inline">
+    <c:url var="action" value="/manage/listdetail"/>
+    <form:form id="form1" modelAttribute="tradeDetail" action="${action}"
+               method="post" cssClass="well form-inline">
+        <label class="label ">起始年月:
+            <select name="lowyear" class=" input-mini">
+                <option value="" selected="selected">--</option>
+                <c:forEach var="yr" begin="2000" end="2050" step="1">
+                    <option value="${yr}">${yr}</option>
+                </c:forEach>
+            </select> 年&nbsp;
+            <select name="lowmonth" class=" input-mini">
+                <option value="" selected="selected">--</option>
+                <c:forEach var="mth" begin="1" end="12" step="1">
+                    <option value="${mth}">${mth}</option>
+                </c:forEach>
+            </select>月
+        </label>
 
-        <label>起始年月:</label>
-        <form:select path="beginYear" items="${year}" itemValue="key" itemLabel="value" cssClass="dropdown-toggle"
-                     placeholder="年"/>
-        <form:select path="beginMonth" items="${month}" itemValue="key" itemLabel="value" cssClass="dropdown-toggle"
-                     placeholder="月"/>
+        <label class="label">结束年月:
+            <select name="highyear" class=" input-mini">
+                <option value="" selected="selected">--</option>
+                <c:forEach var="yr" begin="2000" end="2050" step="1">
+                    <option value="${yr}">${yr}</option>
+                </c:forEach>
+            </select> 年&nbsp;
+            <select name="highmonth" class=" input-mini">
+                <option value="" selected="selected">--</option>
+                <c:forEach var="mth" begin="1" end="12" step="1">
+                    <option value="${mth}">${mth}</option>
+                </c:forEach>
+            </select>月
+        </label>
 
-        <label>结束年月:</label>
-        <form:select path="endYear" items="${year}" itemValue="key" itemLabel="value" cssClass="dropdown-toggle"
-                     placeholder="年"/>
-        <form:select path="endMonth" items="${month}" itemValue="key" itemLabel="value" cssClass="dropdown-toggle"
-                     placeholder="月"/>
 
-        <label>月同期查询:</label>
-        <form:select path="sameMonth" items="${month}" itemValue="complanyType" itemLabel="complanyType"
-                     cssClass="dropdown-toggle"/>
+        <label class="label">月同期查询:
+            <select name="month" class=" input-mini">
+                <option value="" selected="selected">--</option>
+                <c:forEach var="mth" begin="1" end="12" step="1">
+                    <option value="${mth}">${mth}</option>
+                </c:forEach>
+            </select>月
+        </label>
 
+        <br/>
 
-        <label>企业性质:</label>
-        <form:select path="complanyType" items="${complanyType}" itemValue="complanyType" itemLabel="complanyType"
-                     cssClass="dropdown-toggle"/>
+        <label class="label">企业性质:
+            <select name="companyType" class=" input-mini">
+                <option value="">--</option>
+                <c:forEach items="${companyTypeList}" var="companyType">
+                    <option value="${companyType.companyType}">${companyType.companyType}</option>
+                </c:forEach>
+            </select>
+        </label>
 
-        <label>贸易方式:</label>
-        <form:select path="complanyType" items="${tradeType}" itemValue="tradeType" itemLabel="tradeType"
-                     cssClass="dropdown-toggle"/>
+        <label class="label">贸易方式:
+            <select name="tradeType" class=" input-mini">
+                <option value="">--</option>
+                <c:forEach items="${tradeTypeList}" var="tradeType">
+                    <option value="${tradeType.tradeType}">${tradeType.tradeType}</option>
+                </c:forEach>
+            </select>
+        </label>
 
-        <label>运输方式:</label>
-        <form:select path="complanyType" items="${transportation}" itemValue="transportation" itemLabel="transportation"
-                     cssClass="dropdown-toggle"/>
+        <label class="label">运输方式:
+            <select name="transportation" class=" input-mini">
+                <option value="">--</option>
+                <c:forEach items="${transportationList}" var="transportation">
+                    <option value="${transportation.transportation}">${transportation.transportation}</option>
+                </c:forEach>
+            </select>
+        </label>
 
-        <label>海关:</label>
-        <form:select path="complanyType" items="${customs}" itemValue="customs" itemLabel="customs"
-                     cssClass="dropdown-toggle"/>
+        <label class="label">海关:
+            <select name="customs" class=" input-mini">
+                <option value="">--</option>
+                <c:forEach items="${customsList}" var="customs">
+                    <option value="${customs.customs}">${customs.customs}</option>
+                </c:forEach>
+            </select>
+        </label>
 
-        <label>产销国家:</label>
-        <form:select path="complanyType" items="${country}" itemValue="country" itemLabel="country"
-                     cssClass="dropdown-toggle"/>
+        <label class="label">产销国家:
+            <select name="country" class=" input-mini">
+                <option value="">--</option>
+                <c:forEach items="${countryList}" var="country">
+                    <option value="${country.country}">${country.country}</option>
+                </c:forEach>
+            </select>
+        </label>
 
-        <label>城市:</label>
-        <form:select path="complanyType" items="${city}" itemValue="city" itemLabel="city"
-                     cssClass="dropdown-toggle"/>
+        <label class="label">城市:
+            <select name="city" class=" input-mini">
+                <option value="">--</option>
+                <c:forEach items="${cityList}" var="city">
+                    <option value="${city.city}">${city.city}</option>
+                </c:forEach>
+            </select>
+        </label>
 
-        <form:select path="impExpType" cssClass="dropdown-toggle" placeholder="进出口类型">
-            <form:option value="0" label="进口"/>
-            <form:option value="1" label="出口"/>
-        </form:select>
+        <br/>
 
-        <form:input path="searchKey1" cssClass="input-medium search-query" placeholder="关键字:"/>
+        <label class="label">
+            产品代码:<input name="productCode" cssClass="input-mini search-query"/>
+        </label>
+        <label class="label">
+            产品名称:<input name="productName" cssClass="input-mini search-query"/>
+        </label>
+
+        <br/>
+
+        <label class="label">进出口类型:
+            <select name="impExp" class=" input-small">
+                <option value="0">进口</option>
+                <option value="1">出口</option>
+            </select>
+        </label>
 
         <button type="submit" class="btn btn-success">
-            <i class="icon-search icon-white"></i>搜索
+            <i class="icon-search icon-white"></i>查询
         </button>
     </form:form>
 
@@ -89,6 +157,7 @@
             <th>企业性质</th>
             <th>运输方式</th>
             <th>城市</th>
+            <th>海关</th>
             <th>产销国家</th>
             <th>数量</th>
             <th>单位</th>
@@ -97,7 +166,7 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${tradeDetailList}" var="detail" varStatus="st">
+        <c:forEach items="${tradeDetailList.content}" var="detail" varStatus="st">
             <tr>
                 <td>${detail.year}</td>
                 <td>${detail.month}</td>
@@ -107,6 +176,7 @@
                 <td>${detail.companyType}</td>
                 <td>${detail.transportation}</td>
                 <td>${detail.city}</td>
+                <td>${detail.customs}</td>
                 <td>${detail.country}</td>
                 <td>${detail.amount}</td>
                 <td>${detail.unit}</td>
@@ -120,5 +190,8 @@
 
 </div>
 
+<div class="pagination-centered">
+    <jsp:include page="../../common/pagination.jsp"/>
+</div>
 </body>
 </html>

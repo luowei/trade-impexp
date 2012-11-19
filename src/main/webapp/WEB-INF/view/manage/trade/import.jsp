@@ -17,7 +17,7 @@
 <h1>明细导入</h1>
 
 <h2>上传文件：</h2>
-<c:url var="importDetail" value="/manage/trade/importdetail"/>
+<c:url var="importDetail" value="/manage/importdetail"/>
 <form id="importDetail" enctype="multipart/form-data" action="${importDetail}" method="post">
     进出口类型:
     <input type="hidden" name="tableType" value="明细表">
@@ -58,7 +58,7 @@
 <h1>总表导入</h1>
 
 <h2>上传文件:</h2>
-<c:url var="importSum" value="/manage/trade/importsum"/>
+<c:url var="importSum" value="/manage/importsum"/>
 <form id="importSum" enctype="multipart/form-data" action="${importSum}" method="post">
     进出口类型:
     <input type="hidden" name="tableType" value="总表">
@@ -84,9 +84,9 @@
     <script language="javascript" type="text/javascript" src="resources/js/textselect.js"></script>
     <br/>产品类型:
     <input type="text" name="" size="10" onfocus="javascript:showSelect(this,'productType')">
-    <select name="productType" style="display: none" disabled>
+    <select name="productType" >
         <c:forEach var="productType" items="${productTypeList}">
-            <option value="${productType}">${productType}</option>
+            <option value="${productType.productType}">${productType.productType}</option>
         </c:forEach>
     </select>
 

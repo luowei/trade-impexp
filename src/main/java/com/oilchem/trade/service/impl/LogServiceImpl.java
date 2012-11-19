@@ -126,7 +126,7 @@ public class LogServiceImpl implements LogService {
     @Pointcut(value = "execution(" +
             "String com.oilchem.trade.service.impl.CommonServiceImpl.unpackageFile(" +
             "java.util.Map.Entry<Long, com.oilchem.trade.domain.Log>," +
-            "com.oilchem.trade.domain.Log))" +
+            "java.lang.String))" +
             "&& args(logEntry,unPackageDir)",
             argNames = "logEntry,unPackageDir")
     void cutUnpackageFile(Map.Entry<Long, Log> logEntry, String unPackageDir) {

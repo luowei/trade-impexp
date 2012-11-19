@@ -15,4 +15,22 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_import_detail")
 public class ImpTradeDetail extends TradeDetail {
+
+    public ImpTradeDetail() {
+    }
+
+    public ImpTradeDetail(TradeDetail tradeDetail) {
+        this.setYear(tradeDetail.getYear())
+                .setMonth(tradeDetail.getMonth())
+                .setAmountMoney(tradeDetail.getAmountMoney())
+                .setCity(tradeDetail.getCity())
+                .setCompanyType(tradeDetail.getCompanyType())
+                .setCountry(tradeDetail.getCountry())
+                .setCustoms(tradeDetail.getCustoms())
+                .setProductCode(tradeDetail.getProductCode())
+                .setProductName(tradeDetail.getProductName())
+                .setTradeType(tradeDetail.getTradeType())
+                .setTransportation(tradeDetail.getTransportation())
+                .setAmount(tradeDetail.getAmount());
+    }
 }

@@ -24,4 +24,21 @@ public class ExpTradeSum extends TradeSum {
                        String productType) {
         super(year, month,yearMonth, productType);
     }
+
+    public ExpTradeSum(TradeSum tradeSum) {
+        this.setAvgPriceMonth(tradeSum.getAvgPriceMonth())
+                .setAvgPriceSum(tradeSum.getAvgPriceSum())
+                .setMoneyMonth(tradeSum.getMoneyMonth())
+                .setMoneySum(tradeSum.getMoneySum())
+                .setMonth(tradeSum.getMonth())
+                .setYear(tradeSum.getYear())
+                .setNumMonth(tradeSum.getNumMonth())
+                .setNumSum(tradeSum.getNumSum())
+                .setNumPreMonthIncRadio(tradeSum.getNumPreMonthIncRadio())
+                .setNumPreYearSameMonthIncRatio(tradeSum.getNumPreYearSameMonthIncRatio())
+                .setNumPreYearSameQuarterInrRatio(tradeSum.getNumPreYearSameQuarterInrRatio())
+                .setProductName(tradeSum.getProductName())
+                .setProductType(tradeSum.getProductType())
+                .setYearMonth(tradeSum.getYearMonth());
+    }
 }
