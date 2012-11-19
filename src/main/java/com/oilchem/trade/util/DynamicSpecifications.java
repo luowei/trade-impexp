@@ -29,7 +29,7 @@ public class DynamicSpecifications {
             public Predicate toPredicate(Root<T> tRoot, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 List<Predicate> predicates = new ArrayList<Predicate>();
 //                query = cb.createQuery(clazz);
-                tRoot = query.from(clazz);
+//                tRoot = query.from(clazz);
                 for(PropertyFilter filter:filterList){
                     Path expression = tRoot.get(filter.getName());
                     Class attributeClass = expression.getJavaType();
@@ -37,7 +37,6 @@ public class DynamicSpecifications {
                             && conversionService.canConvert(String.class, attributeClass)) {
                         filter.setValue(conversionService.convert(filter.getValue(), attributeClass));
                     }
-
 
                     switch(filter.getType()){
 

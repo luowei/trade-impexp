@@ -48,7 +48,7 @@ public class CommonController {
     public PageRequest getPageRequest(CommonDto commonDto) {
 
         if(commonDto.getPageNumber()==null || commonDto.getPageSize()==null){
-            commonDto.setPageNumber(1).setPageSize(QueryUtils.DEFAULT_PAGESIZE);
+            commonDto.setPageNumber(0).setPageSize(QueryUtils.DEFAULT_PAGESIZE);
         }
 
         Map<String,Sort.Direction> orderMap = new HashMap<String,Sort.Direction>();

@@ -16,7 +16,6 @@ import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
 import com.oilchem.trade.util.DynamicSpecifications;
 import com.oilchem.trade.util.QueryUtils;
-import com.sun.jndi.toolkit.dir.SearchFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,7 +168,7 @@ public class TradeDetailServiceImpl implements TradeDetailService {
                         PageRequest pageRequest) {
         final List<PropertyFilter> filterList = getdetailQueryProps(tradeDetail, commonDto);
 
-        Specification<ImpTradeDetail> spec = DynamicSpecifications.byPropertyFilter(filterList, ImpTradeDetail.class);
+        Specification<ImpTradeDetail> spec = DynamicSpecifications.<ImpTradeDetail>byPropertyFilter(filterList, ImpTradeDetail.class);
         Page<ImpTradeDetail> tradeDetailPage = impTradeDetailDao.findAll(spec, pageRequest);
         return tradeDetailPage;
     }
@@ -186,7 +185,8 @@ public class TradeDetailServiceImpl implements TradeDetailService {
                         PageRequest pageRequest) {
         final List<PropertyFilter> filterList = getdetailQueryProps(tradeDetail, commonDto);
 
-        Specification<ExpTradeDetail> spec = DynamicSpecifications.byPropertyFilter(filterList, ExpTradeDetail.class);
+        Specification<ExpTradeDetail> spec = DynamicSpecifications.<ExpTradeDetail>byPropertyFilter(filterList,
+                ExpTradeDetail.class);
         Page<ExpTradeDetail> tradeDetailPage = expTradeDetailDao.findAll(spec, pageRequest);
 
         return tradeDetailPage;
