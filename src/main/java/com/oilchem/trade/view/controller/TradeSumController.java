@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Created with IntelliJ IDEA.
@@ -53,8 +56,8 @@ public class TradeSumController extends CommonController {
     public String listTradeImpSum(Model model, TradeSum tradeSum,
                                   @PathVariable Integer pageNumber,
                                   Integer impExp, CommonDto commonDto) {
-        if(impExp==null)
-            impExp=0;
+        if (impExp == null)
+            impExp = 0;
 
         if (impExp.equals(Message.ImpExpType.进口.getCode())) {
             Page<ImpTradeSum> impTradeSums = tradeSumService
@@ -82,7 +85,8 @@ public class TradeSumController extends CommonController {
     @RequestMapping("/importsum")
     public String importTradeSum(@RequestParam("file") MultipartFile file, String productType,
                                  Integer impExpType, Model model,
-                                 YearMonthDto yearMonthDto) {
+                                 YearMonthDto yearMonthDto,
+                                 RedirectAttributes redirectAttrs) {
         Boolean validate = (file.getOriginalFilename().endsWith(".rar") ||
                 file.getOriginalFilename().endsWith(".zip")) && yearMonthDto != null;
         if (!validate) return "manage/trade/import";
@@ -100,9 +104,11 @@ public class TradeSumController extends CommonController {
             message.append("<br/>文件上传或数据导入发生了错误");
         }
 
-        model.addAttribute("message",message.toString());
-
-        return "forward:/manage/import";
+//        UriComponents redirectUri = UriComponentsBuilder.fromPath("/manage/import")
+//                .queryParam("message",message.toString()).build().encode();
+//        return "redirect:"+redirectUri.toUriString();
+        redirectAttrs.addFlashAttribute("message",message.toString());
+        return "redirect:/manage/import";
     }
 
 

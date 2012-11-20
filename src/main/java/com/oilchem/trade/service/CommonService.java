@@ -67,16 +67,14 @@ public interface CommonService {
     /**
      * 导入贸易明细
      *
-     * @param tradeDetailDao
      * @param tradeDetailMapper tradeDetailMapper
      * @param yearMonthDto
      * @param accessPath
      * @param sql               sql      @return  @author wei.luo
-     * @param detailClz     @createTime 2012-11-7           */
+     * @param detailClz     @createTime 2012-11-7              */
     <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
     void importTradeDetail(
             CrudRepository repository,
-            BaseDao<E> tradeDetailDao,
             T tradeDetailMapper,
             YearMonthDto yearMonthDto,
             String accessPath, String sql,
@@ -131,13 +129,16 @@ public interface CommonService {
     public <T extends IdEntity> List<T> findAllIdEntityList(Class daoClass, String idEntityName);
 
     /**
-     * 传入这个字段作为条件查询
-     * @param fieldName    java对象中字段的名
-     * @param fieldValue   字段的值
-     * @param <T>
-     * @return
+     * 从Access表中获得明细数据list
+     *
+     * @param tradeDetailMapper tradeDetailMapper
+     * @param yearMonthDto
+     * @param accessPath
+     * @param sql               sql
+     * @param detailClz         detailClz   @return
      */
-    public  <T  extends TradeDetail> Specification<T> hasField(
-            String fieldName,String fieldValue);
+    public  <E extends TradeDetail, T extends AbstractTradeDetailRowMapper> List<E>
+    getListFormDB(T tradeDetailMapper, YearMonthDto yearMonthDto,
+                  String accessPath, String sql, Class detailClz);
 
 }

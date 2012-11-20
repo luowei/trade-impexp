@@ -2,7 +2,6 @@ package com.oilchem.trade.service.impl;
 
 import com.oilchem.trade.config.Message;
 import com.oilchem.trade.util.FileUtil;
-import com.oilchem.trade.util.QueryUtils;
 import com.oilchem.trade.util.ZipUtil;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
@@ -236,7 +235,6 @@ public class CommonServiceImpl implements CommonService {
      * 导入明细数据
      *
      * @param repository
-     * @param tradeDetailDao
      * @param tradeDetailMapper tradeDetailMapper
      * @param yearMonthDto
      * @param accessPath
@@ -245,12 +243,12 @@ public class CommonServiceImpl implements CommonService {
      */
     public <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
     void importTradeDetail(
-            CrudRepository repository, BaseDao<E> tradeDetailDao,
+            CrudRepository repository,
             T tradeDetailMapper, YearMonthDto yearMonthDto,
             String accessPath, String sql, Class detailClz) {
 
-        if (tradeDetailDao == null || tradeDetailMapper == null
-                || yearMonthDto == null || StringUtils.isBlank(sql)) return;
+        if (tradeDetailMapper == null || yearMonthDto == null
+                || StringUtils.isBlank(sql)) return;
 
         List<E> tradeDetailList = getListFormDB(
                 tradeDetailMapper, yearMonthDto, accessPath, sql, detailClz);
@@ -486,7 +484,7 @@ public class CommonServiceImpl implements CommonService {
      * @param sql               sql
      * @param detailClz         detailClz   @return
      */
-    private <E extends TradeDetail, T extends AbstractTradeDetailRowMapper> List<E>
+    public  <E extends TradeDetail, T extends AbstractTradeDetailRowMapper> List<E>
     getListFormDB(T tradeDetailMapper, YearMonthDto yearMonthDto,
                   String accessPath, String sql, Class detailClz) {
         //查出来然后导入

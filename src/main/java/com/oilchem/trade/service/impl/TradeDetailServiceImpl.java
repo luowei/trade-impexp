@@ -3,6 +3,7 @@ package com.oilchem.trade.service.impl;
 import com.oilchem.trade.config.Config;
 import com.oilchem.trade.config.Message;
 import com.oilchem.trade.dao.*;
+import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.ExpTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.ImpTradeDetailRowMapper;
 import com.oilchem.trade.domain.ExpTradeDetail;
@@ -15,35 +16,26 @@ import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
 import com.oilchem.trade.util.DynamicSpecifications;
-import com.oilchem.trade.util.QueryUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.expression.spel.ast.Operator;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.persistence.criteria.*;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import static com.oilchem.trade.config.Config.*;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.springframework.data.jpa.domain.Specifications.*;
 import static com.oilchem.trade.util.QueryUtils.*;
 import static com.oilchem.trade.util.QueryUtils.Type.*;
 
@@ -99,20 +91,41 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         return null;
     }
 
-    <E extends TradeDetail> Boolean mutilThreadImport(){
+    public <E extends TradeDetail,T extends AbstractTradeDetailRowMapper>
+    Boolean getDetailList(final CrudRepository repository,
+                          final T tradeDetailMapper,
+                          final YearMonthDto yearMonthDto,
+                          final String accessPath,
+                          final Class detailClz,
+                          List<String> sqlList){
 
+        Boolean isSuccess = false;
         Integer poolSize = 100;
         ExecutorService pool = Executors.newFixedThreadPool(poolSize);
-        Future<E> rsFuture = pool.submit(new Callable<E>() {
-            public E call() throws Exception {
 
-//                getListFormDB(tradeDetailMapper, yearMonthDto, accessPath, sql, detailClz)
-                return null;
+        for(String sqlStr:sqlList){
+            final String sql = sqlStr;
+            List<E> subDetailList = null;
+
+            Future<List<E>> detailListFuture = pool.submit(new Callable<List<E>>() {
+                public List<E> call() throws Exception {
+
+                    return commonService.getListFormDB(tradeDetailMapper,
+                            yearMonthDto, accessPath, sql, detailClz);
+                }
+            });
+
+            try {
+                subDetailList = detailListFuture.get();
+                repository.save(subDetailList);
+                isSuccess = true;
+
+            } catch (Exception e) {
+                logger.error(e.getMessage(),e);
+                throw new RuntimeException(e);
             }
-        });
-
-
-        return null;
+        }
+        return isSuccess;
     }
 
     /**
@@ -126,7 +139,7 @@ public class TradeDetailServiceImpl implements TradeDetailService {
                                 YearMonthDto yearMonthDto) {
 
         Boolean isSuccess = false;
-        final String sql = "select top 200 * from 结果 ";
+        final String sql = "select top 1000 * from 结果 ";
 
         //导入查询条件表
         commonService.importCriteriaTab(sql, logEntry.getValue().getExtractPath());
@@ -143,7 +156,6 @@ public class TradeDetailServiceImpl implements TradeDetailService {
                 }
 
                 commonService.importTradeDetail(
-                        impTradeDetailDao,
                         impTradeDetailDao,
                         new ImpTradeDetailRowMapper(),
                         yearMonthDto,
@@ -164,7 +176,6 @@ public class TradeDetailServiceImpl implements TradeDetailService {
                 }
 
                 commonService.importTradeDetail(
-                        expTradeDetailDao,
                         expTradeDetailDao,
                         new ExpTradeDetailRowMapper(),
                         yearMonthDto,

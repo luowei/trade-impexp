@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import static com.oilchem.trade.util.QueryUtils.*;
@@ -77,7 +80,7 @@ public class TradeDetailController extends CommonController {
         }
 
         for(PropertyFilter filter:tradeDetailService
-                .getdetailQueryProps(tradeDetail,commonDto)){
+                .getdetailQueryProps(tradeDetail, commonDto)){
             model.addAttribute(filter.getName(),filter.getValue()).addAttribute("impExp",impExp);
         }
 
@@ -89,8 +92,9 @@ public class TradeDetailController extends CommonController {
      * @return
      */
     @RequestMapping("/import")
-    public String importpage(Model model){
-        model.addAttribute("productTypeList",tradeDetailService.getProductList());
+    public String importpage(Model model,String message){
+        model.addAttribute("productTypeList",tradeDetailService.getProductList())
+        .addAttribute("message",message);
         return "manage/trade/import";
     }
 
@@ -103,7 +107,8 @@ public class TradeDetailController extends CommonController {
      */
     @RequestMapping("/importdetail")
     public String importTradeDetail( @RequestParam("file") MultipartFile file,
-                                    Model model,YearMonthDto yearMonthDto) {
+                                    Model model,YearMonthDto yearMonthDto,
+                                    RedirectAttributes redirectAttrs) {
 
         Boolean validate = (file.getOriginalFilename().endsWith(".rar") ||
                 file.getOriginalFilename().endsWith(".zip"))
@@ -122,8 +127,10 @@ public class TradeDetailController extends CommonController {
             message.append("<br/>文件上传或数据导入发生了错误");
         }
 
-        model.addAttribute("message",message.toString());
-        return "forward:/manage/import";
+//        UriComponents redirectUri = UriComponentsBuilder.fromPath("/manage/import")
+//                .queryParam("message",message.toString()).build().encode();
+        redirectAttrs.addFlashAttribute("message",message.toString());
+        return "redirect:/manage/import";
     }
 
     /**

@@ -57,10 +57,7 @@
                 <td>${log.uploadFlg}</td>
                 <td>${log.extractFlag}</td>
                 <td>${log.importFlag}</td>
-                <td>
-                    <c:if test="${log.errorOccur eq null || log.errorOccur eq ''}">成功</c:if>
-                    <c:if test="${log.errorOccur ne null && log.errorOccur ne ''}">${log.errorOccur}</c:if>
-                </td>
+                <td>${log.errorOccur}</td>
                 <td>${log.year}-${log.month}</td>
                 <td>${log.logTime}</td>
                 <td>${log.uploadPath}</td>

@@ -10,7 +10,7 @@
     <packaging>war</packaging>
 
     <properties>
-        <springframework.version>3.0.7.RELEASE</springframework.version>
+        <springframework.version>3.1.2.RELEASE</springframework.version>
         <spring-data-jpa.version>1.1.0.RELEASE</spring-data-jpa.version>
         <slf4j.version>1.6.4</slf4j.version>
         <log4j.version>1.2.16</log4j.version>
@@ -277,6 +277,12 @@
             <artifactId>java-unrar</artifactId>
             <version>0.3</version>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>org.springframework</groupId>-->
+            <!--<artifactId>spring-webmvc</artifactId>-->
+            <!--<version>3.1.1.RELEASE</version>-->
+        <!--</dependency>-->
         <!--<dependency>-->
             <!--<groupId>org.apache.tika</groupId>-->
             <!--<artifactId>tika-core</artifactId>-->
