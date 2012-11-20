@@ -8,6 +8,7 @@ import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.bean.YearMonthDto;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,30 +49,36 @@ public interface CommonService {
 
     /**
      * 导入查询条件表
-     * @param sqlList
+     *
+     *
+     *
+     *
+     *
+     * @param sql
      * @param accessPath
      * @return
+     * @author wei.luo
+     * @createTime 2012-11-7
      */
-    public void
-    importCriteriaTab(List<String> sqlList, final String accessPath);
-
+    <E extends IdEntity> void
+    importCriteriaTab(String sql, String accessPath);
 
 
     /**
-     * 导入明细数据
+     * 导入贸易明细
      *
-     * @param repository
      * @param tradeDetailMapper tradeDetailMapper
      * @param yearMonthDto
      * @param accessPath
      * @param sql               sql      @return  @author wei.luo
-     * @param detailClz         明细抽象类
-     */
-    public <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
+     * @param detailClz     @createTime 2012-11-7              */
+    <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
     void importTradeDetail(
             CrudRepository repository,
-            T tradeDetailMapper, YearMonthDto yearMonthDto,
-            String accessPath, String sql, Class detailClz);
+            T tradeDetailMapper,
+            YearMonthDto yearMonthDto,
+            String accessPath, String sql,
+            Class detailClz);
 
 
     /**

@@ -1,6 +1,5 @@
 package com.oilchem.trade.service.impl;
 
-import com.oilchem.trade.config.Config;
 import com.oilchem.trade.config.Message;
 import com.oilchem.trade.util.FileUtil;
 import com.oilchem.trade.util.ZipUtil;
@@ -38,8 +37,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static com.oilchem.trade.config.Config.*;
 import static com.oilchem.trade.config.MapperConfig.*;
@@ -56,25 +53,18 @@ public class CommonServiceImpl implements CommonService {
 
     @Resource
     CityDao cityDao;
-
     @Resource
     CompanyTypeDao companyTypeDao;
-
     @Resource
     CountryDao countryDao;
-
     @Resource
     CustomsDao customsDao;
-
     @Resource
     TradeTypeDao tradeTypeDao;
-
     @Resource
     TransportationDao transportationDao;
-
     @Resource
     ProductTypeDao productTypeDao;
-
     @Resource
     LogDao logDao;
 
@@ -119,23 +109,22 @@ public class CommonServiceImpl implements CommonService {
         //判断文件类型
         if (type.equals(".zip")) {
             return ZipUtil.unZip(uploadPath, unPackageDir, null);
-
         } else if (type.equals(".rar")) {
             return ZipUtil.unRar(uploadPath, unPackageDir);
-
         } else return null;
     }
 
     /**
      * 导入查询条件表
-     * @param sqlList
+     *
+     * @param sql
      * @param accessPath
      * @return
      */
     @Transactional
     public void
-    importCriteriaTab(List<String> sqlList, final String accessPath) {
-        if (sqlList == null || StringUtils.isBlank(accessPath))
+    importCriteriaTab(String sql, String accessPath) {
+        if (StringUtils.isBlank(sql) || StringUtils.isBlank(accessPath))
             return;
 
         ApplicationContext ctx = AppContextManager.getAppContext();
@@ -144,92 +133,80 @@ public class CommonServiceImpl implements CommonService {
         try {
             //城市
             DetailCriteria cityCri = new DetailCriteria(
-                    CITY,City.class,CityDao.class,
+                    CITY,
+                    City.class,
+                    CityDao.class,
                     CityDao.class.getDeclaredMethod("findByCity", String.class),
-                    ctx.getBean(CityDao.class),new HashSet<String>());
+                    ctx.getBean(CityDao.class),
+                    new HashSet<String>());
             detailCriteriaList.add(cityCri);
 
             //国家
             DetailCriteria countryCri = new DetailCriteria(
-                    COUNTRY,Country.class, CountryDao.class,
+                    COUNTRY,
+                    Country.class,
+                    CountryDao.class,
                     CountryDao.class.getDeclaredMethod("findByCountry", String.class),
-                    ctx.getBean(CountryDao.class),new HashSet<String>());
+                    ctx.getBean(CountryDao.class),
+                    new HashSet<String>());
             detailCriteriaList.add(countryCri);
 
             //企业性质
             DetailCriteria companyTypeCri = new DetailCriteria(
-                    COMPANY_TYPE , CompanyType.class,CompanyTypeDao.class,
+                    COMPANY_TYPE
+                    , CompanyType.class,
+                    CompanyTypeDao.class,
                     CompanyTypeDao.class.getDeclaredMethod("findByCompanyType", String.class),
-                    ctx.getBean(CompanyTypeDao.class), new HashSet<String>());
+                    ctx.getBean(CompanyTypeDao.class),
+                    new HashSet<String>());
             detailCriteriaList.add(companyTypeCri);
 
             //海关
             DetailCriteria customsCri = new DetailCriteria(
-                    CUSTOMS,Customs.class,CustomsDao.class,
+                    CUSTOMS,
+                    Customs.class,
+                    CustomsDao.class,
                     CustomsDao.class.getDeclaredMethod("findByCustoms", String.class),
-                    ctx.getBean(CustomsDao.class),new HashSet<String>());
+                    ctx.getBean(CustomsDao.class),
+                    new HashSet<String>());
             detailCriteriaList.add(customsCri);
 
             //贸易类型
             DetailCriteria tradeTypeCri = new DetailCriteria(
-                    TRADE_TYPE,TradeType.class, TradeTypeDao.class,
+                    TRADE_TYPE,
+                    TradeType.class,
+                    TradeTypeDao.class,
                     TradeTypeDao.class.getDeclaredMethod("findByTradeType", String.class),
-                    ctx.getBean(TradeTypeDao.class),new HashSet<String>());
+                    ctx.getBean(TradeTypeDao.class),
+                    new HashSet<String>());
             detailCriteriaList.add(tradeTypeCri);
 
             //运输方式
             DetailCriteria transportationCri = new DetailCriteria(
-                    TRANSPORTATION,Transportation.class,TransportationDao.class,
+                    TRANSPORTATION,
+                    Transportation.class,
+                    TransportationDao.class,
                     TransportationDao.class.getDeclaredMethod("findByTransportation", String.class),
-                    ctx.getBean(TransportationDao.class),new HashSet<String>());
+                    ctx.getBean(TransportationDao.class),
+                    new HashSet<String>());
             detailCriteriaList.add(transportationCri);
-
         } catch (NoSuchMethodException e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
 
-        //找出查询字段
-        try {
-            final List<DetailCriteria> detailCriterias = detailCriteriaList;
-            ExecutorService pool = Executors.newFixedThreadPool(Config.THREAD_POOLSIZE);
-
-            for (String sqlStr : sqlList) {
-                final String sql = sqlStr;
-
-                //匹配
-                isDone = isDone && pool.submit(new Runnable() {
-                    public void run() {
-                        queryCriteriaRecord(detailCriterias, sql, accessPath);
-                    }
-                }).isDone();
-            }
-            if (isDone)
-                pool.shutdown();
-
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException(e);
-        } finally {
-            isDone = true;
-        }
+        //匹配
+        queryCriteriaRecord(detailCriteriaList, sql, accessPath);
 
         //导入
         cityDao.save(nameList2IdEntityList(detailCriteriaList.get(0).getRetName(), City.class));
-
         countryDao.save(nameList2IdEntityList(detailCriteriaList.get(1).getRetName(), Country.class));
-
         companyTypeDao.save(nameList2IdEntityList(detailCriteriaList.get(2).getRetName(), CompanyType.class));
-
         customsDao.save(nameList2IdEntityList(detailCriteriaList.get(3).getRetName(), Customs.class));
-
         tradeTypeDao.save(nameList2IdEntityList(detailCriteriaList.get(4).getRetName(), TradeType.class));
-
         transportationDao.save(nameList2IdEntityList(detailCriteriaList.get(5).getRetName(), Transportation.class));
 
     }
-    volatile Boolean isDone = true;
-
 
     /**
      * name list 到 实例类 list的转换
@@ -242,11 +219,9 @@ public class CommonServiceImpl implements CommonService {
     private <E extends IdEntity> List<E>
     nameList2IdEntityList(Set<String> nameSet, Class<E> idEntityClass) {
         List<E> idEntityList = new ArrayList<E>();
-
         for (String name : nameSet) {
             try {
                 idEntityList.add(idEntityClass.getConstructor(String.class).newInstance(name));
-
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
                 throw new RuntimeException(e);
@@ -269,18 +244,20 @@ public class CommonServiceImpl implements CommonService {
     public <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
     void importTradeDetail(
             CrudRepository repository,
-            T tradeDetailMapper,
-            YearMonthDto yearMonthDto,
-            String accessPath,
-            String sql,
-            Class detailClz) {
+            T tradeDetailMapper, YearMonthDto yearMonthDto,
+            String accessPath, String sql, Class detailClz) {
 
         if (tradeDetailMapper == null || yearMonthDto == null
                 || StringUtils.isBlank(sql)) return;
 
-        List<E> tradeDetailList = getListFormDB(
+        getListFormDB(
                 tradeDetailMapper, yearMonthDto, accessPath, sql, detailClz);
-        repository.save(tradeDetailList);
+
+        //从EHCache当中取出来，使用线程池执行保存
+        for (; ; ) {
+            List<E> tradeDetailList = null;
+            repository.save(tradeDetailList);
+        }
 
     }
 
@@ -302,7 +279,6 @@ public class CommonServiceImpl implements CommonService {
                         Class<E> tradeSumClass,
                         Class<M> tradeSumRowMapClass,
                         YearMonthDto yearMonthDto) {
-
         if (tradeSumDao == null || tradeSumClass == null
                 || tradeSumRowMapClass == null || yearMonthDto == null
                 || logEntry == null)
@@ -313,7 +289,6 @@ public class CommonServiceImpl implements CommonService {
         //excel取数据
         List<E> tradeSumList = getListFromExcel(logEntry,
                 tradeSumClass, tradeSumRowMapClass, yearMonthDto);
-
         isSuccess = isSuccess && (tradeSumList != null && !tradeSumList.isEmpty());
 
         //保存数据
@@ -389,11 +364,9 @@ public class CommonServiceImpl implements CommonService {
         try {
             if (tableType.equals(DETAIL)) {
                 obj = findByMethod.invoke(logDao, process_flag, DETAIL);
-
             } else if (tableType.equals(SUM)) {
                 obj = findByMethod.invoke(logDao, process_flag, SUM);
             }
-
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -407,7 +380,6 @@ public class CommonServiceImpl implements CommonService {
             for (Log log : logList) {
                 if (fileType.equals(Message.FileType.UPLOAD_FILE))
                     packaeMap.put(log.getId(), log);
-
                 if (fileType.equals(Message.FileType.IMPORT_FILE))
                     packaeMap.put(log.getId(), log);
             }
@@ -431,14 +403,11 @@ public class CommonServiceImpl implements CommonService {
 
         List<T> idEntityList = null;
         Object t = ContextLoader.getCurrentWebApplicationContext().getBean(daoClass);
-
         try {
             Object obj = daoClass.getMethod("findAll", Sort.class).invoke(t, sort);
-
             if (obj != null) {
                 idEntityList = (List<T>) obj;
             }
-
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -461,16 +430,13 @@ public class CommonServiceImpl implements CommonService {
 
     private <T extends TradeDetail> Specification<T> newSpecHasField(
             final String fieldName, final String fieldValue) {
-
         return new Specification<T>() {
 
             @Override
             public javax.persistence.criteria.Predicate
             toPredicate(Root<T> impTradeDetailRoot,
                         CriteriaQuery<?> query, CriteriaBuilder cb) {
-
                 if (fieldValue == null) return null;
-
                 return cb.equal(impTradeDetailRoot.get(fieldName), fieldValue);
             }
         };
@@ -499,9 +465,10 @@ public class CommonServiceImpl implements CommonService {
         try {
             statement = conn.createStatement();
             rs = statement.executeQuery(sql);
+            for (int i = 1; rs.next(); i++) {
 
-            while (rs.next()) {
                 fillDetailCriteriaList(detailCriteriaList, rs);
+
             }
 
         } catch (Exception e) {
@@ -528,16 +495,20 @@ public class CommonServiceImpl implements CommonService {
         Connection conn = getDBConnect(accessPath);
         Statement statement = null;
         ResultSet rs = null;
-        List<E> tradeDetailList = new ArrayList<E>();
-
+        List<E> tradeDetailList = new ArrayList<E>(1000);
         try {
             statement = conn.createStatement();
             rs = statement.executeQuery(sql);
+            for (int i = 1; rs.next(); i++) {
 
-            while (rs.next()) {
                 fillTradeDetailList(rs, tradeDetailMapper, yearMonthDto, detailClz, tradeDetailList);
-            }
+                if (i > 1000) {
+                    tradeDetailList = new ArrayList<E>(1000);
 
+                    //保存到EHCache当中...
+                }
+
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -627,7 +598,6 @@ public class CommonServiceImpl implements CommonService {
             Sheet sheet = workbook.getSheet(0);
             int rows = sheet.getRows();
             int rowIdx = sheet.findCell(PRODUCT_XNAME).getRow() + 1;
-
             Integer year = yearMonthDto.getYear();
             Integer month = yearMonthDto.getMonth();
             String yearMonth = year + "-" + (month < 10 ? "0" + month : month);
@@ -670,7 +640,6 @@ public class CommonServiceImpl implements CommonService {
         try {
             Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
             conn = DriverManager.getConnection(url, prop);
-
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
