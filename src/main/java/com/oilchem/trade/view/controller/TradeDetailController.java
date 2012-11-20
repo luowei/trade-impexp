@@ -10,15 +10,18 @@ import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
+import com.oilchem.trade.util.QueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import static com.oilchem.trade.util.QueryUtils.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -53,8 +56,8 @@ public class TradeDetailController extends CommonController {
      * @param impExp
      * @return
      */
-    @RequestMapping("/listdetail")
-    public String listexpTradeDetail(Model model ,CommonDto commonDto,
+    @RequestMapping("/listdetail/{pageNumber}")
+    public String listexpTradeDetail(Model model ,CommonDto commonDto,@PathVariable Integer pageNumber,
                                      TradeDetail tradeDetail,Integer impExp) {
 
         if(impExp==null)
@@ -63,14 +66,19 @@ public class TradeDetailController extends CommonController {
         if (impExp.equals(Message.ImpExpType.进口.getCode())) {
             Page<ImpTradeDetail> impTradeDetails = tradeDetailService
                     .findImpWithCriteria(new ImpTradeDetail(tradeDetail), commonDto, getPageRequest(commonDto));
-            getDetailCriteriaData(addPageInfo(model, impTradeDetails, getServletContextPath()+"/manage/listdetail"))
+            getDetailCriteriaData(addPageInfo(model, impTradeDetails, "/manage/listdetail"))
                     .addAttribute("tradeDetailList", impTradeDetails);
         }
         if (impExp.equals(Message.ImpExpType.出口.getCode())) {
             Page<ExpTradeDetail> expTradeDetails = tradeDetailService
                     .findExpWithCriteria(new ExpTradeDetail(tradeDetail), commonDto, getPageRequest(commonDto));
-            getDetailCriteriaData(addPageInfo(model, expTradeDetails, getServletContextPath()+"/manage/listdetail"))
+            getDetailCriteriaData(addPageInfo(model, expTradeDetails, "/manage/listdetail"))
                     .addAttribute("tradeDetailList", expTradeDetails);
+        }
+
+        for(PropertyFilter filter:tradeDetailService
+                .getdetailQueryProps(tradeDetail,commonDto)){
+            model.addAttribute(filter.getName(),filter.getValue()).addAttribute("impExp",impExp);
         }
 
         return "manage/trade/listdetail";

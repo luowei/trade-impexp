@@ -2,6 +2,7 @@ package com.oilchem.trade.service.impl;
 
 import com.oilchem.trade.config.Message;
 import com.oilchem.trade.util.FileUtil;
+import com.oilchem.trade.util.QueryUtils;
 import com.oilchem.trade.util.ZipUtil;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
@@ -396,7 +397,7 @@ public class CommonServiceImpl implements CommonService {
             Class daoClass, String idEntityName) {
         if (daoClass == null) return null;
 
-        Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC,idEntityName));
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, idEntityName));
 
         List<T> idEntityList = null;
         Object t = ContextLoader.getCurrentWebApplicationContext().getBean(daoClass);
@@ -555,12 +556,12 @@ public class CommonServiceImpl implements CommonService {
                 continue;
             }
             Object findByMethodRet = detailCriteria.getFindByMethod()
-                    .invoke(detailCriteria.getDao(), name);
+                    .invoke(detailCriteria.getDao(), name.trim());
 
             Set<String> nameSet = detailCriteria.getRetName();
             //如果没有找到相同记录，则把name字段保存到IdEntity引用的对象中
             if (findByMethodRet == null) {
-                nameSet.add(name);
+                nameSet.add(name.trim());
             }
         }
     }

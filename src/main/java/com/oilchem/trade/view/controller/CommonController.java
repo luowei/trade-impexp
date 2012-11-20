@@ -47,45 +47,48 @@ public class CommonController {
      */
     public PageRequest getPageRequest(CommonDto commonDto) {
 
-        if(commonDto.getPageNumber()==null || commonDto.getPageSize()==null){
-            commonDto.setPageNumber(0).setPageSize(QueryUtils.DEFAULT_PAGESIZE);
+        if(commonDto.getPageNumber()==null){
+            commonDto.setPageNumber(1);
+        }
+        if( commonDto.getPageSize()==null){
+            commonDto.setPageSize(QueryUtils.DEFAULT_PAGESIZE);
         }
 
-        Map<String,Sort.Direction> orderMap = new HashMap<String,Sort.Direction>();
-        String orderStr = commonDto.getOrder();
-        String[] orderArr = commonDto.getOrders();
+        Map<String,Sort.Direction> sortMap = new HashMap<String,Sort.Direction>();
+        String sortStr = commonDto.getSort();
+        String[] sortArr = commonDto.getSorts();
 
         //形如 id:asc,name:desc,age:asc --> orderMap
-        if(orderArr!=null ){
-            for (String order:orderArr){
+        if(sortArr!=null ){
+            for (String order:sortArr){
                 String[] ordstr=order.split(":");
                 String field=ordstr[1].toUpperCase().trim();
                 if(Sort.Direction.ASC.toString().equals(field)){
-                    orderMap.put(ordstr[0].trim(),Sort.Direction.ASC);
+                    sortMap.put(ordstr[0].trim(), Sort.Direction.ASC);
                 }else if(Sort.Direction.DESC.toString().equals(field)){
-                    orderMap.put(ordstr[0].trim(),Sort.Direction.DESC);
+                    sortMap.put(ordstr[0].trim(), Sort.Direction.DESC);
                 }
             }
         } else{    //形如:id:asc
-            if(orderStr==null || orderStr.equals("")){
-                orderStr = QueryUtils.DEFAULT_ORDER;
+            if(sortStr==null || sortStr.equals("")){
+                sortStr = QueryUtils.DEFAULT_ORDER;
             }
 
-            String[] order = orderStr.split(":");
+            String[] order = sortStr.split(":");
             String str1 = order[1].toLowerCase().trim();
             String asc_str = Sort.Direction.ASC.name().toLowerCase();
             String desc_str = Sort.Direction.DESC.name().toLowerCase();
 
             if(str1.equals(asc_str)){
-                orderMap.put(order[0].trim(),Sort.Direction.ASC);
+                sortMap.put(order[0].trim(), Sort.Direction.ASC);
             }else if(str1.equals(desc_str)){
-                orderMap.put(order[0].trim(),Sort.Direction.DESC);
+                sortMap.put(order[0].trim(), Sort.Direction.DESC);
             }
         }
 
         //构建pagerequest对象
-        Sort sort = QueryUtils.sortByOrderFiled(orderMap);
-        return new PageRequest(commonDto.getPageNumber(),commonDto.getPageSize(),sort);
+        Sort sort = QueryUtils.sortByOrderFiled(sortMap);
+        return new PageRequest(commonDto.getPageNumber()-1,commonDto.getPageSize(),sort);
     }
 
     /**
@@ -103,13 +106,17 @@ public class CommonController {
         int end = Math.min(begin + 10, page.getTotalPages());
         Integer totalPages = page.getTotalPages();
         Long totalElements = page.getTotalElements();
+        Integer pageSize = page.getSize();
+        String sort = page.getSort().toString();
 
         return model == null ? model : model.addAttribute("currentIndex", current)
                 .addAttribute("beginIndex", begin)
                 .addAttribute("endIndex", end)
                 .addAttribute("totalPages", totalPages)
                 .addAttribute("totalElements", totalElements)
-                .addAttribute("contextUrl", contextUrl);
+                .addAttribute("contextUrl", contextUrl)
+                .addAttribute("pageSize",pageSize)
+                .addAttribute("sort",sort);
     }
 
     /**
@@ -131,8 +138,8 @@ public class CommonController {
      */
     public <E extends IdEntity> Model
     findAllIdEntity(Model model, Class daoClass, String idEntityName) {
-        List<E> productTypeList = commonService.findAllIdEntityList(daoClass, idEntityName);
-        model.addAttribute(productTypeList);
+        List<E> eList = commonService.findAllIdEntityList(daoClass, idEntityName);
+        model.addAttribute(eList);
         return model;
     }
 

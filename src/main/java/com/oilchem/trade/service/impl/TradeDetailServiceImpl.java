@@ -30,10 +30,15 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.persistence.criteria.*;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static com.oilchem.trade.config.Config.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -91,6 +96,22 @@ public class TradeDetailServiceImpl implements TradeDetailService {
             return commonService.unpackageFile(map.entrySet().iterator().next()
                     , UPLOAD_DETAILZIP_DIR);
         }
+        return null;
+    }
+
+    <E extends TradeDetail> Boolean mutilThreadImport(){
+
+        Integer poolSize = 100;
+        ExecutorService pool = Executors.newFixedThreadPool(poolSize);
+        Future<E> rsFuture = pool.submit(new Callable<E>() {
+            public E call() throws Exception {
+
+//                getListFormDB(tradeDetailMapper, yearMonthDto, accessPath, sql, detailClz)
+                return null;
+            }
+        });
+
+
         return null;
     }
 
@@ -204,7 +225,13 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         return (List<ProductType>) productTypeDao.findAll();
     }
 
-    private List<PropertyFilter>
+    /**
+     * 获得查询属性
+     * @param tradeDetail
+     * @param commonDto
+     * @return
+     */
+    public List<PropertyFilter>
     getdetailQueryProps(TradeDetail tradeDetail, CommonDto commonDto) {
         List<PropertyFilter> propList = new ArrayList<PropertyFilter>();
         if (isNotBlank(tradeDetail.getCity())) {

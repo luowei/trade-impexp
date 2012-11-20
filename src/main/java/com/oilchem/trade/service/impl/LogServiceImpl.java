@@ -178,6 +178,7 @@ public class LogServiceImpl implements LogService {
         log = logDao.findOne(logEntry.getKey());
         log.setExtractFlag(EXTRACT_FAILD);
         log.setImportFlag(UNIMPORT_FLAG);
+        log.setErrorOccur(EXTRACT_FAILD);
         log.setLogTime(new Date());
         logDao.save(log);
     }
@@ -239,6 +240,7 @@ public class LogServiceImpl implements LogService {
                                       YearMonthDto yearMonthDto) {
         log = logDao.findOne(logEntry.getKey());
         log.setImportFlag(IMPORT_FAILD);
+        log.setErrorOccur(IMPORT_FAILD);
         log.setLogTime(new Date());
         logDao.save(log);
     }
@@ -299,6 +301,7 @@ public class LogServiceImpl implements LogService {
 
         log = logDao.findOne(logEntry.getKey());
         log.setImportFlag(IMPORT_FAILD);
+        log.setErrorOccur(IMPORT_FAILD);
         log.setLogTime(new Date());
         logDao.save(log);
     }

@@ -199,7 +199,7 @@ public class TradeSumServiceImpl implements TradeSumService {
             propList.add(new PropertyFilter("yearMonth", commonDto.getHighValue(), LT));
         }
 
-        return null;
+        return propList;
     }
 
 }

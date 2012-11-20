@@ -18,8 +18,8 @@ public class CommonDto implements Serializable {
     private String keyword;
     private String lowValue;
     private String highValue;
-    private String order;
-    private String[] orders;
+    private String sort;
+    private String[] sorts;
 
     public Long getId() {
         return id;
@@ -83,21 +83,21 @@ public class CommonDto implements Serializable {
         return this;
     }
 
-    public String getOrder() {
-        return order;
+    public String getSort() {
+        return sort;
     }
 
-    public CommonDto setOrder(String order) {
-        this.order = order;
+    public CommonDto setSort(String sort) {
+        this.sort = sort;
         return this;
     }
 
-    public String[] getOrders() {
-        return orders;
+    public String[] getSorts() {
+        return sorts;
     }
 
-    public CommonDto setOrders(String[] orders) {
-        this.orders = orders;
+    public CommonDto setSorts(String[] sorts) {
+        this.sorts = sorts;
         return this;
     }
 }

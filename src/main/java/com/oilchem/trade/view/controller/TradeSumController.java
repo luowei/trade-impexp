@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,22 +49,24 @@ public class TradeSumController extends CommonController {
      * @param commonDto commonDto
      * @return
      */
-    @RequestMapping("/listsum")
+    @RequestMapping("/listsum/{pageNumber}")
     public String listTradeImpSum(Model model, TradeSum tradeSum,
+                                  @PathVariable Integer pageNumber,
                                   Integer impExp, CommonDto commonDto) {
         if(impExp==null)
             impExp=0;
+
         if (impExp.equals(Message.ImpExpType.进口.getCode())) {
             Page<ImpTradeSum> impTradeSums = tradeSumService
                     .findImpWithCriteria(new ImpTradeSum(tradeSum), commonDto, getPageRequest(commonDto));
-            findAllIdEntity(addPageInfo(model, impTradeSums, getServletContextPath()+"/manage/listsum"),
-                    ProductTypeDao.class, ImpTradeSum.class.getSimpleName())
+            findAllIdEntity(addPageInfo(model, impTradeSums, "/manage/listsum"),
+                    ProductTypeDao.class, ProductType.class.getSimpleName())
                     .addAttribute("tradeSumList", impTradeSums);
         }
         if (impExp.equals(Message.ImpExpType.出口.getCode())) {
             Page<ExpTradeSum> expTradeSums = tradeSumService
                     .findExpWithCriteria(new ExpTradeSum(tradeSum), commonDto, getPageRequest(commonDto));
-            findAllIdEntity(addPageInfo(model, expTradeSums, getServletContextPath()+"/manage/listsum"),
+            findAllIdEntity(addPageInfo(model, expTradeSums, "/manage/listsum"),
                     ProductTypeDao.class, ProductType.class.getSimpleName())
                     .addAttribute("tradeSumList", expTradeSums);
         }

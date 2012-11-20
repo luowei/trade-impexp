@@ -18,24 +18,32 @@
     <title>进出口明细</title>
 
     <link rel="stylesheet" type="text/css" href="<c:url value='/resources/bootstrap/css/bootstrap.min.css' />"/>
-    <link rel="stylesheet" type="text/css"
-          href="<c:url value='/resources/bootstrap/css/bootstrap-responsive.min.css' />"/>
+    <link rel="stylesheet" type="text/css" href="<c:url value='/resources/bootstrap/css/bootstrap-responsive.min.css' />"/>
+    <script type="text/javascript" src="<c:url value="/resources/js/jquery/1.7.2/jquery.js" />"></script>
+    <script type="text/javascript" src="<c:url value="/resources/js/trade.js"/> "></script>
+
 </head>
 <body>
+<h2>进出口明细</h2>
 
 <div class="wrapper">
-    <c:url var="action" value="/manage/listdetail"/>
-    <form:form id="form1" modelAttribute="tradeDetail" action="${action}"
+    <form:form id="form1" modelAttribute="tradeDetail"
+               action="${pageContext.request.contextPath}${contextUrl}/1"
                method="post" cssClass="well form-inline">
+        <input type="hidden" name="pageSize" value="${pageSize}"/>
+        <input type="hidden" name="sort" value="${sort}"/>
+        <input type="hidden" name="highValue" value=""/>
+        <input type="hidden" name="lowValue" value=""/>
+
         <label class="label ">起始年月:
-            <select name="lowyear" class=" input-mini">
+            <select name="lowyear" class=" input-mini" onchange="">
                 <option value="" selected="selected">--</option>
                 <c:forEach var="yr" begin="2000" end="2050" step="1">
                     <option value="${yr}">${yr}</option>
                 </c:forEach>
             </select> 年&nbsp;
             <select name="lowmonth" class=" input-mini">
-                <option value="" selected="selected">--</option>
+                    <option value="" selected="selected">--</option>
                 <c:forEach var="mth" begin="1" end="12" step="1">
                     <option value="${mth}">${mth}</option>
                 </c:forEach>
@@ -43,14 +51,14 @@
         </label>
 
         <label class="label">结束年月:
-            <select name="highyear" class=" input-mini">
+            <select name="highyear" class=" input-mini" onchange="">
                 <option value="" selected="selected">--</option>
                 <c:forEach var="yr" begin="2000" end="2050" step="1">
                     <option value="${yr}">${yr}</option>
                 </c:forEach>
             </select> 年&nbsp;
             <select name="highmonth" class=" input-mini">
-                <option value="" selected="selected">--</option>
+                    <option value="" selected="selected">--</option>
                 <c:forEach var="mth" begin="1" end="12" step="1">
                     <option value="${mth}">${mth}</option>
                 </c:forEach>
@@ -72,8 +80,11 @@
         <label class="label">企业性质:
             <select name="companyType" class=" input-mini">
                 <option value="">--</option>
-                <c:forEach items="${companyTypeList}" var="companyType">
-                    <option value="${companyType.companyType}">${companyType.companyType}</option>
+                <c:forEach items="${companyTypeList}" var="companyTypeItem">
+                    <option value="${companyTypeItem.companyType}"
+                            <c:if test="${companyTypeItem.companyType eq companyType}">selected="selected" </c:if>>
+                            ${companyTypeItem.companyType}
+                    </option>
                 </c:forEach>
             </select>
         </label>
@@ -81,8 +92,11 @@
         <label class="label">贸易方式:
             <select name="tradeType" class=" input-mini">
                 <option value="">--</option>
-                <c:forEach items="${tradeTypeList}" var="tradeType">
-                    <option value="${tradeType.tradeType}">${tradeType.tradeType}</option>
+                <c:forEach items="${tradeTypeList}" var="tradeTypeItem">
+                    <option value="${tradeTypeItem.tradeType}"
+                            <c:if test="${tradeTypeItem.tradeType eq tradeType}">selected="selected" </c:if>>
+                            ${tradeTypeItem.tradeType}
+                    </option>
                 </c:forEach>
             </select>
         </label>
@@ -90,8 +104,11 @@
         <label class="label">运输方式:
             <select name="transportation" class=" input-mini">
                 <option value="">--</option>
-                <c:forEach items="${transportationList}" var="transportation">
-                    <option value="${transportation.transportation}">${transportation.transportation}</option>
+                <c:forEach items="${transportationList}" var="transportationItem">
+                    <option value="${transportationItem.transportation}"
+                            <c:if test="${transportationItem.transportation eq transportation}">selected="selected" </c:if>>
+                            ${transportationItem.transportation}
+                    </option>
                 </c:forEach>
             </select>
         </label>
@@ -99,8 +116,11 @@
         <label class="label">海关:
             <select name="customs" class=" input-mini">
                 <option value="">--</option>
-                <c:forEach items="${customsList}" var="customs">
-                    <option value="${customs.customs}">${customs.customs}</option>
+                <c:forEach items="${customsList}" var="customsItem">
+                    <option value="${customsItem.customs}"
+                            <c:if test="${customsItem.customs eq customs}">selected="selected" </c:if>>
+                            ${customsItem.customs}
+                    </option>
                 </c:forEach>
             </select>
         </label>
@@ -108,8 +128,11 @@
         <label class="label">产销国家:
             <select name="country" class=" input-mini">
                 <option value="">--</option>
-                <c:forEach items="${countryList}" var="country">
-                    <option value="${country.country}">${country.country}</option>
+                <c:forEach items="${countryList}" var="countryItem">
+                    <option value="${countryItem.country}"
+                            <c:if test="${countryItem.country eq country}">selected="selected" </c:if>>
+                            ${countryItem.country}
+                    </option>
                 </c:forEach>
             </select>
         </label>
@@ -117,8 +140,11 @@
         <label class="label">城市:
             <select name="city" class=" input-mini">
                 <option value="">--</option>
-                <c:forEach items="${cityList}" var="city">
-                    <option value="${city.city}">${city.city}</option>
+                <c:forEach items="${cityList}" var="cityItem">
+                    <option value="${cityItem.city}"
+                            <c:if test="${cityItem.city eq city}">selected="selected" </c:if>>
+                            ${cityItem.city}
+                    </option>
                 </c:forEach>
             </select>
         </label>
@@ -126,29 +152,36 @@
         <br/>
 
         <label class="label">
-            产品代码:<input name="productCode" cssClass="input-mini search-query"/>
+            产品代码:<input name="productCode" cssClass="input-mini search-query"
+                        <c:if test='${productCode ne null}'>value="${productCode}" </c:if> />
         </label>
         <label class="label">
-            产品名称:<input name="productName" cssClass="input-mini search-query"/>
+            产品名称:<input name="productName" cssClass="input-mini search-query"
+                        <c:if test='${productName ne null}'>value="${productName}" </c:if> />
         </label>
 
         <br/>
 
         <label class="label">进出口类型:
             <select name="impExp" class=" input-small">
-                <option value="0">进口</option>
-                <option value="1">出口</option>
+                <option value="0" <c:if test="${impExp eq 0}">selected="selected" </c:if>>进口</option>
+                <option value="1" <c:if test="${impExp eq 1}">selected="selected" </c:if>>出口</option>
             </select>
         </label>
 
-        <button type="submit" class="btn btn-success">
-            <i class="icon-search icon-white"></i>查询
-        </button>
+
+            <button type="submit" class="btn btn-success">
+                <i class="icon-search icon-white"></i>查询
+            </button>
+        <%--<div class="btn-group">--%>
+            <input type="button" class="btn btn-primary" value="生成曲线"/>
+        <%--</div>--%>
     </form:form>
 
     <table class="table table-bordered table-striped table-condensed">
         <thead>
         <tr>
+            <th>曲线</th>
             <th>年</th>
             <th>月</th>
             <th>产品代码</th>
@@ -168,6 +201,7 @@
         <tbody>
         <c:forEach items="${tradeDetailList.content}" var="detail" varStatus="st">
             <tr>
+                <td><form:checkbox path="commonDto.ids" value="${detail.id}"/></td>
                 <td>${detail.year}</td>
                 <td>${detail.month}</td>
                 <td>${detail.productCode}</td>

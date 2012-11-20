@@ -16,22 +16,28 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>进出口总表</title>
+
+    <link rel="stylesheet" type="text/css" href="<c:url value='/resources/bootstrap/css/bootstrap.min.css' />"/>
+    <link rel="stylesheet" type="text/css" href="<c:url value='/resources/bootstrap/css/bootstrap-responsive.min.css' />"/>
+    <script type="text/javascript" src="<c:url value="/resources/js/jquery/1.7.2/jquery.js" />"></script>
+    <script type="text/javascript" src="<c:url value="/resources/js/trade.js"/> "></script>
 </head>
 
 <body>
 
 <div class="wrapper">
-    <c:url var="action" value="/manage/listsum"/>
+    <h2>进出口总表</h2>
+    <c:url var="action" value="${pageContext.request.contextPath}${contextUrl}/1"/>
     <form:form id="form1" modelAttribute="tradeSum" action="${action}" method="post" cssClass="well form-inline">
 
-        <label>起始年月:
-           <select name="lowyear">
+        <label class="label">起始年月:
+           <select name="lowyear" class="input-mini">
                <option value="" selected="selected">--</option>
                <c:forEach var="yr" begin="2000" end="2050" step="1">
                    <option value="${yr}">${yr}</option>
                </c:forEach>
            </select> 年&nbsp;
-           <select name="lowmonth">
+           <select name="lowmonth" class="input-mini">
                <option value="" selected="selected">--</option>
                <c:forEach var="mth" begin="1" end="12" step="1">
                    <option value="${mth}">${mth}</option>
@@ -40,41 +46,55 @@
         </label>
 
 
-        <label>结束年月:</label>
-        <select name="highyear">
+        <label class="label">结束年月:
+        <select name="highyear" class="input-mini">
             <option value="" selected="selected">--</option>
             <c:forEach var="yr" begin="2000" end="2050" step="1">
                 <option value="${yr}">${yr}</option>
             </c:forEach>
         </select> 年&nbsp;
-        <select name="highmonth">
+        <select name="highmonth" class="input-mini">
             <option value="" selected="selected">--</option>
             <c:forEach var="mth" begin="1" end="12" step="1">
                 <option value="${mth}">${mth}</option>
             </c:forEach>
         </select>月
+        </label>
 
-        <label>月同期查询:</label>
-        <select name="month">
+        <label class="label">月同期查询:
+        <select name="month" class="input-mini">
             <option value="" selected="selected">--</option>
             <c:forEach var="mth" begin="1" end="12" step="1">
                 <option value="${mth}">${mth}</option>
             </c:forEach>
         </select>月
+        </label>
 
         <br/>
-        <form:input path="productName" cssClass="input-medium search-query" placeholder="产品名称:"/>
-        <form:input path="productCode" cssClass="input-medium search-query" placeholder="产品代码:"/>
+
+        <label class="label">
+            产品名称:<input name="productName" cssClass="input-mini search-query"
+                        <c:if test='${productName ne null}'>value="${productName}" </c:if> />
+        </label>
+
+        <label class="label">进出口类型:
+            <select name="impExp" class=" input-small">
+                <option value="0" <c:if test="${impExp eq 0}">selected="selected" </c:if>>进口</option>
+                <option value="1" <c:if test="${impExp eq 1}">selected="selected" </c:if>>出口</option>
+            </select>
+        </label>
 
         <button type="submit" class="btn btn-success">
             <i class="icon-search icon-white"></i>查询
         </button>
+        <input type="button" class="btn btn-primary" value="生成曲线"/>
 
     </form:form>
 
     <table class="table table-bordered table-striped table-condensed">
         <thead>
         <tr>
+            <th>曲线</th>
             <td>年</td>
             <td>月</td>
             <td>产品名称</td>
@@ -90,8 +110,9 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${sumlist}" var="sum" varStatus="st">
+        <c:forEach items="${tradeSumList.content}" var="sum" varStatus="st">
             <tr>
+                <td><form:checkbox path="commonDto.ids" value="${sum.id}"/></td>
                 <td>${sum.year}</td>
                 <td>${sum.month}</td>
                 <td>${sum.productName}</td>
@@ -109,7 +130,9 @@
 
         </tbody>
     </table>
-    ${pageTag}
+    <div class="pagination-centered">
+        <jsp:include page="../../common/pagination.jsp"/>
+    </div>
 </div>
 </body>
 </html>

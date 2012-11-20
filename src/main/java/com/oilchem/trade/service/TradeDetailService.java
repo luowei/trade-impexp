@@ -7,6 +7,7 @@ import com.oilchem.trade.domain.ProductType;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
+import com.oilchem.trade.util.QueryUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -82,4 +83,13 @@ public interface TradeDetailService {
      * @return
      */
     public List<ProductType> getProductList();
+
+    /**
+     * 获得查询属性
+     * @param tradeDetail
+     * @param commonDto
+     * @return
+     */
+    public List<QueryUtils.PropertyFilter>
+    getdetailQueryProps(TradeDetail tradeDetail, CommonDto commonDto);
 }

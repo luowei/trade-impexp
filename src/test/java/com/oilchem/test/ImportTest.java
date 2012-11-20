@@ -4,7 +4,6 @@ import com.oilchem.trade.config.Config;
 import com.oilchem.trade.config.Message;
 import com.oilchem.trade.domain.ImpTradeDetail;
 import com.oilchem.trade.domain.Log;
-import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
@@ -170,7 +169,7 @@ public class ImportTest {
 //        impTradeDetail.setCompanyType("私人企业");
 
         CommonDto commonDto = new CommonDto();
-        commonDto.setPageNumber(0).setPageSize(20).setOrder("city:asc");
+        commonDto.setPageNumber(0).setPageSize(20).setSort("city:asc");
 //        commonDto .setLowValue("2003-9").setHighValue("2012-12");
 
 
