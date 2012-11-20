@@ -40,4 +40,5 @@ public class Config {
 
     public static String YEARMONTH_SPLIT = "-";
 
+    public static int THREAD_POOLSIZE = 100;
 }

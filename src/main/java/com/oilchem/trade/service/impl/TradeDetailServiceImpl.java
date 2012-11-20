@@ -3,6 +3,7 @@ package com.oilchem.trade.service.impl;
 import com.oilchem.trade.config.Config;
 import com.oilchem.trade.config.Message;
 import com.oilchem.trade.dao.*;
+import com.oilchem.trade.dao.db.JdbcUtil;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.ExpTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.ImpTradeDetailRowMapper;
@@ -28,10 +29,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 import java.util.concurrent.*;
 
 import static com.oilchem.trade.config.Config.*;
@@ -91,19 +91,18 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         return null;
     }
 
-    public <E extends TradeDetail,T extends AbstractTradeDetailRowMapper>
+    public <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
     Boolean getDetailList(final CrudRepository repository,
                           final T tradeDetailMapper,
                           final YearMonthDto yearMonthDto,
                           final String accessPath,
                           final Class detailClz,
-                          List<String> sqlList){
+                          List<String> sqlList) {
 
         Boolean isSuccess = false;
-        Integer poolSize = 100;
-        ExecutorService pool = Executors.newFixedThreadPool(poolSize);
+        ExecutorService pool = Executors.newFixedThreadPool(Config.THREAD_POOLSIZE);
 
-        for(String sqlStr:sqlList){
+        for (String sqlStr : sqlList) {
             final String sql = sqlStr;
             List<E> subDetailList = null;
 
@@ -117,14 +116,15 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
             try {
                 subDetailList = detailListFuture.get();
-                repository.save(subDetailList);
-                isSuccess = true;
+                Iterable<E> details = repository.save(subDetailList);
+                isSuccess = isSuccess && details != null;
 
             } catch (Exception e) {
-                logger.error(e.getMessage(),e);
+                logger.error(e.getMessage(), e);
                 throw new RuntimeException(e);
             }
         }
+        pool.shutdown();
         return isSuccess;
     }
 
@@ -139,10 +139,35 @@ public class TradeDetailServiceImpl implements TradeDetailService {
                                 YearMonthDto yearMonthDto) {
 
         Boolean isSuccess = false;
-        final String sql = "select top 1000 * from 结果 ";
+        String sql = "select count(*) from 结果 ";
+
+        if (!initJdbcUtil(logEntry, sql))
+            return false;
+        Integer recordCount = new JdbcUtil<Integer>() {
+            @Override
+            public Integer constructBean(ResultSet rs, Object... obj) throws SQLException {
+                return rs.getInt(1);
+            }
+        }.getList().get(0);
+
+        if (recordCount < 10000) {
+            THREAD_POOLSIZE = 5;
+        }
+        if (recordCount > 10000 && recordCount <= 100000) {
+            THREAD_POOLSIZE = 10;
+        }
+        if (recordCount > 100000) {
+            THREAD_POOLSIZE = 100;
+        }
+
+
+
+
+
+        List<String> sqlList = new ArrayList<String>();
 
         //导入查询条件表
-        commonService.importCriteriaTab(sql, logEntry.getValue().getExtractPath());
+        commonService.importCriteriaTab(sqlList, logEntry.getValue().getExtractPath());
 
         //导入进口明细总表
         if (yearMonthDto.getImpExpType().equals(Message.ImpExpType.进口.getCode())) {
@@ -154,15 +179,12 @@ public class TradeDetailServiceImpl implements TradeDetailService {
                     impTradeDetailDao.delRepeatImpTradeDetail(
                             yearMonthDto.getYear(), yearMonthDto.getMonth());
                 }
-
-                commonService.importTradeDetail(
-                        impTradeDetailDao,
-                        new ImpTradeDetailRowMapper(),
-                        yearMonthDto,
-                        logEntry.getValue().getExtractPath(), sql,
-                        ImpTradeDetail.class);
-                isSuccess = true;
             }
+
+            getDetailList(impTradeDetailDao, new ImpTradeDetailRowMapper(), yearMonthDto,
+                    logEntry.getValue().getExtractPath(), ImpTradeDetail.class, sqlList);
+            isSuccess = true;
+
         }
 
         //导入出口明细表
@@ -174,22 +196,34 @@ public class TradeDetailServiceImpl implements TradeDetailService {
                     expTradeDetailDao.delRepeatImpTradeDetail(
                             yearMonthDto.getYear(), yearMonthDto.getMonth());
                 }
-
-                commonService.importTradeDetail(
-                        expTradeDetailDao,
-                        new ExpTradeDetailRowMapper(),
-                        yearMonthDto,
-                        logEntry.getValue().getExtractPath(), sql,
-                        ExpTradeDetail.class);
-                isSuccess = true;
             }
+
+            getDetailList(expTradeDetailDao, new ExpTradeDetailRowMapper(), yearMonthDto,
+                    logEntry.getValue().getExtractPath(), ExpTradeDetail.class, sqlList);
+            isSuccess = true;
+
         }
 
         return isSuccess;
     }
 
+    private Boolean initJdbcUtil(Map.Entry<Long, Log> logEntry, String sql) {
+        Boolean isSuccess = false;
+
+        Properties prop = new Properties();
+        prop.put("charSet", "GBK");
+        prop.put("user", "");
+        prop.put("password", "");
+        String url = "jdbc:odbc:driver={Microsoft Access Driver (*.mdb)};DBQ="
+                + logEntry.getValue().getExtractPath();
+        String driverClass = "sun.jdbc.odbc.JdbcOdbcDriver";
+        JdbcUtil.init(driverClass, url, sql, prop);
+        return isSuccess;
+    }
+
     /**
      * 进口明细
+     *
      * @param tradeDetail 页面传来的 IxpTradeDetail包含查询条件中里面
      * @param commonDto
      * @param pageRequest
@@ -207,6 +241,7 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
     /**
      * 出口明细
+     *
      * @param tradeDetail 页面传来的 ExpTradeDetail，包含查询条件中里面
      * @param commonDto
      * @param pageRequest
@@ -230,6 +265,7 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
     /**
      * 获得productType列表
+     *
      * @return
      */
     public List<ProductType> getProductList() {
@@ -238,6 +274,7 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
     /**
      * 获得查询属性
+     *
      * @param tradeDetail
      * @param commonDto
      * @return

@@ -15,12 +15,18 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 public class DetailCriteria{
+    //大表的字段名
     private String fieldName;
+    //大表的字段对应的实例类类型
     private Class idEntityClass;
+    //大表的字段对应的实例的dao的类型
     private Class daoClass;
+    //大表的字段对应的实例的dao的findBy方法
     private Method findByMethod;
+    //大表的字段对应的dao
     private Object dao;
-    private Set<String> retName;
+    //大表的字段对应的表中的记录
+    private volatile Set<String> retName;
 
     public DetailCriteria() {
     }

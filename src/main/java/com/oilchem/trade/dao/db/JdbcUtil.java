@@ -15,7 +15,7 @@ import java.util.Properties;
  * Time: 下午8:41
  * To change this template use File | Settings | File Templates.
  */
-public abstract class JdbcUtil<E, O> {
+public abstract class JdbcUtil<E> {
 
     static Logger logger = LoggerFactory.getLogger(JdbcUtil.class);
 
@@ -87,6 +87,9 @@ public abstract class JdbcUtil<E, O> {
         return list;
     }
 
+    public abstract E constructBean(ResultSet rs, Object... obj) throws SQLException;
+
+
     /**
      * 更新
      * @param sql
@@ -117,8 +120,13 @@ public abstract class JdbcUtil<E, O> {
         return row;
     }
 
-    public abstract E constructBean(ResultSet rs, Object... obj);
-
+    /**
+     * 关闭数据库资源
+     * @param conn
+     * @param statement
+     * @param preStatement
+     * @param rs
+     */
     private static void  closeDBResource(
             Connection conn, Statement statement,
             PreparedStatement preStatement, ResultSet rs) {
