@@ -10,7 +10,6 @@ import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
-import com.oilchem.trade.util.QueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -20,10 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+
 import static com.oilchem.trade.util.QueryUtils.*;
 
 /**
@@ -53,83 +51,82 @@ public class TradeDetailController extends CommonController {
 
     /**
      * 明细列表
+     *
      * @param model
      * @param commonDto
      * @param tradeDetail
-     * @param impExp
      * @return
      */
     @RequestMapping("/listdetail/{pageNumber}")
-    public String listexpTradeDetail(Model model ,CommonDto commonDto,@PathVariable Integer pageNumber,
-                                     TradeDetail tradeDetail,Integer impExp) {
-
-        if(impExp==null)
-            impExp = 0;
+    public String listexpTradeDetail(Model model, @PathVariable Integer pageNumber,
+                                     CommonDto commonDto, YearMonthDto yearMonthDto,
+                                     TradeDetail tradeDetail) {
+        Integer impExp = yearMonthDto.getImpExpType();
+        if (impExp == null)
+            yearMonthDto.setImpExpType(impExp = 0);
 
         if (impExp.equals(Message.ImpExpType.进口.getCode())) {
             Page<ImpTradeDetail> impTradeDetails = tradeDetailService
-                    .findImpWithCriteria(new ImpTradeDetail(tradeDetail), commonDto, getPageRequest(commonDto));
+                    .findImpWithCriteria(new ImpTradeDetail(tradeDetail), commonDto, yearMonthDto, getPageRequest(commonDto));
             getDetailCriteriaData(addPageInfo(model, impTradeDetails, "/manage/listdetail"))
                     .addAttribute("tradeDetailList", impTradeDetails);
         }
         if (impExp.equals(Message.ImpExpType.出口.getCode())) {
             Page<ExpTradeDetail> expTradeDetails = tradeDetailService
-                    .findExpWithCriteria(new ExpTradeDetail(tradeDetail), commonDto, getPageRequest(commonDto));
+                    .findExpWithCriteria(new ExpTradeDetail(tradeDetail), commonDto, yearMonthDto, getPageRequest(commonDto));
             getDetailCriteriaData(addPageInfo(model, expTradeDetails, "/manage/listdetail"))
                     .addAttribute("tradeDetailList", expTradeDetails);
         }
 
-        for(PropertyFilter filter:tradeDetailService
-                .getdetailQueryProps(tradeDetail, commonDto)){
-            model.addAttribute(filter.getName(),filter.getValue()).addAttribute("impExp",impExp);
-        }
+        addAtrribute2Model(model, tradeDetail, commonDto, yearMonthDto);
 
         return "manage/trade/listdetail";
     }
 
     /**
      * 进入导入数据页面
+     *
      * @return
      */
     @RequestMapping("/import")
-    public String importpage(Model model,String message){
-        model.addAttribute("productTypeList",tradeDetailService.getProductList())
-        .addAttribute("message",message);
+    public String importpage(Model model, String message) {
+        model.addAttribute("productTypeList", tradeDetailService.getProductList())
+                .addAttribute("message", message);
         return "manage/trade/import";
     }
 
     /**
      * 导入明细数据
      *
-     * @param file  从 DefaultMultipartHttpServletRequest获得的file
-     * @param yearMonthDto  年月。。。
+     * @param file         从 DefaultMultipartHttpServletRequest获得的file
+     * @param yearMonthDto 年月。。。
      * @return
      */
     @RequestMapping("/importdetail")
-    public String importTradeDetail( @RequestParam("file") MultipartFile file,
-                                    Model model,YearMonthDto yearMonthDto,
+    public String importTradeDetail(@RequestParam("file") MultipartFile file,
+                                    Model model, YearMonthDto yearMonthDto,
                                     RedirectAttributes redirectAttrs) {
 
         Boolean validate = (file.getOriginalFilename().endsWith(".rar") ||
                 file.getOriginalFilename().endsWith(".zip"))
-                && yearMonthDto!=null;
-        if(!validate) return "manage/trade/import";
+                && yearMonthDto != null;
+        if (!validate) return "manage/trade/import";
 
         StringBuffer message = new StringBuffer();
-        try{
+        try {
             String uploadUrl = tradeDetailService.uploadFile(file, yearMonthDto);
-            message.append( "文件已上传到："+Config.UPLOAD_DETAILZIP_DIR +
+            message.append("文件已上传到：" + Config.UPLOAD_DETAILZIP_DIR +
                     uploadUrl.substring(uploadUrl.lastIndexOf("/")));
             taskService.unDetailPackageAndImportTask(yearMonthDto);
 
-        }catch (Exception e){
-            logger.error(e.getMessage(),e);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             message.append("<br/>文件上传或数据导入发生了错误");
         }
 
 //        UriComponents redirectUri = UriComponentsBuilder.fromPath("/manage/import")
 //                .queryParam("message",message.toString()).build().encode();
-        redirectAttrs.addFlashAttribute("message",message.toString());
+        redirectAttrs.addFlashAttribute("message", message.toString());
         return "redirect:/manage/import";
     }
 
@@ -155,6 +152,31 @@ public class TradeDetailController extends CommonController {
                 .addAttribute(tradeTypeList)
                 .addAttribute(transportationList);
 
+        return model;
+    }
+
+    /**
+     * 将属性添加到模型中
+     * @param model
+     * @param tradeDetail
+     * @param commonDto
+     * @param yearMonthDto
+     * @return
+     */
+    private Model addAtrribute2Model(Model model, TradeDetail tradeDetail,
+                                     CommonDto commonDto, YearMonthDto yearMonthDto) {
+
+        model = yearMonthDto.getMonth() != null ? model.addAttribute("month", yearMonthDto.getMonth()): model;
+        model = yearMonthDto.getLowYear() != null ? model.addAttribute("lowYear", yearMonthDto.getLowYear()): model;
+        model = yearMonthDto.getLowMonth() != null ? model.addAttribute("lowMonth", yearMonthDto.getLowMonth()): model;
+        model = yearMonthDto.getHighYear() != null ? model.addAttribute("highYear", yearMonthDto.getHighYear()): model;
+        model = yearMonthDto.getHighMonth() != null ? model.addAttribute("highMonth", yearMonthDto.getHighMonth()): model;
+        model = yearMonthDto.getImpExpType() != null ? model.addAttribute("impExpType", yearMonthDto.getImpExpType()): model;
+
+        for (PropertyFilter filter : tradeDetailService
+                .getdetailQueryProps(tradeDetail, commonDto)) {
+            model.addAttribute(filter.getName(), filter.getValue());
+        }
         return model;
     }
 

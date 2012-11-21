@@ -1,9 +1,12 @@
 package com.oilchem.trade.domain;
 
+import com.oilchem.trade.config.Config;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
+import static com.oilchem.trade.config.Config.YEARMONTH_SPLIT;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,6 +24,9 @@ public class ExpTradeDetail extends TradeDetail {
     public ExpTradeDetail(TradeDetail tradeDetail) {
         this.setYear(tradeDetail.getYear())
                 .setMonth(tradeDetail.getMonth())
+                .setYearMonth(tradeDetail.getYear() + YEARMONTH_SPLIT
+                        + (tradeDetail.getMonth() != null && tradeDetail.getMonth() < 10 ?
+                        "0" + tradeDetail.getMonth() : tradeDetail.getMonth()))
                 .setAmountMoney(tradeDetail.getAmountMoney())
                 .setCity(tradeDetail.getCity())
                 .setCompanyType(tradeDetail.getCompanyType())

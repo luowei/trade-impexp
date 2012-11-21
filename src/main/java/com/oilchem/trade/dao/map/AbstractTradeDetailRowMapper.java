@@ -1,5 +1,6 @@
 package com.oilchem.trade.dao.map;
 
+import com.oilchem.trade.config.Config;
 import com.oilchem.trade.util.GenericsUtils;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.oilchem.trade.config.Config.*;
 import static com.oilchem.trade.config.MapperConfig.*;
 
 /**
@@ -55,7 +57,7 @@ public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implem
         //月
         tradeDetail.setMonth(month);
         //年月
-        tradeDetail.setYearMonth(year+"-"+(month<10 ? "0"+month:month));
+        tradeDetail.setYearMonth(year+ YEARMONTH_SPLIT +(month<10 ? "0"+month:month));
         return tradeDetail;
     }
 

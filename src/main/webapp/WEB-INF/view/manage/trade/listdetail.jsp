@@ -36,31 +36,35 @@
         <input type="hidden" name="lowValue" value=""/>
 
         <label class="label ">起始年月:
-            <select name="lowyear" class=" input-mini" onchange="">
+            <select name="lowYear" class=" input-mini" onchange="">
                 <option value="" selected="selected">--</option>
                 <c:forEach var="yr" begin="2000" end="2050" step="1">
-                    <option value="${yr}">${yr}</option>
+                    <option value="${yr}" <c:if test="${lowYear eq yr}">selected="selected" </c:if>>
+                    ${yr}</option>
                 </c:forEach>
             </select> 年&nbsp;
-            <select name="lowmonth" class=" input-mini">
+            <select name="lowMonth" class=" input-mini">
                     <option value="" selected="selected">--</option>
                 <c:forEach var="mth" begin="1" end="12" step="1">
-                    <option value="${mth}">${mth}</option>
+                    <option value="${mth}" <c:if test="${lowMonth eq mth}">selected="selected" </c:if>>
+                    ${mth}</option>
                 </c:forEach>
             </select>月
         </label>
 
         <label class="label">结束年月:
-            <select name="highyear" class=" input-mini" onchange="">
+            <select name="highYear" class=" input-mini" onchange="">
                 <option value="" selected="selected">--</option>
                 <c:forEach var="yr" begin="2000" end="2050" step="1">
-                    <option value="${yr}">${yr}</option>
+                    <option value="${yr}" <c:if test="${highYear eq yr}">selected="selected" </c:if>>
+                    ${yr}</option>
                 </c:forEach>
             </select> 年&nbsp;
-            <select name="highmonth" class=" input-mini">
+            <select name="highMonth" class=" input-mini">
                     <option value="" selected="selected">--</option>
                 <c:forEach var="mth" begin="1" end="12" step="1">
-                    <option value="${mth}">${mth}</option>
+                    <option value="${mth}"  <c:if test="${highMonth eq mth}">selected="selected" </c:if>>
+                    ${mth}</option>
                 </c:forEach>
             </select>月
         </label>
@@ -70,7 +74,8 @@
             <select name="month" class=" input-mini">
                 <option value="" selected="selected">--</option>
                 <c:forEach var="mth" begin="1" end="12" step="1">
-                    <option value="${mth}">${mth}</option>
+                    <option value="${mth}"  <c:if test="${month eq mth}">selected="selected" </c:if>>
+                    ${mth}</option>
                 </c:forEach>
             </select>月
         </label>
@@ -163,9 +168,9 @@
         <br/>
 
         <label class="label">进出口类型:
-            <select name="impExp" class=" input-small">
-                <option value="0" <c:if test="${impExp eq 0}">selected="selected" </c:if>>进口</option>
-                <option value="1" <c:if test="${impExp eq 1}">selected="selected" </c:if>>出口</option>
+            <select name="impExpType" class=" input-small">
+                <option value="0" <c:if test="${impExpType eq 0}">selected="selected" </c:if>>进口</option>
+                <option value="1" <c:if test="${impExpType eq 1}">selected="selected" </c:if>>出口</option>
             </select>
         </label>
 

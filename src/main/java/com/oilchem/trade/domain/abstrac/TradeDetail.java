@@ -97,8 +97,9 @@ public class TradeDetail
         return yearMonth;
     }
 
-    public void setYearMonth(String yearMonth) {
+    public TradeDetail setYearMonth(String yearMonth) {
         this.yearMonth = yearMonth;
+        return this;
     }
 
     public String getProductCode() {

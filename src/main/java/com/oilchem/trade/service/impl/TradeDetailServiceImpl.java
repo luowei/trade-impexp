@@ -91,27 +91,28 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         return null;
     }
 
-    public <E extends TradeDetail,T extends AbstractTradeDetailRowMapper>
+    public <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
     Boolean getDetailList(final CrudRepository repository,
                           final T tradeDetailMapper,
                           final YearMonthDto yearMonthDto,
                           final String accessPath,
                           final Class detailClz,
-                          List<String> sqlList){
+                          List<String> sqlList) {
 
         Boolean isSuccess = false;
         Integer poolSize = 100;
         ExecutorService pool = Executors.newFixedThreadPool(poolSize);
 
-        for(String sqlStr:sqlList){
+        for (String sqlStr : sqlList) {
             final String sql = sqlStr;
             List<E> subDetailList = null;
 
             Future<List<E>> detailListFuture = pool.submit(new Callable<List<E>>() {
                 public List<E> call() throws Exception {
 
-                    return commonService.getListFormDB(tradeDetailMapper,
-                            yearMonthDto, accessPath, sql, detailClz);
+//                    return commonService.cacheListFormDB(tradeDetailMapper,
+//                            yearMonthDto, accessPath, sql, detailClz);
+                    return null;
                 }
             });
 
@@ -121,7 +122,7 @@ public class TradeDetailServiceImpl implements TradeDetailService {
                 isSuccess = true;
 
             } catch (Exception e) {
-                logger.error(e.getMessage(),e);
+                logger.error(e.getMessage(), e);
                 throw new RuntimeException(e);
             }
         }
@@ -139,10 +140,12 @@ public class TradeDetailServiceImpl implements TradeDetailService {
                                 YearMonthDto yearMonthDto) {
 
         Boolean isSuccess = false;
-        final String sql = "select top 1000 * from 结果 ";
+        final String sql = Config.ACCESS_SELECT_SQL;
 
         //导入查询条件表
-        commonService.importCriteriaTab(sql, logEntry.getValue().getExtractPath());
+        if (Config.NEED_IMPORT_CRITERIA) {
+            commonService.importCriteriaTab(sql, logEntry.getValue().getExtractPath());
+        }
 
         //导入进口明细总表
         if (yearMonthDto.getImpExpType().equals(Message.ImpExpType.进口.getCode())) {
@@ -192,13 +195,15 @@ public class TradeDetailServiceImpl implements TradeDetailService {
      * 进口明细
      * @param tradeDetail 页面传来的 IxpTradeDetail包含查询条件中里面
      * @param commonDto
-     * @param pageRequest
-     * @return
+     * @param yearMonthDto
+     *@param pageRequest  @return
      */
     public Page<ImpTradeDetail>
     findImpWithCriteria(ImpTradeDetail tradeDetail, CommonDto commonDto,
-                        PageRequest pageRequest) {
+                        YearMonthDto yearMonthDto, PageRequest pageRequest) {
         final List<PropertyFilter> filterList = getdetailQueryProps(tradeDetail, commonDto);
+
+        filterList.addAll(commonService.getYearMonthQueryProps(yearMonthDto));
 
         Specification<ImpTradeDetail> spec = DynamicSpecifications.<ImpTradeDetail>byPropertyFilter(filterList, ImpTradeDetail.class);
         Page<ImpTradeDetail> tradeDetailPage = impTradeDetailDao.findAll(spec, pageRequest);
@@ -209,13 +214,15 @@ public class TradeDetailServiceImpl implements TradeDetailService {
      * 出口明细
      * @param tradeDetail 页面传来的 ExpTradeDetail，包含查询条件中里面
      * @param commonDto
-     * @param pageRequest
-     * @return
+     * @param yearMonthDto
+     *@param pageRequest  @return
      */
     public Page<ExpTradeDetail>
     findExpWithCriteria(ExpTradeDetail tradeDetail, CommonDto commonDto,
-                        PageRequest pageRequest) {
+                        YearMonthDto yearMonthDto, PageRequest pageRequest) {
         final List<PropertyFilter> filterList = getdetailQueryProps(tradeDetail, commonDto);
+
+        filterList.addAll(commonService.getYearMonthQueryProps(yearMonthDto));
 
         Specification<ExpTradeDetail> spec = DynamicSpecifications.<ExpTradeDetail>byPropertyFilter(filterList,
                 ExpTradeDetail.class);
@@ -230,6 +237,7 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
     /**
      * 获得productType列表
+     *
      * @return
      */
     public List<ProductType> getProductList() {
@@ -238,6 +246,7 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
     /**
      * 获得查询属性
+     *
      * @param tradeDetail
      * @param commonDto
      * @return
@@ -269,25 +278,6 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         if (isNotBlank(tradeDetail.getCustoms())) {
             propList.add(new PropertyFilter("customs", tradeDetail.getCustoms()));
         }
-        if (tradeDetail.getMonth() != null && tradeDetail.getMonth() != 0) {
-            propList.add(new PropertyFilter("month", tradeDetail.getMonth()));
-        }
-        if (isNotBlank(commonDto.getLowValue())) {
-            propList.add(new PropertyFilter("yearMonth", commonDto.getLowValue(), GE));
-        }
-        if (isNotBlank(commonDto.getHighValue())) {
-            propList.add(new PropertyFilter("yearMonth", commonDto.getHighValue(), LT));
-        }
-//        if (isNotBlank(commonDto.getLowValue())) {
-//            String[] lows = commonDto.getLowValue().split(YEARMONTH_SPLIT);
-//            propList.add(new PropertyFilter("year", lows[0], GE));
-//            propList.add(new PropertyFilter("month", lows[1], GE));
-//        }
-//        if (isNotBlank(commonDto.getHighValue())) {
-//            String[] highs = commonDto.getHighValue().split(YEARMONTH_SPLIT);
-//            propList.add(new PropertyFilter("year", highs[0], LT));
-//            propList.add(new PropertyFilter("month", highs[1], LT));
-//        }
         return propList;
     }
 

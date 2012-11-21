@@ -58,25 +58,27 @@ public interface TradeDetailService {
 
     /**
      * 进口明细
+     *
      * @param tradeDetail 页面传来的 IxpTradeDetail包含查询条件中里面
      * @param commonDto
-     * @param pageRequest
-     * @return
+     * @param yearMonthDto
+     *@param pageRequest  @return
      */
     public Page<ImpTradeDetail>
     findImpWithCriteria(ImpTradeDetail tradeDetail, CommonDto commonDto,
-                        PageRequest pageRequest);
+                        YearMonthDto yearMonthDto, PageRequest pageRequest);
 
     /**
      * 出口明细
+     *
      * @param tradeDetail 页面传来的 ExpTradeDetail，包含查询条件中里面
      * @param commonDto
-     * @param pageRequest
-     * @return
+     * @param yearMonthDto
+     *@param pageRequest  @return
      */
     public Page<ExpTradeDetail>
     findExpWithCriteria(ExpTradeDetail tradeDetail, CommonDto commonDto,
-                        PageRequest pageRequest);
+                        YearMonthDto yearMonthDto, PageRequest pageRequest);
 
     /**
      * 获得productType列表
@@ -86,6 +88,8 @@ public interface TradeDetailService {
 
     /**
      * 获得查询属性
+     *
+     *
      * @param tradeDetail
      * @param commonDto
      * @return

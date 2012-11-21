@@ -8,6 +8,7 @@ import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.bean.YearMonthDto;
+import com.oilchem.trade.util.QueryUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.web.multipart.MultipartFile;
@@ -71,9 +72,9 @@ public interface CommonService {
      * @param yearMonthDto
      * @param accessPath
      * @param sql               sql      @return  @author wei.luo
-     * @param detailClz     @createTime 2012-11-7              */
+     * @param detailClz     @createTime 2012-11-7                 */
     <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
-    void importTradeDetail(
+    Boolean importTradeDetail(
             CrudRepository repository,
             T tradeDetailMapper,
             YearMonthDto yearMonthDto,
@@ -137,8 +138,13 @@ public interface CommonService {
      * @param sql               sql
      * @param detailClz         detailClz   @return
      */
-    public  <E extends TradeDetail, T extends AbstractTradeDetailRowMapper> List<E>
-    getListFormDB(T tradeDetailMapper, YearMonthDto yearMonthDto,
-                  String accessPath, String sql, Class detailClz);
+    public  <E extends TradeDetail, T extends AbstractTradeDetailRowMapper> int
+    cacheListFormDB(T tradeDetailMapper, YearMonthDto yearMonthDto,
+                    String accessPath, String sql, Class detailClz);
 
+    /**
+     * 设置year month属性到到查询的Properties当中去
+     * @param yearMonthDto
+     */
+    public List<QueryUtils.PropertyFilter> getYearMonthQueryProps(YearMonthDto yearMonthDto);
 }

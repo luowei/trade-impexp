@@ -11,6 +11,10 @@ public class YearMonthDto {
 
     private Integer year;
     private Integer month;
+    private Integer lowYear;
+    private Integer lowMonth;
+    private Integer highYear;
+    private Integer highMonth;
 
     /**
      * 进口/出口
@@ -33,47 +37,89 @@ public class YearMonthDto {
         return year;
     }
 
-    public void setYear(Integer year) {
+    public YearMonthDto setYear(Integer year) {
         this.year = year;
+        return this;
     }
 
     public Integer getMonth() {
         return month;
     }
 
-    public void setMonth(Integer month) {
+    public YearMonthDto setMonth(Integer month) {
         this.month = month;
+        return this;
     }
 
     public Integer getImpExpType() {
         return impExpType;
     }
 
-    public void setImpExpType(Integer impExpType) {
+    public YearMonthDto setImpExpType(Integer impExpType) {
         this.impExpType = impExpType;
+        return this;
     }
 
     public String getProductType() {
         return productType;
     }
 
-    public void setProductType(String productType) {
+    public YearMonthDto setProductType(String productType) {
         this.productType = productType;
+        return this;
     }
 
     public String getTableType() {
         return tableType;
     }
 
-    public void setTableType(String tableType) {
+    public YearMonthDto setTableType(String tableType) {
         this.tableType = tableType;
+        return this;
     }
 
     public String getImportType() {
         return importType;
     }
 
-    public void setImportType(String importType) {
+    public YearMonthDto setImportType(String importType) {
         this.importType = importType;
+        return this;
+    }
+
+    public Integer getLowYear() {
+        return lowYear;
+    }
+
+    public YearMonthDto setLowYear(Integer lowYear) {
+        this.lowYear = lowYear;
+        return this;
+    }
+
+    public Integer getLowMonth() {
+        return lowMonth;
+    }
+
+    public YearMonthDto setLowMonth(Integer lowMonth) {
+        this.lowMonth = lowMonth;
+        return this;
+    }
+
+    public Integer getHighYear() {
+        return highYear;
+    }
+
+    public YearMonthDto setHighYear(Integer highYear) {
+        this.highYear = highYear;
+        return this;
+    }
+
+    public Integer getHighMonth() {
+        return highMonth;
+    }
+
+    public YearMonthDto setHighMonth(Integer highMonth) {
+        this.highMonth = highMonth;
+        return this;
     }
 }

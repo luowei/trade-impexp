@@ -17,6 +17,7 @@
         <org.aspectj-version>1.6.12</org.aspectj-version>
         <javassist.version>3.16.1-GA</javassist.version>
         <cglib.version>2.2.2</cglib.version>
+        <ehcache.version>2.5.2</ehcache.version>
 
         <sqljdbc4.version>3.0</sqljdbc4.version>
         <hibernate.version>4.1.4.Final</hibernate.version>
@@ -25,7 +26,8 @@
         <mysql-connector-java.version>5.1.18</mysql-connector-java.version>
 
         <commons-dbcp.version>1.4</commons-dbcp.version>
-        <c3p0.version>0.9.1</c3p0.version>
+        <boneCP.version>0.7.1.RELEASE</boneCP.version>
+        <!--<c3p0.version>0.9.1</c3p0.version>-->
 
         <!--<sitemesh.version>2.4.2</sitemesh.version>-->
 
@@ -206,12 +208,19 @@
             <version>${commons-dbcp.version}</version>
         </dependency>
 
-        <!-- dataSource use c3p0 -->
+        <!-- dataSource use BoneCP -->
         <dependency>
-            <groupId>c3p0</groupId>
-            <artifactId>c3p0</artifactId>
-            <version>${c3p0.version}</version>
+            <groupId>com.jolbox</groupId>
+            <artifactId>bonecp</artifactId>
+            <version>${boneCP.version}</version>
         </dependency>
+
+        <!-- dataSource use c3p0 -->
+        <!--<dependency>-->
+            <!--<groupId>c3p0</groupId>-->
+            <!--<artifactId>c3p0</artifactId>-->
+            <!--<version>${c3p0.version}</version>-->
+        <!--</dependency>-->
 
 
         <!-- commons-lang3 -->
@@ -252,11 +261,11 @@
             <version>${ant-zip.version}</version>
         </dependency>
 
-        <!-- springside -->
+        <!-- ehcache -->
         <dependency>
-            <groupId>org.springside</groupId>
-            <artifactId>springside-core</artifactId>
-            <version>4.0.1.GA-SNAPSHOT</version>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-ehcache</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
 
         <!-- LogTest -->

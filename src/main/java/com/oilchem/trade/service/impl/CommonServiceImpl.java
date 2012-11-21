@@ -1,7 +1,9 @@
 package com.oilchem.trade.service.impl;
 
 import com.oilchem.trade.config.Message;
+import com.oilchem.trade.util.EHCacheUtil;
 import com.oilchem.trade.util.FileUtil;
+import com.oilchem.trade.util.QueryUtils;
 import com.oilchem.trade.util.ZipUtil;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
@@ -20,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,18 +29,19 @@ import org.springframework.web.context.ContextLoader;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 import static com.oilchem.trade.config.Config.*;
 import static com.oilchem.trade.config.MapperConfig.*;
+import static com.oilchem.trade.util.QueryUtils.PropertyFilter;
+import static com.oilchem.trade.util.QueryUtils.Type.GE;
+import static com.oilchem.trade.util.QueryUtils.Type.LT;
 
 /**
  * Created with IntelliJ IDEA.
@@ -195,8 +197,15 @@ public class CommonServiceImpl implements CommonService {
             throw new RuntimeException(e);
         }
 
+        long before = System.currentTimeMillis();
+        logger.info("执行前 before queryCriteriaRecord ******:" + before);
+
         //匹配
         queryCriteriaRecord(detailCriteriaList, sql, accessPath);
+
+        long after = System.currentTimeMillis();
+        logger.info("执行后 after queryCriteriaRecord ******:" + after);
+        logger.info("用时 time:::" + (after - before) / 1000 + " s");
 
         //导入
         cityDao.save(nameList2IdEntityList(detailCriteriaList.get(0).getRetName(), City.class));
@@ -242,24 +251,69 @@ public class CommonServiceImpl implements CommonService {
      * @param detailClz         明细抽象类
      */
     public <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
-    void importTradeDetail(
-            CrudRepository repository,
+    Boolean importTradeDetail(
+            final CrudRepository repository,
             T tradeDetailMapper, YearMonthDto yearMonthDto,
             String accessPath, String sql, Class detailClz) {
 
-        if (tradeDetailMapper == null || yearMonthDto == null
-                || StringUtils.isBlank(sql)) return;
+        Boolean isSuccess = true;
 
-        getListFormDB(
+        if (tradeDetailMapper == null || yearMonthDto == null
+                || StringUtils.isBlank(sql)) return false;
+
+        long before = System.currentTimeMillis();
+        logger.info("拆开并缓存 before queryCriteriaRecord ******:" + before);
+
+
+        //拆开并缓存
+        int idx = cacheListFormDB(
                 tradeDetailMapper, yearMonthDto, accessPath, sql, detailClz);
 
-        //从EHCache当中取出来，使用线程池执行保存
-        for (; ; ) {
-            List<E> tradeDetailList = null;
-            repository.save(tradeDetailList);
-        }
+        long after = System.currentTimeMillis();
+        logger.info("拆开并缓存 after queryCriteriaRecord ******:" + after);
+        logger.info("拆开并缓存用时 time:::" + (after - before) / 1000 + " s");
 
+        ExecutorService pool = Executors.newFixedThreadPool(idx);
+        //从缓存中取出来，使用线程池执行保存
+        for (int i = 1; i <= idx; i++) {
+            Object obj = EHCacheUtil.getValue("detail_cache", "detail_list_" + i);
+
+            if (obj != null) {
+                final List<E> detailList = (List<E>) obj;
+                if (detailList.isEmpty()) break;
+
+                Future<Iterable<E>> future = pool.submit(new Callable<Iterable<E>>() {
+                    public Iterable<E> call() throws Exception {
+
+                        Iterable<E> list = repository.save(detailList);
+                        if (list != null) {
+                            return list;
+                        } else {
+                            throw new RuntimeException("thread:[" + Thread.currentThread().getName()
+                                    + "] save detail list fail......");
+                        }
+                    }
+                });
+
+                try {
+                    isSuccess = isSuccess && future.get().iterator().hasNext();
+                    if (future.isDone()) {
+                        EHCacheUtil.removeElment("detail_cache", "detail_list_" + i);
+                        detailList.clear();
+                        Runtime.getRuntime().gc();
+                    }
+                } catch (Exception e) {
+                    isSuccess = false;
+                    logger.error(e.getMessage(), e);
+                    throw new RuntimeException(e);
+                }
+
+            }
+        }
+        pool.shutdown();
+        return isSuccess;
     }
+//    volatile Boolean isDone = true;
 
 
     /**
@@ -416,33 +470,6 @@ public class CommonServiceImpl implements CommonService {
     }
 
     /**
-     * 传入这个字段作为条件查询
-     *
-     * @param fieldName  java对象中字段的名
-     * @param fieldValue 字段的值
-     * @param <T>
-     * @return
-     */
-    public <T extends TradeDetail> Specification<T> hasField(
-            String fieldName, String fieldValue) {
-        return newSpecHasField(fieldName, fieldValue);
-    }
-
-    private <T extends TradeDetail> Specification<T> newSpecHasField(
-            final String fieldName, final String fieldValue) {
-        return new Specification<T>() {
-
-            @Override
-            public javax.persistence.criteria.Predicate
-            toPredicate(Root<T> impTradeDetailRoot,
-                        CriteriaQuery<?> query, CriteriaBuilder cb) {
-                if (fieldValue == null) return null;
-                return cb.equal(impTradeDetailRoot.get(fieldName), fieldValue);
-            }
-        };
-    }
-
-    /**
      * 从Access获得过滤后查询条件数据
      *
      * @param detailCriteriaList
@@ -450,8 +477,10 @@ public class CommonServiceImpl implements CommonService {
      * @param accessPath
      * @return
      */
+    volatile ResultSet rs = null;
+
     private void
-    queryCriteriaRecord(List<DetailCriteria> detailCriteriaList,
+    queryCriteriaRecord(final List<DetailCriteria> detailCriteriaList,
                         String sql,
                         String accessPath) {
 
@@ -460,16 +489,24 @@ public class CommonServiceImpl implements CommonService {
 
         Connection conn = getDBConnect(accessPath);
         Statement statement = null;
-        ResultSet rs = null;
 
         try {
             statement = conn.createStatement();
             rs = statement.executeQuery(sql);
+
+            ExecutorService pool = Executors.newFixedThreadPool(THREAD_POOLSIZE);
             for (int i = 1; rs.next(); i++) {
 
-                fillDetailCriteriaList(detailCriteriaList, rs);
+                pool.submit(new Callable<Object>() {
+                    @Override
+                    public Object call() throws Exception {
+                        fillDetailCriteriaList(detailCriteriaList, rs);
+                        return null;
+                    }
+                }).get();
 
             }
+            pool.shutdown();
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -488,34 +525,42 @@ public class CommonServiceImpl implements CommonService {
      * @param sql               sql
      * @param detailClz         detailClz   @return
      */
-    public <E extends TradeDetail, T extends AbstractTradeDetailRowMapper> List<E>
-    getListFormDB(T tradeDetailMapper, YearMonthDto yearMonthDto,
-                  String accessPath, String sql, Class detailClz) {
+    public <E extends TradeDetail, T extends AbstractTradeDetailRowMapper> int
+    cacheListFormDB(T tradeDetailMapper, YearMonthDto yearMonthDto,
+                    String accessPath, String sql, Class detailClz) {
         //查出来然后导入
         Connection conn = getDBConnect(accessPath);
         Statement statement = null;
-        ResultSet rs = null;
-        List<E> tradeDetailList = new ArrayList<E>(1000);
+        ResultSet result = null;
+        int j = 1;
+        List<E> tradeDetailList = new ArrayList<E>(BATCH_UPDATESIZE);
         try {
             statement = conn.createStatement();
-            rs = statement.executeQuery(sql);
-            for (int i = 1; rs.next(); i++) {
+            result = statement.executeQuery(sql);
+            EHCacheUtil.removeAllElment("detail_cache");
+            for (int i = 1; result.next(); i++) {
 
-                fillTradeDetailList(rs, tradeDetailMapper, yearMonthDto, detailClz, tradeDetailList);
-                if (i > 1000) {
-                    tradeDetailList = new ArrayList<E>(1000);
-
-                    //保存到EHCache当中...
+                fillTradeDetailList(result, tradeDetailMapper, yearMonthDto, detailClz, tradeDetailList);
+                if (i >= BATCH_UPDATESIZE) {
+                    EHCacheUtil.setValue("detail_cache", "detail_list_" + j, tradeDetailList);
+                    i = 0;
+                    j++;
+                    tradeDetailList = new ArrayList<E>(BATCH_UPDATESIZE);
                 }
 
+
             }
+            if (!tradeDetailList.isEmpty()) {
+                EHCacheUtil.setValue("detail_cache", "detail_list_" + j, tradeDetailList);
+            }
+
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         } finally {
-            closeDBResource(conn, statement, rs);
+            closeDBResource(conn, statement, result);
         }
-        return tradeDetailList;
+        return j;
     }
 
     /**
@@ -600,7 +645,7 @@ public class CommonServiceImpl implements CommonService {
             int rowIdx = sheet.findCell(PRODUCT_XNAME).getRow() + 1;
             Integer year = yearMonthDto.getYear();
             Integer month = yearMonthDto.getMonth();
-            String yearMonth = year + "-" + (month < 10 ? "0" + month : month);
+            String yearMonth = year + YEARMONTH_SPLIT + (month < 10 ? "0" + month : month);
 
             //遍历excel
             for (; rowIdx < rows; rowIdx++) {
@@ -672,4 +717,32 @@ public class CommonServiceImpl implements CommonService {
         }
     }
 
+    /**
+     * 设置year month属性到到查询的Properties当中去
+     * @param yearMonthDto
+     */
+    public List<PropertyFilter> getYearMonthQueryProps(YearMonthDto yearMonthDto) {
+
+        List<PropertyFilter> filterList = new ArrayList<PropertyFilter>();
+
+        if (yearMonthDto.getMonth() != null && yearMonthDto.getMonth() != 0) {
+            filterList.add(new PropertyFilter("month", yearMonthDto.getMonth()));
+        }
+
+        if(yearMonthDto.getLowYear()!=null){
+            Integer lowYear =  yearMonthDto.getLowYear();
+            Integer lowMonth = yearMonthDto.getLowMonth()==null?1:yearMonthDto.getLowMonth();
+            String yearMont = lowYear+YEARMONTH_SPLIT+(lowMonth<10? "0"+lowMonth:lowMonth);
+            filterList.add(new PropertyFilter("yearMonth",yearMont,GE));
+        }
+
+        if(yearMonthDto.getHighYear()!=null){
+            Integer highYear = yearMonthDto.getHighYear();
+            Integer highMonth = yearMonthDto.getHighMonth()==null?1:yearMonthDto.getHighMonth();
+            String yearMonth = highYear+YEARMONTH_SPLIT+(highMonth<10?"0"+highMonth:highMonth);
+            filterList.add(new PropertyFilter("yearMonth",yearMonth,LT));
+        }
+
+        return filterList;
+    }
 }

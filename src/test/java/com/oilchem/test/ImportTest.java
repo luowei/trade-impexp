@@ -175,7 +175,7 @@ public class ImportTest {
 
         Page<ImpTradeDetail> tradeDetails = tradeDetailService
                 .findImpWithCriteria(impTradeDetail, commonDto,
-                        new CommonController().getPageRequest(commonDto));
+                        yearMonth, new CommonController().getPageRequest(commonDto));
 
         assertEquals(true,tradeDetails.getContent().size() > 0);
 

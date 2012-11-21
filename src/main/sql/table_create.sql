@@ -210,3 +210,17 @@ delete from t_export_sum;
 -- drop table t_trade_type;
 -- drop table t_transportation;
 -- drop table t_product_type;
+
+
+--=====================================================
+-- -- 配置sql server的连接数
+-- USE lzdb ;
+-- GO
+-- EXEC sp_configure 'show advanced options', 1;
+-- GO
+-- RECONFIGURE ;
+-- GO
+-- EXEC sp_configure 'user connections', 1000 ;
+-- GO
+-- RECONFIGURE;
+-- GO
