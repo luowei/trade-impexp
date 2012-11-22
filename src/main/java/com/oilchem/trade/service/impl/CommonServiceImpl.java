@@ -3,7 +3,6 @@ package com.oilchem.trade.service.impl;
 import com.oilchem.trade.config.Message;
 import com.oilchem.trade.util.EHCacheUtil;
 import com.oilchem.trade.util.FileUtil;
-import com.oilchem.trade.util.QueryUtils;
 import com.oilchem.trade.util.ZipUtil;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
@@ -642,7 +641,7 @@ public class CommonServiceImpl implements CommonService {
                     new File(logEntry.getValue().getExtractPath()));
             Sheet sheet = workbook.getSheet(0);
             int rows = sheet.getRows();
-            int rowIdx = sheet.findCell(PRODUCT_XNAME).getRow() + 1;
+            int rowIdx = sheet.findCell(EXCEL_PRODUCT_NAME).getRow() + 1;
             Integer year = yearMonthDto.getYear();
             Integer month = yearMonthDto.getMonth();
             String yearMonth = year + YEARMONTH_SPLIT + (month < 10 ? "0" + month : month);

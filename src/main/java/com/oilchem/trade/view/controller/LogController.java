@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -24,14 +23,21 @@ public class LogController extends CommonController {
     @Autowired
     LogService logService;
 
-    @RequestMapping("/listlog/{pageNumber}")
-    public String listLog(Model model,@PathVariable Integer pageNumber,
-                          CommonDto commonDto){
+    @RequestMapping("/listlog/{tableType}/{pageNumber}")
+    public String listLog(Model model,
+                          Log log,
+                          CommonDto commonDto) {
+        if (commonDto.getPageNumber() == null) {
+            commonDto.setPageNumber(1);
+        }
+
+        Page<Log> logs = null;
+
+        logs = logService.findAll(log, getPageRequest(commonDto));
 
 
-        Page<Log> logs = logService.findAll(getPageRequest(commonDto));
-        addPageInfo(model,logs,"/manage/listlog")
-            .addAttribute("logList", logs);
+        addPageInfo(model, logs, "/manage/listlog")
+                .addAttribute("logList", logs);
 
         return "manage/trade/listlog";
     }

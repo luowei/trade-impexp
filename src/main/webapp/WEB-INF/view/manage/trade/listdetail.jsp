@@ -26,7 +26,7 @@
 <body>
 <h2>进出口明细</h2>
 
-<div class="wrapper">
+<div class="container">
     <form:form id="form1" modelAttribute="tradeDetail"
                action="${pageContext.request.contextPath}${contextUrl}/1"
                method="post" cssClass="well form-inline">

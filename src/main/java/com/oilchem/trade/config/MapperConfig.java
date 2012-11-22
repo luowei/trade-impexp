@@ -28,15 +28,15 @@ public class MapperConfig {
     /**
      * excel总表字段
      */
-    public static String PRODUCT_XNAME = "产品品种";
+    public static String EXCEL_PRODUCT_NAME = "产品品种";
     public static String NUM_MONTH = "当月数量";
     public static String NUM_SUM = "累计总数量";
-    public static String MONTH_MONEY = "当月金额";
-    public static String MONTH_SUM = "累计总金额";
+    public static String MONEY_MONTH = "当月金额";
+    public static String MONEY_SUM = "累计总金额";
     public static String AVG_PRICE_MONTH = "当月平均价格";
     public static String AVG_PRICE_SUM = "累计平均价格";
-    public static String NUM_PREMONTH_INCRADIO = "与上月数量增长比";
-    public static String NUM_PREYEARSAMEMONTH_INCRADIO = "与上年同月数量增长比";
+    public static String NUM_PREMONTH_INCRATIO = "与上月数量增长比";
+    public static String NUM_PREYEARSAMEMONTH_INCRATIO = "与上年同月数量增长比";
     public static String NUM_PREYEARSAMEQUARTER_INCRATIO = "与上年同期数量增长比";
 
 

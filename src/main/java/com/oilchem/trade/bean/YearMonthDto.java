@@ -122,4 +122,10 @@ public class YearMonthDto {
         this.highMonth = highMonth;
         return this;
     }
+
+    public boolean validYearMonth(YearMonthDto yearMonthDto){
+         return yearMonthDto.getYear()!=null
+                 && yearMonthDto.getMonth()!=null
+                 && yearMonthDto.getImpExpType()!=null;
+    }
 }

@@ -25,38 +25,42 @@
 
 <body>
 
-<div class="wrapper">
+<div class="container">
     <h2>进出口总表</h2>
-    <c:url var="action" value="${pageContext.request.contextPath}${contextUrl}/1"/>
+    <c:url var="action" value="${contextUrl}/1"/>
     <form:form id="form1" modelAttribute="tradeSum" action="${action}" method="post" cssClass="well form-inline">
 
         <label class="label">起始年月:
-           <select name="lowyear" class="input-mini">
+           <select name="lowYear" class="input-mini">
                <option value="" selected="selected">--</option>
                <c:forEach var="yr" begin="2000" end="2050" step="1">
-                   <option value="${yr}">${yr}</option>
+                   <option value="${yr}" <c:if test="${lowYear eq yr}">selected="selected" </c:if>>
+                   ${yr}</option>
                </c:forEach>
            </select> 年&nbsp;
-           <select name="lowmonth" class="input-mini">
+           <select name="lowMonth" class="input-mini">
                <option value="" selected="selected">--</option>
                <c:forEach var="mth" begin="1" end="12" step="1">
-                   <option value="${mth}">${mth}</option>
+                   <option value="${mth}" <c:if test="${lowMonth eq mth}">selected="selected" </c:if>>
+                   ${mth}</option>
                </c:forEach>
            </select>月
         </label>
 
 
         <label class="label">结束年月:
-        <select name="highyear" class="input-mini">
+        <select name="highYear" class="input-mini">
             <option value="" selected="selected">--</option>
             <c:forEach var="yr" begin="2000" end="2050" step="1">
-                <option value="${yr}">${yr}</option>
+                <option value="${yr}" <c:if test="${highYear eq yr}">selected="selected" </c:if>>
+                ${yr}</option>
             </c:forEach>
         </select> 年&nbsp;
-        <select name="highmonth" class="input-mini">
+        <select name="highMonth" class="input-mini">
             <option value="" selected="selected">--</option>
             <c:forEach var="mth" begin="1" end="12" step="1">
-                <option value="${mth}">${mth}</option>
+                <option value="${mth}" <c:if test="${highMonth eq mth}">selected="selected" </c:if>>
+                ${mth}</option>
             </c:forEach>
         </select>月
         </label>
@@ -65,7 +69,8 @@
         <select name="month" class="input-mini">
             <option value="" selected="selected">--</option>
             <c:forEach var="mth" begin="1" end="12" step="1">
-                <option value="${mth}">${mth}</option>
+                <option value="${mth}" <c:if test="${month eq mth}">selected="selected" </c:if>>
+                ${mth}</option>
             </c:forEach>
         </select>月
         </label>
@@ -77,10 +82,18 @@
                         <c:if test='${productName ne null}'>value="${productName}" </c:if> />
         </label>
 
+        <select name="productType" class="input-mini">
+            <option value="" selected="selected">--</option>
+            <c:forEach var="prodType" items="${productTypeList}">
+                <option value="${prodType.productType}" <c:if test="${productType eq prodType.productType}">selected="selected" </c:if>>
+                        ${prodType.productType}</option>
+            </c:forEach>
+        </select>
+
         <label class="label">进出口类型:
-            <select name="impExp" class=" input-small">
-                <option value="0" <c:if test="${impExp eq 0}">selected="selected" </c:if>>进口</option>
-                <option value="1" <c:if test="${impExp eq 1}">selected="selected" </c:if>>出口</option>
+            <select name="impExpType" class=" input-small">
+                <option value="0" <c:if test="${impExpType eq 0}">selected="selected" </c:if>>进口</option>
+                <option value="1" <c:if test="${impExpType eq 1}">selected="selected" </c:if>>出口</option>
             </select>
         </label>
 
@@ -98,6 +111,7 @@
             <td>年</td>
             <td>月</td>
             <td>产品名称</td>
+            <td>产品类型</td>
             <td>当月数量(T)</td>
             <td>累计总数量(T)</td>
             <td>当月金额(万美元)</td>
@@ -116,6 +130,7 @@
                 <td>${sum.year}</td>
                 <td>${sum.month}</td>
                 <td>${sum.productName}</td>
+                <td>${sum.productType}</td>
                 <td>${sum.numMonth}</td>
                 <td>${sum.numSum}</td>
                 <td>${sum.moneyMonth}</td>

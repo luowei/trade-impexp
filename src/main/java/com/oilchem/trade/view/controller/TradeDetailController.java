@@ -89,9 +89,9 @@ public class TradeDetailController extends CommonController {
      * @return
      */
     @RequestMapping("/import")
-    public String importpage(Model model, String message) {
-        model.addAttribute("productTypeList", tradeDetailService.getProductList())
-                .addAttribute("message", message);
+    public String importpage(Model model) {
+
+        model.addAttribute("productTypeList", tradeDetailService.getProductList());
         return "manage/trade/import";
     }
 
@@ -107,10 +107,13 @@ public class TradeDetailController extends CommonController {
                                     Model model, YearMonthDto yearMonthDto,
                                     RedirectAttributes redirectAttrs) {
 
-        Boolean validate = (file.getOriginalFilename().endsWith(".rar") ||
-                file.getOriginalFilename().endsWith(".zip"))
-                && yearMonthDto != null;
-        if (!validate) return "manage/trade/import";
+        Boolean validate = (file.getOriginalFilename().endsWith(".rar")
+                ||file.getOriginalFilename().endsWith(".zip"))
+                && yearMonthDto.validYearMonth(yearMonthDto);
+        if (!validate) {
+            redirectAttrs.addFlashAttribute("message","输入的年月、或文件格式错误！");
+            return "redirect:/manage/import";
+        }
 
         StringBuffer message = new StringBuffer();
         try {
@@ -124,8 +127,6 @@ public class TradeDetailController extends CommonController {
             message.append("<br/>文件上传或数据导入发生了错误");
         }
 
-//        UriComponents redirectUri = UriComponentsBuilder.fromPath("/manage/import")
-//                .queryParam("message",message.toString()).build().encode();
         redirectAttrs.addFlashAttribute("message", message.toString());
         return "redirect:/manage/import";
     }

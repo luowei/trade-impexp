@@ -18,8 +18,11 @@ public interface LogService {
 
     /**
      * 列出日志
+     *
+     *
+     * @param log
      * @param pageable
      * @return
      */
-    Page<Log> findAll(Pageable pageable);
+    Page<Log> findAll(Log log, Pageable pageable);
 }

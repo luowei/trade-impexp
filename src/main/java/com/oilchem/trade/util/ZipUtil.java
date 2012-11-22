@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +19,8 @@ import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.ZipException;
+
+import static com.oilchem.trade.util.FileUtil.getYYYYMMDDHHMMSS;
 
 
 /**
@@ -370,9 +373,11 @@ public abstract class ZipUtil {
             Enumeration<ZipEntry> zipEntrys = zipFile.getEntries();
             while (zipEntrys.hasMoreElements()) {
                 ZipEntry zipEntry = zipEntrys.nextElement();
-                unZipFile = unZipDir + "/" + zipEntry.getName();
+                unZipFile = unZipDir + "/" + getYYYYMMDDHHMMSS(new Date())
+                        + "_" + zipEntry.getName();
+                String unZipFileDir = unZipDir + "/" + zipEntry.getName();
                 if (zipEntry.isDirectory()) {
-                    new File(unZipFile).mkdirs();
+                    new File(unZipFileDir).mkdirs();
                     continue;
                 } else {
                     File unZipDirFile = new File(unZipDir);
@@ -421,9 +426,12 @@ public abstract class ZipUtil {
             Iterator<FileHeader> fileHeaderIterator = archive.getFileHeaders().iterator();
             while (fileHeaderIterator.hasNext()) {
                 FileHeader fileHeader = fileHeaderIterator.next();
-                unRarFile = unRarDir + "/" + fileHeader.getFileNameString();
+                unRarFile = unRarDir + "/" + getYYYYMMDDHHMMSS(new Date())
+                        + "_" + fileHeader.getFileNameString();
+                String unRarFileDir = unRarDir + "/" + fileHeader.getFileNameString();
+
                 if (fileHeader.isDirectory()) {
-                    new File(unRarFile).mkdirs();
+                    new File(unRarFileDir).mkdirs();
                     continue;
                 } else {
                     File unRarDirFile = new File(unRarDir);

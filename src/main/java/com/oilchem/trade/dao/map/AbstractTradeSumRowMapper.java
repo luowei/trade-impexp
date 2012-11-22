@@ -1,12 +1,14 @@
 package com.oilchem.trade.dao.map;
 
+import com.oilchem.trade.config.ConfigUtil;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import jxl.Sheet;
 import org.apache.commons.lang3.CharUtils;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 
+import static com.oilchem.trade.config.ConfigUtil.Config.*;
+import static com.oilchem.trade.config.ConfigUtil.*;
 import static com.oilchem.trade.config.MapperConfig.*;
 import static org.springframework.util.StringUtils.*;
 
@@ -31,16 +33,16 @@ public class AbstractTradeSumRowMapper<E extends TradeSum> implements MyRowMappe
         this.sheet = sheet;
         this.rowIdx = rowIdx;
 
-        e.setProductName(getContents(PRODUCT_XNAME));
-        e.setNumMonth(getDecimal(NUM_MONTH));
-        e.setNumSum(getDecimal(NUM_SUM));
-        e.setMoneyMonth(getDecimal(MONTH_MONEY));
-        e.setMoneySum(getDecimal(MONTH_SUM));
-        e.setAvgPriceMonth(getDecimal(AVG_PRICE_MONTH));
-        e.setAvgPriceSum(getDecimal(AVG_PRICE_SUM));
-        e.setNumPreMonthIncRadio(getDecimal(NUM_PREMONTH_INCRADIO));
-        e.setNumPreYearSameMonthIncRatio(getDecimal(NUM_PREYEARSAMEMONTH_INCRADIO));
-        e.setNumPreYearSameQuarterInrRatio(getDecimal(NUM_PREYEARSAMEQUARTER_INCRATIO));
+        e.setProductName(getContents(getDefault(excel_product_name)));
+        e.setNumMonth(getDecimal(getDefault(excel_num_month)));
+        e.setNumSum(getDecimal(getDefault(excel_num_sum)));
+        e.setMoneyMonth(getDecimal(getDefault(excel_money_month)));
+        e.setMoneySum(getDecimal(getDefault(excel_money_sum)));
+        e.setAvgPriceMonth(getDecimal(getDefault(excel_avg_price_month)));
+        e.setAvgPriceSum(getDecimal(getDefault(excel_avg_price_sum)));
+        e.setNumPreMonthIncRatio(getDecimal(getDefault(excel_num_premonth_incratio)));
+        e.setNumPreYearSameMonthIncRatio(getDecimal(getDefault(excel_num_preyearsamemonth_incratio)));
+        e.setNumPreYearSameQuarterInrRatio(getDecimal(getDefault(excel_num_preyearsamequarter_imcratio)));
         this.e = e;
     }
 

@@ -43,5 +43,5 @@ public class Config {
     public static int THREAD_POOLSIZE = 100;
     public static boolean NEED_IMPORT_CRITERIA = false;
     public static int BATCH_UPDATESIZE = 5000;
-    public static String ACCESS_SELECT_SQL = "select top 100 * from 结果 ";;
+    public static String ACCESS_SELECT_SQL = "select * from 结果 ";
 }

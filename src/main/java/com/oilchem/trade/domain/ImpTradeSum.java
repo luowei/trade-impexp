@@ -35,7 +35,7 @@ public class ImpTradeSum extends TradeSum {
                 .setYear(tradeSum.getYear())
                 .setNumMonth(tradeSum.getNumMonth())
                 .setNumSum(tradeSum.getNumSum())
-                .setNumPreMonthIncRadio(tradeSum.getNumPreMonthIncRadio())
+                .setNumPreMonthIncRatio(tradeSum.getNumPreMonthIncRatio())
                 .setNumPreYearSameMonthIncRatio(tradeSum.getNumPreYearSameMonthIncRatio())
                 .setNumPreYearSameQuarterInrRatio(tradeSum.getNumPreYearSameQuarterInrRatio())
                 .setProductName(tradeSum.getProductName())

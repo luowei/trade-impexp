@@ -12,6 +12,8 @@ import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeSumService;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
+import com.oilchem.trade.util.QueryUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -21,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Created with IntelliJ IDEA.
@@ -55,24 +55,34 @@ public class TradeSumController extends CommonController {
     @RequestMapping("/listsum/{pageNumber}")
     public String listTradeImpSum(Model model, TradeSum tradeSum,
                                   @PathVariable Integer pageNumber,
-                                  Integer impExp, CommonDto commonDto) {
-        if (impExp == null)
-            impExp = 0;
+                                  YearMonthDto yearMonthDto, CommonDto commonDto) {
+        Integer impExp = yearMonthDto.getImpExpType();
+        if ( impExp== null)
+            yearMonthDto.setImpExpType(impExp = 0);
 
+        //进口
         if (impExp.equals(Message.ImpExpType.进口.getCode())) {
             Page<ImpTradeSum> impTradeSums = tradeSumService
-                    .findImpWithCriteria(new ImpTradeSum(tradeSum), commonDto, getPageRequest(commonDto));
+                    .findImpWithCriteria(new ImpTradeSum(tradeSum), commonDto,
+                            yearMonthDto, getPageRequest(commonDto));
+
             findAllIdEntity(addPageInfo(model, impTradeSums, "/manage/listsum"),
                     ProductTypeDao.class, ProductType.class.getSimpleName())
                     .addAttribute("tradeSumList", impTradeSums);
         }
+
+        //出口
         if (impExp.equals(Message.ImpExpType.出口.getCode())) {
             Page<ExpTradeSum> expTradeSums = tradeSumService
-                    .findExpWithCriteria(new ExpTradeSum(tradeSum), commonDto, getPageRequest(commonDto));
+                    .findExpWithCriteria(new ExpTradeSum(tradeSum), commonDto,
+                            yearMonthDto, getPageRequest(commonDto));
+
             findAllIdEntity(addPageInfo(model, expTradeSums, "/manage/listsum"),
                     ProductTypeDao.class, ProductType.class.getSimpleName())
                     .addAttribute("tradeSumList", expTradeSums);
         }
+
+        addAtrribute2Model(model, tradeSum, commonDto, yearMonthDto);
 
         return "manage/trade/listsum";
     }
@@ -83,13 +93,17 @@ public class TradeSumController extends CommonController {
      * @return
      */
     @RequestMapping("/importsum")
-    public String importTradeSum(@RequestParam("file") MultipartFile file, String productType,
-                                 Integer impExpType, Model model,
+    public String importTradeSum(@RequestParam("file") MultipartFile file,
                                  YearMonthDto yearMonthDto,
                                  RedirectAttributes redirectAttrs) {
-        Boolean validate = (file.getOriginalFilename().endsWith(".rar") ||
-                file.getOriginalFilename().endsWith(".zip")) && yearMonthDto != null;
-        if (!validate) return "manage/trade/import";
+        Boolean validate = (file.getOriginalFilename().endsWith(".rar")
+                ||file.getOriginalFilename().endsWith(".zip"))
+                && yearMonthDto.validYearMonth(yearMonthDto)
+                && yearMonthDto.getProductType()!= null;
+        if (!validate){
+            redirectAttrs.addFlashAttribute("message","输入的年月、或文件、或产品类型格式错误！");
+            return "redirect:/manage/import";
+        }
 
         String uploadUrl = null;
         StringBuffer message = new StringBuffer();
@@ -97,6 +111,10 @@ public class TradeSumController extends CommonController {
             uploadUrl = tradeSumService.uploadFile(file, yearMonthDto);
             message.append("文件已上传到：" + Config.UPLOAD_DETAILZIP_DIR +
                     uploadUrl.substring(uploadUrl.lastIndexOf("/")));
+            if(yearMonthDto.getProductType().contains(",")){
+                String prodType = yearMonthDto.getProductType();
+                yearMonthDto.setProductType(StringUtils.substringBefore(prodType,","));
+            }
             taskService.unSumPackageAndImportTask(yearMonthDto);
 
         } catch (Exception e) {
@@ -104,11 +122,35 @@ public class TradeSumController extends CommonController {
             message.append("<br/>文件上传或数据导入发生了错误");
         }
 
-//        UriComponents redirectUri = UriComponentsBuilder.fromPath("/manage/import")
-//                .queryParam("message",message.toString()).build().encode();
-//        return "redirect:"+redirectUri.toUriString();
         redirectAttrs.addFlashAttribute("message",message.toString());
         return "redirect:/manage/import";
+    }
+
+
+
+    /**
+     * 将属性添加到模型中
+     * @param model
+     * @param tradeSum
+     * @param commonDto
+     * @param yearMonthDto
+     * @return
+     */
+    private Model addAtrribute2Model(Model model, TradeSum tradeSum,
+                                     CommonDto commonDto, YearMonthDto yearMonthDto) {
+
+        model = yearMonthDto.getMonth() != null ? model.addAttribute("month", yearMonthDto.getMonth()): model;
+        model = yearMonthDto.getLowYear() != null ? model.addAttribute("lowYear", yearMonthDto.getLowYear()): model;
+        model = yearMonthDto.getLowMonth() != null ? model.addAttribute("lowMonth", yearMonthDto.getLowMonth()): model;
+        model = yearMonthDto.getHighYear() != null ? model.addAttribute("highYear", yearMonthDto.getHighYear()): model;
+        model = yearMonthDto.getHighMonth() != null ? model.addAttribute("highMonth", yearMonthDto.getHighMonth()): model;
+        model = yearMonthDto.getImpExpType() != null ? model.addAttribute("impExpType", yearMonthDto.getImpExpType()): model;
+
+        for (QueryUtils.PropertyFilter filter : tradeSumService
+                .getSumQueryProps(tradeSum, commonDto)) {
+            model.addAttribute(filter.getName(), filter.getValue());
+        }
+        return model;
     }
 
 

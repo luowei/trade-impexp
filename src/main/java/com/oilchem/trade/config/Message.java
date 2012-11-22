@@ -8,6 +8,11 @@ package com.oilchem.trade.config;
  * To change this template use File | Settings | File Templates.
  */
 public class Message implements IMessageCode {
+
+
+
+
+
     @Override
     public int getCode() {
         return 0;

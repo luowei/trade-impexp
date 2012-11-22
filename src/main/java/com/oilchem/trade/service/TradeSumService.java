@@ -7,12 +7,15 @@ import com.oilchem.trade.domain.ProductType;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
+import com.oilchem.trade.util.QueryUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
+
+import static com.oilchem.trade.util.QueryUtils.PropertyFilter;
 
 /**
  * Created with IntelliJ IDEA.
@@ -35,7 +38,8 @@ public interface TradeSumService {
      * @param yearMonthDto              年月,产品类型
      * @return
      */
-    Boolean importExcel(Map.Entry<Long, Log> logEntry, YearMonthDto yearMonthDto);
+    Boolean importExcel(Map.Entry<Long, Log> logEntry,
+                        YearMonthDto yearMonthDto);
 
     /**
      * 上传文件
@@ -43,26 +47,42 @@ public interface TradeSumService {
      * @param yearMonthDto
      * @return
      */
-    String uploadFile(MultipartFile file, YearMonthDto yearMonthDto);
+    String uploadFile(MultipartFile file,
+                      YearMonthDto yearMonthDto);
 
     /**
      * 进口列表
      * @param tradeSum
      * @param commonDto
-     * @param pageRequest
-     * @return
+     * @param yearMonthDto
+     *@param pageRequest  @return
      */
-    public Page<ImpTradeSum> findImpWithCriteria(
-            ImpTradeSum tradeSum,CommonDto commonDto,PageRequest pageRequest) ;
+    Page<ImpTradeSum> findImpWithCriteria(
+            ImpTradeSum tradeSum,
+            CommonDto commonDto,
+            YearMonthDto yearMonthDto,
+            PageRequest pageRequest) ;
 
     /**
      * 出口列表
      * @param tradeSum
      * @param commonDto
+     * @param yearMonthDto
      * @param pageRequest
      * @return
      */
-    public Page<ExpTradeSum> findExpWithCriteria(
-            ExpTradeSum tradeSum,CommonDto commonDto,PageRequest pageRequest);
+    Page<ExpTradeSum> findExpWithCriteria(
+            ExpTradeSum tradeSum,
+            CommonDto commonDto,
+            YearMonthDto yearMonthDto,
+            PageRequest pageRequest);
 
+    /**
+     * 获得总量
+     * @param tradeSum
+     * @param commonDto
+     * @return
+     */
+    List<PropertyFilter> getSumQueryProps(TradeSum tradeSum,
+                                          CommonDto commonDto);
 }

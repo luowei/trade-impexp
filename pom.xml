@@ -41,6 +41,7 @@
         <jackson.version>1.9.6</jackson.version>
         <jxl.version>2.6.12</jxl.version>
         <ant-zip.version>1.8.4</ant-zip.version>
+        <gson.version>2.2.1</gson.version>
 
         <jdkVersion>1.6</jdkVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -285,6 +286,13 @@
             <groupId>de.innosystec</groupId>
             <artifactId>java-unrar</artifactId>
             <version>0.3</version>
+        </dependency>
+
+        <!-- Google gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
         </dependency>
 
         <!--<dependency>-->

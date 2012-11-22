@@ -6,20 +6,27 @@ import com.oilchem.trade.dao.LogDao;
 import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.service.LogService;
 import com.oilchem.trade.bean.YearMonthDto;
+import com.oilchem.trade.util.DynamicSpecifications;
+import com.oilchem.trade.util.QueryUtils;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import static com.oilchem.trade.config.Config.*;
+import static com.oilchem.trade.util.QueryUtils.PropertyFilter;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Created with IntelliJ IDEA.
@@ -168,6 +175,7 @@ public class LogServiceImpl implements LogService {
 
     /**
      * 解压发生异常
+     *
      * @param logEntry
      * @param unPackageDir
      */
@@ -186,6 +194,7 @@ public class LogServiceImpl implements LogService {
 
     /**
      * 导入详细表日志记录切入点
+     *
      * @param logEntry     logEntry
      * @param yearMonthDto yearMonthDto
      */
@@ -201,6 +210,7 @@ public class LogServiceImpl implements LogService {
 
     /**
      * 导入详细表数据时更新日志
+     *
      * @param logEntry
      * @param yearMonthDto
      */
@@ -217,6 +227,7 @@ public class LogServiceImpl implements LogService {
 
     /**
      * 成功导入详细表后更新日志
+     *
      * @param logEntry
      * @param yearMonthDto
      * @param isSuccess
@@ -234,7 +245,6 @@ public class LogServiceImpl implements LogService {
     }
 
 
-
     @AfterThrowing("cutImportTradeDetail(logEntry,yearMonthDto)")
     void logImportTradeDetailThrowing(Map.Entry<Long, Log> logEntry,
                                       YearMonthDto yearMonthDto) {
@@ -247,6 +257,7 @@ public class LogServiceImpl implements LogService {
 
     /**
      * 导入excel时记录日志
+     *
      * @param logEntry
      * @param yearMonthDto
      * @return
@@ -255,18 +266,19 @@ public class LogServiceImpl implements LogService {
             "java.util.Map.Entry<Long, com.oilchem.trade.domain.Log>," +
             "com.oilchem.trade.bean.YearMonthDto))" +
             "&& args(logEntry,yearMonthDto)"
-            ,argNames = "logEntry,yearMonthDto")
-    void cutImportTradeSum(Map.Entry<Long, Log> logEntry, YearMonthDto yearMonthDto){
+            , argNames = "logEntry,yearMonthDto")
+    void cutImportTradeSum(Map.Entry<Long, Log> logEntry, YearMonthDto yearMonthDto) {
     }
 
     /**
      * 导入Excel前更新日志
+     *
      * @param logEntry
      * @param yearMonthDto
      */
     @Before("cutImportTradeSum(logEntry,yearMonthDto)")
     void logImportingTradeSum(Map.Entry<Long, Log> logEntry,
-                              YearMonthDto yearMonthDto){
+                              YearMonthDto yearMonthDto) {
         log = logDao.findOne(logEntry.getKey());
         log.setImportFlag(IMPORTING_FLAG);
         log.setLogTime(new Date());
@@ -276,6 +288,7 @@ public class LogServiceImpl implements LogService {
 
     /**
      * 导入Excel后更新报日志
+     *
      * @param logEntry
      * @param yearMonthDto
      * @param isSuccess
@@ -283,7 +296,7 @@ public class LogServiceImpl implements LogService {
     @AfterReturning(pointcut = "cutImportTradeSum(logEntry,yearMonthDto)",
             returning = "isSuccess")
     void logImportedTradeSum(Map.Entry<Long, Log> logEntry,
-                             YearMonthDto yearMonthDto,Boolean isSuccess){
+                             YearMonthDto yearMonthDto, Boolean isSuccess) {
 
         log = logDao.findOne(logEntry.getKey());
         log.setImportFlag(IMPORTED_FLAG);
@@ -293,11 +306,12 @@ public class LogServiceImpl implements LogService {
 
     /**
      * 导入Excel发生异常更新日志
+     *
      * @param logEntry
      * @param yearMonthDto
      */
     @AfterThrowing("cutImportTradeSum(logEntry,yearMonthDto)")
-    void logImportTradeSumThrowing(Map.Entry<Long, Log> logEntry, YearMonthDto yearMonthDto){
+    void logImportTradeSumThrowing(Map.Entry<Long, Log> logEntry, YearMonthDto yearMonthDto) {
 
         log = logDao.findOne(logEntry.getKey());
         log.setImportFlag(IMPORT_FAILD);
@@ -310,14 +324,38 @@ public class LogServiceImpl implements LogService {
     /**
      * 列出日志
      *
+     * @param log
      * @param pageable
      * @return
      */
-    public Page<Log> findAll(Pageable pageable) {
-        if (pageable != null) {
-            return logDao.findAll(pageable);
+    public Page<Log> findAll(Log log, Pageable pageable) {
+        if (pageable == null)
+            return null;
+
+        final List<QueryUtils.PropertyFilter> filterList = getLogQueryProps(log);
+        Specification<Log> spec = DynamicSpecifications.<Log>byPropertyFilter(
+                filterList, Log.class);
+
+        return logDao.findAll(spec,pageable);
+    }
+
+    /**
+     * 获得Log的查询属性
+     * @param log
+     * @return
+     */
+    private List<PropertyFilter> getLogQueryProps(Log log) {
+        List<PropertyFilter> filterList = new ArrayList<PropertyFilter>();
+
+        if (isNotBlank(log.getTableType())) {
+            String tableType = "%";
+            if(log.getTableType().equals("0"))
+                tableType = "明细表";
+            if(log.getTableType().equals("1"))
+                tableType = "总表";
+            filterList.add(new PropertyFilter("tableType", tableType));
         }
-        return null;
+        return filterList;
     }
 
 

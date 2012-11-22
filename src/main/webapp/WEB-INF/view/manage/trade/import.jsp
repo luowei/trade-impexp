@@ -15,13 +15,32 @@
     <script type="text/javascript" src="<c:url value="/resources/js/jquery/1.7.2/jquery.js" />"></script>
     <script type="text/javascript" src="<c:url value="/resources/js/trade.js"/> "></script>
 
+    <script type="text/javascript">
+        function changeProductTypeInput() {
+            var selectVal = $("select[name=productType]").val().trim();
+            $("input[name=productType]").val(selectVal);
+        }
+
+        function checkValue() {
+            var inputVal = $("input[name=productType]").val().trim();
+            var selectVal = $("select[name=productType]").val().trim();
+            if (inputVal != selectVal) {
+                if (selectVal != "") {
+                    $("input[name=productType]").val(selectVal);
+                }
+            }
+        }
+
+    </script>
 
 </head>
 <body>
-<c:if test="${message ne null}">
-    <h3 style="color: #4169e1;">${message}</h3>
-</c:if>
 
+<div class="container">
+    <c:if test="${message ne null}">
+        <h3 style="color: #4169e1;">${message}</h3>
+    </c:if>
+</div>
 
 
 <div class="container">
@@ -36,11 +55,13 @@
 
         <label class="label"> 年月:
             <select name="year" class="input-mini">
+                <option value="">--</option>
                 <c:forEach var="year" begin="2000" end="2050" step="1">
                     <option value="${year}">${year}</option>
                 </c:forEach>
             </select>年
             <select name="month" class="input-mini">
+                <option value="">--</option>
                 <c:forEach var="month" begin="1" end="12" step="1">
                     <option value="${month}">${month}</option>
                 </c:forEach>
@@ -49,25 +70,26 @@
 
         <br/>
 
-        <label class="label">zip或rar的Access数据文件包:</label>
-            <input name="file" type="file">
+        <label class="label">zip或rar的Access数据包文件包:</label>
+        <input name="file" type="file">
 
 
         <br/>
 
         <label class="label"> 进出口类型:
             <select name="impExpType" class="input-mini">
+                <option value="">--</option>
                 <option value="0">进口</option>
                 <option value="1">出口</option>
             </select>
         </label>
 
-        <label class="label"> 导入方式:
-            <select name="importType" class="input-mini">
-                <option value="0" selected="selected">自动</option>
-                <option value="1">手动</option>
-            </select>
-        </label>
+        <%--<label class="label"> 导入方式:--%>
+        <%--<select name="importType" class="input-mini">--%>
+        <%--<option value="0" selected="selected">自动</option>--%>
+        <%--<option value="1">手动</option>--%>
+        <%--</select>--%>
+        <%--</label>--%>
 
         <br/> <br/>
 
@@ -78,7 +100,7 @@
 
             <div class="span1">
                 <a class="span1 btn btn-small btn-primary"
-                   href="${pageContext.request.contextPath}/manage/listlog/1">查看日志</a>
+                   href="${pageContext.request.contextPath}/manage/listlog/0/1">查看日志</a>
             </div>
 
             <div class="span1 offset1">
@@ -109,11 +131,13 @@
 
         <label class="label">年月:
             <select name="year" class="input-mini">
+                <option value="">--</option>
                 <c:forEach var="year" begin="2000" end="2050" step="1">
                     <option value="${year}">${year}</option>
                 </c:forEach>
             </select>年
             <select name="month" class="input-mini">
+                <option value="">--</option>
                 <c:forEach var="month" begin="1" end="12" step="1">
                     <option value="${month}">${month}</option>
                 </c:forEach>
@@ -122,34 +146,36 @@
 
         <br/>
 
-        <label class="label">zip或rar或xsl格式的数据文件:</label>
-            <input name="file" type="file">
+        <label class="label">zip或rar格式的excel数据包文件:</label>
+        <input name="file" type="file">
 
         <br/>
 
         <label class="label"> 产品类型:
-            <input type="text" name="" class="input-small"
-                   onfocus="javascript:showSelect(this,'productType')">
-            <select name="productType" class="input-mini">
+            <input type="text" name="productType" class="input-small" onblur="checkValue()">
+            <select name="productType" class="input-mini" onchange="changeProductTypeInput()">
+                <option value="" selected="selected">--</option>
                 <c:forEach var="productType" items="${productTypeList}">
-                    <option value="${productType.productType}">${productType.productType}</option>
+                    <option value="${productType.productType}">
+                            ${productType.productType}</option>
                 </c:forEach>
             </select>
         </label>
 
         <label class="label">进出口类型:
             <select name="impExpType" class="input-mini">
+                <option value="">--</option>
                 <option value="0">进口</option>
                 <option value="1">出口</option>
             </select>
         </label>
 
-        <label class="label">导入方式:
-            <select name="importType" class="input-mini">
-                <option value="0" selected="selected">自动</option>
-                <option value="1">手动</option>
-            </select>
-        </label>
+        <%--<label class="label">导入方式:--%>
+        <%--<select name="importType" class="input-mini">--%>
+        <%--<option value="0" selected="selected">自动</option>--%>
+        <%--<option value="1">手动</option>--%>
+        <%--</select>--%>
+        <%--</label>--%>
 
         <br/><br/>
 
@@ -160,7 +186,7 @@
 
             <div class="span1">
                 <a class="span1 btn btn-small btn-primary"
-                   href="${pageContext.request.contextPath}/manage/listlog/1">查看日志</a>
+                   href="${pageContext.request.contextPath}/manage/listlog/1/1">查看日志</a>
             </div>
 
             <div class="span1 offset1">

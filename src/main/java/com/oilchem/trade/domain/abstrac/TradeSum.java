@@ -3,7 +3,6 @@ package com.oilchem.trade.domain.abstrac;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * 进出口总表
@@ -51,7 +50,7 @@ public class TradeSum extends IdEntity implements Serializable {
     private BigDecimal avgPriceSum;
     //与上月数量增长比
     @Column(name = "num_premonth_incratio")
-    private BigDecimal numPreMonthIncRadio;
+    private BigDecimal numPreMonthIncRatio;
     //与上年同月数量增长比
     @Column(name = "num_preyearsamemonth_incratio")
     private BigDecimal numPreYearSameMonthIncRatio;
@@ -169,12 +168,12 @@ public class TradeSum extends IdEntity implements Serializable {
         return this;
     }
 
-    public BigDecimal getNumPreMonthIncRadio() {
-        return numPreMonthIncRadio;
+    public BigDecimal getNumPreMonthIncRatio() {
+        return numPreMonthIncRatio;
     }
 
-    public TradeSum setNumPreMonthIncRadio(BigDecimal numPreMonthIncRadio) {
-        this.numPreMonthIncRadio = numPreMonthIncRadio;
+    public TradeSum setNumPreMonthIncRatio(BigDecimal numPreMonthIncRadio) {
+        this.numPreMonthIncRatio = numPreMonthIncRadio;
         return this;
     }
 

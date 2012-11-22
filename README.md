@@ -50,3 +50,101 @@
 ---------------------------------
 springside:
 https://github.com/springside/springside4
+
+==========================================================================
+
+ public static class ConfigName {
+
+        //json配置文件的名字
+        public static String CONFIG_COMMON_JSON = "config_common.json";
+        public static String CONFIG_FLAG_JSON = "config_flag.json";
+        public static String CONFIG_MAPPER_JSON = "config_mapper.json";
+
+
+        //---------------- common config---------------------
+
+        public static String UPLOAD_DETAILZIP_DIR = "upload_detailzip_dir";
+        public static String UPLOAD_SUMZIP_DIR = "upload_sumzip_dir";
+        public static String UNZIP_DETAIL_DIR = "unzip_detail_dir";
+        public static String UNZIP_SUM_DIR = "unzip_sum_dir";
+
+        public static String ROOT_URL = "root_url";
+
+        //年月分融符
+        public static String YEARMONTH_SPLIT = "yearmonth_split";
+
+        //线程大小
+        public static String THREAD_POOLSIZE = "thread_poolsize";
+
+        //过滤条件是否导入开关
+        public static String NEED_IMPORT_CRITERIA = "need_import_criteria";
+
+        //批处理块大小
+        public static String BATCH_UPDATESIZE = "batch_updatesize";
+
+        //读取access源数据表的sql语句
+        public static String ACCESS_SELECT_SQL = "access_select_sql";
+
+
+        //----------------- flag config ----------------------
+
+
+        //表类型
+        public static String DETAIL = "detail";
+        public static String SUM = "sum";
+
+        //导入/导出类型
+        public static String IMPORT_TYPE = "import_type";
+        public static String EXPORT_TYPE = "export_type";
+
+        //上传状态标志
+        public static String UPLOADING_FLAG = "uploading_flag";
+        public static String UPLOADED_FLAG = "uploaded_flag";
+        public static String UPLOAD_FAILD = "upload_faild";
+
+        //解压状态标志
+        public static String UNEXTRACT_FLAG = "unextract_flag";
+        public static String EXTRACTING_FLAG = "extracting_flag";
+        public static String EXTRACTED_FLAG = "extracted_flag";
+        public static String EXTRACT_FAILD = "extract_faild";
+
+        //导入状态标志
+        public static String UNIMPORT_FLAG = "unimport_flag";
+        public static String IMPORTING_FLAG = "importing_flag";
+        public static String IMPORTED_FLAG = "imported_flag";
+        public static String IMPORT_FAILD = "import_faild";
+
+
+        //---------------------mapper config -------------------------
+
+        /**
+         * Access明细表字段
+         */
+        public static String ACCESS_PRODUCT_CODE = "access_product_code";
+        public static String ACCESS_PRODUCT_NAME = "access_product_name";
+        public static String ACCESS_COMPANY_TYPE = "access_company_type";
+        public static String ACCESS_TRADE_TYPE = "access_trade_type";
+        public static String ACCESS_TRANSPORTATION = "access_transportation";
+        public static String ACCESS_CUSTOMS = "access_customs";
+        public static String ACCESS_CITY = "access_city";
+        public static String ACCESS_COUNTRY = "access_country";
+        public static String ACCESS_AMOUNT = "access_amount";
+        public static String ACCESS_UNIT = "access_unit";
+        public static String ACCESS_ACOUNTMONEY = "access_acountmoney";
+
+
+        /**
+         * excel总表字段
+         */
+        public static String EXCEL_PRODUCT_NAME = "product_name";
+        public static String NUM_MONTH = "num_month";
+        public static String NUM_SUM = "num_sum";
+        public static String MONEY_MONTH = "money_month";
+        public static String MONEY_SUM = "money_sum";
+        public static String AVG_PRICE_MONTH = "avg_price_month";
+        public static String AVG_PRICE_SUM = "avg_price_sum";
+        public static String NUM_PREMONTH_INCRAtIO = "num_premonth_incratio";
+        public static String NUM_PREYEARSAMEMONTH_INCRAtIO = "num_preyearsamemonth_incratio";
+        public static String NUM_PREYEARSAMEQUARTER_INCRATIO = "num_preyearsamequarter_imcratio";
+
+    }
