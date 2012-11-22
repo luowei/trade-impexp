@@ -1,9 +1,6 @@
 package com.oilchem.trade.service.impl;
 
-import com.oilchem.trade.config.Message;
 import com.oilchem.trade.util.EHCacheUtil;
-import com.oilchem.trade.util.FileUtil;
-import com.oilchem.trade.util.ZipUtil;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.MyRowMapper;
@@ -14,6 +11,8 @@ import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.bean.DetailCriteria;
 import com.oilchem.trade.bean.YearMonthDto;
+import com.oilchem.trade.util.FileUtil;
+import com.oilchem.trade.util.ZipUtil;
 import jxl.Sheet;
 import jxl.Workbook;
 import org.apache.commons.lang3.StringUtils;
@@ -36,11 +35,20 @@ import java.sql.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-import static com.oilchem.trade.config.Config.*;
-import static com.oilchem.trade.config.MapperConfig.*;
+import static com.oilchem.trade.util.ConfigUtil.Config.*;
+import static com.oilchem.trade.util.ConfigUtil.ExcelFiled.*;
+import static com.oilchem.trade.util.ConfigUtil.AccessField.*;
+import static com.oilchem.trade.util.ConfigUtil.Flag.unextract_flag;
+import static com.oilchem.trade.util.ConfigUtil.Flag.unimport_flag;
+import static com.oilchem.trade.util.ConfigUtil.TableType.detail;
+import static com.oilchem.trade.util.ConfigUtil.TableType.sum;
+import static com.oilchem.trade.util.FileUtil.getFileSuffix;
+import static com.oilchem.trade.util.FileUtil.upload;
 import static com.oilchem.trade.util.QueryUtils.PropertyFilter;
 import static com.oilchem.trade.util.QueryUtils.Type.GE;
 import static com.oilchem.trade.util.QueryUtils.Type.LT;
+import static com.oilchem.trade.util.ZipUtil.unRar;
+import static com.oilchem.trade.util.ZipUtil.unZip;
 
 /**
  * Created with IntelliJ IDEA.
@@ -86,7 +94,7 @@ public class CommonServiceImpl implements CommonService {
     public String uploadFile(MultipartFile file, String realDir, YearMonthDto yearMonthDto) {
         if (file == null || StringUtils.isBlank(realDir)) return null;
 
-        String fileUrl = FileUtil.upload(file, realDir, ROOT_URL);
+        String fileUrl = upload(file, realDir, root_url.value());
         return fileUrl;
     }
 
@@ -105,13 +113,13 @@ public class CommonServiceImpl implements CommonService {
             return null;
 
         String uploadPath = logEntry.getValue().getUploadPath();
-        String type = FileUtil.getFileSuffix(uploadPath);
+        String type = getFileSuffix(uploadPath);
 
         //判断文件类型
         if (type.equals(".zip")) {
-            return ZipUtil.unZip(uploadPath, unPackageDir, null);
+            return unZip(uploadPath, unPackageDir, null);
         } else if (type.equals(".rar")) {
-            return ZipUtil.unRar(uploadPath, unPackageDir);
+            return unRar(uploadPath, unPackageDir);
         } else return null;
     }
 
@@ -134,7 +142,7 @@ public class CommonServiceImpl implements CommonService {
         try {
             //城市
             DetailCriteria cityCri = new DetailCriteria(
-                    CITY,
+                    access_city.value(),
                     City.class,
                     CityDao.class,
                     CityDao.class.getDeclaredMethod("findByCity", String.class),
@@ -144,7 +152,7 @@ public class CommonServiceImpl implements CommonService {
 
             //国家
             DetailCriteria countryCri = new DetailCriteria(
-                    COUNTRY,
+                    access_country.value(),
                     Country.class,
                     CountryDao.class,
                     CountryDao.class.getDeclaredMethod("findByCountry", String.class),
@@ -154,8 +162,8 @@ public class CommonServiceImpl implements CommonService {
 
             //企业性质
             DetailCriteria companyTypeCri = new DetailCriteria(
-                    COMPANY_TYPE
-                    , CompanyType.class,
+                    access_company_type.value(),
+                    CompanyType.class,
                     CompanyTypeDao.class,
                     CompanyTypeDao.class.getDeclaredMethod("findByCompanyType", String.class),
                     ctx.getBean(CompanyTypeDao.class),
@@ -164,7 +172,7 @@ public class CommonServiceImpl implements CommonService {
 
             //海关
             DetailCriteria customsCri = new DetailCriteria(
-                    CUSTOMS,
+                    access_customs.value(),
                     Customs.class,
                     CustomsDao.class,
                     CustomsDao.class.getDeclaredMethod("findByCustoms", String.class),
@@ -174,7 +182,7 @@ public class CommonServiceImpl implements CommonService {
 
             //贸易类型
             DetailCriteria tradeTypeCri = new DetailCriteria(
-                    TRADE_TYPE,
+                    access_trade_type.value(),
                     TradeType.class,
                     TradeTypeDao.class,
                     TradeTypeDao.class.getDeclaredMethod("findByTradeType", String.class),
@@ -184,7 +192,7 @@ public class CommonServiceImpl implements CommonService {
 
             //运输方式
             DetailCriteria transportationCri = new DetailCriteria(
-                    TRANSPORTATION,
+                    access_transportation.value(),
                     Transportation.class,
                     TransportationDao.class,
                     TransportationDao.class.getDeclaredMethod("findByTransportation", String.class),
@@ -368,8 +376,8 @@ public class CommonServiceImpl implements CommonService {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
-        return getLogMap(tableType, UNEXTRACT_FLAG,
-                findByMethod, Message.FileType.UPLOAD_FILE);
+        return getLogMap(tableType, unextract_flag.value(),
+                findByMethod);
     }
 
     /**
@@ -389,22 +397,20 @@ public class CommonServiceImpl implements CommonService {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
-        return getLogMap(tableType, UNIMPORT_FLAG,
-                findByMethod, Message.FileType.IMPORT_FILE);
+        return getLogMap(tableType, unimport_flag.value(),
+                findByMethod);
     }
 
     /**
      * 获得logMap
-     *
      * @param tableType
      * @param process_flag
      * @param findByMethod
-     * @param fileType
      * @return
      * @throws Exception
      */
     private Map<Long, Log> getLogMap(String tableType, String process_flag,
-                                     Method findByMethod, Message.FileType fileType) {
+                                     Method findByMethod) {
 
         if (StringUtils.isBlank(tableType) || StringUtils.isBlank(process_flag))
             return null;
@@ -415,10 +421,10 @@ public class CommonServiceImpl implements CommonService {
 
         //查找操作
         try {
-            if (tableType.equals(DETAIL)) {
-                obj = findByMethod.invoke(logDao, process_flag, DETAIL);
-            } else if (tableType.equals(SUM)) {
-                obj = findByMethod.invoke(logDao, process_flag, SUM);
+            if (tableType.equals(detail.value())) {
+                obj = findByMethod.invoke(logDao, process_flag, detail.value());
+            } else if (tableType.equals(sum.value())) {
+                obj = findByMethod.invoke(logDao, process_flag, sum.value());
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -431,9 +437,6 @@ public class CommonServiceImpl implements CommonService {
         //把记录放到map中
         if (logList != null && !logList.isEmpty()) {
             for (Log log : logList) {
-                if (fileType.equals(Message.FileType.UPLOAD_FILE))
-                    packaeMap.put(log.getId(), log);
-                if (fileType.equals(Message.FileType.IMPORT_FILE))
                     packaeMap.put(log.getId(), log);
             }
         }
@@ -493,7 +496,7 @@ public class CommonServiceImpl implements CommonService {
             statement = conn.createStatement();
             rs = statement.executeQuery(sql);
 
-            ExecutorService pool = Executors.newFixedThreadPool(THREAD_POOLSIZE);
+            ExecutorService pool = Executors.newFixedThreadPool(Integer.parseInt(thread_poolsize.value()));
             for (int i = 1; rs.next(); i++) {
 
                 pool.submit(new Callable<Object>() {
@@ -532,7 +535,8 @@ public class CommonServiceImpl implements CommonService {
         Statement statement = null;
         ResultSet result = null;
         int j = 1;
-        List<E> tradeDetailList = new ArrayList<E>(BATCH_UPDATESIZE);
+        Integer listSize = Integer.parseInt(batch_updatesize.value());
+        List<E> tradeDetailList = new ArrayList<E>(listSize);
         try {
             statement = conn.createStatement();
             result = statement.executeQuery(sql);
@@ -540,11 +544,11 @@ public class CommonServiceImpl implements CommonService {
             for (int i = 1; result.next(); i++) {
 
                 fillTradeDetailList(result, tradeDetailMapper, yearMonthDto, detailClz, tradeDetailList);
-                if (i >= BATCH_UPDATESIZE) {
+                if (i >= listSize) {
                     EHCacheUtil.setValue("detail_cache", "detail_list_" + j, tradeDetailList);
                     i = 0;
                     j++;
-                    tradeDetailList = new ArrayList<E>(BATCH_UPDATESIZE);
+                    tradeDetailList = new ArrayList<E>(listSize);
                 }
 
 
@@ -641,10 +645,10 @@ public class CommonServiceImpl implements CommonService {
                     new File(logEntry.getValue().getExtractPath()));
             Sheet sheet = workbook.getSheet(0);
             int rows = sheet.getRows();
-            int rowIdx = sheet.findCell(EXCEL_PRODUCT_NAME).getRow() + 1;
+            int rowIdx = sheet.findCell(excel_product_name.value()).getRow() + 1;
             Integer year = yearMonthDto.getYear();
             Integer month = yearMonthDto.getMonth();
-            String yearMonth = year + YEARMONTH_SPLIT + (month < 10 ? "0" + month : month);
+            String yearMonth = year + yearmonth_split.value() + (month < 10 ? "0" + month : month);
 
             //遍历excel
             for (; rowIdx < rows; rowIdx++) {
@@ -731,14 +735,14 @@ public class CommonServiceImpl implements CommonService {
         if(yearMonthDto.getLowYear()!=null){
             Integer lowYear =  yearMonthDto.getLowYear();
             Integer lowMonth = yearMonthDto.getLowMonth()==null?1:yearMonthDto.getLowMonth();
-            String yearMont = lowYear+YEARMONTH_SPLIT+(lowMonth<10? "0"+lowMonth:lowMonth);
+            String yearMont = lowYear+yearmonth_split.value()+(lowMonth<10? "0"+lowMonth:lowMonth);
             filterList.add(new PropertyFilter("yearMonth",yearMont,GE));
         }
 
         if(yearMonthDto.getHighYear()!=null){
             Integer highYear = yearMonthDto.getHighYear();
             Integer highMonth = yearMonthDto.getHighMonth()==null?1:yearMonthDto.getHighMonth();
-            String yearMonth = highYear+YEARMONTH_SPLIT+(highMonth<10?"0"+highMonth:highMonth);
+            String yearMonth = highYear+yearmonth_split.value()+(highMonth<10?"0"+highMonth:highMonth);
             filterList.add(new PropertyFilter("yearMonth",yearMonth,LT));
         }
 

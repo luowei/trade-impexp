@@ -1,4 +1,4 @@
-package com.oilchem.trade.dao.db;
+package com.oilchem.trade.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +27,7 @@ public abstract class JdbcUtil<E> {
 
     /**
      * 初始化jdbc参数
+     *
      * @param driverClass
      * @param url
      * @param sql
@@ -49,6 +50,7 @@ public abstract class JdbcUtil<E> {
 
     /**
      * 获得查询list
+     *
      * @param obj
      * @return
      */
@@ -82,7 +84,7 @@ public abstract class JdbcUtil<E> {
             throw new RuntimeException(e);
         } finally {
             JdbcUtil.args.clear();
-            closeDBResource(conn, statement,preStatement, rs);
+            closeDBResource(conn, statement, preStatement, rs);
         }
         return list;
     }
@@ -92,13 +94,14 @@ public abstract class JdbcUtil<E> {
 
     /**
      * 更新
+     *
      * @param sql
      * @param values
      * @return
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public static int update(String sql, Object... values){
+    public static int update(String sql, Object... values) {
         PreparedStatement preStatement = null;
         Connection conn = null;
         int row = 0;
@@ -111,23 +114,24 @@ public abstract class JdbcUtil<E> {
             }
             row = preStatement.executeUpdate();
 
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException();
-        }finally {
-            closeDBResource(conn, null,preStatement, null);
+        } finally {
+            closeDBResource(conn, null, preStatement, null);
         }
         return row;
     }
 
     /**
      * 关闭数据库资源
+     *
      * @param conn
      * @param statement
      * @param preStatement
      * @param rs
      */
-    private static void  closeDBResource(
+    private static void closeDBResource(
             Connection conn, Statement statement,
             PreparedStatement preStatement, ResultSet rs) {
         try {

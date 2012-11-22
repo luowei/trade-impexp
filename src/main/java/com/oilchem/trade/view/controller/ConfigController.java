@@ -1,6 +1,6 @@
 package com.oilchem.trade.view.controller;
 
-import com.oilchem.trade.config.ConfigUtil;
+import com.oilchem.trade.util.ConfigUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Map;
 
-import static com.oilchem.trade.config.ConfigUtil.ConfigBean;
+import static com.oilchem.trade.util.ConfigUtil.ConfigBean;
 
 /**
  * Created with IntelliJ IDEA.

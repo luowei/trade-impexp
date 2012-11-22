@@ -33,11 +33,14 @@
         <!--<property name="maxUploadSize" value="100000"/>-->
     </bean>
 
+
+
     <bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/view/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
 
+    <bean name="flashMapManager" class="org.springframework.web.servlet.support.SessionFlashMapManager"/>
 
     <!-- exception mapping -->
     <!--<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">-->

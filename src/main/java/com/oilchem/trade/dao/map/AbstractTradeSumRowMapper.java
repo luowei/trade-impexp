@@ -1,15 +1,12 @@
 package com.oilchem.trade.dao.map;
 
-import com.oilchem.trade.config.ConfigUtil;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import jxl.Sheet;
 import org.apache.commons.lang3.CharUtils;
 
 import java.math.BigDecimal;
 
-import static com.oilchem.trade.config.ConfigUtil.Config.*;
-import static com.oilchem.trade.config.ConfigUtil.*;
-import static com.oilchem.trade.config.MapperConfig.*;
+import static com.oilchem.trade.util.ConfigUtil.ExcelFiled.*;
 import static org.springframework.util.StringUtils.*;
 
 /**
@@ -33,16 +30,16 @@ public class AbstractTradeSumRowMapper<E extends TradeSum> implements MyRowMappe
         this.sheet = sheet;
         this.rowIdx = rowIdx;
 
-        e.setProductName(getContents(getDefault(excel_product_name)));
-        e.setNumMonth(getDecimal(getDefault(excel_num_month)));
-        e.setNumSum(getDecimal(getDefault(excel_num_sum)));
-        e.setMoneyMonth(getDecimal(getDefault(excel_money_month)));
-        e.setMoneySum(getDecimal(getDefault(excel_money_sum)));
-        e.setAvgPriceMonth(getDecimal(getDefault(excel_avg_price_month)));
-        e.setAvgPriceSum(getDecimal(getDefault(excel_avg_price_sum)));
-        e.setNumPreMonthIncRatio(getDecimal(getDefault(excel_num_premonth_incratio)));
-        e.setNumPreYearSameMonthIncRatio(getDecimal(getDefault(excel_num_preyearsamemonth_incratio)));
-        e.setNumPreYearSameQuarterInrRatio(getDecimal(getDefault(excel_num_preyearsamequarter_imcratio)));
+        e.setProductName(getContents(excel_product_name.value()));
+        e.setNumMonth(getDecimal(excel_num_month.value()));
+        e.setNumSum(getDecimal(excel_num_sum.value()));
+        e.setMoneyMonth(getDecimal(excel_money_month.value()));
+        e.setMoneySum(getDecimal(excel_money_sum.value()));
+        e.setAvgPriceMonth(getDecimal(excel_avg_price_month.value()));
+        e.setAvgPriceSum(getDecimal(excel_avg_price_sum.value()));
+        e.setNumPreMonthIncRatio(getDecimal(excel_num_premonth_incratio.value()));
+        e.setNumPreYearSameMonthIncRatio(getDecimal(excel_num_preyearsamemonth_incratio.value()));
+        e.setNumPreYearSameQuarterInrRatio(getDecimal(excel_num_preyearsamequarter_imcratio.value()));
         this.e = e;
     }
 

@@ -1,7 +1,5 @@
 package com.oilchem.trade.view.controller;
 
-import com.oilchem.trade.config.Config;
-import com.oilchem.trade.config.Message;
 import com.oilchem.trade.dao.ProductTypeDao;
 import com.oilchem.trade.domain.ExpTradeSum;
 import com.oilchem.trade.domain.ImpTradeSum;
@@ -23,6 +21,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import static com.oilchem.trade.util.ConfigUtil.Config.upload_sumzip_dir;
+import static com.oilchem.trade.util.ConfigUtil.ImpExpType.export_type;
+import static com.oilchem.trade.util.ConfigUtil.ImpExpType.import_type;
 
 /**
  * Created with IntelliJ IDEA.
@@ -61,7 +63,7 @@ public class TradeSumController extends CommonController {
             yearMonthDto.setImpExpType(impExp = 0);
 
         //进口
-        if (impExp.equals(Message.ImpExpType.进口.getCode())) {
+        if (impExp.equals(import_type.ordinal())) {
             Page<ImpTradeSum> impTradeSums = tradeSumService
                     .findImpWithCriteria(new ImpTradeSum(tradeSum), commonDto,
                             yearMonthDto, getPageRequest(commonDto));
@@ -72,7 +74,7 @@ public class TradeSumController extends CommonController {
         }
 
         //出口
-        if (impExp.equals(Message.ImpExpType.出口.getCode())) {
+        if (impExp.equals(export_type.ordinal())) {
             Page<ExpTradeSum> expTradeSums = tradeSumService
                     .findExpWithCriteria(new ExpTradeSum(tradeSum), commonDto,
                             yearMonthDto, getPageRequest(commonDto));
@@ -109,7 +111,7 @@ public class TradeSumController extends CommonController {
         StringBuffer message = new StringBuffer();
         try {
             uploadUrl = tradeSumService.uploadFile(file, yearMonthDto);
-            message.append("文件已上传到：" + Config.UPLOAD_DETAILZIP_DIR +
+            message.append("文件已上传到：" + upload_sumzip_dir.value() +
                     uploadUrl.substring(uploadUrl.lastIndexOf("/")));
             if(yearMonthDto.getProductType().contains(",")){
                 String prodType = yearMonthDto.getProductType();

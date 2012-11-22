@@ -7,7 +7,14 @@
     <groupId>trade</groupId>
     <artifactId>trade</artifactId>
     <version>1.0</version>
-    <packaging>war</packaging>
+    <modules>
+        <module>persistent</module>
+        <module>persistent-impl</module>
+        <module>service</module>
+        <module>service-impl</module>
+        <module>view</module>
+    </modules>
+    <packaging>pom</packaging>
 
     <properties>
         <springframework.version>3.1.2.RELEASE</springframework.version>

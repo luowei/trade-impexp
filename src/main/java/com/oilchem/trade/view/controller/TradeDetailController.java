@@ -1,7 +1,5 @@
 package com.oilchem.trade.view.controller;
 
-import com.oilchem.trade.config.Config;
-import com.oilchem.trade.config.Message;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.domain.*;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
@@ -22,6 +20,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
+import static com.oilchem.trade.util.ConfigUtil.Config.upload_detailzip_dir;
+import static com.oilchem.trade.util.ConfigUtil.ImpExpType.export_type;
+import static com.oilchem.trade.util.ConfigUtil.ImpExpType.import_type;
 import static com.oilchem.trade.util.QueryUtils.*;
 
 /**
@@ -65,13 +66,13 @@ public class TradeDetailController extends CommonController {
         if (impExp == null)
             yearMonthDto.setImpExpType(impExp = 0);
 
-        if (impExp.equals(Message.ImpExpType.进口.getCode())) {
+        if (impExp.equals(import_type.ordinal())) {
             Page<ImpTradeDetail> impTradeDetails = tradeDetailService
                     .findImpWithCriteria(new ImpTradeDetail(tradeDetail), commonDto, yearMonthDto, getPageRequest(commonDto));
             getDetailCriteriaData(addPageInfo(model, impTradeDetails, "/manage/listdetail"))
                     .addAttribute("tradeDetailList", impTradeDetails);
         }
-        if (impExp.equals(Message.ImpExpType.出口.getCode())) {
+        if (impExp.equals(export_type.ordinal())) {
             Page<ExpTradeDetail> expTradeDetails = tradeDetailService
                     .findExpWithCriteria(new ExpTradeDetail(tradeDetail), commonDto, yearMonthDto, getPageRequest(commonDto));
             getDetailCriteriaData(addPageInfo(model, expTradeDetails, "/manage/listdetail"))
@@ -97,7 +98,6 @@ public class TradeDetailController extends CommonController {
 
     /**
      * 导入明细数据
-     *
      * @param file         从 DefaultMultipartHttpServletRequest获得的file
      * @param yearMonthDto 年月。。。
      * @return
@@ -118,7 +118,7 @@ public class TradeDetailController extends CommonController {
         StringBuffer message = new StringBuffer();
         try {
             String uploadUrl = tradeDetailService.uploadFile(file, yearMonthDto);
-            message.append("文件已上传到：" + Config.UPLOAD_DETAILZIP_DIR +
+            message.append("文件已上传到：" + upload_detailzip_dir.value() +
                     uploadUrl.substring(uploadUrl.lastIndexOf("/")));
             taskService.unDetailPackageAndImportTask(yearMonthDto);
 

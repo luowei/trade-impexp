@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.Deflater;
-import java.util.zip.ZipException;
 
-import static com.oilchem.trade.util.FileUtil.getYYYYMMDDHHMMSS;
+import static com.oilchem.trade.util.CommonUtil.close;
+import static com.oilchem.trade.util.CommonUtil.getYYYYMMDDHHMMSS;
 
 
 /**
@@ -33,31 +33,7 @@ import static com.oilchem.trade.util.FileUtil.getYYYYMMDDHHMMSS;
  */
 public abstract class ZipUtil {
 
-    private static boolean isCreateSrcDir = false;//是否创建源目录
-
     private static Logger log = LoggerFactory.getLogger(ZipUtil.class);
-
-    /**
-     * @param args
-     * @throws java.io.IOException
-     */
-    public static void main(String[] args) throws IOException {
-//        String src = "d:/temp/src";//指定压缩源，可以是目录或文件
-//        String decompressDir = "d:/temp/decompress";//解压路径
-//        String archive = "d:/temp/test1.zip";//压缩包路径
-//        String comment = "Java Zip luowei010101@gmail.com";//压缩包注释
-
-        unrar("d:/temp/bbbb.rar", "d:/temp/bbbb");
-
-//        //----压缩文件或目录
-//        writeByApacheZipOutputStream(src, archive, comment);
-
-        //----使用apace ZipFile解压压缩文件
-//        readByApacheZipFile(archive, decompressDir);
-
-//              File file = new File(archive);
-//              readByApacheZipFile(file, decompressDir);
-    }
 
     /**
      * 压缩文件
@@ -65,51 +41,63 @@ public abstract class ZipUtil {
      * @param src     指定压缩源，可以是目录或文件
      * @param archive //压缩包路径
      * @param comment
-     * @throws java.io.FileNotFoundException //压缩包注释
-     * @throws java.io.IOException
      */
-    public static void writeByApacheZipOutputStream(String src, String archive,
-                                                    String comment) throws FileNotFoundException, IOException {
+    public static void writeByApacheZipOutputStream(
+            String src, String archive, String comment) {
+
+        boolean isCreateSrcDir = false;//是否创建源目录
+
         //----压缩文件：
-        FileOutputStream f = new FileOutputStream(archive);
-        //使用指定校验和创建输出流
-        CheckedOutputStream csum = new CheckedOutputStream(f, new CRC32());
+        FileOutputStream f = null;
+        BufferedOutputStream out = null;
+        CheckedOutputStream csum = null;
+        try {
+            f = new FileOutputStream(archive);
+            //使用指定校验和创建输出流
+            csum = new CheckedOutputStream(f, new CRC32());
 
-        ZipOutputStream zos = new ZipOutputStream(csum);
-        //支持中文
-        zos.setEncoding("UTF-8");
-        BufferedOutputStream out = new BufferedOutputStream(zos);
-        //设置压缩包注释
-        zos.setComment(comment);
-        //启用压缩
-        zos.setMethod(ZipOutputStream.DEFLATED);
-        //压缩级别为最强压缩，但时间要花得多一点
-        zos.setLevel(Deflater.BEST_COMPRESSION);
+            ZipOutputStream zos = new ZipOutputStream(csum);
+            //支持中文
+            zos.setEncoding("UTF-8");
+            out = new BufferedOutputStream(zos);
+            //设置压缩包注释
+            zos.setComment(comment);
+            //启用压缩
+            zos.setMethod(ZipOutputStream.DEFLATED);
+            //压缩级别为最强压缩，但时间要花得多一点
+            zos.setLevel(Deflater.BEST_COMPRESSION);
 
-        File srcFile = new File(src);
+            File srcFile = new File(src);
 
-        if (!srcFile.exists() || (srcFile.isDirectory() && srcFile.list().length == 0)) {
-            throw new FileNotFoundException(
-                    "File must exist and  ZIP file must have at least one entry.");
+            if (!srcFile.exists() || (srcFile.isDirectory() && srcFile.list().length == 0)) {
+                throw new RuntimeException(
+                        "File must exist and  ZIP file must have at least one entry.");
+            }
+            //获取压缩源所在父目录
+            src = src.replaceAll("\\\\", "/");
+            String prefixDir = null;
+            if (srcFile.isFile()) {
+                prefixDir = src.substring(0, src.lastIndexOf("/") + 1);
+            } else {
+                prefixDir = (src.replaceAll("/$", "") + "/");
+            }
+
+            //如果不是根目录
+            if (prefixDir.indexOf("/") != (prefixDir.length() - 1) && isCreateSrcDir) {
+                prefixDir = prefixDir.replaceAll("[^/]+/$", "");
+            }
+
+            //开始压缩
+            writeRecursive(zos, out, srcFile, prefixDir);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        } finally {
+            close(out);
+//            close(f);
+//            close(csum);
         }
-        //获取压缩源所在父目录
-        src = src.replaceAll("\\\\", "/");
-        String prefixDir = null;
-        if (srcFile.isFile()) {
-            prefixDir = src.substring(0, src.lastIndexOf("/") + 1);
-        } else {
-            prefixDir = (src.replaceAll("/$", "") + "/");
-        }
 
-        //如果不是根目录
-        if (prefixDir.indexOf("/") != (prefixDir.length() - 1) && isCreateSrcDir) {
-            prefixDir = prefixDir.replaceAll("[^/]+/$", "");
-        }
-
-        //开始压缩
-        writeRecursive(zos, out, srcFile, prefixDir);
-
-        out.close();
         // 注：校验和要在流关闭后才准备，一定要放在流被关闭后使用
         log.info("Checksum: " + csum.getChecksum().getValue());
     }
@@ -119,16 +107,25 @@ public abstract class ZipUtil {
      *
      * @param file          压缩文件
      * @param decompressDir 解压目录
-     * @throws java.io.IOException
-     * @throws java.io.FileNotFoundException
-     * @throws java.util.zip.ZipException
      */
-    public static void readByApacheZipFile(File file, String decompressDir)
-            throws IOException, FileNotFoundException, ZipException {
+    public static void readByApacheZipFile(File file, String decompressDir) {
 
-        ZipFile zf = new ZipFile(file, "UTF-8");// 支持中文
+        ZipFile zf = null;
+        try {
+            zf = new ZipFile(file, "UTF-8");// 支持中文
+            readByApacheZipFile(decompressDir, zf);
 
-        readByApacheZipFile(decompressDir, zf);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                zf.close();
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+                throw new RuntimeException();
+            }
+        }
     }
 
     /**
@@ -141,29 +138,38 @@ public abstract class ZipUtil {
      *
      * @param archive       压缩包路径
      * @param decompressDir 解压路径
-     * @throws java.io.IOException
-     * @throws java.io.FileNotFoundException
-     * @throws java.util.zip.ZipException
      */
-    public static void readByApacheZipFile(String archive, String decompressDir)
-            throws IOException, FileNotFoundException, ZipException {
+    public static void readByApacheZipFile(String archive, String decompressDir) {
 
-        ZipFile zf = new ZipFile(archive, "GBK");//支持中文
-        readByApacheZipFile(decompressDir, zf);
+        ZipFile zf = null;
+        try {
+            zf = new ZipFile(archive, "GBK");//支持中文
+            readByApacheZipFile(decompressDir, zf);
+
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                zf.close();
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+                throw new RuntimeException(e);
+            }
+        }
 
     }
 
     /**
+     * 解压zip文件
+     *
      * @param decompressDir
      * @param zf
-     * @throws java.io.FileNotFoundException
-     * @throws java.io.IOException
-     * @throws java.util.zip.ZipException
-     * @brief main extract method
      */
-    private static void readByApacheZipFile(String decompressDir, ZipFile zf)
-            throws FileNotFoundException, IOException, ZipException {
-        BufferedInputStream bi;
+    private static void readByApacheZipFile(String decompressDir, ZipFile zf) {
+
+        BufferedInputStream bi = null;
+        BufferedOutputStream bos = null;
         Enumeration<?> e = zf.getEntries();
         while (e.hasMoreElements()) {
             ZipEntry ze2 = (ZipEntry) e.nextElement();
@@ -182,21 +188,35 @@ public abstract class ZipUtil {
                 if (!fileDirFile.exists()) {
                     fileDirFile.mkdirs();
                 }
-                BufferedOutputStream bos = new BufferedOutputStream(
-                        new FileOutputStream(decompressDir + "/" + entryName));
 
-                bi = new BufferedInputStream(zf.getInputStream(ze2));
-                byte[] readContent = new byte[1024];
-                int readCount = bi.read(readContent);
-                while (readCount != -1) {
-                    //解压对文件二进制加密
-                    bos.write(readContent, 0, readCount);
-                    readCount = bi.read(readContent);
+                try {
+                    bos = new BufferedOutputStream(
+                            new FileOutputStream(decompressDir + "/" + entryName));
+
+                    bi = new BufferedInputStream(zf.getInputStream(ze2));
+                    byte[] readContent = new byte[1024];
+                    int readCount = bi.read(readContent);
+                    while (readCount != -1) {
+                        //解压对文件二进制加密
+                        bos.write(readContent, 0, readCount);
+                        readCount = bi.read(readContent);
+                    }
+
+                } catch (IOException e1) {
+                    log.error(e1.getMessage(), e1);
+                    throw new RuntimeException(e1);
+                } finally {
+                    close(bi);
+                    close(bos);
                 }
-                bos.close();
             }
         }
-        zf.close();
+        try {
+            zf.close();
+        } catch (IOException e1) {
+            log.error(e1.getMessage(), e1);
+            throw new RuntimeException(e1);
+        }
     }
 
     /**
@@ -210,11 +230,9 @@ public abstract class ZipUtil {
      * @param bo
      * @param srcFile
      * @param prefixDir
-     * @throws java.io.IOException
-     * @throws java.io.FileNotFoundException
      */
-    private static void writeRecursive(ZipOutputStream zos, BufferedOutputStream bo,
-                                       File srcFile, String prefixDir) throws IOException, FileNotFoundException {
+    private static void writeRecursive(
+            ZipOutputStream zos, BufferedOutputStream bo, File srcFile, String prefixDir) {
         ZipEntry zipEntry;
 
         String filePath = srcFile.getAbsolutePath().replaceAll("\\\\", "/").replaceAll(
@@ -222,78 +240,53 @@ public abstract class ZipUtil {
         if (srcFile.isDirectory()) {
             filePath = filePath.replaceAll("/$", "") + "/";
         }
-        String entryName = filePath.replace(prefixDir, "").replaceAll("/$", "");
-        if (srcFile.isDirectory()) {
-            if (!"".equals(entryName)) {
-                log.info("正在创建目录 - " + srcFile.getAbsolutePath()
-                        + "  entryName=" + entryName);
 
-                //如果是目录，则需要在写目录后面加上 /
-                zipEntry = new ZipEntry(entryName + "/");
-                zos.putNextEntry(zipEntry);
-            }
 
-            File srcFiles[] = srcFile.listFiles();
-            for (int i = 0; i < srcFiles.length; i++) {
-                writeRecursive(zos, bo, srcFiles[i], prefixDir);
-            }
-        } else {
-            log.info("正在写文件 - " + srcFile.getAbsolutePath() + "  entryName="
-                    + entryName);
-            BufferedInputStream bi = new BufferedInputStream(new FileInputStream(srcFile));
-
-            //开始写入新的ZIP文件条目并将流定位到条目数据的开始处
-            zipEntry = new ZipEntry(entryName);
-            zos.putNextEntry(zipEntry);
-            byte[] buffer = new byte[1024];
-            int readCount = bi.read(buffer);
-
-            while (readCount != -1) {
-                bo.write(buffer, 0, readCount);
-                readCount = bi.read(buffer);
-            }
-            //注，在使用缓冲流写压缩文件时，一个条件完后一定要刷新一把，不
-            //然可能有的内容就会存入到后面条目中去了
-            bo.flush();
-            //文件读完后关闭
-            bi.close();
-        }
-    }
-
-    /**
-     * 把输入流导到输出流
-     *
-     * @param inputStream   输入流
-     * @param outputStream  输出流
-     * @param readBlockSize 每次读写的块大小(以byte为单位)
-     * @return 成功或失败
-     */
-    public static Boolean inputStream2OutPutStream(InputStream inputStream,
-                                                   OutputStream outputStream, int readBlockSize) {
-        Boolean flag = false;
-        BufferedInputStream bis = new BufferedInputStream(inputStream);
-        BufferedOutputStream bos = new BufferedOutputStream(outputStream);
-        byte[] bytes = new byte[readBlockSize];
-        int count = 0;
+        BufferedInputStream bi = null;
         try {
-            while ((count = bis.read(bytes)) != -1) {
-                bos.write(bytes, 0, count);
+            String entryName = filePath.replace(prefixDir, "").replaceAll("/$", "");
+            if (srcFile.isDirectory()) {
+                if (!"".equals(entryName)) {
+                    log.info("正在创建目录 - " + srcFile.getAbsolutePath()
+                            + "  entryName=" + entryName);
+
+                    //如果是目录，则需要在写目录后面加上 /
+                    zipEntry = new ZipEntry(entryName + "/");
+                    zos.putNextEntry(zipEntry);
+                }
+
+                File srcFiles[] = srcFile.listFiles();
+                for (int i = 0; i < srcFiles.length; i++) {
+                    writeRecursive(zos, bo, srcFiles[i], prefixDir);
+                }
+            } else {
+                log.info("正在写文件 - " + srcFile.getAbsolutePath() + "  entryName="
+                        + entryName);
+                bi = new BufferedInputStream(new FileInputStream(srcFile));
+
+                //开始写入新的ZIP文件条目并将流定位到条目数据的开始处
+                zipEntry = new ZipEntry(entryName);
+                zos.putNextEntry(zipEntry);
+                byte[] buffer = new byte[1024];
+                int readCount = bi.read(buffer);
+
+                while (readCount != -1) {
+                    bo.write(buffer, 0, readCount);
+                    readCount = bi.read(buffer);
+                }
+                //注，在使用缓冲流写压缩文件时，一个条件完后一定要刷新一把，不
+                //然可能有的内容就会存入到后面条目中去了
+                bo.flush();
+                //文件读完后关闭
+                bi.close();
             }
-            bos.flush();
-            flag = true;
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         } finally {
-            try {
-                bis.close();
-                bos.close();
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-                throw new RuntimeException(e);
-            }
+            close(bi);
+            close(bo);
         }
-        return flag;
     }
 
     /**
@@ -385,7 +378,7 @@ public abstract class ZipUtil {
                         unZipDirFile.mkdirs();
                     is = zipFile.getInputStream(zipEntry);
                     os = new FileOutputStream(unZipFile);
-                    ZipUtil.inputStream2OutPutStream(is, os, 1024);
+                    CommonUtil.inputStream2OutPutStream(is, os, 1024);
                 }
             }
 
@@ -458,6 +451,28 @@ public abstract class ZipUtil {
             }
         }
         return unRarFile;
+    }
+
+    /**
+     * @param args
+     * @throws java.io.IOException
+     */
+    public static void main(String[] args) throws IOException {
+//        String src = "d:/temp/src";//指定压缩源，可以是目录或文件
+//        String decompressDir = "d:/temp/decompress";//解压路径
+//        String archive = "d:/temp/test1.zip";//压缩包路径
+//        String comment = "Java Zip luowei010101@gmail.com";//压缩包注释
+
+        unrar("d:/temp/bbbb.rar", "d:/temp/bbbb");
+
+//        //----压缩文件或目录
+//        writeByApacheZipOutputStream(src, archive, comment);
+
+        //----使用apace ZipFile解压压缩文件
+//        readByApacheZipFile(archive, decompressDir);
+
+//              File file = new File(archive);
+//              readByApacheZipFile(file, decompressDir);
     }
 
 }

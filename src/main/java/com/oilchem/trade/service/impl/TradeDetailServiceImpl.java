@@ -1,7 +1,5 @@
 package com.oilchem.trade.service.impl;
 
-import com.oilchem.trade.config.Config;
-import com.oilchem.trade.config.Message;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.ExpTradeDetailRowMapper;
@@ -34,7 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
-import static com.oilchem.trade.config.Config.*;
+import static com.oilchem.trade.util.ConfigUtil.Config.*;
+import static com.oilchem.trade.util.ConfigUtil.ImpExpType.export_type;
+import static com.oilchem.trade.util.ConfigUtil.ImpExpType.import_type;
+import static com.oilchem.trade.util.ConfigUtil.TableType.detail;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static com.oilchem.trade.util.QueryUtils.*;
 import static com.oilchem.trade.util.QueryUtils.Type.*;
@@ -71,8 +72,8 @@ public class TradeDetailServiceImpl implements TradeDetailService {
      */
     public String uploadFile(MultipartFile file, YearMonthDto yearMonthDto) {
 
-        yearMonthDto.setTableType(Config.DETAIL);
-        return commonService.uploadFile(file, UPLOAD_DETAILZIP_DIR, yearMonthDto);
+        yearMonthDto.setTableType(detail.name());
+        return commonService.uploadFile(file, upload_detailzip_dir.value(), yearMonthDto);
     }
 
     /**
@@ -86,7 +87,7 @@ public class TradeDetailServiceImpl implements TradeDetailService {
             Map<Long, Log> map = new HashMap<Long, Log>();
             map.put(log.getId(), log);
             return commonService.unpackageFile(map.entrySet().iterator().next()
-                    , UPLOAD_DETAILZIP_DIR);
+                    , upload_detailzip_dir.value());
         }
         return null;
     }
@@ -140,15 +141,15 @@ public class TradeDetailServiceImpl implements TradeDetailService {
                                 YearMonthDto yearMonthDto) {
 
         Boolean isSuccess = false;
-        final String sql = Config.ACCESS_SELECT_SQL;
+        final String sql = access_select_sql.value();
 
         //导入查询条件表
-        if (Config.NEED_IMPORT_CRITERIA) {
+        if (new Boolean(need_import_criteria.value())) {
             commonService.importCriteriaTab(sql, logEntry.getValue().getExtractPath());
         }
 
         //导入进口明细总表
-        if (yearMonthDto.getImpExpType().equals(Message.ImpExpType.进口.getCode())) {
+        if (yearMonthDto.getImpExpType().equals(import_type.ordinal())) {
 
             synchronized ("detailimp_lock".intern()) {
                 Long count = impTradeDetailDao.countWithYearMonth(
@@ -169,7 +170,7 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         }
 
         //导入出口明细表
-        else if (yearMonthDto.getImpExpType().equals(Message.ImpExpType.出口.getCode())) {
+        else if (yearMonthDto.getImpExpType().equals(export_type.ordinal())) {
             synchronized ("detailexp_lock".intern()) {
                 Long count = expTradeDetailDao.countWithYearMonth(
                         yearMonthDto.getYear(), yearMonthDto.getMonth(), ExpTradeDetail.class);

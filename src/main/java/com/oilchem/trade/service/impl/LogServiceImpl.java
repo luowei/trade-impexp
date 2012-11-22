@@ -1,7 +1,5 @@
 package com.oilchem.trade.service.impl;
 
-import com.oilchem.trade.config.Config;
-import com.oilchem.trade.config.Message;
 import com.oilchem.trade.dao.LogDao;
 import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.service.LogService;
@@ -24,7 +22,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static com.oilchem.trade.config.Config.*;
+import static com.oilchem.trade.util.ConfigUtil.Flag.*;
+import static com.oilchem.trade.util.ConfigUtil.ImpExpType.export_type;
+import static com.oilchem.trade.util.ConfigUtil.ImpExpType.import_type;
 import static com.oilchem.trade.util.QueryUtils.PropertyFilter;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -71,18 +71,18 @@ public class LogServiceImpl implements LogService {
     @Before("cutUploadFile(file,readDir,yearMonthDto)")
     void logUploadingFile(MultipartFile file, String readDir, YearMonthDto yearMonthDto) {
         log = new Log();
-        log.setLogType(Config.IMPORT);
+        log.setLogType(import_type.value());
         log.setTableType(yearMonthDto.getTableType());
 
-        if (yearMonthDto.getImpExpType().equals(Message.ImpExpType.进口.getCode())) {
-            log.setTradeType(Message.ImpExpType.进口.getMessage());
-        } else if (yearMonthDto.getImpExpType().equals(Message.ImpExpType.出口.getCode())) {
-            log.setTradeType(Message.ImpExpType.出口.getMessage());
+        if (yearMonthDto.getImpExpType().equals(import_type.ordinal())) {
+            log.setTradeType(import_type.value());
+        } else if (yearMonthDto.getImpExpType().equals(export_type.ordinal())) {
+            log.setTradeType(export_type.value());
         }
 
         log.setYear(yearMonthDto.getYear());
         log.setMonth(yearMonthDto.getMonth());
-        log.setUploadFlg(UPLOADING_FLAG);
+        log.setUploadFlg(uploading_flag.value());
         log.setLogTime(new Date());
         logDao.save(log);
     }
@@ -101,8 +101,8 @@ public class LogServiceImpl implements LogService {
         log.setUploadPath(uploadUrl);
         log.setUploadPath(readDir + uploadUrl.substring(uploadUrl.lastIndexOf("/")));
 
-        log.setUploadFlg(UPLOADED_FLAG);
-        log.setExtractFlag(UNEXTRACT_FLAG);
+        log.setUploadFlg(uploaded_flag.value());
+        log.setExtractFlag(unextract_flag.value());
         log.setLogTime(new Date());
         logDao.save(log);
         //更新日志 .. 上传完毕
@@ -118,8 +118,8 @@ public class LogServiceImpl implements LogService {
     void logUploadFileThrowing(MultipartFile file, String readDir,
                                YearMonthDto yearMonthDto) {
 
-        log.setUploadFlg(UPLOAD_FAILD);
-        log.setErrorOccur(UPLOAD_FAILD);
+        log.setUploadFlg(upload_faild.value());
+        log.setErrorOccur(upload_faild.value());
         log.setLogTime(new Date());
         logDao.save(log);
     }
@@ -149,7 +149,7 @@ public class LogServiceImpl implements LogService {
     void logUnpackagingFile(Map.Entry<Long, Log> logEntry, String unPackageDir) {
 
         log = logDao.findOne(logEntry.getKey());
-        log.setExtractFlag(EXTRACTING_FLAG);
+        log.setExtractFlag(extracting_flag.value());
         log.setLogTime(new Date());
         logDao.save(log);
     }
@@ -166,9 +166,9 @@ public class LogServiceImpl implements LogService {
                            String unPackageDir, String unPackagePath) {
 
         log = logDao.findOne(logEntry.getKey());
-        log.setExtractFlag(EXTRACTED_FLAG);
+        log.setExtractFlag(extracted_flag.value());
         log.setExtractPath(unPackagePath);
-        log.setImportFlag(UNIMPORT_FLAG);
+        log.setImportFlag(unimport_flag.value());
         log.setLogTime(new Date());
         logDao.save(log);
     }
@@ -184,9 +184,9 @@ public class LogServiceImpl implements LogService {
                                   String unPackageDir) {
 
         log = logDao.findOne(logEntry.getKey());
-        log.setExtractFlag(EXTRACT_FAILD);
-        log.setImportFlag(UNIMPORT_FLAG);
-        log.setErrorOccur(EXTRACT_FAILD);
+        log.setExtractFlag(extract_faild.value());
+        log.setImportFlag(unimport_flag.value());
+        log.setErrorOccur(extract_faild.value());
         log.setLogTime(new Date());
         logDao.save(log);
     }
@@ -219,7 +219,7 @@ public class LogServiceImpl implements LogService {
                                  YearMonthDto yearMonthDto) {
 
         log = logDao.findOne(logEntry.getKey());
-        log.setImportFlag(IMPORTING_FLAG);
+        log.setImportFlag(importing_flag.value());
         log.setLogTime(new Date());
         logDao.save(log);
 
@@ -239,7 +239,7 @@ public class LogServiceImpl implements LogService {
                                 Boolean isSuccess) {
 
         log = logDao.findOne(logEntry.getKey());
-        log.setImportFlag(IMPORTED_FLAG);
+        log.setImportFlag(imported_flag.value());
         log.setLogTime(new Date());
         logDao.save(log);
     }
@@ -249,8 +249,8 @@ public class LogServiceImpl implements LogService {
     void logImportTradeDetailThrowing(Map.Entry<Long, Log> logEntry,
                                       YearMonthDto yearMonthDto) {
         log = logDao.findOne(logEntry.getKey());
-        log.setImportFlag(IMPORT_FAILD);
-        log.setErrorOccur(IMPORT_FAILD);
+        log.setImportFlag(import_faild.value());
+        log.setErrorOccur(import_faild.value());
         log.setLogTime(new Date());
         logDao.save(log);
     }
@@ -280,7 +280,7 @@ public class LogServiceImpl implements LogService {
     void logImportingTradeSum(Map.Entry<Long, Log> logEntry,
                               YearMonthDto yearMonthDto) {
         log = logDao.findOne(logEntry.getKey());
-        log.setImportFlag(IMPORTING_FLAG);
+        log.setImportFlag(importing_flag.value());
         log.setLogTime(new Date());
         logDao.save(log);
 
@@ -299,7 +299,7 @@ public class LogServiceImpl implements LogService {
                              YearMonthDto yearMonthDto, Boolean isSuccess) {
 
         log = logDao.findOne(logEntry.getKey());
-        log.setImportFlag(IMPORTED_FLAG);
+        log.setImportFlag(imported_flag.value());
         log.setLogTime(new Date());
         logDao.save(log);
     }
@@ -314,8 +314,8 @@ public class LogServiceImpl implements LogService {
     void logImportTradeSumThrowing(Map.Entry<Long, Log> logEntry, YearMonthDto yearMonthDto) {
 
         log = logDao.findOne(logEntry.getKey());
-        log.setImportFlag(IMPORT_FAILD);
-        log.setErrorOccur(IMPORT_FAILD);
+        log.setImportFlag(import_faild.value());
+        log.setErrorOccur(import_faild.value());
         log.setLogTime(new Date());
         logDao.save(log);
     }

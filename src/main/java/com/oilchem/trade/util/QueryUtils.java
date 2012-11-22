@@ -169,20 +169,19 @@ public abstract class QueryUtils {
 
         /**
          * 添加属性
+         *
          * @param name
          * @param value
          * @return
          */
-        public PropertyFilter add(String name, String value,Type type) {
+        public PropertyFilter add(String name, String value, Type type) {
 
-            if (name != null && name != ""){
-                if(type == null){
+            if (name != null && name != "") {
+                if (type == null) {
                     type = Type.EQ;
                 }
-                return new PropertyFilter(name, value,type);
-            }
-
-            else return this;
+                return new PropertyFilter(name, value, type);
+            } else return this;
         }
     }
 

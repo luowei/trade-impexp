@@ -1,7 +1,5 @@
 package com.oilchem.trade.dao.map;
 
-import com.oilchem.trade.config.Config;
-import com.oilchem.trade.config.ConfigUtil;
 import com.oilchem.trade.util.GenericsUtils;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import org.slf4j.Logger;
@@ -11,10 +9,8 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.oilchem.trade.config.Config.*;
-import static com.oilchem.trade.config.ConfigUtil.Config.*;
-import static com.oilchem.trade.config.ConfigUtil.*;
-import static com.oilchem.trade.config.MapperConfig.*;
+import static com.oilchem.trade.util.ConfigUtil.AccessField.*;
+import static com.oilchem.trade.util.ConfigUtil.Config.yearmonth_split;
 
 /**
  * detail与access表中字段映射
@@ -34,33 +30,33 @@ public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implem
                                       Integer year,
                                       Integer month) throws SQLException {
         //产品代码
-        tradeDetail.setProductCode(rs.getString(getDefault(access_product_code)));
+        tradeDetail.setProductCode(rs.getString(access_product_code.value()));
         //产品名称
-        tradeDetail.setProductName(rs.getString(getDefault(access_product_name)));
+        tradeDetail.setProductName(rs.getString(access_product_name.value()));
         //企业性质
-        tradeDetail.setCompanyType(rs.getString(getDefault(access_company_type)));
+        tradeDetail.setCompanyType(rs.getString(access_company_type.value()));
         //贸易方式
-        tradeDetail.setTradeType(rs.getString(getDefault(access_trade_type)));
+        tradeDetail.setTradeType(rs.getString(access_trade_type.value()));
         //城市
-        tradeDetail.setCity(rs.getString(getDefault(access_city)));
+        tradeDetail.setCity(rs.getString(access_city.value()));
         //产销国家
-        tradeDetail.setCountry(rs.getString(getDefault(access_country)));
+        tradeDetail.setCountry(rs.getString(access_country.value()));
         //出口海关
-        tradeDetail.setCustoms(rs.getString(getDefault(access_customs)));
+        tradeDetail.setCustoms(rs.getString(access_customs.value()));
         //运输方式
-        tradeDetail.setTransportation(rs.getString(getDefault(access_transportation)));
+        tradeDetail.setTransportation(rs.getString(access_transportation.value()));
         //单位
-        tradeDetail.setUnit(rs.getString(getDefault(access_unit)));
+        tradeDetail.setUnit(rs.getString(access_unit.value()));
         //数量
-        tradeDetail.setAmount(rs.getBigDecimal(getDefault(access_amount)));
+        tradeDetail.setAmount(rs.getBigDecimal(access_amount.value()));
         //金额
-        tradeDetail.setAmountMoney(rs.getBigDecimal(getDefault(access_acountmoney)));
+        tradeDetail.setAmountMoney(rs.getBigDecimal(access_acountmoney.value()));
         //年
         tradeDetail.setYear(year);
         //月
         tradeDetail.setMonth(month);
         //年月
-        tradeDetail.setYearMonth(year+ getDefault(yearmonth_split) +(month<10 ? "0"+month:month));
+        tradeDetail.setYearMonth(year+ yearmonth_split.value() +(month<10 ? "0"+month:month));
         return tradeDetail;
     }
 

@@ -1,7 +1,5 @@
 package com.oilchem.test;
 
-import com.oilchem.trade.config.Config;
-import com.oilchem.trade.config.Message;
 import com.oilchem.trade.domain.ImpTradeDetail;
 import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.service.CommonService;
@@ -25,9 +23,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Map;
 
-import static com.oilchem.trade.config.Config.DETAIL;
-import static com.oilchem.trade.config.Config.SUM;
-import static com.oilchem.trade.config.Config.UNZIP_DETAIL_DIR;
+import static com.oilchem.trade.util.ConfigUtil.Config.unzip_detail_dir;
+import static com.oilchem.trade.util.ConfigUtil.ImpExpType.import_type;
+import static com.oilchem.trade.util.ConfigUtil.TableType.*;
 import static junit.framework.Assert.*;
 
 /**
@@ -61,11 +59,11 @@ public class ImportTest {
     @Before
     public void setUp() throws Exception {
         yearMonth = new YearMonthDto();
-        yearMonth.setImpExpType(Message.ImpExpType.进口.getCode());
+        yearMonth.setImpExpType(import_type.ordinal());
 //        yearMonth.setImpExpType(ImpExpType.出口.getCode());
-        yearMonth.setImportType(Config.IMPORT);
+        yearMonth.setImportType(import_type.value());
         yearMonth.setProductType("有机化工");
-        yearMonth.setTableType(Config.DETAIL);
+        yearMonth.setTableType(detail.name());
         yearMonth.setYear(2012);
         yearMonth.setMonth(11);
 
@@ -97,10 +95,10 @@ public class ImportTest {
 //    @Test(expected = Exception.class)
     public void testUnpackageFile() throws Exception {
         try {
-            Map<Long, Log> unExtractMap = commonService.getUnExtractPackage(DETAIL);
+            Map<Long, Log> unExtractMap = commonService.getUnExtractPackage(detail.value());
             for (Map.Entry<Long, Log> entry : unExtractMap.entrySet()) {
                 commonService.unpackageFile(
-                        entry, UNZIP_DETAIL_DIR);
+                        entry, unzip_detail_dir.value());
             }
             assertTrue(true);
         } catch (Exception e) {
@@ -117,7 +115,7 @@ public class ImportTest {
     public void testImportAccess() throws Exception {
         Boolean isSuccess = false;
         try {
-            Map<Long, Log> unImportMap = commonService.getUnImportFile(DETAIL);
+            Map<Long, Log> unImportMap = commonService.getUnImportFile(detail.value());
             if (unImportMap != null)
                 for (Map.Entry<Long, Log> entry : unImportMap.entrySet()) {
                     tradeDetailService.importAccess(entry, yearMonth);
@@ -140,7 +138,7 @@ public class ImportTest {
 
         Boolean isSuccess = false;
         try {
-            Map<Long, Log> unImportMap = commonService.getUnImportFile(SUM);
+            Map<Long, Log> unImportMap = commonService.getUnImportFile(sum.value());
             if (unImportMap != null)
                 for (Map.Entry<Long, Log> logEntry : unImportMap.entrySet()) {
                     isSuccess = tradeSumService.importExcel(logEntry, yearMonth);

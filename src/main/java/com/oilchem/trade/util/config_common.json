@@ -46,12 +46,12 @@
     "need_import_criteria":{
         "key":"need_import_criteria",
         "name":"导入查询条件开关",
-        "value":false,
+        "value":"false",
         "describe":"是否需要继续导入查询条件的开关"
     },
 
-    "need_import_criteria":{
-        "key":"need_import_criteria",
+    "batch_updatesize":{
+        "key":"batch_updatesize",
         "name":"导入块单元大小",
         "value":"5000",
         "describe":"批量写入时每一块的单元大小"
@@ -63,16 +63,6 @@
         "value":"-",
         "describe":"年月的间隔符号"
     },
-
-
-
-
-
-
-
-
-
-
 
 
     "detail_flag":{
@@ -127,7 +117,6 @@
     },
 
 
-
     "unextract_flag":{
         "key":"unextract_flag",
         "name":"未解压的标志",
@@ -157,7 +146,6 @@
     },
 
 
-
     "unimport_flag_flag":{
         "key":"unimport_flag_flag",
         "name":"未导入的标志",
@@ -185,16 +173,6 @@
         "value":"导入失败",
         "describe":"导入失败的标志"
     },
-
-
-
-
-
-
-
-
-
-
 
 
     "access_product_code":{
@@ -273,7 +251,6 @@
         "value":"Col013",
         "describe":""
     },
-
 
 
     "excel_product_name":{

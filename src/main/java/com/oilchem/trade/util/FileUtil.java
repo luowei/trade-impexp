@@ -15,6 +15,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
+import static com.oilchem.trade.util.CommonUtil.getYYYYMMDDHHMMSS;
+
 /**
  * User: luowei
  * Date: 12-5-28
@@ -81,10 +83,10 @@ public abstract class FileUtil {
      * 删除文件或文件夹
      *
      * @param path 文件或文件夹路径
+     * @return 是否成功
      * @throws Exception 抛出Exception异常
      * @author wei.luo
      * @createTime 2012-4-7
-     * @return 是否成功
      */
     public static boolean delete(String path) throws Exception {
         File file = new File(path);
@@ -180,27 +182,6 @@ public abstract class FileUtil {
         return strbuf.toString();
     }
 
-    /**
-     * 获年月日时分秒字符串
-     *
-     * @param date date
-     * @return
-     * @author wei.luo
-     * @createTime 2012-4-18
-     */
-    public static String getYYYYMMDDHHMMSS(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        StringBuffer strbuf = new StringBuffer();
-        strbuf.append(calendar.get(Calendar.YEAR));
-        strbuf.append(calendar.get(Calendar.MONTH) + 1 < 10 ? "0" + (calendar.get(Calendar.MONTH) + 1) : (calendar.get(Calendar.MONTH) + 1));
-        strbuf.append(calendar.get(Calendar.DAY_OF_MONTH) < 10 ? "0" + calendar.get(Calendar.DAY_OF_MONTH) : calendar.get(Calendar.DAY_OF_MONTH));
-        strbuf.append(calendar.get(Calendar.HOUR_OF_DAY) < 10 ? "0" + calendar.get(Calendar.HOUR_OF_DAY) : calendar.get(Calendar.HOUR_OF_DAY));
-        strbuf.append(calendar.get(Calendar.MINUTE) < 10 ? "0" + calendar.get(Calendar.MINUTE) : calendar.get(Calendar.MINUTE));
-        strbuf.append(calendar.get(Calendar.SECOND) < 10 ? "0" + calendar.get(Calendar.SECOND) : calendar.get(Calendar.SECOND));
-        return strbuf.toString();
-    }
-
 
     /**
      * 上传文件
@@ -208,9 +189,9 @@ public abstract class FileUtil {
      * @param file    MultipartFile的文件
      * @param realDir 目标目录的物理路径
      * @param netDir  应用的根url
+     * @return 返回上传之后文件的url
      * @author wei.luo
      * @createTime 2012-3-24
-     * @return 返回上传之后文件的url
      */
     public static synchronized String upload(MultipartFile file, String realDir, String netDir) {
         if (file.isEmpty() || StringUtils.isBlank(realDir)) {
@@ -227,8 +208,8 @@ public abstract class FileUtil {
                 + originalFileName.substring(originalFileName.lastIndexOf("."));
         String readFileName = realDir + "/" + fileName;
         File dirFile = new File(realDir);
-        if(!dirFile.exists())
-             dirFile.mkdirs();
+        if (!dirFile.exists())
+            dirFile.mkdirs();
         File uploadFile = new File(readFileName);
         try {
             // 上传

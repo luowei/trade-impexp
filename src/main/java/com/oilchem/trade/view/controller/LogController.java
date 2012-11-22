@@ -36,7 +36,7 @@ public class LogController extends CommonController {
         logs = logService.findAll(log, getPageRequest(commonDto));
 
 
-        addPageInfo(model, logs, "/manage/listlog")
+        addPageInfo(model, logs, "/manage/listlog/"+log.getTableType())
                 .addAttribute("logList", logs);
 
         return "manage/trade/listlog";

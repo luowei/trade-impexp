@@ -1,7 +1,5 @@
 package com.oilchem.trade.service.impl;
 
-import com.oilchem.trade.config.Config;
-import com.oilchem.trade.config.Message;
 import com.oilchem.trade.dao.ExpTradeSumDao;
 import com.oilchem.trade.dao.ImpTradeSumDao;
 import com.oilchem.trade.dao.LogDao;
@@ -33,9 +31,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.oilchem.trade.config.Config.*;
-import static com.oilchem.trade.util.QueryUtils.Type.GE;
-import static com.oilchem.trade.util.QueryUtils.Type.LT;
+import static com.oilchem.trade.util.ConfigUtil.Config.*;
+import static com.oilchem.trade.util.ConfigUtil.ImpExpType.export_type;
+import static com.oilchem.trade.util.ConfigUtil.ImpExpType.import_type;
+import static com.oilchem.trade.util.ConfigUtil.TableType.sum;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static com.oilchem.trade.util.QueryUtils.*;
 
@@ -73,7 +72,7 @@ public class TradeSumServiceImpl implements TradeSumService {
             Map<Long, Log> map = new HashMap<Long, Log>();
             map.put(log.getId(), log);
             return commonService.unpackageFile(map.entrySet().iterator().next()
-                    , UPLOAD_DETAILZIP_DIR);
+                    , upload_detailzip_dir.value());
         }
         return null;
     }
@@ -93,8 +92,8 @@ public class TradeSumServiceImpl implements TradeSumService {
         Boolean isSuccess = true;
 
 
-        Boolean isImp = yearMonthDto.getImpExpType().equals(Message.ImpExpType.进口.getCode());
-        Boolean isExp = yearMonthDto.getImpExpType().equals(Message.ImpExpType.出口.getCode());
+        Boolean isImp = yearMonthDto.getImpExpType().equals(import_type.ordinal());
+        Boolean isExp = yearMonthDto.getImpExpType().equals(export_type.ordinal());
         //进口
         if (isImp) {
 
@@ -157,9 +156,9 @@ public class TradeSumServiceImpl implements TradeSumService {
     public String uploadFile(MultipartFile file,
                              YearMonthDto yearMonthDto) {
 
-        yearMonthDto.setTableType(Config.SUM);
+        yearMonthDto.setTableType(sum.value());
         return commonService.uploadFile(file,
-                UPLOAD_SUMZIP_DIR, yearMonthDto);
+                upload_sumzip_dir.value(),yearMonthDto);
     }
 
     /**

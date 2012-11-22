@@ -30,7 +30,7 @@ public class DynamicSpecifications {
                 List<Predicate> predicates = new ArrayList<Predicate>();
 //                query = cb.createQuery(clazz);
 //                tRoot = query.from(clazz);
-                for(PropertyFilter filter:filterList){
+                for (PropertyFilter filter : filterList) {
                     Path expression = tRoot.get(filter.getName());
                     Class attributeClass = expression.getJavaType();
                     if (!attributeClass.equals(String.class) && filter.getValue() instanceof String
@@ -38,25 +38,25 @@ public class DynamicSpecifications {
                         filter.setValue(conversionService.convert(filter.getValue(), attributeClass));
                     }
 
-                    switch(filter.getType()){
+                    switch (filter.getType()) {
 
                         case EQ:
-                            predicates.add(cb.equal(expression,filter.getValue()));
+                            predicates.add(cb.equal(expression, filter.getValue()));
                             break;
                         case LIKE:
-                            predicates.add(cb.like(expression,"%"+filter.getValue()+"%"));
+                            predicates.add(cb.like(expression, "%" + filter.getValue() + "%"));
                             break;
                         case GT:
-                            predicates.add(cb.greaterThan(expression,(Comparable)filter.getValue()));
+                            predicates.add(cb.greaterThan(expression, (Comparable) filter.getValue()));
                             break;
                         case GE:
-                            predicates.add(cb.greaterThanOrEqualTo(expression,(Comparable)filter.getValue()));
+                            predicates.add(cb.greaterThanOrEqualTo(expression, (Comparable) filter.getValue()));
                             break;
                         case LT:
-                            predicates.add(cb.lessThan(expression,(Comparable)filter.getValue()));
+                            predicates.add(cb.lessThan(expression, (Comparable) filter.getValue()));
                             break;
                         case LE:
-                            predicates.add(cb.lessThanOrEqualTo(expression,(Comparable)filter.getValue()));
+                            predicates.add(cb.lessThanOrEqualTo(expression, (Comparable) filter.getValue()));
                             break;
                     }
 
@@ -79,7 +79,7 @@ public class DynamicSpecifications {
                 Predicate where = cb.conjunction();
                 query = cb.createQuery(clazz);
                 tRoot = query.from(clazz);
-                for(PropertyFilter filter:filterList){
+                for (PropertyFilter filter : filterList) {
                     Path expression = tRoot.get(filter.getName());
                     Class attributeClass = expression.getJavaType();
                     if (!attributeClass.equals(String.class) && filter.getValue() instanceof String
@@ -88,25 +88,25 @@ public class DynamicSpecifications {
                     }
 
 
-                    switch(filter.getType()){
+                    switch (filter.getType()) {
 
                         case EQ:
-                            where = cb.and(where, cb.equal(expression,filter.getValue()));
+                            where = cb.and(where, cb.equal(expression, filter.getValue()));
                             break;
                         case LIKE:
-                            where = cb.and(where, (cb.like(expression,"%"+filter.getValue()+"%")));
+                            where = cb.and(where, (cb.like(expression, "%" + filter.getValue() + "%")));
                             break;
                         case GT:
-                            where = cb.and(where, cb.greaterThan(expression,(Comparable)filter.getValue()));
+                            where = cb.and(where, cb.greaterThan(expression, (Comparable) filter.getValue()));
                             break;
                         case GE:
-                            where = cb.and(where, cb.greaterThanOrEqualTo(expression,(Comparable)filter.getValue()));
+                            where = cb.and(where, cb.greaterThanOrEqualTo(expression, (Comparable) filter.getValue()));
                             break;
                         case LT:
-                            where = cb.and(where, cb.lessThan(expression,(Comparable)filter.getValue()));
+                            where = cb.and(where, cb.lessThan(expression, (Comparable) filter.getValue()));
                             break;
                         case LE:
-                            where = cb.and(where, cb.lessThanOrEqualTo(expression,(Comparable)filter.getValue()));
+                            where = cb.and(where, cb.lessThanOrEqualTo(expression, (Comparable) filter.getValue()));
                             break;
                     }
 
