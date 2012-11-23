@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration>
+
+<configuration>
+    <jmxConfigurator />
+    <!-- 配置文件路径 -->
+    <property file="logback-default.properties" />
+
+    <!--logback的版本必须是0.9.21以上才支持-->
+    <timestamp key="byDay" datePattern="yyyyMMdd"/>
+
+    <!-- 控制台输出日志 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </layout>
+    </appender>
+
+    <!-- 文件输出日志 (文件大小策略进行文件输出，超过指定大小对文件压缩(.zip)备份)-->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 文件的路径及文件名 -->
+        <File>${LOG_HOME}/${fileName}.log</File>
+
+        <!-- 定义窗口滚动策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <!-- 每触发一次，自动压缩日志文件，%i在1-3之间循环变化 -->
+            <FileNamePattern>${LOG_HOME}/${fileName}_%i.log.zip</FileNamePattern>
+            <MinIndex>1</MinIndex>  <!-- %i的最小值为1-->
+            <MaxIndex>3</MaxIndex>  <!-- %i的最大值为3-->
+        </rollingPolicy>
+
+        <!-- 触发策略，通常rollingPolicy与triggeringPolicy联合使用 -->
+        <triggeringPolicy
+                class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>${MaxFileSize}</MaxFileSize>
+        </triggeringPolicy>
+
+        <!-- 格式化输出 -->
+        <!-- %d表示日期,格式为：yyyy-MM-dd HH:mm:ss.SSS ;%thread：线程名;
+        	%-5level:从左边以5个字符的宽度显示级别; %logger:显示logger名;%msg:日志消息;%n:换行
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+        </layout>
+        -->
+
+        <!-- 或者用下面的形式格式(推荐)-->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}%relative%thread%mdc%level%logger%msg</pattern>
+        </encoder>
+
+        <!-- 以html文件输出 -->
+        <!--
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+        	<layout class="ch.qos.logback.classic.html.HTMLLayout">
+      			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}%relative%thread%mdc%level%logger%msg</pattern>
+      		</layout>
+		</encoder>
+        -->
+
+    </appender>
+
+    <!-- 输出ERROR级别的日志到文件(同样采用文件大小策略进行文件输出，超过指定大小对文件压缩(.zip)备份) -->
+    <appender name="FILE-ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>  <!-- 指定要对级别为ERROR日志信息过滤 -->
+            <OnMismatch>DENY</OnMismatch>  	<!-- 如果不匹配，则拒绝处理 -->
+            <OnMatch>ACCEPT</OnMatch>  		<!-- 如果匹配，则立即处理 -->
+        </filter>
+        <File>${LOG_HOME}/${fileName}Err.log</File>  <!-- 文件名即路径 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/${fileName}Err_%i.log.zip</FileNamePattern>
+            <MinIndex>1</MinIndex>
+            <MaxIndex>10</MaxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>${MaxFileSize}</MaxFileSize>
+        </triggeringPolicy>
+
+        <!-- 格式化输出 -->
+        <!--
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+        </layout>
+         -->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}%relative%thread%mdc%level%logger%msg</pattern>
+        </encoder>
+
+    </appender>
+
+
+    <!--这里指定logger name 是为jmx设置日志级别做铺垫 -->
+    <!-- 分别将STDOUT与FILE appender都添加到自定义的logger中，否则将不会输出到appender指定的 目的地-->
+    <logger name="org.springframework" level="info">
+        <appender-ref ref="stdout"/>
+    </logger>
+    <logger name="com.oilchem" level="info">
+        <appender-ref ref="stdout"/>
+        <appender-ref ref="file-error"/>
+    </logger>
+
+</configuration>

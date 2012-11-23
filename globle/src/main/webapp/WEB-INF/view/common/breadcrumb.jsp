@@ -2,7 +2,7 @@
 
 <ul class="breadcrumb" style="border-top:none; border-left: none; padding-left: 25px;">
     <li>
-        <a href="${pageContext.request.contextPath}/manage/configlist">配置管理</a> <span class="divider">|</span>
+        <a href="${pageContext.request.contextPath}/manage/configlist">配置</a> <span class="divider">|</span>
     </li>
     <li>
         <a href="${pageContext.request.contextPath}/manage/import">导入</a> <span class="divider">|</span>
