@@ -1,0 +1,223 @@
+{
+    "upload_detailzip_dir":{
+        "key":"upload_detailzip_dir",
+        "name":"access包上传目录",
+        "value":"d:/aaaa/upload/detailzip",
+        "describe":"access包上传目录"
+    },
+
+    "upload_sumzip_dir":{
+        "key":"upload_sumzip_dir",
+        "name":"excel包上传目录",
+        "value":"d:/aaaa/upload/sumzip",
+        "describe":"excel包上传目录"
+    },
+
+    "unzip_detail_dir":{
+        "key":"unzip_detail_dir",
+        "name":"access包解压目录",
+        "value":"d:/aaaa/unzip/detail",
+        "describe":"access包解压目录"
+    },
+
+    "unzip_sum_dir":{
+        "key":"unzip_sum_dir",
+        "name":"excel包解压目录",
+        "value":"d:/aaaa/unzip/sum",
+        "describe":"excel包解压目录"
+    },
+
+
+    "root_url":{
+        "key":"root_url",
+        "name":"应用根url",
+        "value":"http://com.oilchem.trade.vvvv.org",
+        "describe":"应用根url"
+    },
+
+
+    "thread_poolsize":{
+        "key":"thread_poolsize",
+        "name":"默认线程池的大小",
+        "value":"100",
+        "describe":"默认线程池的大小"
+    },
+
+    "need_import_criteria":{
+        "key":"need_import_criteria",
+        "name":"导入查询条件开关",
+        "value":"false",
+        "describe":"是否需要继续导入查询条件的开关"
+    },
+
+    "batch_updatesize":{
+        "key":"batch_updatesize",
+        "name":"导入块单元大小",
+        "value":"5000",
+        "describe":"批量写入时每一块的单元大小"
+    },
+
+    "select_access_sql":{
+        "key":"select_access_sql",
+        "name":"读取access表的sql语句",
+        "value":" select * from 结果 ",
+        "describe":"读取access表的sql语句"
+    },
+
+    "yearmonth_split":{
+        "key":"yearmonth_split",
+        "name":"年月的间隔符号",
+        "value":"-",
+        "describe":"年月的间隔符号"
+    },
+
+    "access_product_code":{
+        "key":"access_product_code",
+        "name":"产品代码",
+        "value":"col002",
+        "describe":"value配成要导入的access表中[产品代码]列的列名"
+    },
+
+    "access_product_name":{
+        "key":"access_product_name",
+        "name":"产品名称",
+        "value":"PName",
+        "describe":"value配成要导入的access表中[产品名称]列的列名"
+    },
+
+    "access_company_type":{
+        "key":"access_company_type",
+        "name":"公司名称",
+        "value":"E2",
+        "describe":"value配成要导入的access表中[公司名称]列的列名"
+    },
+
+    "access_trade_type":{
+        "key":"access_trade_type",
+        "name":"贸易方式",
+        "value":"TradeName",
+        "describe":"value为access表中[贸易方式]列的列名"
+    },
+
+    "access_transportation":{
+        "key":"access_transportation",
+        "name":"运输方式",
+        "value":"TransName",
+        "describe":"value配成要导入的access表中[运输方式]列的列名"
+    },
+
+    "access_customs":{
+        "key":"access_customs",
+        "name":"海关",
+        "value":"CustomsName",
+        "describe":"value配成要导入的access表中[海关]列的列名"
+    },
+
+    "access_city":{
+        "key":"access_city",
+        "name":"城市",
+        "value":"cityName",
+        "describe":"value配成要导入的access表中[城市]列的列名"
+    },
+
+    "access_country":{
+        "key":"access_country",
+        "name":"产销国家",
+        "value":"PGCountryName",
+        "describe":"value配成要导入的access表中[产销国家]列的列名"
+    },
+
+    "access_amount":{
+        "key":"access_amount",
+        "name":"数量",
+        "value":"Col012",
+        "describe":"value配成要导入的access表中[数量]列的列名"
+    },
+
+    "access_unit":{
+        "key":"access_unit",
+        "name":"单位",
+        "value":"UnitName",
+        "describe":"value配成要导入的access表中[单位]列的列名"
+    },
+
+    "access_acountmoney":{
+        "key":"access_acountmoney",
+        "name":"金额",
+        "value":"Col013",
+        "describe":"value配成要导入的access表中[金额]列的列名"
+    },
+
+
+    "excel_product_name":{
+        "key":"excel_product_name",
+        "name":"总表产品名称",
+        "value":"产品品种",
+        "describe":"value配成要导入的access表中[产品品种]列的列名"
+    },
+
+    "excel_num_month":{
+        "key":"excel_num_month",
+        "name":"当月数量",
+        "value":"当月数量",
+        "describe":"value配成要导入的excel表中[当月数量]列的列名"
+    },
+
+    "excel_num_sum":{
+        "key":"excel_num_sum",
+        "name":"累计总数量",
+        "value":"累计总数量",
+        "describe":"value配成要导入的excel表中[累计总数量]列的列名"
+    },
+
+    "excel_money_month":{
+        "key":"excel_money_month",
+        "name":"当月金额",
+        "value":"当月金额",
+        "describe":"value配成要导入的excel表中[当月金额]列的列名"
+    },
+
+    "excel_money_sum":{
+        "key":"excel_money_sum",
+        "name":"累计总金额",
+        "value":"累计总金额",
+        "describe":"value配成要导入的excel表中[累计总金额]列的列名"
+    },
+
+    "excel_avg_price_month":{
+        "key":"excel_avg_price_month",
+        "name":"当月平均价格",
+        "value":"当月平均价格",
+        "describe":"value配成要导入的excel表中[当月平均价格]列的列名"
+    },
+
+    "excel_avg_price_sum":{
+        "key":"excel_avg_price_sum",
+        "name":"累计平均价格",
+        "value":"累计平均价格",
+        "describe":"value配成要导入的excel表中[累计平均价格]列的列名"
+    },
+
+    "excel_num_premonth_incratio":{
+        "key":"excel_num_premonth_incratio",
+        "name":"与上月数量增长比",
+        "value":"与上月数量增长比",
+        "describe":"value配成要导入的excel表中[与上月数量增长比]列的列名"
+    },
+
+    "excel_num_preyearsamemonth_incratio":{
+        "key":"excel_num_preyearsamemonth_incratio",
+        "name":"与上年同月数量增长比",
+        "value":"与上年同月数量增长比",
+        "describe":"value配成要导入的excel表中与[上年同月数量增长比]列的列名"
+    },
+
+    "excel_num_preyearsamequarter_imcratio":{
+        "key":"excel_num_preyearsamequarter_imcratio",
+        "name":"与上年同期数量增长比",
+        "value":"与上年同期数量增长比",
+        "describe":"value配成要导入的excel表中与[与上年同期数量增长比]列的列名"
+    }
+
+
+}

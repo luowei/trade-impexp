@@ -1,4 +1,4 @@
-﻿trade-impexp
+﻿com.oilchem.trade-impexp
 =============================================
 
 进出口数据的导入导出查询数据...
@@ -148,3 +148,17 @@ https://github.com/springside/springside4
         public static String NUM_PREYEARSAMEQUARTER_INCRATIO = "num_preyearsamequarter_imcratio";
 
     }
+
+
+    -------------------------------------------------------------------------------
+    maven 在使用 -pl 选项指定的值过滤模块的时候，通过两种方式，一是把 -pl 选项的值当做 groupId:artifactId 来查找，其次把 -pl 选项的值作为相对路径来查找，相对于用户运行 maven 时的工作目录。
+
+    例如有以下项目结构：
+
+    all [org.apache.maven:test]
+    |-- m-1 [org.apache.maven:m1]
+    |-- m-2 [org.apache.maven:m2]
+
+    如果想通过 -pl 选项来指定顶级模块 all 和 m-1 模块，可以使用一下这么命令：
+
+    mvn -pl org.apache.maven:test,m-1 clean install
