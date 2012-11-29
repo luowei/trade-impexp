@@ -276,6 +276,48 @@ public class ConfigUtil {
         }
     }
 
+    /**
+     * 图表类型
+     */
+    public static enum ChartType{
+        lineChart("拆线图", getGroovyFilePath("line.groovy") ),
+//        barChart("柱状图",getGroovyFilePath("bar.groovy")),
+//        pieChart("饼图",getGroovyFilePath("pie.groovy")),
+//        areaHollowChart("区空心图表"),
+//        filledBarChart("填充柱状图"),
+//        horiziontalBarChart("横向柱状图"),
+//        scatterChart("散点图"),
+//        sketchBarChart("速写柱状图"),
+//        stackedBarChart("堆叠柱状图")
+               ;
+
+        private String chartName;
+        private String value;
+        ChartType(String chartName,String value){
+            this.chartName = chartName;
+            this.value = value;
+        }
+        public String chartName(){
+            return this.chartName;
+        }
+        public String value(){
+            return this.value;
+        }
+        private static String getGroovyFilePath(String fileName){
+//            String configFilePath = ChartType.class.getResource(fileName).getPath().substring(1);
+//            // 判断系统 linux，windows
+//            if ("\\".equals(File.separator)) {
+//                configFilePath = configFilePath.replace("%20", " ");
+//            } else if ("/".equals(File.separator)) {
+//                configFilePath = "/" + configFilePath.replace("%20", " ");
+//            }
+//            return configFilePath;
+
+            return "d:/line.groovy";
+        }
+
+    }
+
     public static enum Flag {
 
         //上传状态标志
@@ -296,7 +338,6 @@ public class ConfigUtil {
         import_faild("导入失败"),;
 
         private String value;
-
         Flag(String value) {
             this.value = value;
         }
