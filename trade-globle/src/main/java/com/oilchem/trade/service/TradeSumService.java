@@ -83,4 +83,21 @@ public interface TradeSumService {
      */
     List<PropertyFilter> getSumQueryProps(TradeSum tradeSum,
                                           CommonDto commonDto);
+
+    /**
+     * 获得进口列表数据
+     * @param ids
+     * @return
+     */
+    public List<ImpTradeSum> getImpTradeSum(List<Long> ids);
+
+    /**
+     * 获得出口列表数据
+     * @param ids
+     * @return
+     */
+    public List<ExpTradeSum> getExpSumList(List<Long> ids);
+
+
+
 }

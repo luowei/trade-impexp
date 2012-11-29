@@ -140,5 +140,30 @@ public abstract class CommonUtil {
         }
     }
 
+    /**
+     * 一次读取文件中的所有内容
+     * @param filepath
+     * @return
+     */
+    public static String getStringFromFile(String filepath) {
+
+        File f = new File(filepath);
+        if(!f.exists()) return null;
+
+        DataInputStream dis = null;
+        byte[] data = new byte[(int) f.length()];
+
+        try {
+            dis = new DataInputStream(new FileInputStream(f));
+            dis.readFully(data);
+            return new String(data);
+        } catch (IOException e) {
+            logger.error(e.getMessage(),e);
+            throw new RuntimeException(e);
+        } finally {
+            close(dis);
+        }
+    }
+
 
 }

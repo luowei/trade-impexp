@@ -157,17 +157,14 @@ public class CommonController {
      * @return
      */
     public String getChartData(ChartType chartType) {
-        final String IMPORTS = "import ofc4j.*;\nimport ofc4j.model.*;\nimport ofc4j.model.elements.*;\nimport ofc4j.model.axis.*;"
-                + "\nimport ofc4j.model.axis.Label.Rotation;\nimport ofc4j.model.elements.HorizontalBarChart.Bar;\nimport ofc4j.model.elements.PieChart.Slice;"
-                + "\nimport ofc4j.model.elements.ScatterChart.Point;\nimport ofc4j.model.elements.FilledBarChart;\nimport ofc4j.model.elements.SketchBarChart;"
-                + "\nimport ofc4j.model.elements.StackedBarChart;\nimport ofc4j.model.elements.StackedBarChart.StackValue;\n\n";
 
         if(chartType==null) return null;
 
         GroovyShell sh = new GroovyShell();
-        String groovySource = CommonUtil.readStringFromFile(chartType.value());
+//        String groovySource = CommonUtil.readStringFromFile(chartType.value());
+        String groovySource = CommonUtil.getStringFromFile(chartType.value());
 
-        Object o = sh.evaluate(IMPORTS+groovySource);
+        Object o = sh.evaluate(groovySource);
         if (Chart.class.isAssignableFrom(o.getClass())) {
             return OFC.instance.render((Chart) o);
         }

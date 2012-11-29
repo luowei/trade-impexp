@@ -88,12 +88,26 @@ public interface TradeDetailService {
 
     /**
      * 获得查询属性
-     *
-     *
      * @param tradeDetail
      * @param commonDto
      * @return
      */
     public List<QueryUtils.PropertyFilter>
     getdetailQueryProps(TradeDetail tradeDetail, CommonDto commonDto);
+
+
+    /**
+     * 获得进口数据列表
+     * @param ids
+     * @return
+     */
+    public List<ImpTradeDetail> getImpDetailList(List<Long> ids);
+
+    /**
+     * 获得出口数据列表
+     * @param ids
+     * @return
+     */
+    public List<ExpTradeDetail> getExpDetailList(List<Long> ids);
+
 }

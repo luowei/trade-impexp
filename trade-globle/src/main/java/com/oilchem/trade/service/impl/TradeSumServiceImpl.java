@@ -219,4 +219,22 @@ public class TradeSumServiceImpl implements TradeSumService {
         return propList;
     }
 
+    /**
+     * 获得出口列表数据
+     * @param ids
+     * @return
+     */
+    public List<ExpTradeSum> getExpSumList(List<Long> ids){
+        return ids!=null ? (List<ExpTradeSum>)expTradeSumDao.findAll(ids):null;
+    }
+
+    /**
+     * 获得进口列表数据
+     * @param ids
+     * @return
+     */
+    public List<ImpTradeSum> getImpTradeSum(List<Long> ids){
+        return ids!=null ? (List<ImpTradeSum>)impTradeSumDao.findAll(ids):null;
+    }
+
 }

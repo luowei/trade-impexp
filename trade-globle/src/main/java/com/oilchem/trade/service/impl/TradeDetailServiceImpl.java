@@ -245,6 +245,25 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         return (List<ProductType>) productTypeDao.findAll();
     }
 
+
+    /**
+     * 获得出口数据列表
+     * @param ids
+     * @return
+     */
+    public List<ExpTradeDetail> getExpDetailList(List<Long> ids){
+        return  ids!=null ? (List<ExpTradeDetail>)expTradeDetailDao.findAll(ids):null;
+    }
+
+    /**
+     * 获得进口数据列表
+     * @param ids
+     * @return
+     */
+    public List<ImpTradeDetail> getImpDetailList(List<Long> ids){
+        return ids!=null ? (List<ImpTradeDetail>)impTradeDetailDao.findAll(ids):null;
+    }
+
     /**
      * 获得查询属性
      *
