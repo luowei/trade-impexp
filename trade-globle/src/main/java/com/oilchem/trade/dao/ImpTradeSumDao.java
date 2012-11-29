@@ -8,6 +8,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Administrator
@@ -23,4 +25,7 @@ public interface ImpTradeSumDao extends CrudRepository<ImpTradeSum,Long>,
     @Transactional
     @Query("delete from ExpTradeSum t where t.year = :year and t.month = :month")
     void delRepeatImpTradeSum(@Param("year") Integer year,@Param("month") Integer month);
+
+
+    List<ImpTradeSum> findByProductNameAndYearMonth(String productName,String yearMonth);
 }

@@ -37,9 +37,9 @@ public class AbstractTradeSumRowMapper<E extends TradeSum> implements MyRowMappe
         e.setMoneySum(getDecimal(excel_money_sum.value()));
         e.setAvgPriceMonth(getDecimal(excel_avg_price_month.value()));
         e.setAvgPriceSum(getDecimal(excel_avg_price_sum.value()));
-        e.setNumPreMonthIncRatio(getDecimal(excel_num_premonth_incratio.value()));
-        e.setNumPreYearSameMonthIncRatio(getDecimal(excel_num_preyearsamemonth_incratio.value()));
-        e.setNumPreYearSameQuarterInrRatio(getDecimal(excel_num_preyearsamequarter_imcratio.value()));
+        e.setPm(getDecimal(excel_pm.value()));
+        e.setPy(getDecimal(excel_py.value()));
+        e.setPq(getDecimal(excel_pq.value()));
         this.e = e;
     }
 

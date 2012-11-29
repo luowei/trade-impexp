@@ -34,9 +34,9 @@ public class ExpTradeSum extends TradeSum {
                 .setYear(tradeSum.getYear())
                 .setNumMonth(tradeSum.getNumMonth())
                 .setNumSum(tradeSum.getNumSum())
-                .setNumPreMonthIncRatio(tradeSum.getNumPreMonthIncRatio())
-                .setNumPreYearSameMonthIncRatio(tradeSum.getNumPreYearSameMonthIncRatio())
-                .setNumPreYearSameQuarterInrRatio(tradeSum.getNumPreYearSameQuarterInrRatio())
+                .setPm(tradeSum.getPm())
+                .setPy(tradeSum.getPy())
+                .setPq(tradeSum.getPq())
                 .setProductName(tradeSum.getProductName())
                 .setProductType(tradeSum.getProductType())
                 .setYearMonth(tradeSum.getYearMonth());

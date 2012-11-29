@@ -24,4 +24,15 @@ public interface TaskService {
      */
     void unDetailPackageAndImportTask(final YearMonthDto yearMonthDto);
 
+    /**
+     * 解包
+     * @param logId
+     */
+    public void extractPackage(final Long logId);
+
+    /**
+     * 导入数据
+     */
+    public void importData(final Long logId);
+
 }

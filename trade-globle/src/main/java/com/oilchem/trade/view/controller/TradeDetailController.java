@@ -142,17 +142,24 @@ public class TradeDetailController extends CommonController {
         return "redirect:/manage/import";
     }
 
-
+    /**
+     * 获得图表
+     * @param model
+     * @param yearMonthDto
+     * @param chartType
+     * @return
+     */
+    @RequestMapping("/detailchart")
     public String getDetailChartData(Model model,YearMonthDto yearMonthDto,
                                      String chartType){
 
-        List<String> names = new ArrayList<String>();
+        List<String> codes = new ArrayList<String>();
 
         List<Label> labels = chartService.getYearMonthLabels(yearMonthDto);
 
         ChartData<TradeDetail> chartData = new ChartData<TradeDetail>().setLabels(labels);
 
-        List<ChartData<TradeDetail>> chartDataList = tradeDetailService.getChartDetailList(names, chartData, yearMonthDto);
+        List<ChartData<TradeDetail>> chartDataList = tradeDetailService.getChartDetailList(codes, chartData, yearMonthDto);
 
 
         Object o = new MyChart().getDetailLineChart(chartDataList);
@@ -208,7 +215,6 @@ public class TradeDetailController extends CommonController {
 
         model = yearMonthDto.getMonth() != null ? model.addAttribute("month", yearMonthDto.getMonth()): model;
         model = yearMonthDto.getLowYear() != null ? model.addAttribute("lowYear", yearMonthDto.getLowYear()): model;
-        model = yearMonthDto.getLowMonth() != null ? model.addAttribute("lowMonth", yearMonthDto.getLowMonth()): model;
         model = yearMonthDto.getHighYear() != null ? model.addAttribute("highYear", yearMonthDto.getHighYear()): model;
         model = yearMonthDto.getHighMonth() != null ? model.addAttribute("highMonth", yearMonthDto.getHighMonth()): model;
         model = yearMonthDto.getImpExpType() != null ? model.addAttribute("impExpType", yearMonthDto.getImpExpType()): model;

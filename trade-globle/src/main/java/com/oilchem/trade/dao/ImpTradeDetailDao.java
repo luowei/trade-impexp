@@ -59,5 +59,5 @@ public interface ImpTradeDetailDao extends CrudRepository<ImpTradeDetail, Long>,
             @Param("productName") String productName,
             Pageable pageable);
 
-    List<ImpTradeDetail> findByProductNameAndYearMonth(String name, String yearMonth);
+    List<ImpTradeDetail> findByProductCodeAndYearMonth(String productCode, String yearMonth);
 }

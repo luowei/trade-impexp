@@ -50,13 +50,13 @@ public class TradeSum extends IdEntity implements Serializable {
     private BigDecimal avgPriceSum;
     //与上月数量增长比
     @Column(name = "num_premonth_incratio")
-    private BigDecimal numPreMonthIncRatio;
+    private BigDecimal pm;
     //与上年同月数量增长比
     @Column(name = "num_preyearsamemonth_incratio")
-    private BigDecimal numPreYearSameMonthIncRatio;
+    private BigDecimal py;
     //与上年同期数量增长比
     @Column(name = "num_preyearsamequarter_incratio")
-    private BigDecimal numPreYearSameQuarterInrRatio;
+    private BigDecimal pq;
 
     public TradeSum() {
     }
@@ -67,6 +67,22 @@ public class TradeSum extends IdEntity implements Serializable {
         this.month = month;
         this.yearMonth = yearMonth;
         this.productType = productType;
+    }
+
+    public TradeSum(String productName, BigDecimal numMonth, BigDecimal numSum,
+                    BigDecimal moneyMonth, BigDecimal moneySum,
+                    BigDecimal avgPriceMonth, BigDecimal avgPriceSum,
+                    BigDecimal pm, BigDecimal py, BigDecimal pq) {
+        this.productName = productName;
+        this.numMonth = numMonth;
+        this.numSum = numSum;
+        this.moneyMonth = moneyMonth;
+        this.moneySum = moneySum;
+        this.avgPriceMonth = avgPriceMonth;
+        this.avgPriceSum = avgPriceSum;
+        this.pm = pm;
+        this.py = py;
+        this.pq = pq;
     }
 
     public Integer getYear() {
@@ -168,30 +184,30 @@ public class TradeSum extends IdEntity implements Serializable {
         return this;
     }
 
-    public BigDecimal getNumPreMonthIncRatio() {
-        return numPreMonthIncRatio;
+    public BigDecimal getPm() {
+        return pm;
     }
 
-    public TradeSum setNumPreMonthIncRatio(BigDecimal numPreMonthIncRadio) {
-        this.numPreMonthIncRatio = numPreMonthIncRadio;
+    public TradeSum setPm(BigDecimal numPreMonthIncRadio) {
+        this.pm = numPreMonthIncRadio;
         return this;
     }
 
-    public BigDecimal getNumPreYearSameMonthIncRatio() {
-        return numPreYearSameMonthIncRatio;
+    public BigDecimal getPy() {
+        return py;
     }
 
-    public TradeSum setNumPreYearSameMonthIncRatio(BigDecimal numPreYearSameMonthIncRatio) {
-        this.numPreYearSameMonthIncRatio = numPreYearSameMonthIncRatio;
+    public TradeSum setPy(BigDecimal py) {
+        this.py = py;
         return this;
     }
 
-    public BigDecimal getNumPreYearSameQuarterInrRatio() {
-        return numPreYearSameQuarterInrRatio;
+    public BigDecimal getPq() {
+        return pq;
     }
 
-    public TradeSum setNumPreYearSameQuarterInrRatio(BigDecimal numPreYearSameQuarterInrRatio) {
-        this.numPreYearSameQuarterInrRatio = numPreYearSameQuarterInrRatio;
+    public TradeSum setPq(BigDecimal pq) {
+        this.pq = pq;
         return this;
     }
 }

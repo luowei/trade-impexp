@@ -56,5 +56,5 @@ public interface ExpTradeDetailDao extends CrudRepository<ExpTradeDetail,Long>,
             @Param("productName") String productName,
             Pageable pageable);
 
-    List<ExpTradeDetail> findByProductNameAndYearMonth(String name, String yearMonth);
+    List<ExpTradeDetail> findByProductCodeAndYearMonth(String productCode, String yearMonth);
 }

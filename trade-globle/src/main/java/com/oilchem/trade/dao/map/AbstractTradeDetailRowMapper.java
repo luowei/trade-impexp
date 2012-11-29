@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -48,9 +49,13 @@ public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implem
         //单位
         tradeDetail.setUnit(rs.getString(access_unit.value()));
         //数量
-        tradeDetail.setAmount(rs.getBigDecimal(access_amount.value()));
+        BigDecimal amount =  rs.getBigDecimal(access_amount.value());
+        tradeDetail.setAmount(amount);
         //金额
-        tradeDetail.setAmountMoney(rs.getBigDecimal(access_acountmoney.value()));
+        BigDecimal amountMoney = rs.getBigDecimal(access_acountmoney.value());
+        tradeDetail.setAmountMoney(amountMoney);
+        //平均价格
+        tradeDetail.setUnitPrice(amountMoney.divide(amount).setScale(2,BigDecimal.ROUND_HALF_UP));
         //年
         tradeDetail.setYear(year);
         //月

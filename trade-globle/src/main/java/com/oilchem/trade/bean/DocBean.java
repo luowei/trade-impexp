@@ -222,9 +222,9 @@ public class DocBean {
         excel_money_sum,
         excel_avg_price_month,
         excel_avg_price_sum,
-        excel_num_premonth_incratio,
-        excel_num_preyearsamemonth_incratio,
-        excel_num_preyearsamequarter_imcratio,;
+        excel_pm,
+        excel_py,
+        excel_pq,;
 
         public String value() {
             return getDefault(this);
@@ -244,9 +244,11 @@ public class DocBean {
 
         yearmonth_split,
         thread_poolsize,
+        axis_steps,
+        scale_size,
         need_import_criteria,
         batch_updatesize,
-        select_access_sql,;
+        select_access_sql, ;
 
         public String value() {
             return getDefault(this);

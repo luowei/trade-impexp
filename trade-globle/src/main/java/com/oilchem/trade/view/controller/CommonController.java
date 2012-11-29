@@ -197,18 +197,5 @@ public class CommonController {
         return null;
     }
 
-    public static void main(String[] args) {
-
-        String x_legend = "aaa";
-        String y_legend = "bbb";
-        List<TradeSum> tradeSumList = null;
-        List<TradeDetail> tradeDetailList = new ArrayList<TradeDetail>();
-        tradeDetailList.add(new TradeDetail ().setAmount (new BigDecimal(12345)));
-        tradeDetailList.add(new TradeDetail().setAmount(new BigDecimal(33333)));
-
-        String chartData = new CommonController().getChartData(tradeDetailList,
-                new ChartProps(x_legend,y_legend),DocBean.ChartType.lineChart);
-        System.out.println("chartData:" + chartData);
-    }
 
 }

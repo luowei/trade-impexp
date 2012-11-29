@@ -1,5 +1,6 @@
 package com.oilchem.trade.service;
 
+import com.oilchem.trade.bean.ChartData;
 import com.oilchem.trade.domain.ExpTradeSum;
 import com.oilchem.trade.domain.ImpTradeSum;
 import com.oilchem.trade.domain.Log;
@@ -26,14 +27,16 @@ public interface TradeSumService {
 
     /**
      * 解包
+     *
      * @param logId@return 解包后的文件路径
      */
     String unPackage(Long logId);
 
     /**
      * 导入Excel
+     *
      * @param logEntry
-     * @param yearMonthDto              年月,产品类型
+     * @param yearMonthDto 年月,产品类型
      * @return
      */
     Boolean importExcel(Map.Entry<Long, Log> logEntry,
@@ -41,7 +44,8 @@ public interface TradeSumService {
 
     /**
      * 上传文件
-     * @param file  file
+     *
+     * @param file         file
      * @param yearMonthDto
      * @return
      */
@@ -50,19 +54,21 @@ public interface TradeSumService {
 
     /**
      * 进口列表
+     *
      * @param tradeSum
      * @param commonDto
      * @param yearMonthDto
-     *@param pageRequest  @return
+     * @param pageRequest  @return
      */
     Page<ImpTradeSum> findImpWithCriteria(
             ImpTradeSum tradeSum,
             CommonDto commonDto,
             YearMonthDto yearMonthDto,
-            PageRequest pageRequest) ;
+            PageRequest pageRequest);
 
     /**
      * 出口列表
+     *
      * @param tradeSum
      * @param commonDto
      * @param yearMonthDto
@@ -77,6 +83,7 @@ public interface TradeSumService {
 
     /**
      * 获得总量
+     *
      * @param tradeSum
      * @param commonDto
      * @return
@@ -86,18 +93,27 @@ public interface TradeSumService {
 
     /**
      * 获得进口列表数据
+     *
      * @param ids
      * @return
      */
-    public List<ImpTradeSum> getImpTradeSum(List<Long> ids);
+    List<ImpTradeSum> getImpTradeSum(List<Long> ids);
 
     /**
      * 获得出口列表数据
+     *
      * @param ids
      * @return
      */
-    public List<ExpTradeSum> getExpSumList(List<Long> ids);
+    List<ExpTradeSum> getExpSumList(List<Long> ids);
 
-
-
+    /**
+     * 获得图表数据
+     * @param names
+     * @param chartData
+     * @param yearMonthDto
+     * @return
+     */
+    List<ChartData<TradeSum>> getChartSumList(
+            List<String> names, ChartData<TradeSum> chartData, YearMonthDto yearMonthDto);
 }

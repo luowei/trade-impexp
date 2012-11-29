@@ -199,21 +199,21 @@
     },
 
     "excel_num_premonth_incratio":{
-        "key":"excel_num_premonth_incratio",
+        "key":"excel_pm",
         "name":"与上月数量增长比",
         "value":"与上月数量增长比",
         "describe":"value配成要导入的excel表中[与上月数量增长比]列的列名"
     },
 
     "excel_num_preyearsamemonth_incratio":{
-        "key":"excel_num_preyearsamemonth_incratio",
+        "key":"excel_py",
         "name":"与上年同月数量增长比",
         "value":"与上年同月数量增长比",
         "describe":"value配成要导入的excel表中与[上年同月数量增长比]列的列名"
     },
 
     "excel_num_preyearsamequarter_imcratio":{
-        "key":"excel_num_preyearsamequarter_imcratio",
+        "key":"excel_pq",
         "name":"与上年同期数量增长比",
         "value":"与上年同期数量增长比",
         "describe":"value配成要导入的excel表中与[与上年同期数量增长比]列的列名"

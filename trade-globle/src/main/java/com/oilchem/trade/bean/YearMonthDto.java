@@ -33,6 +33,18 @@ public class YearMonthDto {
      */
     private String importType;
 
+    public YearMonthDto() {
+    }
+
+    public YearMonthDto(Integer year, Integer month, Integer impExpType,
+                        String productType, String tableType) {
+        this.year = year;
+        this.month = month;
+        this.impExpType = impExpType;
+        this.productType = productType;
+        this.tableType = tableType;
+    }
+
     public Integer getYear() {
         return year;
     }

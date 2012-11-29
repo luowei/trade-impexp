@@ -1,16 +1,22 @@
 package com.oilchem.trade.view.controller;
 
+import com.oilchem.trade.bean.ChartData;
+import com.oilchem.trade.chart.MyChart;
 import com.oilchem.trade.dao.ProductTypeDao;
 import com.oilchem.trade.domain.ExpTradeSum;
 import com.oilchem.trade.domain.ImpTradeSum;
 import com.oilchem.trade.domain.ProductType;
 import com.oilchem.trade.domain.abstrac.TradeSum;
+import com.oilchem.trade.service.ChartService;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeSumService;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
 import com.oilchem.trade.util.QueryUtils;
+import ofc4j.OFC;
+import ofc4j.model.Chart;
+import ofc4j.model.axis.Label;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +26,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.oilchem.trade.bean.DocBean.Config.upload_sumzip_dir;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.export_type;
@@ -41,6 +50,9 @@ public class TradeSumController extends CommonController {
 
     @Autowired
     TradeSumService tradeSumService;
+
+    @Autowired
+    ChartService chartService;
 
     @Autowired
     TaskService taskService;
@@ -128,6 +140,32 @@ public class TradeSumController extends CommonController {
         return "redirect:/manage/import";
     }
 
+    @RequestMapping("/sumchart")
+    public String getSumChartData(Model model,YearMonthDto yearMonthDto,
+                                  String chartType){
+
+        List<String> names = new ArrayList<String>();
+        List<Label> labels = chartService.getYearMonthLabels(yearMonthDto);
+
+        ChartData<TradeSum> chartData = new ChartData<TradeSum>().setLabels(labels);
+
+        List<ChartData<TradeSum>> chartDataList = tradeSumService.getChartSumList(names, chartData, yearMonthDto);
+
+
+        Object o = new MyChart().getSumLineChart(chartDataList);
+        List<String> chartList = new ArrayList<String>();
+
+        if(o!=null && o instanceof List){
+            for(Object chart_o:(List)o){
+                if (Chart.class.isAssignableFrom(chart_o.getClass())) {
+                    chartList.add(OFC.instance.render((Chart) chart_o));
+                }
+            }
+        }
+        model.addAttribute("chartList",chartList);
+
+        return null;
+    }
 
 
     /**

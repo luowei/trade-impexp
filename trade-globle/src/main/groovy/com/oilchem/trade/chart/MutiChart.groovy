@@ -8,15 +8,13 @@ import ofc4j.model.axis.Label
 import com.oilchem.trade.domain.abstrac.TradeSum
 import com.oilchem.trade.domain.abstrac.TradeDetail
 import ofc4j.model.Text
-
-import com.oilchem.trade.bean.DocBean
-
-import static java.lang.Integer.toHexString
-import ofc4j.model.elements.BarChart
-import ofc4j.model.elements.PieChart
-
-import static com.oilchem.trade.bean.DocBean.ExcelFiled.*
 import com.oilchem.trade.bean.ChartData
+
+import static com.oilchem.trade.bean.DocBean.*;
+import static com.oilchem.trade.bean.DocBean.Config.axis_steps;
+import static java.lang.Integer.toHexString
+import static com.oilchem.trade.bean.DocBean.ExcelFiled.*
+import static com.oilchem.trade.bean.DocBean.Config.scale_size
 
 class MyChart {
 
@@ -63,12 +61,12 @@ class MyChart {
                 .setTitle(new Text(excel_avg_price_month.value())).setYLegend(new Text(excel_avg_price_month.value()));
         Chart avgPriceSumChat = new Chart()
                 .setTitle(new Text(excel_avg_price_sum.value())).setYLegend(new Text(excel_avg_price_sum.value()));
-        Chart numPreMonthIncratioChat = new Chart()
-                .setTitle(new Text(excel_num_premonth_incratio.value())).setYLegend(new Text(excel_num_premonth_incratio.value()));
-        Chart numPreYearSameMonthChat = new Chart()
-                .setTitle(new Text(excel_num_preyearsamemonth_incratio.value())).setYLegend(new Text(excel_num_preyearsamemonth_incratio.value()));
-        Chart numPreYearSameQuarterIncratioChat = new Chart()
-                .setTitle(new Text(excel_num_preyearsamequarter_imcratio.value())).setYLegend(new Text(excel_num_preyearsamequarter_imcratio.value()));
+        Chart pmChart = new Chart()
+                .setTitle(new Text(excel_pm.value())).setYLegend(new Text(excel_pm.value()));
+        Chart pyChart = new Chart()
+                .setTitle(new Text(excel_py.value())).setYLegend(new Text(excel_py.value()));
+        Chart pqChart = new Chart()
+                .setTitle(new Text(excel_pq.value())).setYLegend(new Text(excel_pq.value()));
 
         chartDataList.each {
             List<List<LineChart>> sumFiledLineList = getSumFiledLineList(it.elementList)
@@ -79,15 +77,15 @@ class MyChart {
             sumChartList << newChart(moneySumChat, it, excel_money_sum.value()).addElements(sumFiledLineList.get(3))
             sumChartList << newChart(avgPriceMonthChat, it, excel_avg_price_month.value()).addElements(sumFiledLineList.get(4))
             sumChartList << newChart(avgPriceSumChat, it, excel_avg_price_sum.value()).addElements(sumFiledLineList.get(5))
-            sumChartList << newChart(numPreMonthIncratioChat, it, excel_num_premonth_incratio.value()).addElements(sumFiledLineList.get(6))
-            sumChartList << newChart(numPreYearSameMonthChat, it, excel_num_preyearsamemonth_incratio.value()).addElements(sumFiledLineList.get(7))
-            sumChartList << newChart(numPreYearSameQuarterIncratioChat, it, excel_num_preyearsamequarter_imcratio.value()).addElements(sumFiledLineList.get(8))
+            sumChartList << newChart(pmChart, it, excel_pm.value()).addElements(sumFiledLineList.get(6))
+            sumChartList << newChart(pyChart, it, excel_py.value()).addElements(sumFiledLineList.get(7))
+            sumChartList << newChart(pqChart, it, excel_pq.value()).addElements(sumFiledLineList.get(8))
         }
         sumChartList
     }
 
 
-    def List<List<LineChart>> getSumFiledLineList(List<List<TradeSum>> labelSumsList) {
+    def List<List<LineChart>> getSumFiledLineList(List<TradeSum> sumsList) {
         List<List<LineChart>> sumFiledLineList = new ArrayList<List<LineChart>>(9);
         LineChart numMonthLineChart = new LineChart();
         LineChart numSumLineChart = new LineChart();
@@ -95,11 +93,11 @@ class MyChart {
         LineChart moneySumhLineChart = new LineChart();
         LineChart avgPriceMonthhLineChart = new LineChart();
         LineChart avgPriceSumLineChart = new LineChart();
-        LineChart numPreMonthIncRatioLineChart = new LineChart();
-        LineChart numPreYearSameMonthIncRatioLineChart = new LineChart();
-        LineChart numPreYearSameQuarterInrRatioLineChart = new LineChart();
+        LineChart pmLineChart = new LineChart();
+        LineChart pyLineChart = new LineChart();
+        LineChart pqLineChart = new LineChart();
 
-        labelSumsList.each {
+        sumsList.each {
             sumFiledLineList.size() < 1 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
             sumFiledLineList.get(0) << newLineElement(numMonthLineChart, it).addValues(it.numMonth)
             sumFiledLineList.size() < 2 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
@@ -113,11 +111,11 @@ class MyChart {
             sumFiledLineList.size() < 6 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
             sumFiledLineList.get(5) << newLineElement(avgPriceSumLineChart, it).addValues(it.avgPriceSum)
             sumFiledLineList.size() < 7 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
-            sumFiledLineList.get(6) << newLineElement(numPreMonthIncRatioLineChart, it).addValues(it.numPreMonthIncRatio)
+            sumFiledLineList.get(6) << newLineElement(pmLineChart, it).addValues(it.pm)
             sumFiledLineList.size() < 8 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
-            sumFiledLineList.get(7) << newLineElement(numPreYearSameMonthIncRatioLineChart, it).addValues(it.numPreYearSameMonthIncRatio)
+            sumFiledLineList.get(7) << newLineElement(pyLineChart, it).addValues(it.py)
             sumFiledLineList.size() < 9 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
-            sumFiledLineList.get(8) << newLineElement(numPreYearSameQuarterInrRatioLineChart, it).addValues(it.numPreYearSameQuarterInrRatio)
+            sumFiledLineList.get(8) << newLineElement(pqLineChart, it).addValues(it.pq)
         }
         sumFiledLineList
     }
@@ -146,11 +144,14 @@ class MyChart {
     }
 
     private def Chart newChart(Chart chart, ChartData chartData, BigDecimal key) {
+
+        def minRang = chartData.minRangMap.get(key) < 0 ? chartData.minRangMap.get(key) : 0
+        def maxRang = chartData.maxRangMap.get(key).multiply(BigDecimal.valueOf(1.2))
+        def scale = Integer.parseInt(scale_size.value())
+        def step = (chartData.maxRangMap.get(key) / BigDecimal.valueOf(axis_steps.value())).setScale(scale,BigDecimal.ROUND_HALF_UP)
         return chart.setXAxis(new XAxis().addLabels(chartData.labels))
                 .setXLegend(new Text(chartData.x_legend))
-                .setYAxis(new YAxis().setRange(0,           //rang从0到最大值
-                chartData.maxRangMap.get(key),
-                chartData.maxRangMap.get(key) / 20))
+                .setYAxis(new YAxis().setRange( minRang,maxRang,step))
     }
 
     private def LineChart newLineElement(LineChart lineChart, def it) {
@@ -166,7 +167,7 @@ class MyChart {
      */
     def Chart getBarChart(List<TradeSum> tradeSumList, ArrayList<LineChart> lineElements,
                           List<TradeDetail> tradeDetailList, ArrayList<Label> labels,
-                          DocBean.ChartProps chartProps) {
+                          ChartProps chartProps) {
 
     }
 
@@ -176,7 +177,7 @@ class MyChart {
      */
     def Chart getpieChart(List<TradeSum> tradeSumList, ArrayList<LineChart> lineElements,
                           List<TradeDetail> tradeDetailList, ArrayList<Label> labels,
-                          DocBean.ChartProps chartProps) {
+                          ChartProps chartProps) {
 
     }
 
@@ -205,14 +206,23 @@ class MyChart {
         tradeDetailList2 << new TradeDetail().setAmount(33563).setUnitPrice(33333).setProductName("cccccccc").setAmountMoney(777777).setYearMonth("2012-11")
         tradeDetailList2 << new TradeDetail().setAmount(44524).setUnitPrice(44444).setProductName("dddddddd").setAmountMoney(888888).setYearMonth("2012-11")
 
-        List<List<TradeDetail>> labelDetailList = new ArrayList<List<TradeDetail>>();
-        labelDetailList << tradeDetailList1
-        labelDetailList << tradeDetailList2
+        ChartData<TradeDetail> chartData1 = new ChartData<TradeDetail>();
+        ChartData<TradeDetail> chartData2 = new ChartData<TradeDetail>();
 
         List<Label> labels = []
         labels << new Label("2010-05")
         labels << new Label("2012-11")
-        List<Chart> chartList = new MyChart().getDetailLineChart(labelDetailList, labels, new DocBean.ChartProps(x_legend, y_legend))
+
+        chartData1.elementList << tradeDetailList1
+        chartData2.elementList << tradeDetailList2
+        chartData1.labels << labels
+        chartData2.labels << labels
+
+        List<ChartData<TradeDetail>> chartDataList = [];
+        chartDataList << chartData1
+        chartDataList << chartData2
+
+        List<Chart> chartList = new MyChart().getDetailLineChart(chartDataList)
         println chartList;
     }
 
