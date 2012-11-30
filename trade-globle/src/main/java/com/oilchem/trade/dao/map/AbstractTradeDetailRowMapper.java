@@ -9,8 +9,8 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.oilchem.trade.util.ConfigUtil.AccessField.*;
-import static com.oilchem.trade.util.ConfigUtil.Config.yearmonth_split;
+import static com.oilchem.trade.bean.DocBean.AccessField.*;
+import static com.oilchem.trade.bean.DocBean.Config.yearmonth_split;
 
 /**
  * detail与access表中字段映射

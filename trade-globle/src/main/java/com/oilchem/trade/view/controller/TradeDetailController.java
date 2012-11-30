@@ -20,9 +20,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-import static com.oilchem.trade.util.ConfigUtil.Config.upload_detailzip_dir;
-import static com.oilchem.trade.util.ConfigUtil.ImpExpType.export_type;
-import static com.oilchem.trade.util.ConfigUtil.ImpExpType.import_type;
+import static com.oilchem.trade.bean.DocBean.Config.upload_detailzip_dir;
+import static com.oilchem.trade.bean.DocBean.ImpExpType.export_type;
+import static com.oilchem.trade.bean.DocBean.ImpExpType.import_type;
 import static com.oilchem.trade.util.QueryUtils.*;
 
 /**

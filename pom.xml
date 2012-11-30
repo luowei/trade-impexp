@@ -116,6 +116,7 @@
         <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
         <jetty-maven-plugin.version>8.1.0.v20120127</jetty-maven-plugin.version>
         <cargo-maven2-plugin.version>1.2.1</cargo-maven2-plugin.version>
+        <gmaven-plugin.version>1.0</gmaven-plugin.version>
 
 
     </properties>
@@ -407,6 +408,11 @@
                 <version>${xstream.version}</version>
             </dependency>
 
+            <!--<dependency>-->
+                <!--<groupId>org.codehaus.gmaven.runtime</groupId>-->
+                <!--<artifactId>gmaven-runtime-default</artifactId>-->
+            <!--</dependency>-->
+
         </dependencies>
 
     </dependencyManagement>
@@ -453,10 +459,49 @@
                     <version>${sql-maven-plugin.version}</version>
                 </plugin>
 
+                <plugin>
+                    <groupId>org.codehaus.groovy.maven</groupId>
+                    <artifactId>gmaven-plugin</artifactId>
+                    <version>${gmaven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>generateStubs</goal>
+                                <goal>compile</goal>
+                                <goal>generateTestStubs</goal>
+                                <goal>testCompile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
                 <!--<plugin>-->
-                    <!--<groupId>org.apache.maven.plugins</groupId>-->
-                    <!--<artifactId>maven-pmd-plugin</artifactId>-->
-                    <!--<version>2.7.1</version>-->
+                    <!--<groupId>org.codehaus.groovy.maven</groupId>-->
+                    <!--<artifactId>gmaven-plugin</artifactId>-->
+                    <!--<executions>-->
+                        <!--<execution>-->
+                            <!--<goals>-->
+                                <!--<goal>compile</goal>-->
+                            <!--</goals>-->
+                            <!--<configuration>-->
+                                <!--<sources>-->
+                                    <!--<fileset>-->
+                                        <!--<directory>${pom.basedir}/src/main/script</directory>-->
+                                        <!--<includes>-->
+                                            <!--<include>**/*.groovy</include>-->
+                                        <!--</includes>-->
+                                    <!--</fileset>-->
+                                <!--</sources>-->
+                            <!--</configuration>-->
+                        <!--</execution>-->
+                    <!--</executions>-->
+                <!--</plugin>-->
+
+
+                <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-pmd-plugin</artifactId>-->
+                <!--<version>2.7.1</version>-->
                 <!--</plugin>-->
 
                 <plugin>

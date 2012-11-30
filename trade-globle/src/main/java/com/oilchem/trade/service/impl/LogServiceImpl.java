@@ -4,7 +4,6 @@ import com.oilchem.trade.dao.LogDao;
 import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.service.LogService;
 import com.oilchem.trade.bean.YearMonthDto;
-import com.oilchem.trade.util.ConfigUtil;
 import com.oilchem.trade.util.DynamicSpecifications;
 import com.oilchem.trade.util.QueryUtils;
 import org.aspectj.lang.annotation.*;
@@ -23,10 +22,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static com.oilchem.trade.util.ConfigUtil.Flag.*;
-import static com.oilchem.trade.util.ConfigUtil.ImpExpType.export_type;
-import static com.oilchem.trade.util.ConfigUtil.ImpExpType.import_type;
-import static com.oilchem.trade.util.ConfigUtil.OptType.import_opt;
+import static com.oilchem.trade.bean.DocBean.Flag.*;
+import static com.oilchem.trade.bean.DocBean.ImpExpType.export_type;
+import static com.oilchem.trade.bean.DocBean.ImpExpType.import_type;
+import static com.oilchem.trade.bean.DocBean.OptType.import_opt;
 import static com.oilchem.trade.util.QueryUtils.PropertyFilter;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 

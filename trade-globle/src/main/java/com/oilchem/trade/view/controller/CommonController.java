@@ -1,12 +1,13 @@
 package com.oilchem.trade.view.controller;
 
-import com.oilchem.trade.util.CommonUtil;
-import com.oilchem.trade.util.ConfigUtil;
-import com.oilchem.trade.util.QueryUtils;
+import com.oilchem.trade.bean.DocBean;
+import com.oilchem.trade.chart.MyChart;
+import com.oilchem.trade.domain.abstrac.TradeDetail;
+import com.oilchem.trade.domain.abstrac.TradeSum;
+import com.oilchem.trade.util.*;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.bean.CommonDto;
-import groovy.lang.GroovyShell;
 import ofc4j.OFC;
 import ofc4j.model.Chart;
 import org.slf4j.Logger;
@@ -19,11 +20,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.context.ContextLoader;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.oilchem.trade.util.ConfigUtil.ChartType;
+import static com.oilchem.trade.bean.DocBean.ChartProps;
+import static com.oilchem.trade.bean.DocBean.ChartType;
 
 /**
  * Created with IntelliJ IDEA.
@@ -153,28 +157,58 @@ public class CommonController {
 
     /**
      * 获得图表数据
+     *
      * @param chartType
      * @return
      */
-    public String getChartData(ChartType chartType) {
+    public <T extends IdEntity> String getChartData(List<T> list,ChartProps chartProps, ChartType chartType) {
 
-        if(chartType==null) return null;
+        if (chartType == null) return null;
 
-        GroovyShell sh = new GroovyShell();
-//        String groovySource = CommonUtil.readStringFromFile(chartType.value());
-        String groovySource = CommonUtil.getStringFromFile(chartType.value());
+//        //方法一
+//        GroovyShell sh = new GroovyShell();
+////        String groovySource = CommonUtil.readStringFromFile(chartType.value());
+//        String groovySource = CommonUtil.getStringFromFile(chartType.value());
+//        Object o = sh.evaluate(groovySource);
 
-        Object o = sh.evaluate(groovySource);
+
+//        //方法二
+//        Object o = null;
+//        try {
+//            ClassLoader parent = getClass().getClassLoader();
+//            GroovyClassLoader loader = new GroovyClassLoader(parent);
+//            Class groovyClass = loader.parseClass(new File(chartType.value()));
+//            GroovyObject groovyObject = (GroovyObject)groovyClass.newInstance();
+//            o = groovyObject.invokeMethod("getLineChart",new Object[]{list,new ChartProps()});
+//        } catch (Exception e) {
+//            logger.error(e.getMessage(),e);
+//            throw new RuntimeException(e);
+//        }
+
+        //方法三
+        Object o = new MyChart().getLineChart(list, chartProps,chartType);
+
         if (Chart.class.isAssignableFrom(o.getClass())) {
             return OFC.instance.render((Chart) o);
         }
 
+        //方法四，直接用java构造Chart,省略。。。
+
         return null;
     }
 
-    public static void main(String[] args){
-        String chartData = new CommonController().getChartData(ConfigUtil.ChartType.lineChart);
-        System.out.println("chartData:"+chartData);
+    public static void main(String[] args) {
+
+        String x_legend = "aaa";
+        String y_legend = "bbb";
+        List<TradeSum> tradeSumList = null;
+        List<TradeDetail> tradeDetailList = new ArrayList<TradeDetail>();
+        tradeDetailList.add(new TradeDetail ().setAmount (new BigDecimal(12345)));
+        tradeDetailList.add(new TradeDetail().setAmount(new BigDecimal(33333)));
+
+        String chartData = new CommonController().getChartData(tradeDetailList,
+                new ChartProps(x_legend,y_legend),DocBean.ChartType.lineChart);
+        System.out.println("chartData:" + chartData);
     }
 
 }

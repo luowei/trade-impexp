@@ -6,7 +6,7 @@ import org.apache.commons.lang3.CharUtils;
 
 import java.math.BigDecimal;
 
-import static com.oilchem.trade.util.ConfigUtil.ExcelFiled.*;
+import static com.oilchem.trade.bean.DocBean.ExcelFiled.*;
 import static org.springframework.util.StringUtils.*;
 
 /**

@@ -32,10 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
-import static com.oilchem.trade.util.ConfigUtil.Config.*;
-import static com.oilchem.trade.util.ConfigUtil.ImpExpType.export_type;
-import static com.oilchem.trade.util.ConfigUtil.ImpExpType.import_type;
-import static com.oilchem.trade.util.ConfigUtil.TableType.detail;
+import static com.oilchem.trade.bean.DocBean.Config.*;
+import static com.oilchem.trade.bean.DocBean.ImpExpType.export_type;
+import static com.oilchem.trade.bean.DocBean.ImpExpType.import_type;
+import static com.oilchem.trade.bean.DocBean.TableType.detail;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static com.oilchem.trade.util.QueryUtils.*;
 import static com.oilchem.trade.util.QueryUtils.Type.*;

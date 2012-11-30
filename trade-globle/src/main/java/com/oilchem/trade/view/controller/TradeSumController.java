@@ -16,15 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import static com.oilchem.trade.util.ConfigUtil.Config.upload_sumzip_dir;
-import static com.oilchem.trade.util.ConfigUtil.ImpExpType.export_type;
-import static com.oilchem.trade.util.ConfigUtil.ImpExpType.import_type;
+import static com.oilchem.trade.bean.DocBean.Config.upload_sumzip_dir;
+import static com.oilchem.trade.bean.DocBean.ImpExpType.export_type;
+import static com.oilchem.trade.bean.DocBean.ImpExpType.import_type;
 
 /**
  * Created with IntelliJ IDEA.

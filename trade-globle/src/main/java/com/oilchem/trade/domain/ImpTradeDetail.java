@@ -5,7 +5,7 @@ import com.oilchem.trade.domain.abstrac.TradeDetail;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import static com.oilchem.trade.util.ConfigUtil.Config.yearmonth_split;
+import static com.oilchem.trade.bean.DocBean.Config.yearmonth_split;
 
 /**
  * Created with IntelliJ IDEA.

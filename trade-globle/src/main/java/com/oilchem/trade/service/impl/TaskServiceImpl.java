@@ -17,10 +17,10 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.oilchem.trade.util.ConfigUtil.Config.unzip_detail_dir;
-import static com.oilchem.trade.util.ConfigUtil.Config.unzip_sum_dir;
-import static com.oilchem.trade.util.ConfigUtil.TableType.detail;
-import static com.oilchem.trade.util.ConfigUtil.TableType.sum;
+import static com.oilchem.trade.bean.DocBean.Config.unzip_detail_dir;
+import static com.oilchem.trade.bean.DocBean.Config.unzip_sum_dir;
+import static com.oilchem.trade.bean.DocBean.TableType.detail;
+import static com.oilchem.trade.bean.DocBean.TableType.sum;
 
 /**
  * Created with IntelliJ IDEA.

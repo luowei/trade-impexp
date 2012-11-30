@@ -31,10 +31,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.oilchem.trade.util.ConfigUtil.Config.*;
-import static com.oilchem.trade.util.ConfigUtil.ImpExpType.export_type;
-import static com.oilchem.trade.util.ConfigUtil.ImpExpType.import_type;
-import static com.oilchem.trade.util.ConfigUtil.TableType.sum;
+import static com.oilchem.trade.bean.DocBean.Config.*;
+import static com.oilchem.trade.bean.DocBean.ImpExpType.export_type;
+import static com.oilchem.trade.bean.DocBean.ImpExpType.import_type;
+import static com.oilchem.trade.bean.DocBean.TableType.sum;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static com.oilchem.trade.util.QueryUtils.*;
 
