@@ -1,5 +1,6 @@
 package com.oilchem.trade.service.impl;
 
+import com.oilchem.trade.bean.ChartData;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.ExpTradeDetailRowMapper;
@@ -14,6 +15,7 @@ import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
 import com.oilchem.trade.util.DynamicSpecifications;
+import ofc4j.model.axis.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -194,10 +197,11 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
     /**
      * 进口明细
-     * @param tradeDetail 页面传来的 IxpTradeDetail包含查询条件中里面
+     *
+     * @param tradeDetail  页面传来的 IxpTradeDetail包含查询条件中里面
      * @param commonDto
      * @param yearMonthDto
-     *@param pageRequest  @return
+     * @param pageRequest  @return
      */
     public Page<ImpTradeDetail>
     findImpWithCriteria(ImpTradeDetail tradeDetail, CommonDto commonDto,
@@ -213,10 +217,11 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
     /**
      * 出口明细
-     * @param tradeDetail 页面传来的 ExpTradeDetail，包含查询条件中里面
+     *
+     * @param tradeDetail  页面传来的 ExpTradeDetail，包含查询条件中里面
      * @param commonDto
      * @param yearMonthDto
-     *@param pageRequest  @return
+     * @param pageRequest  @return
      */
     public Page<ExpTradeDetail>
     findExpWithCriteria(ExpTradeDetail tradeDetail, CommonDto commonDto,
@@ -248,21 +253,135 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
     /**
      * 获得出口数据列表
+     *
      * @param ids
      * @return
      */
-    public List<ExpTradeDetail> getExpDetailList(List<Long> ids){
-        return  ids!=null ? (List<ExpTradeDetail>)expTradeDetailDao.findAll(ids):null;
+    public List<ExpTradeDetail> getExpDetailList(List<Long> ids) {
+        return ids != null ? (List<ExpTradeDetail>) expTradeDetailDao.findAll(ids) : null;
     }
 
     /**
      * 获得进口数据列表
+     *
      * @param ids
      * @return
      */
-    public List<ImpTradeDetail> getImpDetailList(List<Long> ids){
-        return ids!=null ? (List<ImpTradeDetail>)impTradeDetailDao.findAll(ids):null;
+    public List<ImpTradeDetail> getImpDetailList(List<Long> ids) {
+        return ids != null ? (List<ImpTradeDetail>) impTradeDetailDao.findAll(ids) : null;
     }
+
+
+//    public List<List<TradeDetail>> getChartExpDetailList(
+//            List<String> names,List<Label> labels, YearMonthDto yearMonthDto){
+//
+//        List<List<TradeDetail>> monthDetailsList = new ArrayList<List<TradeDetail>>();
+//
+//        for (Label label:labels){
+//            List<TradeDetail> tradeDetailList = new ArrayList<TradeDetail>();
+//            for (String name : names) {
+//                List<ExpTradeDetail>  tradeDetails = expTradeDetailDao.findByProductNameAndYearMonth(name, label.getText());
+//                tradeDetailList.add(new ExpTradeDetail(processChartData(name, tradeDetails)));
+//            }
+//            monthDetailsList.add(tradeDetailList);
+//        }
+//
+//        return monthDetailsList;
+//    }
+
+
+    /**
+     * 获得detailChart List
+     *
+     * @param names
+     * @param chartData
+     * @param yearMonthDto @return     获得由月份组合而成的 list<TradeDetail>的集合
+     */
+    BigDecimal maxAmount = null;
+    BigDecimal maxAmountMoney = null;
+    BigDecimal maxUnitPrice = null;
+
+    BigDecimal minAmount = null;
+    BigDecimal minAmountMoney = null;
+    BigDecimal minUnitPrice = null;
+    public List<ChartData<TradeDetail>> getChartDetailList(
+            List<String> names, ChartData<TradeDetail> chartData, YearMonthDto yearMonthDto) {
+
+        List<TradeDetail> tradeDetailList = new ArrayList<TradeDetail>();
+        List<ChartData<TradeDetail>> monthDetailsList = new ArrayList<ChartData<TradeDetail>>();
+        Integer impExpType = yearMonthDto.getImpExpType();
+
+        Map<String, BigDecimal> maxRangMap = chartData.getMaxRangMap();
+        Map<String, BigDecimal> minRangMap = chartData.getMinRangMap();
+
+        //遍历每个月
+        for (Label label : chartData.getLabels()) {
+
+            //遍历用户选择的名字
+            for (String name : names) {
+                if (impExpType.equals(import_type.ordinal())) {
+                    List<ImpTradeDetail> impTradeDetails = impTradeDetailDao.findByProductNameAndYearMonth(name, label.getText());
+                    TradeDetail tradeDetail = processChartData(name, impTradeDetails);
+
+                    putMaxRangMap(maxRangMap,tradeDetail);
+                    putMinRangMap(minRangMap,tradeDetail);
+
+                    tradeDetailList.add(tradeDetail);
+                }
+                if (impExpType.equals(export_type.ordinal())) {
+                    List<ExpTradeDetail> expTradeDetails = expTradeDetailDao.findByProductNameAndYearMonth(name, label.getText());
+                    TradeDetail tradeDetail = processChartData(name, expTradeDetails);
+
+                    putMaxRangMap(maxRangMap,tradeDetail);
+                    putMinRangMap(minRangMap,  tradeDetail);
+
+                    tradeDetailList.add(tradeDetail);
+                }
+            }
+            monthDetailsList.add(chartData.setElementList(tradeDetailList)
+                    .setMaxRangMap(maxRangMap).setMinRangMap(minRangMap));
+        }
+
+        return monthDetailsList;
+    }
+
+    //最小值
+    private void putMinRangMap(Map<String, BigDecimal> minRangMap,  TradeDetail tradeDetail) {
+        minRangMap.put("amount",tradeDetail.getAmount().compareTo(minAmount) > 0 ? minAmount : tradeDetail.getAmount());
+        minRangMap.put("amount",tradeDetail.getAmountMoney().compareTo(minAmountMoney) > 0 ? minAmountMoney : tradeDetail.getAmountMoney());
+        minRangMap.put("amount", tradeDetail.getUnitPrice().compareTo(minUnitPrice) > 0 ? minUnitPrice : tradeDetail.getUnitPrice());
+    }
+
+    //最大值
+    private void putMaxRangMap(Map<String, BigDecimal> maxRangMap,  TradeDetail tradeDetail) {
+        maxRangMap.put("amount",tradeDetail.getAmount().compareTo(maxAmount) < 0 ? maxAmount : tradeDetail.getAmount());
+        maxRangMap.put("amountMoney", tradeDetail.getAmountMoney().compareTo(maxAmountMoney) < 0 ? maxAmountMoney : tradeDetail.getAmountMoney());
+        maxRangMap.put("unitPrice", tradeDetail.getUnitPrice().compareTo(maxUnitPrice) > 0 ? maxUnitPrice : tradeDetail.getUnitPrice());
+    }
+
+
+    /**
+     * 构造tradeDetail供图表使用
+     *
+     * @param name
+     * @param tradeDetails
+     * @return
+     */
+    private <T extends TradeDetail> TradeDetail processChartData(String name, List<T> tradeDetails) {
+        BigDecimal amount = BigDecimal.valueOf(0),
+                amountMoney = BigDecimal.valueOf(0),
+                unitPrice = BigDecimal.valueOf(0);
+        for (TradeDetail tradeDetail : tradeDetails) {
+            amount = amount.add(tradeDetail.getAmount());
+            amountMoney = amountMoney.add(tradeDetail.getAmountMoney());
+            unitPrice = unitPrice.add(tradeDetail.getUnitPrice());
+        }
+        amount = amount.divide(BigDecimal.valueOf(tradeDetails.size()));
+        amountMoney = amountMoney.divide(BigDecimal.valueOf(tradeDetails.size()));
+        unitPrice = unitPrice.divide(BigDecimal.valueOf(tradeDetails.size()));
+        return new TradeDetail(name, amount, amountMoney, unitPrice);
+    }
+
 
     /**
      * 获得查询属性

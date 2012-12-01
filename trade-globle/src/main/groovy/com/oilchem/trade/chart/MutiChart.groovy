@@ -16,205 +16,145 @@ import ofc4j.model.elements.BarChart
 import ofc4j.model.elements.PieChart
 
 import static com.oilchem.trade.bean.DocBean.ExcelFiled.*
+import com.oilchem.trade.bean.ChartData
 
 class MyChart {
-
-    def getLineChart(List list, DocBean.ChartProps chartProps, DocBean.ChartType chartType) {
-
-        List<Label> labels = new ArrayList<Label>()
-
-        def barElements = new ArrayList<BarChart>()
-        def pieElements = new ArrayList<PieChart>()
-
-        List<TradeDetail> tradeDetailList = list.every {
-            it.class.simpleName.equals TradeDetail.class.simpleName
-        } ? (List<TradeDetail>) list : null
-
-        List<TradeSum> tradeSumList = list.every {
-            it.class.simpleName.equals TradeSum.class.simpleName
-        } ? (List<TradeDetail>) list : null
-
-        println "aaaaaaaaaaaaaaaaaaaa"
-
-        switch (chartType) {
-            case chartType.value().equals("barChart"):
-                return getBarChart(tradeSumList, lineElements, tradeDetailList, labels, chartProps);
-            case chartType.value().equals("pieChart"):
-                return
-        }
-
-        if (chartType.value().equals("pieChart")) {
-
-        }
-
-        return getLineChart(tradeSumList, tradeDetailList, labels, chartProps)
-    }
 
     /**
      * 获得拆线图
      * @return
      */
-    def List<Chart> getLineChart(List<TradeSum> tradeSumList, List<TradeDetail> tradeDetailList,
-                                 List<Label> labels, DocBean.ChartProps chartProps) {
+    def List<Chart> getDetailLineChart(List<ChartData<TradeDetail>> chartDataList) {
 
         //-------------tradeDetail  ----------------------
-        List<List<LineChart>> detailFiledLineList = new ArrayList<List<LineChart>>(3);
-        List<Chart> detailChartList = new ArrayList<Chart>(3);
+        List<Chart> detailChartList = new ArrayList<Chart>();
 
-//        //数量
-//        def amountLine = tradeDetailList?.collect(new ArrayList<LineChart>(), {
-//            newLineElement().addValues(it.amount)
-//                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-//        })
-//        //价格
-//        def amountMoneyLine = tradeDetailList?.collect(new ArrayList<LineChart>(), {
-//            newLineElement().addValues(it.amountMoney)
-//                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-//        })
-//        //单价
-//        def unitPriceLine = tradeDetailList?.collect(new ArrayList<LineChart>(), {
-//            newLineElement().addValues(it.unitPrice)
-//                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-//        })
+        Chart amountChat = new Chart()
+                .setTitle(new Text("数量")).setYLegend(new Text("数量"));
+        Chart amountMoneyChart = new Chart()
+                .setTitle(new Text("金额")).setYLegend(new Text("金额"));
+        Chart unitpriceChart = new Chart()
+                .setTitle(new Text("平均价格")).setYLegend(new Text("平均价格"));
 
-        detailFiledLineList = tradeDetailList?.collect {
-            detailFiledLineList.get(0) == null ? new ArrayList<LineChart>() : detailFiledLineList.get(0) << newLineElement(it).addValues(it.amount)
-            detailFiledLineList.get(1) == null ? new ArrayList<LineChart>() : detailFiledLineList.get(1) << newLineElement(it).addValues(it.amountMoney)
-            detailFiledLineList.get(2) == null ? new ArrayList<LineChart>() : detailFiledLineList.get(2) << newLineElement(it).addValues(it.unitPrice)
+        //遍历每个月
+        chartDataList.each {
+            List<List<LineChart>> detailFiledLineList = getDetailFiledListList(it.elementList)
+
+            detailChartList << newChart(amountChat, it, "amount").addElements(detailFiledLineList.get(0))
+            detailChartList << newChart(amountMoneyChart, it, "amountMoney").addElements(detailFiledLineList.get(1))
+            detailChartList << newChart(unitpriceChart, it, "unitPrice").addElements(detailFiledLineList.get(2))
         }
+        detailChartList
+    }
+
+    def List<Chart> getSumLineChart(List<ChartData<TradeSum>> chartDataList) {
 
         //--------------tradeSum----------------------------
+        List<Chart> sumChartList = new ArrayList<Chart>();
+        Chart nummonthChat = new Chart()
+                .setTitle(new Text(excel_num_month.value())).setYLegend(new Text(excel_num_month.value()));
+        Chart numSumChat = new Chart()
+                .setTitle(new Text(excel_num_sum.value())).setYLegend(new Text(excel_num_sum.value()))
+        Chart moneyMonthChat = new Chart()
+                .setTitle(new Text(excel_money_month.value())).setYLegend(new Text(excel_money_month.value()))
+        Chart moneySumChat = new Chart()
+                .setTitle(new Text(excel_money_sum.value())).setYLegend(new Text(excel_money_sum.value()));
+        Chart avgPriceMonthChat = new Chart()
+                .setTitle(new Text(excel_avg_price_month.value())).setYLegend(new Text(excel_avg_price_month.value()));
+        Chart avgPriceSumChat = new Chart()
+                .setTitle(new Text(excel_avg_price_sum.value())).setYLegend(new Text(excel_avg_price_sum.value()));
+        Chart numPreMonthIncratioChat = new Chart()
+                .setTitle(new Text(excel_num_premonth_incratio.value())).setYLegend(new Text(excel_num_premonth_incratio.value()));
+        Chart numPreYearSameMonthChat = new Chart()
+                .setTitle(new Text(excel_num_preyearsamemonth_incratio.value())).setYLegend(new Text(excel_num_preyearsamemonth_incratio.value()));
+        Chart numPreYearSameQuarterIncratioChat = new Chart()
+                .setTitle(new Text(excel_num_preyearsamequarter_imcratio.value())).setYLegend(new Text(excel_num_preyearsamequarter_imcratio.value()));
 
-        List<List<LineChart>> sumFiledLineList = new ArrayList<List<LineChart>>(9);
-        List<Chart> sumChartList = new ArrayList<Chart>(9);
-//
-//        //当月数量
-//        sumFiledLineList << tradeSumList?.collect(new ArrayList<LineChart>(), {
-//            newLineElement().addValues(it.numMonth)
-//                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-//        })
-//
-//        //累计总数量
-//        sumFiledLineList << tradeSumList?.collect(new ArrayList<LineChart>(), {
-//            newLineElement().addValues(it.numSum)
-//                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-//        })
-//
-//        ////当月金额
-//        sumFiledLineList << tradeSumList?.collect(new ArrayList<LineChart>(), {
-//            newLineElement().addValues(it.moneyMonth)
-//                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-//        })
-//
-//        //累计金额
-//        sumFiledLineList << tradeSumList?.collect(new ArrayList<LineChart>(), {
-//            newLineElement().addValues(it.moneySum)
-//                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-//        })
-//
-//        //当月平均价格
-//        sumFiledLineList << tradeSumList?.collect(new ArrayList<LineChart>(), {
-//            newLineElement().addValues(it.avgPriceMonth)
-//                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-//        })
-//
-//        //累积平均价格
-//        sumFiledLineList << tradeSumList?.collect(new ArrayList<LineChart>(), {
-//            newLineElement().addValues(it.avgPriceSum)
-//                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-//        })
-//
-//        //与上月数量增长比
-//        sumFiledLineList << tradeSumList?.collect(new ArrayList<LineChart>(), {
-//            newLineElement().addValues(it.numPreMonthIncRatio)
-//                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-//        })
-//
-//        //与上年同月数量增长比
-//        sumFiledLineList << tradeSumList?.collect(new ArrayList<LineChart>(), {
-//            newLineElement().addValues(it.numPreYearSameMonthIncRatio)
-//                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-//        })
-//
-//        //与上年同期数量增长比
-//        sumFiledLineList << tradeSumList?.collect(new ArrayList<LineChart>(), {
-//            newLineElement().addValues(it.numPreYearSameQuarterInrRatio)
-//                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-//        })
+        chartDataList.each {
+            List<List<LineChart>> sumFiledLineList = getSumFiledLineList(it.elementList)
 
-
-        sumFiledLineList = tradeSumList?.collect(sumFiledLineList, {
-            sumFiledLineList.get(0) == null ? new ArrayList<LineChart>() : sumFiledLineList.get(0) << newLineElement(it).addValues(it.numMonth)
-            sumFiledLineList.get(1) == null ? new ArrayList<LineChart>() : sumFiledLineList.get(1) << newLineElement(it).addValues(it.numSum)
-            sumFiledLineList.get(2) == null ? new ArrayList<LineChart>() : sumFiledLineList.get(2) << newLineElement(it).addValues(it.moneyMonth)
-            sumFiledLineList.get(3) == null ? new ArrayList<LineChart>() : sumFiledLineList.get(3) << newLineElement(it).addValues(it.moneySum)
-            sumFiledLineList.get(4) == null ? new ArrayList<LineChart>() : sumFiledLineList.get(4) << newLineElement(it).addValues(it.avgPriceMonth)
-            sumFiledLineList.get(5) == null ? new ArrayList<LineChart>() : sumFiledLineList.get(5) << newLineElement(it).addValues(it.avgPriceSum)
-            sumFiledLineList.get(6) == null ? new ArrayList<LineChart>() : sumFiledLineList.get(6) << newLineElement(it).addValues(it.numPreMonthIncRatio)
-            sumFiledLineList.get(7) == null ? new ArrayList<LineChart>() : sumFiledLineList.get(7) << newLineElement(it).addValues(it.numPreYearSameMonthIncRatio)
-            sumFiledLineList.get(8) == null ? new ArrayList<LineChart>() : sumFiledLineList.get(8) << newLineElement(it).addValues(it.numPreYearSameQuarterInrRatio)
-//             return sumFiledLineList
-//                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-        })
-
-
-
-
-        sumFiledLineList.get(0).each {
-            print "lineCharts name:" + it.text + " values:" + it.values + "color:" + it.colour + ","
-
+            sumChartList << newChart(nummonthChat, it, excel_num_month.value()).addElements(sumFiledLineList.get(0))
+            sumChartList << newChart(numSumChat, it, excel_num_sum.value()).addElements(sumFiledLineList.get(1))
+            sumChartList << newChart(moneyMonthChat, it, excel_money_month.value()).addElements(sumFiledLineList.get(2))
+            sumChartList << newChart(moneySumChat, it, excel_money_sum.value()).addElements(sumFiledLineList.get(3))
+            sumChartList << newChart(avgPriceMonthChat, it, excel_avg_price_month.value()).addElements(sumFiledLineList.get(4))
+            sumChartList << newChart(avgPriceSumChat, it, excel_avg_price_sum.value()).addElements(sumFiledLineList.get(5))
+            sumChartList << newChart(numPreMonthIncratioChat, it, excel_num_premonth_incratio.value()).addElements(sumFiledLineList.get(6))
+            sumChartList << newChart(numPreYearSameMonthChat, it, excel_num_preyearsamemonth_incratio.value()).addElements(sumFiledLineList.get(7))
+            sumChartList << newChart(numPreYearSameQuarterIncratioChat, it, excel_num_preyearsamequarter_imcratio.value()).addElements(sumFiledLineList.get(8))
         }
-
-        sumChartList = sumFiledLineList?.collect(sumChartList, {
-            newChart(labels, chartProps).setTitle(new Text(excel_num_month.value()))
-                    .setYLegend(new Text(excel_num_month.value()))
-                    .addElements(numMonthLine)
-        })
-
-        //总表
-        sumChartList.plus(
-                newChart(labels, chartProps).setTitle(new Text(excel_num_month.value()))
-                        .setYLegend(new Text(excel_num_month.value()))
-                        .addElements(numMonthLine)
-        )
-                .plus(
-                newChart(labels, chartProps).setTitle(new Text(excel_num_month.value()))
-                        .setYLegend(new Text(excel_num_month.value()))
-                        .addElements(numMonthLine)
-        )
-                .plus(
-                newChart(labels, chartProps).setTitle(new Text(excel_num_month.value()))
-                        .setYLegend(new Text(excel_num_month.value()))
-                        .addElements(numMonthLine)
-        )
-                .plus(
-                newChart(labels, chartProps).setTitle(new Text(excel_num_month.value()))
-                        .setYLegend(new Text(excel_num_month.value()))
-                        .addElements(numMonthLine)
-        )
-                .plus(
-                newChart(labels, chartProps).setTitle(new Text(excel_num_month.value()))
-                        .setYLegend(new Text(excel_num_month.value()))
-                        .addElements(numMonthLine)
-        )
-                .plus(
-                newChart(labels, chartProps).setTitle(new Text(excel_num_month.value()))
-                        .setYLegend(new Text(excel_num_month.value()))
-                        .addElements(numMonthLine)
-        )
-
-        return sumChartList;
+        sumChartList
     }
 
-    private def Chart newChart(List<Label> labels, DocBean.ChartProps chartProps) {
-        new Chart().setXAxis(new XAxis().addLabels(labels))
-                .setXLegend(new Text(chartProps.x_legend))
-                .setYAxis(new YAxis().setRange(chartProps.minRang, chartProps.maxRang, chartProps.step))
+
+    def List<List<LineChart>> getSumFiledLineList(List<List<TradeSum>> labelSumsList) {
+        List<List<LineChart>> sumFiledLineList = new ArrayList<List<LineChart>>(9);
+        LineChart numMonthLineChart = new LineChart();
+        LineChart numSumLineChart = new LineChart();
+        LineChart moneyMonthLineChart = new LineChart();
+        LineChart moneySumhLineChart = new LineChart();
+        LineChart avgPriceMonthhLineChart = new LineChart();
+        LineChart avgPriceSumLineChart = new LineChart();
+        LineChart numPreMonthIncRatioLineChart = new LineChart();
+        LineChart numPreYearSameMonthIncRatioLineChart = new LineChart();
+        LineChart numPreYearSameQuarterInrRatioLineChart = new LineChart();
+
+        labelSumsList.each {
+            sumFiledLineList.size() < 1 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
+            sumFiledLineList.get(0) << newLineElement(numMonthLineChart, it).addValues(it.numMonth)
+            sumFiledLineList.size() < 2 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
+            sumFiledLineList.get(1) << newLineElement(numSumLineChart, it).addValues(it.numSum)
+            sumFiledLineList.size() < 3 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
+            sumFiledLineList.get(2) << newLineElement(moneyMonthLineChart, it).addValues(it.moneyMonth)
+            sumFiledLineList.size() < 4 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
+            sumFiledLineList.get(3) << newLineElement(moneySumhLineChart, it).addValues(it.moneySum)
+            sumFiledLineList.size() < 5 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
+            sumFiledLineList.get(4) << newLineElement(avgPriceMonthhLineChart, it).addValues(it.avgPriceMonth)
+            sumFiledLineList.size() < 6 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
+            sumFiledLineList.get(5) << newLineElement(avgPriceSumLineChart, it).addValues(it.avgPriceSum)
+            sumFiledLineList.size() < 7 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
+            sumFiledLineList.get(6) << newLineElement(numPreMonthIncRatioLineChart, it).addValues(it.numPreMonthIncRatio)
+            sumFiledLineList.size() < 8 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
+            sumFiledLineList.get(7) << newLineElement(numPreYearSameMonthIncRatioLineChart, it).addValues(it.numPreYearSameMonthIncRatio)
+            sumFiledLineList.size() < 9 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
+            sumFiledLineList.get(8) << newLineElement(numPreYearSameQuarterInrRatioLineChart, it).addValues(it.numPreYearSameQuarterInrRatio)
+        }
+        sumFiledLineList
     }
 
-    private def LineChart newLineElement(def it) {
-        new LineChart()
-                .setWidth(1)
+    def List<List<LineChart>> getDetailFiledListList(List<TradeDetail> detailList) {
+
+        List<List<LineChart>> detailFiledLineList = new ArrayList<List<LineChart>>(3);
+
+        LineChart amountLineChart = new LineChart();
+        LineChart amountMoneyLineChart = new LineChart();
+        LineChart unitPriceLineChart = new LineChart();
+
+
+        detailList.each {
+            detailFiledLineList.size() < 1 ? detailFiledLineList << new ArrayList<LineChart>() : detailFiledLineList
+            detailFiledLineList.get(0) << newLineElement(amountLineChart, it).addValues(it.amount)
+
+            detailFiledLineList.size() < 2 ? detailFiledLineList << new ArrayList<LineChart>() : detailFiledLineList
+            detailFiledLineList.get(1) << newLineElement(amountMoneyLineChart, it).addValues(it.amountMoney)
+
+            detailFiledLineList.size() < 3 ? detailFiledLineList << new ArrayList<LineChart>() : detailFiledLineList
+            detailFiledLineList.get(2) << newLineElement(unitPriceLineChart, it).addValues(it.unitPrice)
+        }
+        detailFiledLineList
+
+    }
+
+    private def Chart newChart(Chart chart, ChartData chartData, BigDecimal key) {
+        return chart.setXAxis(new XAxis().addLabels(chartData.labels))
+                .setXLegend(new Text(chartData.x_legend))
+                .setYAxis(new YAxis().setRange(0,           //rang从0到最大值
+                chartData.maxRangMap.get(key),
+                chartData.maxRangMap.get(key) / 20))
+    }
+
+    private def LineChart newLineElement(LineChart lineChart, def it) {
+        lineChart.setWidth(1)
                 .setColour(getRadomColor())
                 .setDotSize(5)
                 .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
@@ -258,10 +198,22 @@ class MyChart {
         def x_legend = "aaa"
         def y_legend = "bbb"
         List<TradeSum> tradeSumList = null
-        List<TradeDetail> tradeDetailList = new ArrayList<TradeDetail>()
-        tradeDetailList << new TradeDetail().setAmount(12345).setProductName("nameaaaa")
-        tradeDetailList << new TradeDetail().setAmount(33333).setProductName("namebbbb")
-        new MyChart().getLineChart(tradeDetailList, new DocBean.ChartProps(x_legend, y_legend), DocBean.ChartType.lineChart)
+        List<TradeDetail> tradeDetailList1 = new ArrayList<TradeDetail>()
+        List<TradeDetail> tradeDetailList2 = new ArrayList<TradeDetail>()
+        tradeDetailList1 << new TradeDetail().setAmount(12345).setUnitPrice(11111).setProductName("aaaaaaaa").setAmountMoney(555555).setYearMonth("2010-05")
+        tradeDetailList1 << new TradeDetail().setAmount(23333).setUnitPrice(22222).setProductName("bbbbbbbb").setAmountMoney(666666).setYearMonth("2010-05")
+        tradeDetailList2 << new TradeDetail().setAmount(33563).setUnitPrice(33333).setProductName("cccccccc").setAmountMoney(777777).setYearMonth("2012-11")
+        tradeDetailList2 << new TradeDetail().setAmount(44524).setUnitPrice(44444).setProductName("dddddddd").setAmountMoney(888888).setYearMonth("2012-11")
+
+        List<List<TradeDetail>> labelDetailList = new ArrayList<List<TradeDetail>>();
+        labelDetailList << tradeDetailList1
+        labelDetailList << tradeDetailList2
+
+        List<Label> labels = []
+        labels << new Label("2010-05")
+        labels << new Label("2012-11")
+        List<Chart> chartList = new MyChart().getDetailLineChart(labelDetailList, labels, new DocBean.ChartProps(x_legend, y_legend))
+        println chartList;
     }
 
 }

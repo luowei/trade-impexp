@@ -74,6 +74,17 @@ public class TradeDetail
     @Column(name = "country_id")
     private Integer countryId;
 
+    public TradeDetail() {
+    }
+
+    public TradeDetail(String productName, BigDecimal amount,
+                       BigDecimal amountMoney, BigDecimal unitPrice) {
+        this.productName = productName;
+        this.amount = amount;
+        this.amountMoney = amountMoney;
+        this.unitPrice = unitPrice;
+    }
+
     public Integer getYear() {
         return year;
     }

@@ -1,13 +1,20 @@
 package com.oilchem.trade.view.controller;
 
+import com.oilchem.trade.bean.ChartData;
+import com.oilchem.trade.bean.DocBean;
+import com.oilchem.trade.chart.MyChart;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.domain.*;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
+import com.oilchem.trade.service.ChartService;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
+import ofc4j.OFC;
+import ofc4j.model.Chart;
+import ofc4j.model.axis.Label;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -18,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.oilchem.trade.bean.DocBean.Config.upload_detailzip_dir;
@@ -41,6 +49,9 @@ public class TradeDetailController extends CommonController {
 
     @Autowired
     TradeDetailService tradeDetailService;
+
+    @Autowired
+    ChartService chartService;
 
     @Autowired
     TaskService taskService;
@@ -129,6 +140,34 @@ public class TradeDetailController extends CommonController {
 
         redirectAttrs.addFlashAttribute("message", message.toString());
         return "redirect:/manage/import";
+    }
+
+
+    public String getDetailChartData(Model model,YearMonthDto yearMonthDto,
+                                     String chartType){
+
+        List<String> names = new ArrayList<String>();
+
+        List<Label> labels = chartService.getYearMonthLabels(yearMonthDto);
+
+        ChartData<TradeDetail> chartData = new ChartData<TradeDetail>().setLabels(labels);
+
+        List<ChartData<TradeDetail>> chartDataList = tradeDetailService.getChartDetailList(names, chartData, yearMonthDto);
+
+
+        Object o = new MyChart().getDetailLineChart(chartDataList);
+        List<String> chartList = new ArrayList<String>();
+
+        if(o!=null && o instanceof List){
+            for(Object chart_o:(List)o){
+                if (Chart.class.isAssignableFrom(chart_o.getClass())) {
+                    chartList.add(OFC.instance.render((Chart) chart_o));
+                }
+            }
+        }
+        model.addAttribute("chartList",chartList);
+
+        return null;
     }
 
     /**

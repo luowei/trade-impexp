@@ -186,11 +186,11 @@ public class CommonController {
 //        }
 
         //方法三
-        Object o = new MyChart().getLineChart(list, chartProps,chartType);
+//        Object o = new MyChart().getLineChart(list, chartProps,chartType);
 
-        if (Chart.class.isAssignableFrom(o.getClass())) {
-            return OFC.instance.render((Chart) o);
-        }
+//        if (Chart.class.isAssignableFrom(o.getClass())) {
+//            return OFC.instance.render((Chart) o);
+//        }
 
         //方法四，直接用java构造Chart,省略。。。
 

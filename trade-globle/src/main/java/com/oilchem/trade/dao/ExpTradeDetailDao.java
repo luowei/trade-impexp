@@ -10,6 +10,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Administrator
@@ -54,4 +56,5 @@ public interface ExpTradeDetailDao extends CrudRepository<ExpTradeDetail,Long>,
             @Param("productName") String productName,
             Pageable pageable);
 
+    List<ExpTradeDetail> findByProductNameAndYearMonth(String name, String yearMonth);
 }

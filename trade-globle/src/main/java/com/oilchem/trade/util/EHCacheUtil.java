@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * @createTime:2012-2-1
  */
 
-public class EHCacheUtil {
+public abstract class EHCacheUtil {
 
     /**
      * 元素最大数量

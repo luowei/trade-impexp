@@ -18,7 +18,7 @@ import static com.oilchem.trade.util.QueryUtils.*;
  * Time: 下午5:41
  * To change this template use File | Settings | File Templates.
  */
-public class DynamicSpecifications {
+public abstract class DynamicSpecifications {
 
     private static final ConversionService conversionService = new GenericConversionService();
 

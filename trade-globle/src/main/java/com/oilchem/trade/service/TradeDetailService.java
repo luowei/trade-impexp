@@ -1,5 +1,6 @@
 package com.oilchem.trade.service;
 
+import com.oilchem.trade.bean.ChartData;
 import com.oilchem.trade.domain.ExpTradeDetail;
 import com.oilchem.trade.domain.ImpTradeDetail;
 import com.oilchem.trade.domain.Log;
@@ -8,6 +9,7 @@ import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.util.QueryUtils;
+import ofc4j.model.axis.Label;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -109,5 +111,18 @@ public interface TradeDetailService {
      * @return
      */
     public List<ExpTradeDetail> getExpDetailList(List<Long> ids);
+
+
+    /**
+     * 获得detailChart List
+     *
+     * @param names
+     * @param chartData
+     * @param yearMonthDto  @return     获得由月份组合而成的 list<TradeDetail>的集合
+     */
+    public List<ChartData<TradeDetail>> getChartDetailList(
+            List<String> names, ChartData<TradeDetail> chartData, YearMonthDto yearMonthDto);
+
+
 
 }
