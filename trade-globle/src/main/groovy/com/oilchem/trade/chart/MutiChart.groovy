@@ -10,7 +10,6 @@ import com.oilchem.trade.domain.abstrac.TradeDetail
 import ofc4j.model.Text
 import com.oilchem.trade.bean.ChartData
 
-import static com.oilchem.trade.bean.DocBean.*;
 import static com.oilchem.trade.bean.DocBean.Config.axis_steps;
 import static java.lang.Integer.toHexString
 import static com.oilchem.trade.bean.DocBean.ExcelFiled.*
@@ -21,12 +20,6 @@ class MyChart {
 
     def style = "{color:#736AEF; font-size:12px;}"
 
-
-
-    //建立三根线
-    LineChart amountLineChart = new LineChart()
-    LineChart amountMoneyLineChart = new LineChart()
-    LineChart unitPriceLineChart = new LineChart()
     /**
      * 获得拆线图
      * @return
@@ -34,49 +27,41 @@ class MyChart {
     def List<Chart> getDetailLineChart(Map<String, ChartData<TradeDetail>> chartDataMap) {
 
         //-------------tradeDetail  ----------------------
-        List<Chart> detailChartList = new ArrayList<Chart>();
-
         Chart amountChat = new Chart()
-                .setTitle(new Text("amount")).setYLegend(new Text("amount", style));
+                .setTitle(new Text("amount")).setYLegend(new Text("amount", style))
         Chart amountMoneyChart = new Chart()
-                .setTitle(new Text("amount money")).setYLegend(new Text("amount money", style));
+                .setTitle(new Text("amount money")).setYLegend(new Text("amount money", style))
         Chart unitpriceChart = new Chart()
-                .setTitle(new Text("unit price")).setYLegend(new Text("unit price", style));
+                .setTitle(new Text("unit price")).setYLegend(new Text("unit price", style))
 
         //遍历每一种产品
         chartDataMap.each {
 
             String code = it.key;
             ChartData<TradeDetail> chartData = it.value
-            List<List<LineChart>> detailFiledLineList = getDetailFiledListList(code, chartData.elementList)
+            List<LineChart> detailLineList = getDetailLineList(code, chartData.elementList)
 
-            detailChartList << newChart(amountChat, chartData, "amount").addElements(detailFiledLineList.get(0))
-            detailChartList << newChart(amountMoneyChart, chartData, "amountMoney").addElements(detailFiledLineList.get(1))
-            detailChartList << newChart(unitpriceChart, chartData, "unitPrice").addElements(detailFiledLineList.get(2))
+            amountChat = newChart(amountChat, chartData, "amount").addElements(detailLineList.get(0))
+            amountMoneyChart = newChart(amountMoneyChart, chartData, "amountMoney").addElements(detailLineList.get(1))
+            unitpriceChart = newChart(unitpriceChart, chartData, "unitPrice").addElements(detailLineList.get(2))
         }
-        detailChartList
+        [amountChat, amountMoneyChart, unitpriceChart]
     }
 
-    def getDetailFiledListList(String code, List<TradeDetail> detailList) {
+    def getDetailLineList(String code, List<TradeDetail> detailList) {
 
-        def detailFiledLineList = new ArrayList<List<LineChart>>(3)
+        //建立三根线
+        LineChart amountLineChart = new LineChart().setText(code)
+        LineChart amountMoneyLineChart = new LineChart().setText(code)
+        LineChart unitPriceLineChart = new LineChart().setText(code)
 
-        amountLineChart.setText(code)
-        amountMoneyLineChart.setText(code)
-        unitPriceLineChart.setText(code)
-
-        //添加三个折线图
+        //遍历每个月
         detailList.each {
-            detailFiledLineList.size() < 1 ? detailFiledLineList << new ArrayList<LineChart>() : detailFiledLineList
-            detailFiledLineList.get(0) << newLineElement(amountLineChart, it).addValues(it.amount.doubleValue())
-
-            detailFiledLineList.size() < 2 ? detailFiledLineList << new ArrayList<LineChart>() : detailFiledLineList
-            detailFiledLineList.get(1) << newLineElement(amountMoneyLineChart, it).addValues(it.amountMoney.doubleValue())
-
-            detailFiledLineList.size() < 3 ? detailFiledLineList << new ArrayList<LineChart>() : detailFiledLineList
-            detailFiledLineList.get(2) << newLineElement(unitPriceLineChart, it).addValues(it.unitPrice.doubleValue())
+            amountLineChart = newLineElement(amountLineChart, it).addValues(it==null ? 0 : it.amount.doubleValue())
+            amountMoneyLineChart = newLineElement(amountMoneyLineChart, it).addValues(it==null ? 0 : it.amountMoney.doubleValue())
+            unitPriceLineChart = newLineElement(unitPriceLineChart, it).addValues(it==null ? 0 : it.unitPrice.doubleValue())
         }
-        detailFiledLineList
+        [amountLineChart, amountMoneyLineChart, unitPriceLineChart]
 
     }
 
@@ -107,26 +92,25 @@ class MyChart {
 
         chartDataMap.each {
             String code = it.key
-            ChartData<TradeSum>  chartData = it.value
-            List<List<LineChart>> sumFiledLineList = getSumFiledLineList(code,chartData.elementList)
+            ChartData<TradeSum> chartData = it.value
+            List<List<LineChart>> sumFiledLineList = getSumFiledLineList(code, chartData.elementList)
 
-            sumChartList << newChart(nummonthChat, chartData, excel_num_month.value()).addElements(sumFiledLineList.get(0))
-            sumChartList << newChart(numSumChat, chartData, excel_num_sum.value()).addElements(sumFiledLineList.get(1))
-            sumChartList << newChart(moneyMonthChat, chartData, excel_money_month.value()).addElements(sumFiledLineList.get(2))
-            sumChartList << newChart(moneySumChat, chartData, excel_money_sum.value()).addElements(sumFiledLineList.get(3))
-            sumChartList << newChart(avgPriceMonthChat, chartData, excel_avg_price_month.value()).addElements(sumFiledLineList.get(4))
-            sumChartList << newChart(avgPriceSumChat, chartData, excel_avg_price_sum.value()).addElements(sumFiledLineList.get(5))
-            sumChartList << newChart(pmChart, chartData, excel_pm.value()).addElements(sumFiledLineList.get(6))
-            sumChartList << newChart(pyChart, chartData, excel_py.value()).addElements(sumFiledLineList.get(7))
-            sumChartList << newChart(pqChart, chartData, excel_pq.value()).addElements(sumFiledLineList.get(8))
+            nummonthChat = newChart(nummonthChat, chartData, excel_num_month.value()).addElements(sumFiledLineList.get(0))
+            numSumChat = newChart(numSumChat, chartData, excel_num_sum.value()).addElements(sumFiledLineList.get(1))
+            moneyMonthChat = newChart(moneyMonthChat, chartData, excel_money_month.value()).addElements(sumFiledLineList.get(2))
+            moneySumChat = newChart(moneySumChat, chartData, excel_money_sum.value()).addElements(sumFiledLineList.get(3))
+            avgPriceMonthChat = newChart(avgPriceMonthChat, chartData, excel_avg_price_month.value()).addElements(sumFiledLineList.get(4))
+            avgPriceSumChat = newChart(avgPriceSumChat, chartData, excel_avg_price_sum.value()).addElements(sumFiledLineList.get(5))
+            pmChart = newChart(pmChart, chartData, excel_pm.value()).addElements(sumFiledLineList.get(6))
+            pyChart = newChart(pyChart, chartData, excel_py.value()).addElements(sumFiledLineList.get(7))
+            pqChart = newChart(pqChart, chartData, excel_pq.value()).addElements(sumFiledLineList.get(8))
 
         }
-
-        sumChartList
+        [nummonthChat,numSumChat,moneyMonthChat,moneySumChat,avgPriceMonthChat,avgPriceSumChat,pmChart,pyChart,pqChart]
     }
 
 
-    def getSumFiledLineList(String code,List<TradeSum> sumsList) {
+    def getSumFiledLineList(String code, List<TradeSum> sumsList) {
         List<List<LineChart>> sumFiledLineList = new ArrayList<List<LineChart>>(9)
         LineChart numMonthLineChart = new LineChart().setText(code)
         LineChart numSumLineChart = new LineChart().setText(code)
@@ -139,43 +123,18 @@ class MyChart {
         LineChart pqLineChart = new LineChart().setText(code)
 
         sumsList.each {
-            sumFiledLineList.size() < 1 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
-            sumFiledLineList.get(0) << newLineElement(numMonthLineChart, it).addValues(it.numMonth)
-                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-
-            sumFiledLineList.size() < 2 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
-            sumFiledLineList.get(1) << newLineElement(numSumLineChart, it).addValues(it.numSum)
-                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-
-            sumFiledLineList.size() < 3 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
-            sumFiledLineList.get(2) << newLineElement(moneyMonthLineChart, it).addValues(it.moneyMonth)
-                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-
-            sumFiledLineList.size() < 4 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
-            sumFiledLineList.get(3) << newLineElement(moneySumhLineChart, it).addValues(it.moneySum)
-                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-
-            sumFiledLineList.size() < 5 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
-            sumFiledLineList.get(4) << newLineElement(avgPriceMonthhLineChart, it).addValues(it.avgPriceMonth)
-                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-
-            sumFiledLineList.size() < 6 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
-            sumFiledLineList.get(5) << newLineElement(avgPriceSumLineChart, it).addValues(it.avgPriceSum)
-                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-
-            sumFiledLineList.size() < 7 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
-            sumFiledLineList.get(6) << newLineElement(pmLineChart, it).addValues(it.pm)
-                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-
-            sumFiledLineList.size() < 8 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
-            sumFiledLineList.get(7) << newLineElement(pyLineChart, it).addValues(it.py)
-                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
-
-            sumFiledLineList.size() < 9 ? sumFiledLineList << new ArrayList<LineChart>() : sumFiledLineList
-            sumFiledLineList.get(8) << newLineElement(pqLineChart, it).addValues(it.pq)
-                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 6) : it.productName)
+            numMonthLineChart = newLineElement(numMonthLineChart, it).addValues(it==null ? 0 : it.numMonth.doubleValue())
+            numSumLineChart = newLineElement(numSumLineChart, it).addValues(it==null ? 0 : it.numSum.doubleValue())
+            moneyMonthLineChart = newLineElement(moneyMonthLineChart, it).addValues(it==null ? 0 :it.moneyMonth.doubleValue())
+            moneySumhLineChart = newLineElement(moneySumhLineChart, it).addValues(it==null ? 0 :it.moneySum.doubleValue())
+            avgPriceMonthhLineChart = newLineElement(avgPriceMonthhLineChart, it).addValues(it==null ? 0 :it.avgPriceMonth.doubleValue())
+            avgPriceSumLineChart = newLineElement(avgPriceSumLineChart, it).addValues(it==null ? 0 :it.avgPriceSum.doubleValue())
+            pmLineChart = newLineElement(pmLineChart, it).addValues(it==null ? 0 :it.pm.doubleValue())
+            pyLineChart = newLineElement(pyLineChart, it).addValues(it==null ? 0 :it.py.doubleValue())
+            pqLineChart = newLineElement(pqLineChart, it).addValues(it==null ? 0 :it.pq.doubleValue())
         }
-        sumFiledLineList
+        [numMonthLineChart,numSumLineChart,moneyMonthLineChart,moneySumhLineChart,
+                avgPriceMonthhLineChart,avgPriceSumLineChart,pmLineChart,pyLineChart,pqLineChart]
     }
 
 
@@ -186,7 +145,6 @@ class MyChart {
         def maxRang = chartData.maxRangMap.get(key).multiply(BigDecimal.valueOf(1.2))
         maxRang = maxRang.compareTo(BigDecimal.valueOf(Long.valueOf(axis_steps.value()))) < 0 ?
             BigDecimal.valueOf(Long.valueOf(axis_steps.value())) : maxRang;
-
 
         int scale = Integer.parseInt(scale_size.value())
         def steps = BigDecimal.valueOf(Long.valueOf(axis_steps.value()));

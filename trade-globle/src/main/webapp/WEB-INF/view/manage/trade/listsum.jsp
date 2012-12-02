@@ -118,11 +118,14 @@
         </button>
         <input id="chart" type="button" class="btn-small btn-primary" value="生成曲线" onclick="genSumChart()"/>
 
+        <div class="pagination-centered">
+            <jsp:include page="../../common/pagination.jsp"/>
+        </div>
 
         <table class="table table-bordered table-striped table-condensed">
             <thead>
             <tr>
-                <th><label class="label-info"><input type="checkbox" id="all"/>曲线</label></th>
+                <th><label><input type="checkbox" id="all"/>曲线</label></th>
                 <td>年月</td>
                 <td>产品名称</td>
                 <td>产品类型</td>

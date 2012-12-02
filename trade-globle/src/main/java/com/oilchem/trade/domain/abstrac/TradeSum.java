@@ -69,6 +69,15 @@ public class TradeSum extends IdEntity implements Serializable {
         this.productType = productType;
     }
 
+    public TradeSum(BigDecimal numMonth, BigDecimal numSum,
+                    BigDecimal moneyMonth, BigDecimal moneySum,
+                    BigDecimal avgPriceMonth, BigDecimal avgPriceSum,
+                    BigDecimal pm, BigDecimal py, BigDecimal pq) {
+
+        this(null,numMonth,numSum,moneyMonth,
+                moneySum,avgPriceMonth,avgPriceSum, pm,py,pq);
+    }
+
     public TradeSum(String productName, BigDecimal numMonth, BigDecimal numSum,
                     BigDecimal moneyMonth, BigDecimal moneySum,
                     BigDecimal avgPriceMonth, BigDecimal avgPriceSum,

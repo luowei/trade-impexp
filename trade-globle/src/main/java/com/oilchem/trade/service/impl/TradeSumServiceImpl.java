@@ -29,10 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.oilchem.trade.bean.DocBean.Config.*;
 import static com.oilchem.trade.bean.DocBean.ExcelFiled.*;
@@ -260,51 +257,62 @@ public class TradeSumServiceImpl implements TradeSumService {
             List<Label> labels, List<String> names,
             YearMonthDto yearMonthDto) {
 
-        Map<String, ChartData<TradeSum>> chartDataMap = new HashMap<String, ChartData<TradeSum>>(names.size());
-        ChartData<TradeSum> chartData = new ChartData<TradeSum>().setLabels(labels);
-
-        List<TradeSum> tradeSumList = new ArrayList<TradeSum>();
         Integer impExpType = yearMonthDto.getImpExpType();
+        Map<String, ChartData<TradeSum>> chartDataMap = new HashMap<String, ChartData<TradeSum>>(names.size());
+        if (labels == null || labels.isEmpty()) return null;
 
-        Map<String, BigDecimal> maxRangMap = chartData.getMaxRangMap();
-        Map<String, BigDecimal> minRangMap = chartData.getMinRangMap();
-
-        if (chartData.getLabels() == null) return null;
+        Map<String, BigDecimal> maxRangMap = new HashMap<String, BigDecimal>();
+        Map<String, BigDecimal> minRangMap = new HashMap<String, BigDecimal>();
 
         //遍历用户选择的名字
         for (String name : names) {
+
+            ChartData<TradeSum> chartData = new ChartData<TradeSum>().setLabels(labels);
+            Map<String, TradeSum> labelMap = new TreeMap<String, TradeSum>();
+
             //遍历每个月
             for (Label label : chartData.getLabels()) {
 
+                TradeSum tradeSum = null;
+                String labelText = label.getText();
+
+                if (labelMap.get(labelText) == null) {
+                    labelMap.put(label.getText(), new TradeSum(
+                            BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
+                            BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
+                            BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
+                }
 
                 if (impExpType.equals(import_type.ordinal())) {
                     List<ImpTradeSum> impTradeSums = impTradeSumDao.findByProductNameAndYearMonth(name, label.getText());
-                    TradeSum tradeSum = processChartData(name, impTradeSums);
+                    if (!impTradeSums.isEmpty()) {
+                        tradeSum = combinTradSum(name, impTradeSums);
+                    }
 
-                    putMaxRangMap(maxRangMap, tradeSum);
-                    putMinRangMap(minRangMap, tradeSum);
-
-                    tradeSumList.add(tradeSum);
                 }
                 if (impExpType.equals(export_type.ordinal())) {
                     List<ExpTradeSum> expTradeDetails = expTradeSumDao.findByProductNameAndYearMonth(name, label.getText());
-                    TradeSum tradeSum = processChartData(name, expTradeDetails);
+                    if (!expTradeDetails.isEmpty()) {
+                        tradeSum = combinTradSum(name, expTradeDetails);
+                    }
+                }
 
+                labelMap.put(labelText, tradeSum);
+                if (tradeSum != null) {
                     putMaxRangMap(maxRangMap, tradeSum);
                     putMinRangMap(minRangMap, tradeSum);
-
-                    tradeSumList.add(tradeSum);
                 }
-                chartData.setElementList(tradeSumList)
-                        .setMaxRangMap(maxRangMap).setMinRangMap(minRangMap);
 
             }
-            chartDataMap.put(name, chartData);
 
+            chartData.setElementList(new ArrayList<TradeSum>(labelMap.values()))
+                    .setMaxRangMap(maxRangMap).setMinRangMap(minRangMap);
+            chartDataMap.put(name, chartData);
         }
 
         return chartDataMap;
     }
+
 
     /**
      * 使用平均值构造tradeSum供图表使用
@@ -313,7 +321,7 @@ public class TradeSumServiceImpl implements TradeSumService {
      * @param tradeSums
      * @return
      */
-    private <T extends TradeSum> TradeSum processChartData(String name, List<T> tradeSums) {
+    private <T extends TradeSum> TradeSum combinTradSum(String name, List<T> tradeSums) {
         BigDecimal numMonth = BigDecimal.valueOf(0),
                 numSum = BigDecimal.valueOf(0),
                 moneyMonth = BigDecimal.valueOf(0),
@@ -354,6 +362,7 @@ public class TradeSumServiceImpl implements TradeSumService {
                 moneyMonth, moneySum, avgPriceMonth, avgPriceSum, pm, py, pq);
     }
 
+
     BigDecimal minnumMonth = BigDecimal.valueOf(0),
             minnumSum = BigDecimal.valueOf(0),
             minmoneyMonth = BigDecimal.valueOf(0),
@@ -389,15 +398,15 @@ public class TradeSumServiceImpl implements TradeSumService {
             maxPQ = BigDecimal.valueOf(Long.valueOf(axis_steps.value()));
 
     private void putMaxRangMap(Map<String, BigDecimal> maxRangMap, TradeSum tradeSum) {
-        maxRangMap.put(excel_num_month.value(), tradeSum.getNumMonth().compareTo(maxnumMonth) > 0 ? maxnumMonth : tradeSum.getNumMonth());
-        maxRangMap.put(excel_money_sum.value(), tradeSum.getMoneySum().compareTo(maxnumSum) > 0 ? maxnumSum : tradeSum.getMoneySum());
-        maxRangMap.put(excel_money_month.value(), tradeSum.getMoneyMonth().compareTo(maxmoneyMonth) > 0 ? maxmoneyMonth : tradeSum.getMoneyMonth());
-        maxRangMap.put(excel_money_sum.value(), tradeSum.getMoneySum().compareTo(maxmoneySum) > 0 ? maxmoneySum : tradeSum.getMoneySum());
-        maxRangMap.put(excel_avg_price_month.value(), tradeSum.getAvgPriceMonth().compareTo(maxavgPriceMonth) > 0 ? maxavgPriceMonth : tradeSum.getAvgPriceMonth());
-        maxRangMap.put(excel_avg_price_sum.value(), tradeSum.getAvgPriceSum().compareTo(maxavgPriceSum) > 0 ? maxavgPriceSum : tradeSum.getAvgPriceSum());
-        maxRangMap.put(excel_pm.value(), tradeSum.getPm().compareTo(maxPM) > 0 ? maxPM : tradeSum.getPm());
+        maxRangMap.put(excel_num_month.value(), tradeSum.getNumMonth().compareTo(maxnumMonth) < 0 ? maxnumMonth : tradeSum.getNumMonth());
+        maxRangMap.put(excel_money_sum.value(), tradeSum.getMoneySum().compareTo(maxnumSum) < 0 ? maxnumSum : tradeSum.getMoneySum());
+        maxRangMap.put(excel_money_month.value(), tradeSum.getMoneyMonth().compareTo(maxmoneyMonth) < 0 ? maxmoneyMonth : tradeSum.getMoneyMonth());
+        maxRangMap.put(excel_money_sum.value(), tradeSum.getMoneySum().compareTo(maxmoneySum) < 0 ? maxmoneySum : tradeSum.getMoneySum());
+        maxRangMap.put(excel_avg_price_month.value(), tradeSum.getAvgPriceMonth().compareTo(maxavgPriceMonth) < 0 ? maxavgPriceMonth : tradeSum.getAvgPriceMonth());
+        maxRangMap.put(excel_avg_price_sum.value(), tradeSum.getAvgPriceSum().compareTo(maxavgPriceSum) < 0 ? maxavgPriceSum : tradeSum.getAvgPriceSum());
+        maxRangMap.put(excel_pm.value(), tradeSum.getPm().compareTo(maxPM) < 0 ? maxPM : tradeSum.getPm());
         maxRangMap.put(excel_py.value(), tradeSum.getPy().compareTo(maxPY) > 0 ? maxPY : tradeSum.getPy());
-        maxRangMap.put(excel_pq.value(), tradeSum.getPq().compareTo(maxPQ) > 0 ? maxPQ : tradeSum.getPq());
+        maxRangMap.put(excel_pq.value(), tradeSum.getPq().compareTo(maxPQ) < 0 ? maxPQ : tradeSum.getPq());
     }
 
 

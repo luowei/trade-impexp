@@ -196,6 +196,9 @@
     <input id="chart" type="button" class="btn-small btn-primary" value="生成曲线" onclick="genDetailChart()"/>
     <%--</div>--%>
 
+    <div class="pagination-centered">
+        <jsp:include page="../../common/pagination.jsp"/>
+    </div>
 
     <table class="table table-bordered table-striped table-condensed">
         <thead>
