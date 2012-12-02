@@ -1,5 +1,6 @@
 package com.oilchem.trade.view.controller;
 
+import com.google.common.collect.Lists;
 import com.oilchem.trade.bean.ChartData;
 import com.oilchem.trade.bean.DocBean;
 import com.oilchem.trade.chart.MyChart;
@@ -12,9 +13,11 @@ import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
+import com.oilchem.trade.util.EHCacheUtil;
 import ofc4j.OFC;
 import ofc4j.model.Chart;
 import ofc4j.model.axis.Label;
+import org.hibernate.cfg.CollectionSecondPass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -22,15 +25,19 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.servlet.http.HttpSession;
+import java.util.*;
 
+import static com.oilchem.trade.bean.DocBean.Config.chart_height;
+import static com.oilchem.trade.bean.DocBean.Config.chart_width;
 import static com.oilchem.trade.bean.DocBean.Config.upload_detailzip_dir;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.export_type;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.import_type;
+import static com.oilchem.trade.util.EHCacheUtil.setValue;
 import static com.oilchem.trade.util.QueryUtils.*;
 
 /**
@@ -109,6 +116,7 @@ public class TradeDetailController extends CommonController {
 
     /**
      * 导入明细数据
+     *
      * @param file         从 DefaultMultipartHttpServletRequest获得的file
      * @param yearMonthDto 年月。。。
      * @return
@@ -119,10 +127,10 @@ public class TradeDetailController extends CommonController {
                                     RedirectAttributes redirectAttrs) {
 
         Boolean validate = (file.getOriginalFilename().endsWith(".rar")
-                ||file.getOriginalFilename().endsWith(".zip"))
+                || file.getOriginalFilename().endsWith(".zip"))
                 && yearMonthDto.validYearMonth(yearMonthDto);
         if (!validate) {
-            redirectAttrs.addFlashAttribute("message","输入的年月、或文件格式错误！");
+            redirectAttrs.addFlashAttribute("message", "输入的年月、或文件格式错误！");
             return "redirect:/manage/import";
         }
 
@@ -144,16 +152,24 @@ public class TradeDetailController extends CommonController {
 
     /**
      * 获得图表
+     *
      * @param model
      * @param yearMonthDto
      * @param chartType
      * @return
      */
     @RequestMapping("/detailchart")
-    public String getDetailChartData(Model model,YearMonthDto yearMonthDto,
-                                     String chartType){
+    public String getDetailChartData(Model model, YearMonthDto yearMonthDto,
+                                     CommonDto commonDto, String chartType,
+                                     TradeDetail tradeDetail, HttpSession session,
+                                     RedirectAttributes redirectAttributes) {
 
-        List<String> codes = new ArrayList<String>();
+        if (commonDto.getCodes() == null || commonDto.getCodes().length < 1) {
+            return "redirect:/manage/listdetail/" + (commonDto.getPageNumber() == null ? 1 : commonDto.getPageNumber());
+        }
+
+        List<String> codes = removeDuplicateWithOrder(
+                Lists.asList(commonDto.getCodes()[0], commonDto.getCodes()));
 
         List<Label> labels = chartService.getYearMonthLabels(yearMonthDto);
 
@@ -165,20 +181,41 @@ public class TradeDetailController extends CommonController {
         Object o = new MyChart().getDetailLineChart(chartDataList);
         List<String> chartList = new ArrayList<String>();
 
-        if(o!=null && o instanceof List){
-            for(Object chart_o:(List)o){
+        //缓存
+        int idx = 1;
+        if (o != null && o instanceof List) {
+            for (Object chart_o : (List) o) {
                 if (Chart.class.isAssignableFrom(chart_o.getClass())) {
-                    chartList.add(OFC.instance.render((Chart) chart_o));
+                    String chart = OFC.instance.render((Chart) chart_o);
+                    setValue("chart", "detail_chartList_"
+//                            +session.getId()
+                            + idx, chart);
+                    idx++;
                 }
             }
         }
-        model.addAttribute("chartList",chartList);
 
-        return null;
+        model.addAttribute("idx",idx).addAttribute("width", chart_width.value())
+                .addAttribute("height", chart_height.value());
+
+        return "manage/trade/chart";
+    }
+
+
+
+
+    @ResponseBody
+    @RequestMapping("/gdchart/{chartIdx}")
+    public String getChart( HttpSession session,@PathVariable Integer chartIdx) {
+        String chart = (String) EHCacheUtil.getValue("chart", "detail_chartList_"
+//                +session.getId()
+                + chartIdx);
+        return chart;
     }
 
     /**
      * 获得查询条件数据
+     *
      * @param model 模型
      * @return
      */
@@ -203,6 +240,7 @@ public class TradeDetailController extends CommonController {
 
     /**
      * 将属性添加到模型中
+     *
      * @param model
      * @param tradeDetail
      * @param commonDto
@@ -212,11 +250,11 @@ public class TradeDetailController extends CommonController {
     private Model addAtrribute2Model(Model model, TradeDetail tradeDetail,
                                      CommonDto commonDto, YearMonthDto yearMonthDto) {
 
-        model = yearMonthDto.getMonth() != null ? model.addAttribute("month", yearMonthDto.getMonth()): model;
-        model = yearMonthDto.getLowYear() != null ? model.addAttribute("lowYear", yearMonthDto.getLowYear()): model;
-        model = yearMonthDto.getHighYear() != null ? model.addAttribute("highYear", yearMonthDto.getHighYear()): model;
-        model = yearMonthDto.getHighMonth() != null ? model.addAttribute("highMonth", yearMonthDto.getHighMonth()): model;
-        model = yearMonthDto.getImpExpType() != null ? model.addAttribute("impExpType", yearMonthDto.getImpExpType()): model;
+        model = yearMonthDto.getMonth() != null ? model.addAttribute("month", yearMonthDto.getMonth()) : model;
+        model = yearMonthDto.getLowYear() != null ? model.addAttribute("lowYear", yearMonthDto.getLowYear()) : model;
+        model = yearMonthDto.getHighYear() != null ? model.addAttribute("highYear", yearMonthDto.getHighYear()) : model;
+        model = yearMonthDto.getHighMonth() != null ? model.addAttribute("highMonth", yearMonthDto.getHighMonth()) : model;
+        model = yearMonthDto.getImpExpType() != null ? model.addAttribute("impExpType", yearMonthDto.getImpExpType()) : model;
 
         for (PropertyFilter filter : tradeDetailService
                 .getdetailQueryProps(tradeDetail, commonDto)) {

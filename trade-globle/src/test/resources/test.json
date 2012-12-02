@@ -1,290 +1,147 @@
-[
+{"y_axis":{
+    "min":0,
+    "max":24624,
+    "steps":1231
+}, "title":{
+    "text":"数量"
+}, "x_legend":{}, "y_legend":{
+    "text":"数量"
+}, "elements":[
     {
-        "y_axis":{
-            "min":0,
-            "max":10000,
-            "steps":1000
-        },
-        "title":{
-            "text":"数量"
-        },
-        "x_legend":{
-            "text":"aaa"
-        },
-        "y_legend":{
-            "text":"数量"
-        },
-        "elements":[
-            {
-                "colour":"#436f69",
-                "dot-size":5,
-                "text":"dddddd",
-                "values":["33563", "44524"],
-                "width":1,
-                "font-size":10,
-                "type":"line"
-            },
-            {
-                "colour":"#f55373",
-                "dot-size":5,
-                "text":"bbbbbb",
-                "values":["12345", "23333"],
-                "width":1,
-                "font-size":10,
-                "type":"line"
-            }
-        ],
-        "x_axis":{
-            "labels":{
-                "labels":[
-                    {
-                        "text":"2010-05"
-                    },
-                    {
-                        "text":"2012-11"
-                    }
-                ]
-            }
-        }
+        "colour":"#9675ae",
+        "dot-size":5,
+        "values":["0", "20520.793", "0", "20520.793", "0", "0", "0", "0", "0", "0", "0", "0"],
+        "width":1,
+        "font-size":10,
+        "type":"line"
     },
     {
-        "y_axis":{
-            "min":0,
-            "max":10000,
-            "steps":1000
-        },
-        "title":{
-            "text":"金额"
-        },
-        "x_legend":{
-            "text":"aaa"
-        },
-        "y_legend":{
-            "text":"金额"
-        },
-        "elements":[
-            {
-                "colour":"#1e4b12",
-                "dot-size":5,
-                "text":"dddddd",
-                "values":["777777", "888888"],
-                "width":1,
-                "font-size":10,
-                "type":"line"
-            },
-            {
-                "colour":"#cecabd",
-                "dot-size":5,
-                "text":"bbbbbb",
-                "values":["555555", "666666"],
-                "width":1,
-                "font-size":10,
-                "type":"line"
-            }
-        ],
-        "x_axis":{
-            "labels":{
-                "labels":[
-                    {
-                        "text":"2010-05"
-                    },
-                    {
-                        "text":"2012-11"
-                    }
-                ]
-            }
-        }
+        "colour":"#57159b",
+        "dot-size":5,
+        "values":["0", "20520.793", "0", "20520.793", "0", "0", "0", "0", "0", "0", "0", "0"],
+        "width":1,
+        "font-size":10,
+        "type":"line"
     },
     {
-        "y_axis":{
-            "min":0,
-            "max":10000,
-            "steps":1000
-        },
-        "title":{
-            "text":"平均价格"
-        },
-        "x_legend":{
-            "text":"aaa"
-        },
-        "y_legend":{
-            "text":"平均价格"
-        },
-        "elements":[
-            {
-                "colour":"#e844a1",
-                "dot-size":5,
-                "text":"bbbbbb",
-                "values":["11111", "22222"],
-                "width":1,
-                "font-size":10,
-                "type":"line"
-            },
-            {
-                "colour":"#762982",
-                "dot-size":5,
-                "text":"dddddd",
-                "values":["33333", "44444"],
-                "width":1,
-                "font-size":10,
-                "type":"line"
-            }
-        ],
-        "x_axis":{
-            "labels":{
-                "labels":[
-                    {
-                        "text":"2010-05"
-                    },
-                    {
-                        "text":"2012-11"
-                    }
-                ]
-            }
-        }
+        "colour":"#2f91f3",
+        "dot-size":5,
+        "values":["0", "20520.793", "0", "20520.793", "0", "0", "0", "0", "0", "0", "0", "0"],
+        "width":1,
+        "font-size":10,
+        "type":"line"
     },
     {
-        "y_axis":{
-            "min":0,
-            "max":10000,
-            "steps":1000
-        },
-        "title":{
-            "text":"数量"
-        },
-        "x_legend":{
-            "text":"aaa"
-        },
-        "y_legend":{
-            "text":"数量"
-        },
-        "elements":[
-            {
-                "colour":"#436f69",
-                "dot-size":5,
-                "text":"dddddd",
-                "values":["33563", "44524"],
-                "width":1,
-                "font-size":10,
-                "type":"line"
-            },
-            {
-                "colour":"#f55373",
-                "dot-size":5,
-                "text":"bbbbbb",
-                "values":["12345", "23333"],
-                "width":1,
-                "font-size":10,
-                "type":"line"
-            }
-        ],
-        "x_axis":{
-            "labels":{
-                "labels":[
-                    {
-                        "text":"2010-05"
-                    },
-                    {
-                        "text":"2012-11"
-                    }
-                ]
-            }
-        }
+        "colour":"#c866df",
+        "dot-size":5,
+        "values":["0", "20520.793", "0", "20520.793", "0", "0", "0", "0", "0", "0", "0", "0"],
+        "width":1,
+        "font-size":10,
+        "type":"line"
     },
     {
-        "y_axis":{
-            "min":0,
-            "max":10000,
-            "steps":1000
-        },
-        "title":{
-            "text":"金额"
-        },
-        "x_legend":{
-            "text":"aaa"
-        },
-        "y_legend":{
-            "text":"金额"
-        },
-        "elements":[
-            {
-                "colour":"#1e4b12",
-                "dot-size":5,
-                "text":"dddddd",
-                "values":["777777", "888888"],
-                "width":1,
-                "font-size":10,
-                "type":"line"
-            },
-            {
-                "colour":"#cecabd",
-                "dot-size":5,
-                "text":"bbbbbb",
-                "values":["555555", "666666"],
-                "width":1,
-                "font-size":10,
-                "type":"line"
-            }
-        ],
-        "x_axis":{
-            "labels":{
-                "labels":[
-                    {
-                        "text":"2010-05"
-                    },
-                    {
-                        "text":"2012-11"
-                    }
-                ]
-            }
-        }
+        "colour":"#eb3215",
+        "dot-size":5,
+        "values":["0", "20520.793", "0", "20520.793", "0", "0", "0", "0", "0", "0", "0", "0"],
+        "width":1,
+        "font-size":10,
+        "type":"line"
     },
     {
-        "y_axis":{
-            "min":0,
-            "max":10000,
-            "steps":1000
-        },
-        "title":{
-            "text":"平均价格"
-        },
-        "x_legend":{
-            "text":"aaa"
-        },
-        "y_legend":{
-            "text":"平均价格"
-        },
-        "elements":[
-            {
-                "colour":"#e844a1",
-                "dot-size":5,
-                "text":"bbbbbb",
-                "values":["11111", "22222"],
-                "width":1,
-                "font-size":10,
-                "type":"line"
-            },
-            {
-                "colour":"#762982",
-                "dot-size":5,
-                "text":"dddddd",
-                "values":["33333", "44444"],
-                "width":1,
-                "font-size":10,
-                "type":"line"
-            }
-        ],
-        "x_axis":{
-            "labels":{
-                "labels":[
-                    {
-                        "text":"2010-05"
-                    },
-                    {
-                        "text":"2012-11"
-                    }
-                ]
-            }
-        }
+        "colour":"#81b114",
+        "dot-size":5,
+        "values":["0", "20520.793", "0", "20520.793", "0", "0", "0", "0", "0", "0", "0", "0"],
+        "width":1,
+        "font-size":10,
+        "type":"line"
+    },
+    {
+        "colour":"#d1c882",
+        "dot-size":5,
+        "values":["0", "20520.793", "0", "20520.793", "0", "0", "0", "0", "0", "0", "0", "0"],
+        "width":1,
+        "font-size":10,
+        "type":"line"
+    },
+    {
+        "colour":"#6890a4",
+        "dot-size":5,
+        "values":["0", "20520.793", "0", "20520.793", "0", "0", "0", "0", "0", "0", "0", "0"],
+        "width":1,
+        "font-size":10,
+        "type":"line"
+    },
+    {
+        "colour":"#d8b719",
+        "dot-size":5,
+        "values":["0", "20520.793", "0", "20520.793", "0", "0", "0", "0", "0", "0", "0", "0"],
+        "width":1,
+        "font-size":10,
+        "type":"line"
+    },
+    {
+        "colour":"#87771e",
+        "dot-size":5,
+        "values":["0", "20520.793", "0", "20520.793", "0", "0", "0", "0", "0", "0", "0", "0"],
+        "width":1,
+        "font-size":10,
+        "type":"line"
+    },
+    {
+        "colour":"#1c97bb",
+        "dot-size":5,
+        "values":["0", "20520.793", "0", "20520.793", "0", "0", "0", "0", "0", "0", "0", "0"],
+        "width":1,
+        "font-size":10,
+        "type":"line"
+    },
+    {
+        "colour":"#414b8b",
+        "dot-size":5,
+        "values":["0", "20520.793", "0", "20520.793", "0", "0", "0", "0", "0", "0", "0", "0"],
+        "width":1,
+        "font-size":10,
+        "type":"line"
     }
-]
+], "x_axis":{
+    "labels":{
+        "labels":[
+            {
+                "text":"2011-12"
+            },
+            {
+                "text":"2012-01"
+            },
+            {
+                "text":"2012-02"
+            },
+            {
+                "text":"2012-03"
+            },
+            {
+                "text":"2012-04"
+            },
+            {
+                "text":"2012-05"
+            },
+            {
+                "text":"2012-06"
+            },
+            {
+                "text":"2012-07"
+            },
+            {
+                "text":"2012-08"
+            },
+            {
+                "text":"2012-09"
+            },
+            {
+                "text":"2012-10"
+            },
+            {
+                "text":"2012-11"
+            }
+        ]
+    }
+}}

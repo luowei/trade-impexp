@@ -21,10 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.context.ContextLoader;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.oilchem.trade.bean.DocBean.ChartProps;
 import static com.oilchem.trade.bean.DocBean.ChartType;
@@ -154,6 +151,24 @@ public class CommonController {
         model.addAttribute(eList);
         return model;
     }
+
+    /**
+     * 删除list中重复的元素
+     * @param list
+     * @param <T>
+     * @return
+     */
+    public <T> List<T>  removeDuplicateWithOrder(List<T> list)   {
+        Set<T> set  =   new  HashSet<T>();
+        List newList  =   new  ArrayList();
+        for  (Iterator<T> iter  =  list.iterator(); iter.hasNext();)   {
+            T element  =  iter.next();
+            if  (set.add(element))
+                newList.add(element);
+        }
+        return newList;
+    }
+
 
     /**
      * 获得图表数据

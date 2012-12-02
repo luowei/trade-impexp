@@ -29,10 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
 import static com.oilchem.trade.bean.DocBean.Config.*;
@@ -156,20 +153,20 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         if (yearMonthDto.getImpExpType().equals(import_type.ordinal())) {
 
 //            synchronized ("detailimp_lock".intern()) {
-                Long count = impTradeDetailDao.countWithYearMonth(
-                        yearMonthDto.getYear(), yearMonthDto.getMonth(), ImpTradeDetail.class);
-                if (count != null && count > 0) {
-                    impTradeDetailDao.delRepeatImpTradeDetail(
-                            yearMonthDto.getYear(), yearMonthDto.getMonth());
-                }
+            Long count = impTradeDetailDao.countWithYearMonth(
+                    yearMonthDto.getYear(), yearMonthDto.getMonth(), ImpTradeDetail.class);
+            if (count != null && count > 0) {
+                impTradeDetailDao.delRepeatImpTradeDetail(
+                        yearMonthDto.getYear(), yearMonthDto.getMonth());
+            }
 
-                commonService.importTradeDetail(
-                        impTradeDetailDao,
-                        new ImpTradeDetailRowMapper(),
-                        yearMonthDto,
-                        logEntry.getValue().getExtractPath(), sql,
-                        ImpTradeDetail.class);
-                isSuccess = true;
+            commonService.importTradeDetail(
+                    impTradeDetailDao,
+                    new ImpTradeDetailRowMapper(),
+                    yearMonthDto,
+                    logEntry.getValue().getExtractPath(), sql,
+                    ImpTradeDetail.class);
+            isSuccess = true;
 //            }
         }
 
@@ -177,20 +174,20 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         else if (yearMonthDto.getImpExpType().equals(export_type.ordinal())) {
 
 //            synchronized ("detailexp_lock".intern()) {
-                Long count = expTradeDetailDao.countWithYearMonth(
-                        yearMonthDto.getYear(), yearMonthDto.getMonth(), ExpTradeDetail.class);
-                if (count != null && count > 0) {
-                    expTradeDetailDao.delRepeatImpTradeDetail(
-                            yearMonthDto.getYear(), yearMonthDto.getMonth());
-                }
+            Long count = expTradeDetailDao.countWithYearMonth(
+                    yearMonthDto.getYear(), yearMonthDto.getMonth(), ExpTradeDetail.class);
+            if (count != null && count > 0) {
+                expTradeDetailDao.delRepeatImpTradeDetail(
+                        yearMonthDto.getYear(), yearMonthDto.getMonth());
+            }
 
-                commonService.importTradeDetail(
-                        expTradeDetailDao,
-                        new ExpTradeDetailRowMapper(),
-                        yearMonthDto,
-                        logEntry.getValue().getExtractPath(), sql,
-                        ExpTradeDetail.class);
-                isSuccess = true;
+            commonService.importTradeDetail(
+                    expTradeDetailDao,
+                    new ExpTradeDetailRowMapper(),
+                    yearMonthDto,
+                    logEntry.getValue().getExtractPath(), sql,
+                    ExpTradeDetail.class);
+            isSuccess = true;
 //            }
         }
 
@@ -283,14 +280,13 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 //            List<TradeDetail> tradeDetailList = new ArrayList<TradeDetail>();
 //            for (String name : names) {
 //                List<ExpTradeDetail>  tradeDetails = expTradeDetailDao.findByProductCodeAndYearMonth(name, label.getText());
-//                tradeDetailList.add(new ExpTradeDetail(processChartData(name, tradeDetails)));
+//                tradeDetailList.add(new ExpTradeDetail(combinDetail(name, tradeDetails)));
 //            }
 //            monthDetailsList.add(tradeDetailList);
 //        }
 //
 //        return monthDetailsList;
 //    }
-
 
 
     /**
@@ -303,53 +299,77 @@ public class TradeDetailServiceImpl implements TradeDetailService {
     public List<ChartData<TradeDetail>> getChartDetailList(
             List<String> codes, ChartData<TradeDetail> chartData, YearMonthDto yearMonthDto) {
 
-        List<TradeDetail> tradeDetailList = new ArrayList<TradeDetail>();
+        Map<String,TradeDetail> labelMap = new TreeMap<String,TradeDetail>();
         List<ChartData<TradeDetail>> monthDetailsList = new ArrayList<ChartData<TradeDetail>>();
         Integer impExpType = yearMonthDto.getImpExpType();
 
         Map<String, BigDecimal> maxRangMap = chartData.getMaxRangMap();
         Map<String, BigDecimal> minRangMap = chartData.getMinRangMap();
 
+        if (chartData.getLabels() == null) return null;
         //遍历每个月
         for (Label label : chartData.getLabels()) {
+
+            String labelText = label.getText();
+            if(labelMap.get(labelText)==null){
+                labelMap.put(label.getText(), new TradeDetail(BigDecimal.valueOf(0),BigDecimal.valueOf(0),BigDecimal.valueOf(0)));
+            }
+
 
             //遍历用户选择的名字
             for (String code : codes) {
                 if (impExpType.equals(import_type.ordinal())) {
                     List<ImpTradeDetail> impTradeDetails = impTradeDetailDao.findByProductCodeAndYearMonth(code, label.getText());
-                    TradeDetail tradeDetail = processChartData(code, impTradeDetails);
 
-                    putMaxRangMap(maxRangMap,tradeDetail);
-                    putMinRangMap(minRangMap,tradeDetail);
+                    if (!impTradeDetails.isEmpty()) {
+                        detail2processedDetail(labelMap,labelText, maxRangMap, minRangMap, code, impTradeDetails);
+                    }
 
-                    tradeDetailList.add(tradeDetail);
+
                 }
                 if (impExpType.equals(export_type.ordinal())) {
                     List<ExpTradeDetail> expTradeDetails = expTradeDetailDao.findByProductCodeAndYearMonth(code, label.getText());
-                    TradeDetail tradeDetail = processChartData(code, expTradeDetails);
 
-                    putMaxRangMap(maxRangMap,tradeDetail);
-                    putMinRangMap(minRangMap,  tradeDetail);
-
-                    tradeDetailList.add(tradeDetail);
+                    if (!expTradeDetails.isEmpty()) {
+                        detail2processedDetail(labelMap,labelText, maxRangMap, minRangMap, code, expTradeDetails);
+                    }
                 }
             }
-            monthDetailsList.add(chartData.setElementList(tradeDetailList)
+
+
+            List<TradeDetail> detailList = new ArrayList<TradeDetail>();
+            detailList.addAll(labelMap.values());
+            monthDetailsList.add(chartData.setElementList(detailList)
                     .setMaxRangMap(maxRangMap).setMinRangMap(minRangMap));
         }
 
         return monthDetailsList;
     }
 
+    private <T extends TradeDetail> void detail2processedDetail(
+            Map<String,TradeDetail> labelMap,
+            String labelText,
+            Map<String, BigDecimal> maxRangMap,
+            Map<String, BigDecimal> minRangMap,
+            String code, List<T> tradeDetails) {
+
+        TradeDetail tradeDetail = combinDetail(code, tradeDetails);
+        labelMap.put(labelText,tradeDetail);
+
+        putMaxRangMap(maxRangMap, tradeDetail);
+        putMinRangMap(minRangMap, tradeDetail);
+
+    }
 
 
     //最小值
     BigDecimal minAmount = BigDecimal.valueOf(0);
     BigDecimal minAmountMoney = BigDecimal.valueOf(0);
     BigDecimal minUnitPrice = BigDecimal.valueOf(0);
-    private void putMinRangMap(Map<String, BigDecimal> minRangMap,  TradeDetail tradeDetail) {
-        minRangMap.put("amount",tradeDetail.getAmount().compareTo(minAmount) > 0 ? minAmount : tradeDetail.getAmount());
-        minRangMap.put("amount",tradeDetail.getAmountMoney().compareTo(minAmountMoney) > 0 ? minAmountMoney : tradeDetail.getAmountMoney());
+
+    private void putMinRangMap(Map<String, BigDecimal> minRangMap, TradeDetail tradeDetail) {
+        minRangMap.put("amount", tradeDetail.getAmount().compareTo(minAmount) > 0 ? minAmount : tradeDetail.getAmount());
+        minRangMap.put("amount", tradeDetail.getAmountMoney().compareTo(minAmountMoney) > 0 ? minAmountMoney : tradeDetail.getAmountMoney());
         minRangMap.put("amount", tradeDetail.getUnitPrice().compareTo(minUnitPrice) > 0 ? minUnitPrice : tradeDetail.getUnitPrice());
     }
 
@@ -357,8 +377,9 @@ public class TradeDetailServiceImpl implements TradeDetailService {
     BigDecimal maxAmount = BigDecimal.valueOf(0);
     BigDecimal maxAmountMoney = BigDecimal.valueOf(0);
     BigDecimal maxUnitPrice = BigDecimal.valueOf(0);
-    private void putMaxRangMap(Map<String, BigDecimal> maxRangMap,  TradeDetail tradeDetail) {
-        maxRangMap.put("amount",tradeDetail.getAmount().compareTo(maxAmount) < 0 ? maxAmount : tradeDetail.getAmount());
+
+    private void putMaxRangMap(Map<String, BigDecimal> maxRangMap, TradeDetail tradeDetail) {
+        maxRangMap.put("amount", tradeDetail.getAmount().compareTo(maxAmount) < 0 ? maxAmount : tradeDetail.getAmount());
         maxRangMap.put("amountMoney", tradeDetail.getAmountMoney().compareTo(maxAmountMoney) < 0 ? maxAmountMoney : tradeDetail.getAmountMoney());
         maxRangMap.put("unitPrice", tradeDetail.getUnitPrice().compareTo(maxUnitPrice) > 0 ? maxUnitPrice : tradeDetail.getUnitPrice());
     }
@@ -366,25 +387,27 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
     /**
      * 使用平均值构造tradeDetail供图表使用
-     * @param name
+     *
      * @param tradeDetails
      * @return
      */
-    private <T extends TradeDetail> TradeDetail processChartData(String name, List<T> tradeDetails) {
+    private <T extends TradeDetail> TradeDetail combinDetail(String code, List<T> tradeDetails) {
         BigDecimal amount = BigDecimal.valueOf(0),
                 amountMoney = BigDecimal.valueOf(0),
                 unitPrice = BigDecimal.valueOf(0);
+        String name = null;
         for (TradeDetail tradeDetail : tradeDetails) {
-            amount = amount.add(tradeDetail.getAmount());
-            amountMoney = amountMoney.add(tradeDetail.getAmountMoney());
-            unitPrice = unitPrice.add(tradeDetail.getUnitPrice());
+            amount = tradeDetail.getAmount()==null?amount:amount.add(tradeDetail.getAmount());
+            amountMoney = tradeDetail.getAmountMoney()==null?amountMoney: amountMoney.add(tradeDetail.getAmountMoney());
+            unitPrice = tradeDetail.getUnitPrice()==null?unitPrice: unitPrice.add(tradeDetail.getUnitPrice());
+            name = tradeDetail.getProductName().intern();
         }
         int scale = Integer.parseInt(scale_size.value());
 
-        amount = amount.divide(BigDecimal.valueOf(tradeDetails.size())).setScale(scale, ROUND_HALF_UP);
-        amountMoney = amountMoney.divide(BigDecimal.valueOf(tradeDetails.size())).setScale(scale, ROUND_HALF_UP);
-        unitPrice = unitPrice.divide(BigDecimal.valueOf(tradeDetails.size())).setScale(scale, ROUND_HALF_UP);
-        return new TradeDetail(name, amount, amountMoney, unitPrice);
+        amount = amount.divide(BigDecimal.valueOf(tradeDetails.size()), scale, ROUND_HALF_UP);
+        amountMoney = amountMoney.divide(BigDecimal.valueOf(tradeDetails.size()), scale, ROUND_HALF_UP);
+        unitPrice = unitPrice.divide(BigDecimal.valueOf(tradeDetails.size()), scale, ROUND_HALF_UP);
+        return new TradeDetail(code,name, amount, amountMoney, unitPrice);
     }
 
 

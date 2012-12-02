@@ -246,9 +246,11 @@ public class DocBean {
         thread_poolsize,
         axis_steps,
         scale_size,
+        chart_width,
+        chart_height,
         need_import_criteria,
         batch_updatesize,
-        select_access_sql, ;
+        select_access_sql,;
 
         public String value() {
             return getDefault(this);

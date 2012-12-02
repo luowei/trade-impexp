@@ -267,6 +267,7 @@ public class TradeSumServiceImpl implements TradeSumService {
         Map<String, BigDecimal> maxRangMap = chartData.getMaxRangMap();
         Map<String, BigDecimal> minRangMap = chartData.getMinRangMap();
 
+        if (chartData.getLabels() == null) return null;
         //遍历每个月
         for (Label label : chartData.getLabels()) {
 
@@ -318,32 +319,32 @@ public class TradeSumServiceImpl implements TradeSumService {
 
         //累加
         for (TradeSum tradeSum : tradeSums) {
-            numMonth = numMonth.add(tradeSum.getNumMonth());
-            numSum = numSum.add(tradeSum.getNumSum());
-            moneyMonth = moneyMonth.add(tradeSum.getMoneyMonth());
-            moneySum = moneySum.add(tradeSum.getMoneySum());
-            avgPriceMonth = avgPriceMonth.add(tradeSum.getAvgPriceMonth());
-            avgPriceSum = avgPriceSum.add(tradeSum.getAvgPriceSum());
-            pm = pm.add(tradeSum.getPm());
-            py = py.add(tradeSum.getPy());
-            pq = pq.add(tradeSum.getPq());
+            numMonth = tradeSum.getNumMonth() == null ? numMonth : numMonth.add(tradeSum.getNumMonth());
+            numSum = tradeSum.getNumSum() == null ? numSum : numSum.add(tradeSum.getNumSum());
+            moneyMonth = tradeSum.getMoneyMonth() == null ? moneyMonth : moneyMonth.add(tradeSum.getMoneyMonth());
+            moneySum = tradeSum.getMoneySum() == null ? moneySum : moneySum.add(tradeSum.getMoneySum());
+            avgPriceMonth = tradeSum.getAvgPriceMonth() == null ? avgPriceMonth : avgPriceMonth.add(tradeSum.getAvgPriceMonth());
+            avgPriceSum = tradeSum.getAvgPriceSum() == null ? avgPriceSum : avgPriceSum.add(tradeSum.getAvgPriceSum());
+            pm = tradeSum.getPm() == null ? pm : pm.add(tradeSum.getPm());
+            py = tradeSum.getPy() == null ? py : py.add(tradeSum.getPy());
+            pq = tradeSum.getPq() == null ? pq : pq.add(tradeSum.getPq());
         }
-        BigDecimal size =  BigDecimal.valueOf(tradeSums.size());
+        BigDecimal size = BigDecimal.valueOf(tradeSums.size());
         int scale = Integer.parseInt(scale_size.value());
 
         //取平均值
-        numMonth = numMonth.divide(size).setScale(scale, ROUND_HALF_UP);
-        numSum = numSum.divide(size).setScale(scale, ROUND_HALF_UP);
-        moneyMonth = moneyMonth.divide(size).setScale(scale, ROUND_HALF_UP);
-        moneySum = moneySum.divide(size).setScale(scale, ROUND_HALF_UP);
-        avgPriceMonth = avgPriceMonth.divide(size).setScale(scale, ROUND_HALF_UP);
-        avgPriceSum = avgPriceSum.divide(size).setScale(scale, ROUND_HALF_UP);
-        pm = pm.divide(size).setScale(scale, ROUND_HALF_UP);
-        py = py.divide(size).setScale(scale, ROUND_HALF_UP);
-        pq = pq.divide(size).setScale(scale, ROUND_HALF_UP);
+        numMonth = numMonth.divide(size,scale, ROUND_HALF_UP);
+        numSum = numSum.divide(size,scale, ROUND_HALF_UP);
+        moneyMonth = moneyMonth.divide(size,scale, ROUND_HALF_UP);
+        moneySum = moneySum.divide(size,scale, ROUND_HALF_UP);
+        avgPriceMonth = avgPriceMonth.divide(size,scale, ROUND_HALF_UP);
+        avgPriceSum = avgPriceSum.divide(size,scale, ROUND_HALF_UP);
+        pm = pm.divide(size,scale, ROUND_HALF_UP);
+        py = py.divide(size,scale, ROUND_HALF_UP);
+        pq = pq.divide(size,scale, ROUND_HALF_UP);
 
         return new TradeSum(name, numMonth, numSum,
-                moneyMonth,moneySum,avgPriceMonth,avgPriceSum,pm,py,pq);
+                moneyMonth, moneySum, avgPriceMonth, avgPriceSum, pm, py, pq);
     }
 
     BigDecimal minnumMonth = BigDecimal.valueOf(0),

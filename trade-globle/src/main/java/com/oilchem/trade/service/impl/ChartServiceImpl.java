@@ -7,9 +7,12 @@ import ofc4j.model.axis.Label;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import static com.oilchem.trade.bean.DocBean.Config.yearmonth_split;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,28 +26,43 @@ public class ChartServiceImpl implements ChartService {
 
     /**
      * 获得年月的label
+     *
      * @param yearMonthDto
      * @return
      */
     public List<Label> getYearMonthLabels(YearMonthDto yearMonthDto) {
 
-        if (yearMonthDto.getLowYear() == null || yearMonthDto.getLowMonth() == null)
-            return null;
+        Integer highYear = null;
+        Integer highMonth = null;
+        Integer lowYear = null;
+        Integer lowMonth = null;
 
-        Integer lowYear = yearMonthDto.getLowYear();
-        Integer lowMonth = yearMonthDto.getLowMonth() == null ? 1 : yearMonthDto.getLowMonth();
-        Integer highYear = yearMonthDto.getHighYear();
-        Integer highMonth = yearMonthDto.getHighMonth() == null ? 1 : yearMonthDto.getHighMonth();
+        //默认为近一年的统计
+        if (yearMonthDto.getLowYear() == null || yearMonthDto.getHighYear() == null) {
+            Calendar calendar = Calendar.getInstance();
+            highYear = calendar.get((YEAR));
+            highMonth = calendar.get(MONTH) + 1 < 10 ? calendar.get(MONTH) + 1 : calendar.get(MONTH) + 1;
+            lowYear = highYear - 1;
+            lowMonth = highMonth;
+        } else {
+            lowYear = yearMonthDto.getLowYear();
+            lowMonth = yearMonthDto.getLowMonth() == null ? 1 : yearMonthDto.getLowMonth();
+            highYear = yearMonthDto.getHighYear();
+            highMonth = yearMonthDto.getHighMonth() == null ? 1 : yearMonthDto.getHighMonth();
 
-        if (lowYear > highYear) return null;
+            if (lowYear > highYear) return null;
+        }
 
         List<Label> labelList = new ArrayList<Label>();
-        while (lowYear < highYear || (lowYear == highYear && lowMonth <= highMonth)) {
-            labelList.add(new Label(lowYear + yearmonth_split.value() + (lowMonth < 10 ? "0" + lowMonth : lowMonth)));
-            if (++lowMonth > 12) {
-                lowMonth = 1;
+        labelList.add(new Label(lowYear + yearmonth_split.value() + (lowMonth < 10 ? "0" + lowMonth : lowMonth)));
+        while (lowYear < highYear || (lowYear.equals(highYear) && lowMonth < highMonth-1)) {
+            if (lowMonth >= 12) {
                 lowYear++;
+                lowMonth = 1;
+            } else {
+                ++lowMonth;
             }
+            labelList.add(new Label(lowYear + yearmonth_split.value() + (lowMonth < 10 ? "0" + lowMonth : lowMonth)));
 
         }
         return labelList;

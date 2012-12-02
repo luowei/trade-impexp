@@ -21,12 +21,23 @@
     <link rel="stylesheet" type="text/css"
           href="<c:url value='/resources/bootstrap/css/bootstrap-responsive.min.css' />"/>
     <script type="text/javascript" src="<c:url value="/resources/js/jquery/1.7.2/jquery.js" />"></script>
-    <script type="text/javascript" src="<c:url value="/resources/js/trade.js"/> "></script>
+    <script type="text/javascript" src="<c:url value="/resources/js/trade.js" />"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            checkAll("all", "codes");
+        });
+
+        function genDetailChart() {
+            $("#form1").attr("action", "${pageContext.request.contextPath}/manage/detailchart");
+            $("#form1").submit();
+        }
+    </script>
 
 </head>
 <body>
 
-<jsp:include page="../../common/breadcrumb.jsp" />
+<jsp:include page="../../common/breadcrumb.jsp"/>
 
 <div class="container">
 <h2>进出口明细</h2>
@@ -182,58 +193,58 @@
         <i class="icon-search icon-white"></i>查询
     </button>
     <%--<div class="btn-group">--%>
-    <input type="button" class="btn btn-primary" value="生成曲线"/>
+    <input id="chart" type="button" class="btn-small btn-primary" value="生成曲线" onclick="genDetailChart()"/>
     <%--</div>--%>
-</form:form>
 
-<table class="table table-bordered table-striped table-condensed">
-    <thead>
-    <tr>
-        <th>曲线</th>
-        <th>年</th>
-        <th>月</th>
-        <th>产品代码</th>
-        <th>产品名称</th>
-        <th>贸易方式</th>
-        <th>企业性质</th>
-        <th>运输方式</th>
-        <th>城市</th>
-        <th>海关</th>
-        <th>产销国家</th>
-        <th>数量</th>
-        <th>单位</th>
-        <th>美元价值</th>
-        <th>均价</th>
-    </tr>
-    </thead>
-    <tbody>
-    <c:forEach items="${tradeDetailList.content}" var="detail" varStatus="st">
+
+    <table class="table table-bordered table-striped table-condensed">
+        <thead>
         <tr>
-            <td><form:checkbox path="commonDto.ids" value="${detail.id}"/></td>
-            <td>${detail.year}</td>
-            <td>${detail.month}</td>
-            <td>${detail.productCode}</td>
-            <td>${detail.productName}</td>
-            <td>${detail.tradeType}</td>
-            <td>${detail.companyType}</td>
-            <td>${detail.transportation}</td>
-            <td>${detail.city}</td>
-            <td>${detail.customs}</td>
-            <td>${detail.country}</td>
-            <td>${detail.amount}</td>
-            <td>${detail.unit}</td>
-            <td>${detail.amountMoney}</td>
-            <td></td>
+            <th><label><input type="checkbox" id="all"/>曲线</label></th>
+            <th>年月</th>
+            <th>产品代码</th>
+            <th>产品名称</th>
+            <th>贸易方式</th>
+            <th>企业性质</th>
+            <th>运输方式</th>
+            <th>城市</th>
+            <th>海关</th>
+            <th>产销国家</th>
+            <th>数量</th>
+            <th>单位</th>
+            <th>美元价值</th>
+            <th>均价</th>
         </tr>
-    </c:forEach>
-    </tbody>
-</table>
-${pageTag}
-
-</div>
+        </thead>
+        <tbody>
+        <c:forEach items="${tradeDetailList.content}" var="detail" varStatus="st">
+            <tr>
+                <td><input type="checkbox" name="codes" value="${detail.productCode}"/></td>
+                <td>${detail.yearMonth}</td>
+                <td>${detail.productCode}</td>
+                <td>${detail.productName}</td>
+                <td>${detail.tradeType}</td>
+                <td>${detail.companyType}</td>
+                <td>${detail.transportation}</td>
+                <td>${detail.city}</td>
+                <td>${detail.customs}</td>
+                <td>${detail.country}</td>
+                <td>${detail.amount}</td>
+                <td>${detail.unit}</td>
+                <td>${detail.amountMoney}</td>
+                <td></td>
+            </tr>
+        </c:forEach>
+        </tbody>
+    </table>
+</form:form>
 
 <div class="pagination-centered">
     <jsp:include page="../../common/pagination.jsp"/>
 </div>
+
+</div>
+
+
 </body>
 </html>

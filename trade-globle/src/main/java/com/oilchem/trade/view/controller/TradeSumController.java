@@ -1,5 +1,6 @@
 package com.oilchem.trade.view.controller;
 
+import com.google.common.collect.Lists;
 import com.oilchem.trade.bean.ChartData;
 import com.oilchem.trade.chart.MyChart;
 import com.oilchem.trade.dao.ProductTypeDao;
@@ -28,8 +29,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
+import static com.oilchem.trade.bean.DocBean.Config.chart_height;
+import static com.oilchem.trade.bean.DocBean.Config.chart_width;
 import static com.oilchem.trade.bean.DocBean.Config.upload_sumzip_dir;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.export_type;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.import_type;
@@ -142,9 +146,16 @@ public class TradeSumController extends CommonController {
 
     @RequestMapping("/sumchart")
     public String getSumChartData(Model model,YearMonthDto yearMonthDto,
-                                  String chartType){
+                                  CommonDto commonDto,String chartType,
+                                  TradeSum tradeSum,RedirectAttributes redirectAttr){
 
-        List<String> names = new ArrayList<String>();
+        if (commonDto.getCodes()==null || commonDto.getCodes().length < 1) {
+            return "redirect:/manage/sumchart/" + (commonDto.getPageNumber()==null?1:commonDto.getPageNumber());
+        }
+
+        List<String> names = removeDuplicateWithOrder(
+                Lists.asList(commonDto.getCodes()[0], commonDto.getCodes()));
+
         List<Label> labels = chartService.getYearMonthLabels(yearMonthDto);
 
         ChartData<TradeSum> chartData = new ChartData<TradeSum>().setLabels(labels);
@@ -162,9 +173,11 @@ public class TradeSumController extends CommonController {
                 }
             }
         }
-        model.addAttribute("chartList",chartList);
+        model.addAttribute("chartList",chartList)
+                .addAttribute("width", chart_width.value())
+                .addAttribute("height", chart_height.value());
 
-        return null;
+        return  "manage/trade/chart";
     }
 
 

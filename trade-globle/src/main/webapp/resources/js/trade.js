@@ -7,13 +7,35 @@
  */
 
 /**
- * 将两个select的值合并返回
+ * 全选功能
+ * @param controlCheckboxId 控制全选checkbox的id
+ * @param name checkbox名称
  */
-function combinSelVal(){
+function checkAll(controlCheckboxId, name){
+    var $controlCheckbox = $("#" + controlCheckboxId);
+    var $element = $("input[name="+name+"]");
 
-//    var lowValue = $("select[name='lowyear']").val.toString()
-//        +$("select[name='lowmonth']").val.toString();
-//    var highValue = $("select[name='highyear']").val
-//        +$("select[name='highmonth']").val;
+    var checkedName = "input[name=" + name + "]:checked";
 
+    $controlCheckbox.click(function () {
+        if ($(this).attr("checked") == "checked") {
+            $element.attr("checked", "checked");
+        } else {
+            $element.removeAttr("checked");
+        }
+    });
+
+    var size = $element.length;
+
+    $element.click(function () {
+        var $checkedElement = $(checkedName);
+
+        if (size == $checkedElement.length) {
+            $controlCheckbox.attr("checked", "checked");
+        }
+
+        if (size > $checkedElement.length) {
+            $controlCheckbox.removeAttr("checked");
+        }
+    });
 }

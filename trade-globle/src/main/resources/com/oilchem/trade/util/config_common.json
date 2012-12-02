@@ -198,27 +198,54 @@
         "describe":"value配成要导入的excel表中[累计平均价格]列的列名"
     },
 
-    "excel_num_premonth_incratio":{
+    "excel_pm":{
         "key":"excel_pm",
         "name":"与上月数量增长比",
         "value":"与上月数量增长比",
         "describe":"value配成要导入的excel表中[与上月数量增长比]列的列名"
     },
 
-    "excel_num_preyearsamemonth_incratio":{
+    "excel_py":{
         "key":"excel_py",
         "name":"与上年同月数量增长比",
         "value":"与上年同月数量增长比",
         "describe":"value配成要导入的excel表中与[上年同月数量增长比]列的列名"
     },
 
-    "excel_num_preyearsamequarter_imcratio":{
+    "excel_pq":{
         "key":"excel_pq",
         "name":"与上年同期数量增长比",
         "value":"与上年同期数量增长比",
         "describe":"value配成要导入的excel表中与[与上年同期数量增长比]列的列名"
-    }
+    },
 
+    "axis_steps":{
+        "key":"axis_steps",
+        "name":"图表数据轴步间数",
+        "value":"20",
+        "describe":"图表数据轴数据的分隔数目"
+    },
+
+    "scale_size":{
+        "key":"scale_size",
+        "name":"数据精度",
+        "value":"3",
+        "describe":"数据精确到几位小数点"
+    },
+
+    "chart_width":{
+        "key":"chart_width",
+        "name":"图表宽度",
+        "value":"600",
+        "describe":"图表的宽度"
+    },
+
+    "chart_height":{
+        "key":"chart_height",
+        "name":"图表高度",
+        "value":"400",
+        "describe":"图表的高度"
+    }
 
 
 }

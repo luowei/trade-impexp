@@ -13,6 +13,7 @@ public class CommonDto implements Serializable {
 
     private Long id;
     private Long[] ids;
+    private String[] codes;
     private Integer pageNumber;
     private Integer pageSize;
     private String keyword;
@@ -41,6 +42,15 @@ public class CommonDto implements Serializable {
 
     public Integer getPageNumber() {
         return pageNumber;
+    }
+
+    public String[] getCodes() {
+        return codes;
+    }
+
+    public CommonDto setCodes(String[] codes) {
+        this.codes = codes;
+        return this;
     }
 
     public CommonDto setPageNumber(Integer pageNumber) {

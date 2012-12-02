@@ -29,7 +29,7 @@ public class ChartData<T> {
     List<T> elementList = new ArrayList<T>();
 
     //图表标签轴上的标签list
-   List<Label> labels;
+   List<Label> labels = new ArrayList<Label>();
 
 
     public ChartData() {
