@@ -179,7 +179,6 @@ public class TradeDetailController extends CommonController {
 
     /**
      * 获得查询条件数据
-     *
      * @param model 模型
      * @return
      */
