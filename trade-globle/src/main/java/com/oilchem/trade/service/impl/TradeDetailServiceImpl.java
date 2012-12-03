@@ -291,16 +291,17 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
     /**
      * 获得detailChart List
-     *
+     * @param labels
      * @param codes
-     * @param chartData
      * @param yearMonthDto @return     获得由月份组合而成的 list<TradeDetail>的集合
      */
-    public List<ChartData<TradeDetail>> getChartDetailList(
-            List<String> codes, ChartData<TradeDetail> chartData, YearMonthDto yearMonthDto) {
+    public ChartData<TradeDetail> getChartDetailList(
+            List<Label> labels,
+            List<String> codes, YearMonthDto yearMonthDto) {
+
+        ChartData<TradeDetail> chartData = new ChartData<TradeDetail>().setLabels(labels);
 
         Map<String,TradeDetail> labelMap = new TreeMap<String,TradeDetail>();
-        List<ChartData<TradeDetail>> monthDetailsList = new ArrayList<ChartData<TradeDetail>>();
         Integer impExpType = yearMonthDto.getImpExpType();
 
         Map<String, BigDecimal> maxRangMap = chartData.getMaxRangMap();
@@ -339,11 +340,12 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
             List<TradeDetail> detailList = new ArrayList<TradeDetail>();
             detailList.addAll(labelMap.values());
-            monthDetailsList.add(chartData.setElementList(detailList)
-                    .setMaxRangMap(maxRangMap).setMinRangMap(minRangMap));
+            chartData.setElementList(detailList)
+                    .setMaxRangMap(maxRangMap)
+                    .setMinRangMap(minRangMap);
         }
 
-        return monthDetailsList;
+        return chartData;
     }
 
     private <T extends TradeDetail> void detail2processedDetail(

@@ -29,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import static com.oilchem.trade.bean.DocBean.Config.chart_height;
@@ -158,12 +157,12 @@ public class TradeSumController extends CommonController {
 
         List<Label> labels = chartService.getYearMonthLabels(yearMonthDto);
 
-        ChartData<TradeSum> chartData = new ChartData<TradeSum>().setLabels(labels);
-
-        List<ChartData<TradeSum>> chartDataList = tradeSumService.getChartSumList(names, chartData, yearMonthDto);
 
 
-        Object o = new MyChart().getSumLineChart(chartDataList);
+        ChartData<TradeSum> chartData = tradeSumService.getChartSumList(labels,names,yearMonthDto );
+
+
+        Object o = new MyChart().getSumLineChart(chartData);
         List<String> chartList = new ArrayList<String>();
 
         if(o!=null && o instanceof List){

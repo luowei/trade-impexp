@@ -7,6 +7,7 @@ import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
+import ofc4j.model.axis.Label;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -109,11 +110,14 @@ public interface TradeSumService {
 
     /**
      * 获得图表数据
+     *
+     *
+     * @param labels
      * @param names
-     * @param chartData
      * @param yearMonthDto
      * @return
      */
-    List<ChartData<TradeSum>> getChartSumList(
-            List<String> names, ChartData<TradeSum> chartData, YearMonthDto yearMonthDto);
+    ChartData<TradeSum> getChartSumList(
+            List<Label> labels, List<String> names,
+            YearMonthDto yearMonthDto);
 }

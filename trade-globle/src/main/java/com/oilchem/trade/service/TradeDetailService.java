@@ -115,13 +115,13 @@ public interface TradeDetailService {
 
     /**
      * 获得detailChart List
-     *
+     * @param labels
      * @param codes
-     * @param chartData
      * @param yearMonthDto  @return     获得由月份组合而成的 list<TradeDetail>的集合
      */
-    public List<ChartData<TradeDetail>> getChartDetailList(
-            List<String> codes, ChartData<TradeDetail> chartData, YearMonthDto yearMonthDto);
+    public ChartData<TradeDetail> getChartDetailList(
+            List<Label> labels,
+            List<String> codes,  YearMonthDto yearMonthDto);
 
 
 

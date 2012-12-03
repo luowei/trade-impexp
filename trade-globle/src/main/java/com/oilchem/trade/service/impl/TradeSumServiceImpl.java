@@ -1,7 +1,6 @@
 package com.oilchem.trade.service.impl;
 
 import com.oilchem.trade.bean.ChartData;
-import com.oilchem.trade.bean.DocBean;
 import com.oilchem.trade.dao.ExpTradeSumDao;
 import com.oilchem.trade.dao.ImpTradeSumDao;
 import com.oilchem.trade.dao.LogDao;
@@ -252,16 +251,20 @@ public class TradeSumServiceImpl implements TradeSumService {
     /**
      * 获得图表数据
      *
+     *
+     *
+     * @param labels
      * @param names
-     * @param chartData
      * @param yearMonthDto
      * @return
      */
-    public List<ChartData<TradeSum>> getChartSumList(
-            List<String> names, ChartData<TradeSum> chartData, YearMonthDto yearMonthDto) {
+    public ChartData<TradeSum> getChartSumList(
+            List<Label> labels, List<String> names,
+             YearMonthDto yearMonthDto) {
+
+        ChartData<TradeSum> chartData = new ChartData<TradeSum>().setLabels(labels);
 
         List<TradeSum> tradeSumList = new ArrayList<TradeSum>();
-        List<ChartData<TradeSum>> monthSumsList = new ArrayList<ChartData<TradeSum>>();
         Integer impExpType = yearMonthDto.getImpExpType();
 
         Map<String, BigDecimal> maxRangMap = chartData.getMaxRangMap();
@@ -292,11 +295,11 @@ public class TradeSumServiceImpl implements TradeSumService {
                     tradeSumList.add(tradeSum);
                 }
             }
-            monthSumsList.add(chartData.setElementList(tradeSumList)
-                    .setMaxRangMap(maxRangMap).setMinRangMap(minRangMap));
+            chartData.setElementList(tradeSumList)
+                    .setMaxRangMap(maxRangMap).setMinRangMap(minRangMap);
         }
 
-        return monthSumsList;
+        return chartData;
     }
 
     /**

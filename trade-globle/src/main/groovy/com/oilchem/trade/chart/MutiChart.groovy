@@ -19,11 +19,13 @@ import com.oilchem.trade.bean.DocBean
 
 class MyChart {
 
+    def style = "{color:#736AEF; font-size:12px;}"
+
     /**
      * 获得拆线图
      * @return
      */
-    def List<Chart> getDetailLineChart(List<ChartData<TradeDetail>> chartDataList) {
+    def List<Chart> getDetailLineChart(ChartData<TradeDetail> chartData) {
 
         //-------------tradeDetail  ----------------------
         List<Chart> detailChartList = new ArrayList<Chart>();
@@ -38,18 +40,18 @@ class MyChart {
         //遍历每个月
 //        chartDataList.each {
 
-        List<List<LineChart>> detailFiledLineList = getDetailFiledListList(chartDataList.get(0).elementList)
+        List<List<LineChart>> detailFiledLineList = getDetailFiledListList(chartData.elementList)
 
-        detailChartList << newChart(amountChat, chartDataList.get(0), "amount").addElements(detailFiledLineList.get(0))
-        detailChartList << newChart(amountMoneyChart, chartDataList.get(0), "amountMoney").addElements(detailFiledLineList.get(1))
-        detailChartList << newChart(unitpriceChart, chartDataList.get(0), "unitPrice").addElements(detailFiledLineList.get(2))
+        detailChartList << newChart(amountChat, chartData, "amount").addElements(detailFiledLineList.get(0))
+        detailChartList << newChart(amountMoneyChart, chartData, "amountMoney").addElements(detailFiledLineList.get(1))
+        detailChartList << newChart(unitpriceChart, chartData, "unitPrice").addElements(detailFiledLineList.get(2))
 //        }
         detailChartList
     }
 
-    def style = "{color:#736AEF; font-size:12px;}"
 
-    def List<Chart> getSumLineChart(List<ChartData<TradeSum>> chartDataList) {
+
+    def List<Chart> getSumLineChart(ChartData<TradeSum> chartData) {
 
         //--------------tradeSum----------------------------
         List<Chart> sumChartList = new ArrayList<Chart>();
@@ -72,19 +74,18 @@ class MyChart {
         Chart pqChart = new Chart()
                 .setTitle(new Text(excel_pq.value())).setYLegend(new Text(excel_pq.value(), style));
 
-        chartDataList.each {
-            List<List<LineChart>> sumFiledLineList = getSumFiledLineList(it.elementList)
+            List<List<LineChart>> sumFiledLineList = getSumFiledLineList(chartData.elementList)
 
-            sumChartList << newChart(nummonthChat, it, excel_num_month.value()).addElements(sumFiledLineList.get(0))
-            sumChartList << newChart(numSumChat, it, excel_num_sum.value()).addElements(sumFiledLineList.get(1))
-            sumChartList << newChart(moneyMonthChat, it, excel_money_month.value()).addElements(sumFiledLineList.get(2))
-            sumChartList << newChart(moneySumChat, it, excel_money_sum.value()).addElements(sumFiledLineList.get(3))
-            sumChartList << newChart(avgPriceMonthChat, it, excel_avg_price_month.value()).addElements(sumFiledLineList.get(4))
-            sumChartList << newChart(avgPriceSumChat, it, excel_avg_price_sum.value()).addElements(sumFiledLineList.get(5))
-            sumChartList << newChart(pmChart, it, excel_pm.value()).addElements(sumFiledLineList.get(6))
-            sumChartList << newChart(pyChart, it, excel_py.value()).addElements(sumFiledLineList.get(7))
-            sumChartList << newChart(pqChart, it, excel_pq.value()).addElements(sumFiledLineList.get(8))
-        }
+            sumChartList << newChart(nummonthChat, chartData, excel_num_month.value()).addElements(sumFiledLineList.get(0))
+            sumChartList << newChart(numSumChat, chartData, excel_num_sum.value()).addElements(sumFiledLineList.get(1))
+            sumChartList << newChart(moneyMonthChat, chartData, excel_money_month.value()).addElements(sumFiledLineList.get(2))
+            sumChartList << newChart(moneySumChat, chartData, excel_money_sum.value()).addElements(sumFiledLineList.get(3))
+            sumChartList << newChart(avgPriceMonthChat, chartData, excel_avg_price_month.value()).addElements(sumFiledLineList.get(4))
+            sumChartList << newChart(avgPriceSumChat, chartData, excel_avg_price_sum.value()).addElements(sumFiledLineList.get(5))
+            sumChartList << newChart(pmChart, chartData, excel_pm.value()).addElements(sumFiledLineList.get(6))
+            sumChartList << newChart(pyChart, chartData, excel_py.value()).addElements(sumFiledLineList.get(7))
+            sumChartList << newChart(pqChart, chartData, excel_pq.value()).addElements(sumFiledLineList.get(8))
+
         sumChartList
     }
 
