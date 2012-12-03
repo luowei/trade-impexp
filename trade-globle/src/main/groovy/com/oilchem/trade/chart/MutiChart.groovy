@@ -29,48 +29,48 @@ class MyChart {
         List<Chart> detailChartList = new ArrayList<Chart>();
 
         Chart amountChat = new Chart()
-                .setTitle(new Text("数量")).setYLegend(new Text("数量"));
+                .setTitle(new Text("数量")).setYLegend(new Text("数量", style));
         Chart amountMoneyChart = new Chart()
-                .setTitle(new Text("金额")).setYLegend(new Text("金额"));
+                .setTitle(new Text("金额")).setYLegend(new Text("金额", style));
         Chart unitpriceChart = new Chart()
-                .setTitle(new Text("平均价格")).setYLegend(new Text("平均价格"));
-
-
+                .setTitle(new Text("平均价格")).setYLegend(new Text("平均价格", style));
 
         //遍历每个月
 //        chartDataList.each {
 
-            List<List<LineChart>> detailFiledLineList = getDetailFiledListList(chartDataList.get(0).elementList)
+        List<List<LineChart>> detailFiledLineList = getDetailFiledListList(chartDataList.get(0).elementList)
 
-            detailChartList << newChart(amountChat, chartDataList.get(0), "amount").addElements(detailFiledLineList.get(0))
-            detailChartList << newChart(amountMoneyChart, chartDataList.get(0), "amountMoney").addElements(detailFiledLineList.get(1))
-            detailChartList << newChart(unitpriceChart, chartDataList.get(0), "unitPrice").addElements(detailFiledLineList.get(2))
+        detailChartList << newChart(amountChat, chartDataList.get(0), "amount").addElements(detailFiledLineList.get(0))
+        detailChartList << newChart(amountMoneyChart, chartDataList.get(0), "amountMoney").addElements(detailFiledLineList.get(1))
+        detailChartList << newChart(unitpriceChart, chartDataList.get(0), "unitPrice").addElements(detailFiledLineList.get(2))
 //        }
         detailChartList
     }
+
+    def style = "{color:#736AEF; font-size:12px;}"
 
     def List<Chart> getSumLineChart(List<ChartData<TradeSum>> chartDataList) {
 
         //--------------tradeSum----------------------------
         List<Chart> sumChartList = new ArrayList<Chart>();
         Chart nummonthChat = new Chart()
-                .setTitle(new Text(excel_num_month.value())).setYLegend(new Text(excel_num_month.value()));
+                .setTitle(new Text(excel_num_month.value())).setYLegend(new Text(excel_num_month.value(), style));
         Chart numSumChat = new Chart()
-                .setTitle(new Text(excel_num_sum.value())).setYLegend(new Text(excel_num_sum.value()))
+                .setTitle(new Text(excel_num_sum.value())).setYLegend(new Text(excel_num_sum.value(), style))
         Chart moneyMonthChat = new Chart()
-                .setTitle(new Text(excel_money_month.value())).setYLegend(new Text(excel_money_month.value()))
+                .setTitle(new Text(excel_money_month.value())).setYLegend(new Text(excel_money_month.value(), style))
         Chart moneySumChat = new Chart()
-                .setTitle(new Text(excel_money_sum.value())).setYLegend(new Text(excel_money_sum.value()));
+                .setTitle(new Text(excel_money_sum.value())).setYLegend(new Text(excel_money_sum.value(), style));
         Chart avgPriceMonthChat = new Chart()
-                .setTitle(new Text(excel_avg_price_month.value())).setYLegend(new Text(excel_avg_price_month.value()));
+                .setTitle(new Text(excel_avg_price_month.value())).setYLegend(new Text(excel_avg_price_month.value(), style));
         Chart avgPriceSumChat = new Chart()
-                .setTitle(new Text(excel_avg_price_sum.value())).setYLegend(new Text(excel_avg_price_sum.value()));
+                .setTitle(new Text(excel_avg_price_sum.value())).setYLegend(new Text(excel_avg_price_sum.value(), style));
         Chart pmChart = new Chart()
-                .setTitle(new Text(excel_pm.value())).setYLegend(new Text(excel_pm.value()));
+                .setTitle(new Text(excel_pm.value())).setYLegend(new Text(excel_pm.value(), style));
         Chart pyChart = new Chart()
-                .setTitle(new Text(excel_py.value())).setYLegend(new Text(excel_py.value()));
+                .setTitle(new Text(excel_py.value())).setYLegend(new Text(excel_py.value(), style));
         Chart pqChart = new Chart()
-                .setTitle(new Text(excel_pq.value())).setYLegend(new Text(excel_pq.value()));
+                .setTitle(new Text(excel_pq.value())).setYLegend(new Text(excel_pq.value(), style));
 
         chartDataList.each {
             List<List<LineChart>> sumFiledLineList = getSumFiledLineList(it.elementList)
@@ -152,15 +152,15 @@ class MyChart {
         //添加三个折线图
         detailList.each {
             detailFiledLineList.size() < 1 ? detailFiledLineList << new ArrayList<LineChart>() : detailFiledLineList
-            detailFiledLineList.get(0) << newLineElement(amountLineChart, it).addValues(it.amount)
+            detailFiledLineList.get(0) << newLineElement(amountLineChart, it).addValues(it.amount.doubleValue())
 //                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 5) : it.productName)
 
             detailFiledLineList.size() < 2 ? detailFiledLineList << new ArrayList<LineChart>() : detailFiledLineList
-            detailFiledLineList.get(1) << newLineElement(amountMoneyLineChart, it).addValues(it.amountMoney)
+            detailFiledLineList.get(1) << newLineElement(amountMoneyLineChart, it).addValues(it.amountMoney.doubleValue())
 //                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 5) : it.productName)
 
             detailFiledLineList.size() < 3 ? detailFiledLineList << new ArrayList<LineChart>() : detailFiledLineList
-            detailFiledLineList.get(2) << newLineElement(unitPriceLineChart, it).addValues(it.unitPrice)
+            detailFiledLineList.get(2) << newLineElement(unitPriceLineChart, it).addValues(it.unitPrice.doubleValue())
 //                    .setText(it.productName.length() > 6 ? it.productName.substring(0, 5) : it.productName)
         }
         detailFiledLineList
@@ -169,14 +169,20 @@ class MyChart {
 
     private Chart newChart(Chart chart, ChartData chartData, String key) {
 
-        def minRang = chartData.minRangMap.get(key) < 0 ? chartData.minRangMap.get(key) : 0
+        def minRang = chartData.minRangMap.get(key)==null || chartData.minRangMap.get(key) < 0 ? chartData.minRangMap.get(key) : 0
         def maxRang = chartData.maxRangMap.get(key).multiply(BigDecimal.valueOf(1.2))
-        def scale = Integer.parseInt(scale_size.value())
+        maxRang =  maxRang.compareTo(BigDecimal.valueOf(Long.valueOf(axis_steps.value()))) < 0 ?
+            BigDecimal.valueOf(Long.valueOf(axis_steps.value())) : maxRang;
+
+
+        int scale = Integer.parseInt(scale_size.value())
         def steps = BigDecimal.valueOf(Long.valueOf(axis_steps.value()));
-        def step = maxRang.divide(steps,scale, BigDecimal.ROUND_HALF_UP).intValue()
+        def step = maxRang.divide(steps, scale, BigDecimal.ROUND_HALF_UP).intValue()
+
         return chart.setXAxis(new XAxis().addLabels(chartData.labels))
-                .setXLegend(new Text(chartData.x_legend))
-                .setYAxis(new YAxis().setRange(minRang, maxRang.intValue(), step))
+                .setXLegend(new Text("year-month"/*chartData.x_legend*/, style))
+                .setYAxis(new YAxis()
+                .setRange(minRang, maxRang.intValue(), step))
     }
 
     private LineChart newLineElement(LineChart lineChart, def it) {
@@ -242,20 +248,20 @@ class MyChart {
         chartData1.labels << labels
         chartData2.labels << labels
 
-        chartData1.minRangMap.put("amount",3.234)
-        chartData2.minRangMap.put("amount",1.264)
-        chartData1.maxRangMap.put("amount",2534.32)
-        chartData2.maxRangMap.put("amount",5635.32)
+        chartData1.minRangMap.put("amount", 3.234)
+        chartData2.minRangMap.put("amount", 1.264)
+        chartData1.maxRangMap.put("amount", 2534.32)
+        chartData2.maxRangMap.put("amount", 5635.32)
 
-        chartData1.minRangMap.put("amountMoney",3.234)
-        chartData2.minRangMap.put("amountMoney",1.264)
-        chartData1.maxRangMap.put("amountMoney",2534.32)
-        chartData2.maxRangMap.put("amountMoney",5635.32)
+        chartData1.minRangMap.put("amountMoney", 3.234)
+        chartData2.minRangMap.put("amountMoney", 1.264)
+        chartData1.maxRangMap.put("amountMoney", 2534.32)
+        chartData2.maxRangMap.put("amountMoney", 5635.32)
 
-        chartData1.minRangMap.put("unitPrice",3.234)
-        chartData2.minRangMap.put("unitPrice",1.264)
-        chartData1.maxRangMap.put("unitPrice",2534.32)
-        chartData2.maxRangMap.put("unitPrice",5635.32)
+        chartData1.minRangMap.put("unitPrice", 3.234)
+        chartData2.minRangMap.put("unitPrice", 1.264)
+        chartData1.maxRangMap.put("unitPrice", 2534.32)
+        chartData2.maxRangMap.put("unitPrice", 5635.32)
 
         List<ChartData<TradeDetail>> chartDataList = [];
         chartDataList << chartData1

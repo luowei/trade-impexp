@@ -374,9 +374,9 @@ public class TradeDetailServiceImpl implements TradeDetailService {
     }
 
     //最大值
-    BigDecimal maxAmount = BigDecimal.valueOf(0);
-    BigDecimal maxAmountMoney = BigDecimal.valueOf(0);
-    BigDecimal maxUnitPrice = BigDecimal.valueOf(0);
+    BigDecimal maxAmount = BigDecimal.valueOf(Long.valueOf(axis_steps.value()));
+    BigDecimal maxAmountMoney = BigDecimal.valueOf(Long.valueOf(axis_steps.value()));
+    BigDecimal maxUnitPrice = BigDecimal.valueOf(Long.valueOf(axis_steps.value()));
 
     private void putMaxRangMap(Map<String, BigDecimal> maxRangMap, TradeDetail tradeDetail) {
         maxRangMap.put("amount", tradeDetail.getAmount().compareTo(maxAmount) < 0 ? maxAmount : tradeDetail.getAmount());

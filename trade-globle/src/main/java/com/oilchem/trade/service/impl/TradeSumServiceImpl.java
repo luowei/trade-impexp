@@ -371,15 +371,15 @@ public class TradeSumServiceImpl implements TradeSumService {
     }
 
     //存入最大值
-    BigDecimal maxnumMonth = BigDecimal.valueOf(0),
-            maxnumSum = BigDecimal.valueOf(0),
-            maxmoneyMonth = BigDecimal.valueOf(0),
-            maxmoneySum = BigDecimal.valueOf(0),
-            maxavgPriceMonth = BigDecimal.valueOf(0),
-            maxavgPriceSum = BigDecimal.valueOf(0),
-            maxPM = BigDecimal.valueOf(0),
-            maxPY = BigDecimal.valueOf(0),
-            maxPQ = BigDecimal.valueOf(0);
+    BigDecimal maxnumMonth = BigDecimal.valueOf(Long.valueOf(axis_steps.value())),
+            maxnumSum = BigDecimal.valueOf(Long.valueOf(axis_steps.value())),
+            maxmoneyMonth = BigDecimal.valueOf(Long.valueOf(axis_steps.value())),
+            maxmoneySum = BigDecimal.valueOf(Long.valueOf(axis_steps.value())),
+            maxavgPriceMonth = BigDecimal.valueOf(Long.valueOf(axis_steps.value())),
+            maxavgPriceSum = BigDecimal.valueOf(Long.valueOf(axis_steps.value())),
+            maxPM = BigDecimal.valueOf(Long.valueOf(axis_steps.value())),
+            maxPY = BigDecimal.valueOf(Long.valueOf(axis_steps.value())),
+            maxPQ = BigDecimal.valueOf(Long.valueOf(axis_steps.value()));
 
     private void putMaxRangMap(Map<String, BigDecimal> maxRangMap, TradeSum tradeSum) {
         maxRangMap.put(excel_num_month.value(), tradeSum.getNumMonth().compareTo(maxnumMonth) > 0 ? maxnumMonth : tradeSum.getNumMonth());

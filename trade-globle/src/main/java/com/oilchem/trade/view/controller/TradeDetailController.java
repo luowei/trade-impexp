@@ -13,6 +13,8 @@ import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
+import com.oilchem.trade.util.CommonUtil;
+import com.oilchem.trade.util.ConfigUtil;
 import com.oilchem.trade.util.EHCacheUtil;
 import ofc4j.OFC;
 import ofc4j.model.Chart;
@@ -181,6 +183,16 @@ public class TradeDetailController extends CommonController {
         Object o = new MyChart().getDetailLineChart(chartDataList);
         List<String> chartList = new ArrayList<String>();
 
+//        String testJson = CommonUtil.readStringFromFile(ConfigUtil.getConfigFilePath("prj_test.json"));
+
+//        String testJson1 = CommonUtil.readStringFromFile(ConfigUtil.getConfigFilePath("de_chart1.json"));
+//        String testJson2 = CommonUtil.readStringFromFile(ConfigUtil.getConfigFilePath("de_chart2.json"));
+//        String testJson3 = CommonUtil.readStringFromFile(ConfigUtil.getConfigFilePath("de_chart3.json"));
+//
+//        setValue("chart", "detail_chartList_1",testJson1);
+//        setValue("chart", "detail_chartList_2",testJson2);
+//        setValue("chart", "detail_chartList_3",testJson3);
+
         //缓存
         int idx = 1;
         if (o != null && o instanceof List) {
@@ -190,12 +202,18 @@ public class TradeDetailController extends CommonController {
                     setValue("chart", "detail_chartList_"
 //                            +session.getId()
                             + idx, chart);
+
+                    System.out.println("=================================================");
+                    System.out.println(chart);
+                    System.out.println("=================================================");
+
                     idx++;
                 }
             }
         }
 
-        model.addAttribute("idx",idx).addAttribute("width", chart_width.value())
+
+        model.addAttribute("idx",idx-1).addAttribute("width", chart_width.value())
                 .addAttribute("height", chart_height.value());
 
         return "manage/trade/chart";

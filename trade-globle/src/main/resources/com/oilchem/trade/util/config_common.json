@@ -236,7 +236,7 @@
     "chart_width":{
         "key":"chart_width",
         "name":"图表宽度",
-        "value":"600",
+        "value":"800",
         "describe":"图表的宽度"
     },
 

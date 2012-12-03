@@ -54,10 +54,10 @@ public class ConfigUtil {
      *
      * @return 返回路径
      */
-    public static String getConfigFilePath() {
+    public static String getConfigFilePath(String fileName) {
         String path = ConfigUtil.class.getResource("ConfigUtil.class").getPath();
-        String path1 = ConfigUtil.class.getResource(CONFIG_COMMON_JSON).getPath();
-        String configFilePath = ConfigUtil.class.getResource(CONFIG_COMMON_JSON).getPath().substring(1);
+        String path1 = ConfigUtil.class.getResource(fileName).getPath();
+        String configFilePath = ConfigUtil.class.getResource(fileName).getPath().substring(1);
         // 判断系统 linux，windows
         if ("\\".equals(File.separator)) {
             configFilePath = configFilePath.replace("%20", " ");
@@ -83,7 +83,7 @@ public class ConfigUtil {
      * @return 成功或失败
      */
     public static Boolean setConfigJson(String configJson) {
-        String filePath = getConfigFilePath();
+        String filePath = getConfigFilePath(CONFIG_COMMON_JSON);
         if (configUtil == null) {
             configUtil = initConfigUtil();
         }
@@ -150,7 +150,7 @@ public class ConfigUtil {
      */
     private static synchronized ConfigUtil initConfigUtil() {
         if (configUtil == null) {
-            String configFilePath = getConfigFilePath();
+            String configFilePath = getConfigFilePath(CONFIG_COMMON_JSON);
             String jsonStr = CommonUtil.readStringFromFile(configFilePath);
             configUtil = new ConfigUtil(jsonStr);
         }
