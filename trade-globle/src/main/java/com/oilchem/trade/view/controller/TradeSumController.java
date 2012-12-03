@@ -30,6 +30,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.oilchem.trade.bean.DocBean.Config.chart_height;
 import static com.oilchem.trade.bean.DocBean.Config.chart_width;
@@ -159,10 +160,10 @@ public class TradeSumController extends CommonController {
 
 
 
-        ChartData<TradeSum> chartData = tradeSumService.getChartSumList(labels,names,yearMonthDto );
+        Map<String, ChartData<TradeSum>> chartDataMap = tradeSumService.getChartSumList(labels,names,yearMonthDto );
 
 
-        Object o = new MyChart().getSumLineChart(chartData);
+        Object o = new MyChart().getSumLineChart(chartDataMap);
         List<String> chartList = new ArrayList<String>();
 
         if(o!=null && o instanceof List){

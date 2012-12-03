@@ -112,12 +112,13 @@ public interface TradeSumService {
      * 获得图表数据
      *
      *
+     *
      * @param labels
      * @param names
      * @param yearMonthDto
      * @return
      */
-    ChartData<TradeSum> getChartSumList(
+    Map<String, ChartData<TradeSum>> getChartSumList(
             List<Label> labels, List<String> names,
             YearMonthDto yearMonthDto);
 }

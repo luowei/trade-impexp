@@ -251,17 +251,16 @@ public class TradeSumServiceImpl implements TradeSumService {
     /**
      * 获得图表数据
      *
-     *
-     *
      * @param labels
      * @param names
      * @param yearMonthDto
      * @return
      */
-    public ChartData<TradeSum> getChartSumList(
+    public Map<String, ChartData<TradeSum>> getChartSumList(
             List<Label> labels, List<String> names,
-             YearMonthDto yearMonthDto) {
+            YearMonthDto yearMonthDto) {
 
+        Map<String, ChartData<TradeSum>> chartDataMap = new HashMap<String, ChartData<TradeSum>>(names.size());
         ChartData<TradeSum> chartData = new ChartData<TradeSum>().setLabels(labels);
 
         List<TradeSum> tradeSumList = new ArrayList<TradeSum>();
@@ -271,11 +270,13 @@ public class TradeSumServiceImpl implements TradeSumService {
         Map<String, BigDecimal> minRangMap = chartData.getMinRangMap();
 
         if (chartData.getLabels() == null) return null;
-        //遍历每个月
-        for (Label label : chartData.getLabels()) {
 
-            //遍历用户选择的名字
-            for (String name : names) {
+        //遍历用户选择的名字
+        for (String name : names) {
+            //遍历每个月
+            for (Label label : chartData.getLabels()) {
+
+
                 if (impExpType.equals(import_type.ordinal())) {
                     List<ImpTradeSum> impTradeSums = impTradeSumDao.findByProductNameAndYearMonth(name, label.getText());
                     TradeSum tradeSum = processChartData(name, impTradeSums);
@@ -294,12 +295,15 @@ public class TradeSumServiceImpl implements TradeSumService {
 
                     tradeSumList.add(tradeSum);
                 }
+                chartData.setElementList(tradeSumList)
+                        .setMaxRangMap(maxRangMap).setMinRangMap(minRangMap);
+
             }
-            chartData.setElementList(tradeSumList)
-                    .setMaxRangMap(maxRangMap).setMinRangMap(minRangMap);
+            chartDataMap.put(name, chartData);
+
         }
 
-        return chartData;
+        return chartDataMap;
     }
 
     /**
@@ -336,15 +340,15 @@ public class TradeSumServiceImpl implements TradeSumService {
         int scale = Integer.parseInt(scale_size.value());
 
         //取平均值
-        numMonth = numMonth.divide(size,scale, ROUND_HALF_UP);
-        numSum = numSum.divide(size,scale, ROUND_HALF_UP);
-        moneyMonth = moneyMonth.divide(size,scale, ROUND_HALF_UP);
-        moneySum = moneySum.divide(size,scale, ROUND_HALF_UP);
-        avgPriceMonth = avgPriceMonth.divide(size,scale, ROUND_HALF_UP);
-        avgPriceSum = avgPriceSum.divide(size,scale, ROUND_HALF_UP);
-        pm = pm.divide(size,scale, ROUND_HALF_UP);
-        py = py.divide(size,scale, ROUND_HALF_UP);
-        pq = pq.divide(size,scale, ROUND_HALF_UP);
+        numMonth = numMonth.divide(size, scale, ROUND_HALF_UP);
+        numSum = numSum.divide(size, scale, ROUND_HALF_UP);
+        moneyMonth = moneyMonth.divide(size, scale, ROUND_HALF_UP);
+        moneySum = moneySum.divide(size, scale, ROUND_HALF_UP);
+        avgPriceMonth = avgPriceMonth.divide(size, scale, ROUND_HALF_UP);
+        avgPriceSum = avgPriceSum.divide(size, scale, ROUND_HALF_UP);
+        pm = pm.divide(size, scale, ROUND_HALF_UP);
+        py = py.divide(size, scale, ROUND_HALF_UP);
+        pq = pq.divide(size, scale, ROUND_HALF_UP);
 
         return new TradeSum(name, numMonth, numSum,
                 moneyMonth, moneySum, avgPriceMonth, avgPriceSum, pm, py, pq);

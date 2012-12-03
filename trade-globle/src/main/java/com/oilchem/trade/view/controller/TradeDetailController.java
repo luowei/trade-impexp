@@ -175,11 +175,10 @@ public class TradeDetailController extends CommonController {
 
         List<Label> labels = chartService.getYearMonthLabels(yearMonthDto);
 
-        ChartData<TradeDetail> chartData = tradeDetailService.getChartDetailList(labels,codes, yearMonthDto);
+        Map<String, ChartData<TradeDetail>> chartDataMap = tradeDetailService.getChartDetailList(labels,codes, yearMonthDto);
 
 
-        Object o = new MyChart().getDetailLineChart(chartData);
-        List<String> chartList = new ArrayList<String>();
+        Object o = new MyChart().getDetailLineChart(chartDataMap);
 
 //        String testJson = CommonUtil.readStringFromFile(ConfigUtil.getConfigFilePath("prj_test.json"));
 
