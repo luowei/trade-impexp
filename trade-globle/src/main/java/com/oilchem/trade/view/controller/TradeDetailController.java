@@ -61,9 +61,6 @@ public class TradeDetailController extends CommonController {
     TradeDetailService tradeDetailService;
 
     @Autowired
-    ChartService chartService;
-
-    @Autowired
     TaskService taskService;
 
 //    @ModelAttribute
@@ -153,86 +150,6 @@ public class TradeDetailController extends CommonController {
         return "redirect:/manage/import";
     }
 
-    /**
-     * 获得图表
-     *
-     * @param model
-     * @param yearMonthDto
-     * @param chartType
-     * @return
-     */
-    @RequestMapping("/detailchart")
-    public String getDetailChartData(Model model, YearMonthDto yearMonthDto,
-                                     CommonDto commonDto, String chartType,
-                                     TradeDetail tradeDetail, HttpSession session,
-                                     RedirectAttributes redirectAttributes) {
-
-        if (commonDto.getCodes() == null || commonDto.getCodes().length < 1) {
-            return "redirect:/manage/listdetail/" + (commonDto.getPageNumber() == null ? 1 : commonDto.getPageNumber());
-        }
-
-        List<String> codes = removeDuplicateWithOrder(
-                Lists.asList(commonDto.getCodes()[0], commonDto.getCodes()));
-
-        List<Label> labels = chartService.getYearMonthLabels(yearMonthDto);
-
-        Map<String, ChartData<TradeDetail>> chartDataMap = tradeDetailService.getChartDetailList(labels,codes, yearMonthDto);
-
-
-        Object o = new MyChart().getDetailLineChart(chartDataMap);
-
-//        String testJson = CommonUtil.readStringFromFile(ConfigUtil.getConfigFilePath("prj_test.json"));
-
-//        String testJson1 = CommonUtil.readStringFromFile(ConfigUtil.getConfigFilePath("de_chart1.json"));
-//        String testJson2 = CommonUtil.readStringFromFile(ConfigUtil.getConfigFilePath("de_chart2.json"));
-//        String testJson3 = CommonUtil.readStringFromFile(ConfigUtil.getConfigFilePath("de_chart3.json"));
-//
-//        setValue("chart", "detail_chartList_1",testJson1);
-//        setValue("chart", "detail_chartList_2",testJson2);
-//        setValue("chart", "detail_chartList_3",testJson3);
-
-        //缓存
-        int idx = 1;
-        if (o != null && o instanceof List) {
-            for (Object chart_o : (List) o) {
-                if (Chart.class.isAssignableFrom(chart_o.getClass())) {
-                    Gson gson = new Gson();
-                    String chart = gson.toJson(chart_o,Chart.class);
-//                    String chart = OFC.instance.render((Chart) chart_o);
-                    setValue("chart", "chartList_"
-//                            +session.getId()
-                            + idx, chart);
-
-                    System.out.println("=================================================");
-                    System.out.println(chart);
-                    System.out.println("=================================================");
-
-                    idx++;
-                }
-            }
-        }
-
-
-        model.addAttribute("idx",idx-1).addAttribute("width", chart_width.value())
-                .addAttribute("height", chart_height.value());
-
-        return "manage/trade/chart";
-    }
-
-
-
-    @RequestMapping("/gdchart/{chartIdx}")
-    @ResponseBody
-    public String getChart( HttpSession session,@PathVariable Integer chartIdx) {
-         String chart = (String) EHCacheUtil.getValue("chart", "chartList_"
-//                +session.getId()
-                + chartIdx);
-        System.out.println("***************************************************************");
-        System.out.println(chart);
-        System.out.println("***************************************************************");
-//        return new ArrayList<String>(){{add(chart);}};
-        return chart;
-    }
 
     /**
      * 获得查询条件数据

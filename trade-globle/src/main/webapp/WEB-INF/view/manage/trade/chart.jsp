@@ -19,9 +19,8 @@
     <script type="text/javascript" src="<c:url value="/resources/openflashchart/prototype.js" />"></script>
 
 
-
 </head>
-<body onload="">
+<body onload="showChart()">
 
 <jsp:include page="../../common/breadcrumb.jsp"/>
 
@@ -45,46 +44,19 @@
 
 </script>
 
-<div class="container">
-    <label class="label"> 图表类型
+<div class="container well inline">
+    <label class="label "> 图表类型
         <select id="chartType" name="chartType">
             <option value="lineChart" selected="selected">折线图</option>
             <option value="barChart">柱状图</option>
         </select>
     </label>
-
-    <input type="button" class="btn-small" value="显示图表" onclick="showChart()">
 </div>
 
 
 <c:forEach var="idx" begin="1" end="${idx}" step="1">
-
-
-    <div id="chart_${idx}" class="container">
-
-
-            <%--<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"--%>
-            <%--codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0"--%>
-            <%--width="${width}"--%>
-            <%--height="${heigt}" id="graph-2" align="middle">--%>
-            <%--<param name="allowScriptAccess" value="always"/>--%>
-            <%--<param name="movie"--%>
-            <%--value="<c:url value="/resources/openflashchart/open-flash-chart.swf"/>?width=${width}&height=${heigt}&data=${chart}"/>--%>
-            <%--<param name="quality" value="high"/>--%>
-            <%--<param name="bgcolor" value="#FFFFFF"/>--%>
-            <%--<embed src="<c:url value="/resources/openflashchart/open-flash-chart.swf"/>?data=${chart}"--%>
-            <%--quality="high"--%>
-            <%--bgcolor="#FFFFFF"--%>
-            <%--width="${width}"--%>
-            <%--height="${height}"--%>
-            <%--name="chart"--%>
-            <%--align="middle"--%>
-            <%--allowScriptAccess="always"--%>
-            <%--type="application/x-shockwave-flash"--%>
-            <%--pluginspage="http://www.macromedia.com/go/getflashplayer"--%>
-            <%--id="chart"/>--%>
-            <%--</object>--%>
-
+    <div class="container">
+        <div id="chart_${idx}" class="container"></div>
     </div>
     <hr/>
 </c:forEach>

@@ -150,50 +150,6 @@ public class TradeSumController extends CommonController {
         return "redirect:/manage/import";
     }
 
-    @RequestMapping("/sumchart")
-    public String getSumChartData(Model model,YearMonthDto yearMonthDto,
-                                  CommonDto commonDto,String chartType,
-                                  TradeSum tradeSum,RedirectAttributes redirectAttr){
-
-        if (commonDto.getCodes()==null || commonDto.getCodes().length < 1) {
-            return "redirect:/manage/sumchart/" + (commonDto.getPageNumber()==null?1:commonDto.getPageNumber());
-        }
-
-        List<String> names = removeDuplicateWithOrder(
-                Lists.asList(commonDto.getCodes()[0], commonDto.getCodes()));
-
-        List<Label> labels = chartService.getYearMonthLabels(yearMonthDto);
-
-
-
-        Map<String, ChartData<TradeSum>> chartDataMap = tradeSumService.getChartSumList(labels,names,yearMonthDto );
-
-
-        Object o = new MyChart().getSumLineChart(chartDataMap);
-        List<String> chartList = new ArrayList<String>();
-
-        //缓存
-        int idx = 1;
-        if(o!=null && o instanceof List){
-            for(Object chart_o:(List)o){
-                if (Chart.class.isAssignableFrom(chart_o.getClass())) {
-                    Gson gson = new Gson();
-                    String chart = gson.toJson(chart_o,Chart.class);
-//                    String chart = OFC.instance.render((Chart) chart_o);
-                    setValue("chart", "chartList_"
-                            + idx, chart);
-                    idx++;
-                }
-            }
-        }
-        model.addAttribute("idx", idx - 1)
-                .addAttribute("width", chart_width.value())
-                .addAttribute("height", chart_height.value());
-
-        return  "manage/trade/chart";
-    }
-
-
     /**
      * 将属性添加到模型中
      * @param model

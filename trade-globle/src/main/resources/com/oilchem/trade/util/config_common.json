@@ -35,6 +35,12 @@
         "describe":"应用根url"
     },
 
+    "default_pagesize":{
+        "key":"default_pagesize",
+        "name":"默认页大小",
+        "value":"100",
+        "describe":"默认页大小"
+    },
 
     "thread_poolsize":{
         "key":"thread_poolsize",
@@ -246,6 +252,7 @@
         "value":"400",
         "describe":"图表的高度"
     }
+
 
 
 }

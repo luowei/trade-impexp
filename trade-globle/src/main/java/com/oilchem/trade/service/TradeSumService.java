@@ -108,17 +108,4 @@ public interface TradeSumService {
      */
     List<ExpTradeSum> getExpSumList(List<Long> ids);
 
-    /**
-     * 获得图表数据
-     *
-     *
-     *
-     * @param labels
-     * @param names
-     * @param yearMonthDto
-     * @return
-     */
-    Map<String, ChartData<TradeSum>> getChartSumList(
-            List<Label> labels, List<String> names,
-            YearMonthDto yearMonthDto);
 }

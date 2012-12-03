@@ -241,6 +241,7 @@ public class DocBean {
         unzip_detail_dir,
         unzip_sum_dir,
         root_url,
+        default_pagesize,
 
         yearmonth_split,
         thread_poolsize,

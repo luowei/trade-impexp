@@ -189,7 +189,7 @@ class MyChart {
         stepMap.put(key,step)
 
         return chart.setXAxis(new XAxis().addLabels(chartData.labels))
-                .setXLegend(new Text("年月"/*chartData.x_legend*/, style))
+                .setXLegend(new Text("year-month"/*chartData.x_legend*/, style))
                 .setYAxis(new YAxis()
                 .setRange(minRangMap.get(key).intValue(), maxRangMap.get(key).intValue(), stepMap.get(key).intValue()))
     }

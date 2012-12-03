@@ -25,6 +25,7 @@ import java.util.*;
 
 import static com.oilchem.trade.bean.DocBean.ChartProps;
 import static com.oilchem.trade.bean.DocBean.ChartType;
+import static com.oilchem.trade.bean.DocBean.Config.default_pagesize;
 
 /**
  * Created with IntelliJ IDEA.
@@ -60,7 +61,7 @@ public class CommonController {
             commonDto.setPageNumber(1);
         }
         if (commonDto.getPageSize() == null) {
-            commonDto.setPageSize(QueryUtils.DEFAULT_PAGESIZE);
+            commonDto.setPageSize(Integer.parseInt(default_pagesize.value()));
         }
 
         Map<String, Sort.Direction> sortMap = new HashMap<String, Sort.Direction>();

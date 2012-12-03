@@ -116,7 +116,8 @@
         <button type="submit" class="btn btn-success">
             <i class="icon-search icon-white"></i>查询
         </button>
-        <input id="chart" type="button" class="btn-small btn-primary" value="生成曲线" onclick="genSumChart()"/>
+        <%--<input id="chart" type="button" class="btn-small btn-primary" value="生成曲线" onclick="genSumChart()"/>--%>
+        <a  href="" target="_blank" class="btn btn-small btn-primary" onclick="genSumChart()">生成曲线</a>
 
         <div class="pagination-centered">
             <jsp:include page="../../common/pagination.jsp"/>
@@ -125,7 +126,8 @@
         <table class="table table-bordered table-striped table-condensed">
             <thead>
             <tr>
-                <th><label><input type="checkbox" id="all"/>曲线</label></th>
+                <th>曲线</th>
+                <%--<th><label><input type="checkbox" id="all"/>曲线</label></th>--%>
                 <td>年月</td>
                 <td>产品名称</td>
                 <td>产品类型</td>

@@ -1,6 +1,5 @@
 package com.oilchem.trade.service.impl;
 
-import com.oilchem.trade.bean.ChartData;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.ExpTradeDetailRowMapper;
@@ -15,7 +14,6 @@ import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
 import com.oilchem.trade.util.DynamicSpecifications;
-import ofc4j.model.axis.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -36,7 +33,6 @@ import static com.oilchem.trade.bean.DocBean.Config.*;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.export_type;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.import_type;
 import static com.oilchem.trade.bean.DocBean.TableType.detail;
-import static java.math.BigDecimal.ROUND_HALF_UP;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static com.oilchem.trade.util.QueryUtils.*;
 import static com.oilchem.trade.util.QueryUtils.Type.*;
@@ -268,121 +264,6 @@ public class TradeDetailServiceImpl implements TradeDetailService {
      */
     public List<ImpTradeDetail> getImpDetailList(List<Long> ids) {
         return ids != null ? (List<ImpTradeDetail>) impTradeDetailDao.findAll(ids) : null;
-    }
-
-
-    /**
-     * 获得detailChart List
-     *
-     * @param labels
-     * @param codes
-     * @param yearMonthDto @return     获得由月份组合而成的 list<TradeDetail>的集合
-     */
-    public Map<String, ChartData<TradeDetail>> getChartDetailList(
-            List<Label> labels,
-            List<String> codes, YearMonthDto yearMonthDto) {
-
-        Integer impExpType = yearMonthDto.getImpExpType();
-        Map<String, ChartData<TradeDetail>> codeChartDataMap = new HashMap<String, ChartData<TradeDetail>>(codes.size());
-        if (labels == null || labels.isEmpty()) return null;
-
-        Map<String, BigDecimal> maxRangMap =new HashMap<String, BigDecimal>();
-        Map<String, BigDecimal> minRangMap = new HashMap<String, BigDecimal>();
-
-        //遍历用户选择的每种产品
-        for (String code : codes) {
-
-            ChartData<TradeDetail> chartData = new ChartData<TradeDetail>().setLabels(labels);
-            Map<String, TradeDetail> labelMap = new TreeMap<String, TradeDetail>();
-
-            //遍历某种产品的每个月
-            for (Label label : chartData.getLabels()) {
-
-                String labelText = label.getText();
-                TradeDetail tradeDetail = null;
-
-                if (labelMap.get(labelText) == null) {
-                    labelMap.put(label.getText(), new TradeDetail(BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
-                }
-
-                if (impExpType.equals(import_type.ordinal())) {
-                    List<ImpTradeDetail> impTradeDetails = impTradeDetailDao.findByProductCodeAndYearMonth(code, label.getText());
-
-                    if (!impTradeDetails.isEmpty()) {
-                        tradeDetail = combinDetail(code, impTradeDetails);
-                    }
-                }
-
-                if (impExpType.equals(export_type.ordinal())) {
-                    List<ExpTradeDetail> expTradeDetails = expTradeDetailDao.findByProductCodeAndYearMonth(code, label.getText());
-
-                    if (!expTradeDetails.isEmpty()) {
-                        tradeDetail = combinDetail(code, expTradeDetails);
-                    }
-                }
-
-                labelMap.put(labelText, tradeDetail);
-                if (tradeDetail != null) {
-                    putMaxRangMap(maxRangMap, tradeDetail);
-                    putMinRangMap(minRangMap, tradeDetail);
-                }
-            }
-
-            chartData.setElementList(new ArrayList<TradeDetail>(labelMap.values()))
-                    .setMaxRangMap(maxRangMap)
-                    .setMinRangMap(minRangMap);
-            codeChartDataMap.put(code, chartData);
-        }
-
-        return codeChartDataMap;
-    }
-
-    /**
-     * 使用平均值构造tradeDetail供图表使用
-     *
-     * @param tradeDetails
-     * @return
-     */
-    private <T extends TradeDetail> TradeDetail combinDetail(String code, List<T> tradeDetails) {
-        BigDecimal amount = BigDecimal.valueOf(0),
-                amountMoney = BigDecimal.valueOf(0),
-                unitPrice = BigDecimal.valueOf(0);
-        String name = null;
-        for (TradeDetail tradeDetail : tradeDetails) {
-            amount = tradeDetail.getAmount() == null ? amount : amount.add(tradeDetail.getAmount());
-            amountMoney = tradeDetail.getAmountMoney() == null ? amountMoney : amountMoney.add(tradeDetail.getAmountMoney());
-            unitPrice = tradeDetail.getUnitPrice() == null ? unitPrice : unitPrice.add(tradeDetail.getUnitPrice());
-            name = tradeDetail.getProductName().intern();
-        }
-        int scale = Integer.parseInt(scale_size.value());
-        BigDecimal size = BigDecimal.valueOf(tradeDetails.size());
-
-        amount = amount.divide(size, scale, ROUND_HALF_UP);
-        amountMoney = amountMoney.divide(size, scale, ROUND_HALF_UP);
-        unitPrice = unitPrice.divide(size, scale, ROUND_HALF_UP);
-        return new TradeDetail(code, name, amount, amountMoney, unitPrice);
-    }
-
-    //最小值
-    BigDecimal minAmount = BigDecimal.valueOf(0);
-    BigDecimal minAmountMoney = BigDecimal.valueOf(0);
-    BigDecimal minUnitPrice = BigDecimal.valueOf(0);
-
-    private void putMinRangMap(Map<String, BigDecimal> minRangMap, TradeDetail tradeDetail) {
-        minRangMap.put("amount", tradeDetail.getAmount().compareTo(minAmount) > 0 ? minAmount : tradeDetail.getAmount());
-        minRangMap.put("amount", tradeDetail.getAmountMoney().compareTo(minAmountMoney) > 0 ? minAmountMoney : tradeDetail.getAmountMoney());
-        minRangMap.put("amount", tradeDetail.getUnitPrice().compareTo(minUnitPrice) > 0 ? minUnitPrice : tradeDetail.getUnitPrice());
-    }
-
-    //最大值
-    BigDecimal maxAmount = BigDecimal.valueOf(Long.valueOf(axis_steps.value()));
-    BigDecimal maxAmountMoney = BigDecimal.valueOf(Long.valueOf(axis_steps.value()));
-    BigDecimal maxUnitPrice = BigDecimal.valueOf(Long.valueOf(axis_steps.value()));
-
-    private void putMaxRangMap(Map<String, BigDecimal> maxRangMap, TradeDetail tradeDetail) {
-        maxRangMap.put("amount", tradeDetail.getAmount().compareTo(maxAmount) < 0 ? maxAmount : tradeDetail.getAmount());
-        maxRangMap.put("amountMoney", tradeDetail.getAmountMoney().compareTo(maxAmountMoney) < 0 ? maxAmountMoney : tradeDetail.getAmountMoney());
-        maxRangMap.put("unitPrice", tradeDetail.getUnitPrice().compareTo(maxUnitPrice) < 0 ? maxUnitPrice : tradeDetail.getUnitPrice());
     }
 
 
