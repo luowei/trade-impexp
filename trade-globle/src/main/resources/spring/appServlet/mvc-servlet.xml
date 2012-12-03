@@ -9,6 +9,28 @@
 
     <context:component-scan base-package="com.oilchem.trade.view"/>
 
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <bean  class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <value>text/plain;charset=UTF-8</value>
+                        </list>
+                    </property>
+                </bean>
+                <!--<bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />-->
+                <bean  class="org.springframework.http.converter.ResourceHttpMessageConverter" />
+                <bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter" />
+                <bean  class="org.springframework.http.converter.xml.XmlAwareFormHttpMessageConverter" />
+                <bean  class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter" />
+            </list>
+        </property>
+    </bean>
+
+    <!--<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />-->
+
     <!--It registers several features, including JSR-303 validation support, message conversion, and support for field formatting-->
     <mvc:annotation-driven/>
 
@@ -29,10 +51,9 @@
 
 
     <bean id="multipartResolver"
-          class="org.springframework.web.multipart.commons.CommonsMultipartResolver" >
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <!--<property name="maxUploadSize" value="100000"/>-->
     </bean>
-
 
 
     <bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -44,11 +65,11 @@
 
     <!-- exception mapping -->
     <!--<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">-->
-        <!--<property name="exceptionMappings">-->
-            <!--<props>-->
-                <!--<prop key="java.lang.Exception">error/500</prop>-->
-            <!--</props>-->
-        <!--</property>-->
+    <!--<property name="exceptionMappings">-->
+    <!--<props>-->
+    <!--<prop key="java.lang.Exception">error/500</prop>-->
+    <!--</props>-->
+    <!--</property>-->
     <!--</bean>-->
 
 

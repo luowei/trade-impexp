@@ -1,44 +1,6 @@
-{"y_axis":{
-    "min":0,
-    "max":24624,
-    "steps":1231
-}, "title":{
-    "text":"amount"
-}, "x_legend":{
-    "text":"year-month",
-    "style":"{color:#736AEF; font-size:12px;}"
-}, "y_legend":{
-    "text":"amount",
-    "style":"{color:#736AEF; font-size:12px;}"
-}, "elements":[
-    {
-        "colour":"#48af87",
-        "dot-size":5,
-        "text":"13019090",
-        "values":[0, 20520.793, 0, 20520.793, 0, 0, 0, 0, 0, 0, 0, 0],
-        "width":2,
-        "font-size":10,
-        "type":"line"
-    },
-    {
-        "colour":"#b41ee6",
-        "dot-size":5,
-        "text":"15091000",
-        "values":[0, 20520.793, 0, 20520.793, 0, 0, 0, 0, 0, 0, 0, 0],
-        "width":2,
-        "font-size":10,
-        "type":"line"
-    },
-    {
-        "colour":"#3966be",
-        "dot-size":5,
-        "text":"13012000",
-        "values":[0, 20520.793, 0, 20520.793, 0, 0, 0, 0, 0, 0, 0, 0],
-        "width":2,
-        "font-size":10,
-        "type":"line"
-    }
-], "x_axis":{
+{"title":{
+    "text":"数量"
+}, "x_axis":{
     "labels":{
         "labels":[
             {
@@ -79,4 +41,78 @@
             }
         ]
     }
-}}
+}, "y_axis":{
+    "steps":487808,
+    "min":0,
+    "max":9756169
+}, "y_legend":{
+    "text":"数量",
+    "style":"{color:#736AEF; font-size:12px;}"
+}, "x_legend":{
+    "text":"year-month",
+    "style":"{color:#736AEF; font-size:12px;}"
+}, "elements":[
+    {
+        "width":2,
+        "dotSize":5,
+        "colour":"#1bae38",
+        "type":"line",
+        "text":"25010020",
+        "fontSize":10,
+        "values":[0, 7465.938, 0, 7465.938, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
+        "width":2,
+        "dotSize":5,
+        "colour":"#8572bc",
+        "type":"line",
+        "text":"23099090",
+        "fontSize":10,
+        "values":[0, 225816.029, 0, 225816.029, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
+        "width":2,
+        "dotSize":5,
+        "colour":"#cb87b1",
+        "type":"line",
+        "text":"25020000",
+        "fontSize":10,
+        "values":[0, 1.19235196E7, 0, 1.19235196E7, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
+        "width":2,
+        "dotSize":5,
+        "colour":"#a3ecec",
+        "type":"line",
+        "text":"25010019",
+        "fontSize":10,
+        "values":[0, 2.3383628476E7, 0, 2.3383628476E7, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
+        "width":2,
+        "dotSize":5,
+        "colour":"#898a30",
+        "type":"line",
+        "text":"25010011",
+        "fontSize":10,
+        "values":[0, 11688.909, 0, 11688.909, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
+        "width":2,
+        "dotSize":5,
+        "colour":"#54e125",
+        "type":"line",
+        "text":"25010030",
+        "fontSize":10,
+        "values":[0, 773.0, 0, 773.0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
+        "width":2,
+        "dotSize":5,
+        "colour":"#f09e6d",
+        "type":"line",
+        "text":"25030000",
+        "fontSize":10,
+        "values":[0, 8130141.214, 0, 8130141.214, 0, 0, 0, 0, 0, 0, 0, 0]
+    }
+]}

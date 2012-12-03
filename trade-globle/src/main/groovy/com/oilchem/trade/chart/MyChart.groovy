@@ -16,6 +16,8 @@ import static com.oilchem.trade.bean.DocBean.ExcelFiled.*
 import static com.oilchem.trade.bean.DocBean.Config.scale_size
 import com.oilchem.trade.bean.DocBean
 
+import static com.oilchem.trade.bean.DocBean.Config.batch_updatesize
+
 class MyChart {
 
     def style = "{color:#736AEF; font-size:12px;}"
@@ -28,12 +30,15 @@ class MyChart {
 
         //-------------tradeDetail  ----------------------
         Chart amountChat = new Chart()
-                .setTitle(new Text("amount")).setYLegend(new Text("amount", style))
+                .setTitle(new Text("数量")).setYLegend(new Text("数量", style))
         Chart amountMoneyChart = new Chart()
-                .setTitle(new Text("amount money")).setYLegend(new Text("amount money", style))
+                .setTitle(new Text("金额")).setYLegend(new Text("金额", style))
         Chart unitpriceChart = new Chart()
-                .setTitle(new Text("unit price")).setYLegend(new Text("unit price", style))
+                .setTitle(new Text("单价")).setYLegend(new Text("单价", style))
 
+        Map<String,BigDecimal> minRangMap =  new TreeMap<String, BigDecimal>();
+        Map<String,BigDecimal> maxRangMap = new TreeMap<String, BigDecimal>();
+        Map<String,BigDecimal> stepMap = new TreeMap<String, BigDecimal>();
         //遍历每一种产品
         chartDataMap.each {
 
@@ -41,9 +46,9 @@ class MyChart {
             ChartData<TradeDetail> chartData = it.value
             List<LineChart> detailLineList = getDetailLineList(code, chartData.elementList)
 
-            amountChat = newChart(amountChat, chartData, "amount").addElements(detailLineList.get(0))
-            amountMoneyChart = newChart(amountMoneyChart, chartData, "amountMoney").addElements(detailLineList.get(1))
-            unitpriceChart = newChart(unitpriceChart, chartData, "unitPrice").addElements(detailLineList.get(2))
+            amountChat = newChart(amountChat, chartData, "amount",minRangMap,maxRangMap,stepMap).addElements(detailLineList.get(0))
+            amountMoneyChart = newChart(amountMoneyChart, chartData, "amountMoney",minRangMap,maxRangMap,stepMap).addElements(detailLineList.get(1))
+            unitpriceChart = newChart(unitpriceChart, chartData, "unitPrice",minRangMap,maxRangMap,stepMap).addElements(detailLineList.get(2))
         }
         [amountChat, amountMoneyChart, unitpriceChart]
     }
@@ -90,20 +95,42 @@ class MyChart {
         Chart pqChart = new Chart()
                 .setTitle(new Text(excel_pq.value())).setYLegend(new Text(excel_pq.value(), style));
 
-        chartDataMap.each {
+         Map<String,BigDecimal> minRangMap =  new TreeMap<String, BigDecimal>();
+         Map<String,BigDecimal> maxRangMap = new TreeMap<String, BigDecimal>();
+         Map<String,BigDecimal> stepMap = new TreeMap<String, BigDecimal>();
+
+        for(Map.Entry<String,ChartData<TradeSum>> it:chartDataMap) {
             String code = it.key
             ChartData<TradeSum> chartData = it.value
             List<List<LineChart>> sumFiledLineList = getSumFiledLineList(code, chartData.elementList)
 
-            nummonthChat = newChart(nummonthChat, chartData, excel_num_month.value()).addElements(sumFiledLineList.get(0))
-            numSumChat = newChart(numSumChat, chartData, excel_num_sum.value()).addElements(sumFiledLineList.get(1))
-            moneyMonthChat = newChart(moneyMonthChat, chartData, excel_money_month.value()).addElements(sumFiledLineList.get(2))
-            moneySumChat = newChart(moneySumChat, chartData, excel_money_sum.value()).addElements(sumFiledLineList.get(3))
-            avgPriceMonthChat = newChart(avgPriceMonthChat, chartData, excel_avg_price_month.value()).addElements(sumFiledLineList.get(4))
-            avgPriceSumChat = newChart(avgPriceSumChat, chartData, excel_avg_price_sum.value()).addElements(sumFiledLineList.get(5))
-            pmChart = newChart(pmChart, chartData, excel_pm.value()).addElements(sumFiledLineList.get(6))
-            pyChart = newChart(pyChart, chartData, excel_py.value()).addElements(sumFiledLineList.get(7))
-            pqChart = newChart(pqChart, chartData, excel_pq.value()).addElements(sumFiledLineList.get(8))
+
+            nummonthChat = newChart(nummonthChat, chartData, excel_num_month.value(),minRangMap,maxRangMap,stepMap)
+                    .addElements(sumFiledLineList.get(0))
+
+            numSumChat = newChart(numSumChat, chartData, excel_num_sum.value(),minRangMap,maxRangMap,stepMap)
+                    .addElements(sumFiledLineList.get(1))
+
+            moneyMonthChat = newChart(moneyMonthChat, chartData, excel_money_month.value(),minRangMap,maxRangMap,stepMap)
+                    .addElements(sumFiledLineList.get(2))
+
+            moneySumChat = newChart(moneySumChat, chartData, excel_money_sum.value(),minRangMap,maxRangMap,stepMap)
+                    .addElements(sumFiledLineList.get(3))
+
+            avgPriceMonthChat = newChart(avgPriceMonthChat, chartData, excel_avg_price_month.value(),minRangMap,maxRangMap,stepMap)
+                    .addElements(sumFiledLineList.get(4))
+
+            avgPriceSumChat = newChart(avgPriceSumChat, chartData, excel_avg_price_sum.value(),minRangMap,maxRangMap,stepMap)
+                    .addElements(sumFiledLineList.get(5))
+
+            pmChart = newChart(pmChart, chartData, excel_pm.value(),minRangMap,maxRangMap,stepMap)
+                    .addElements(sumFiledLineList.get(6))
+
+            pyChart = newChart(pyChart, chartData, excel_py.value(),minRangMap,maxRangMap,stepMap)
+                    .addElements(sumFiledLineList.get(7))
+
+            pqChart = newChart(pqChart, chartData, excel_pq.value(),minRangMap,maxRangMap,stepMap)
+                    .addElements(sumFiledLineList.get(8))
 
         }
         [nummonthChat,numSumChat,moneyMonthChat,moneySumChat,avgPriceMonthChat,avgPriceSumChat,pmChart,pyChart,pqChart]
@@ -139,21 +166,32 @@ class MyChart {
 
 
 
-    private Chart newChart(Chart chart, ChartData chartData, String key) {
-
-        def minRang = chartData.minRangMap.get(key) == null || chartData.minRangMap.get(key) < 0 ? chartData.minRangMap.get(key) : 0
-        def maxRang = chartData.maxRangMap.get(key).multiply(BigDecimal.valueOf(1.2))
-        maxRang = maxRang.compareTo(BigDecimal.valueOf(Long.valueOf(axis_steps.value()))) < 0 ?
-            BigDecimal.valueOf(Long.valueOf(axis_steps.value())) : maxRang;
+    private Chart newChart(Chart chart, ChartData chartData, String key,
+                           Map<String,BigDecimal> minRangMap,Map<String,BigDecimal> maxRangMap,Map<String,BigDecimal> stepMap) {
 
         int scale = Integer.parseInt(scale_size.value())
-        def steps = BigDecimal.valueOf(Long.valueOf(axis_steps.value()));
-        def step = maxRang.divide(steps, scale, BigDecimal.ROUND_HALF_UP).intValue()
+        def steps = BigDecimal.valueOf(Long.valueOf(axis_steps.value()))
+
+        def minRang = chartData.minRangMap.get(key) == null  ? 0:chartData.minRangMap.get(key)
+        def maxRang = chartData.maxRangMap.get(key) == null  ? steps:chartData.maxRangMap.get(key)
+
+        maxRang = maxRang.multiply(BigDecimal.valueOf(1.2))
+
+        //设定最大值最小值
+        if(minRangMap.get(key)==null||minRangMap.get(key) < minRang){
+            minRangMap.put(key,minRang)
+        }
+        if( maxRangMap.get(key)==null||maxRangMap.get(key) < maxRang){
+            maxRangMap.put(key,maxRang)
+        }
+
+        def step = maxRangMap.get(key).divide(steps, scale, BigDecimal.ROUND_HALF_UP).intValue()
+        stepMap.put(key,step)
 
         return chart.setXAxis(new XAxis().addLabels(chartData.labels))
-                .setXLegend(new Text("year-month"/*chartData.x_legend*/, style))
+                .setXLegend(new Text("年月"/*chartData.x_legend*/, style))
                 .setYAxis(new YAxis()
-                .setRange(minRang, maxRang.intValue(), step))
+                .setRange(minRangMap.get(key).intValue(), maxRangMap.get(key).intValue(), stepMap.get(key).intValue()))
     }
 
     private LineChart newLineElement(LineChart lineChart, def it) {

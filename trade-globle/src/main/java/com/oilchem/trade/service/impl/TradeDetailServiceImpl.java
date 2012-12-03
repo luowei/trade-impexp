@@ -271,24 +271,6 @@ public class TradeDetailServiceImpl implements TradeDetailService {
     }
 
 
-//    public List<List<TradeDetail>> getChartExpDetailList(
-//            List<String> names,List<Label> labels, YearMonthDto yearMonthDto){
-//
-//        List<List<TradeDetail>> monthDetailsList = new ArrayList<List<TradeDetail>>();
-//
-//        for (Label label:labels){
-//            List<TradeDetail> tradeDetailList = new ArrayList<TradeDetail>();
-//            for (String name : names) {
-//                List<ExpTradeDetail>  tradeDetails = expTradeDetailDao.findByProductCodeAndYearMonth(name, label.getText());
-//                tradeDetailList.add(new ExpTradeDetail(combinDetail(name, tradeDetails)));
-//            }
-//            monthDetailsList.add(tradeDetailList);
-//        }
-//
-//        return monthDetailsList;
-//    }
-
-
     /**
      * 获得detailChart List
      *
@@ -400,7 +382,7 @@ public class TradeDetailServiceImpl implements TradeDetailService {
     private void putMaxRangMap(Map<String, BigDecimal> maxRangMap, TradeDetail tradeDetail) {
         maxRangMap.put("amount", tradeDetail.getAmount().compareTo(maxAmount) < 0 ? maxAmount : tradeDetail.getAmount());
         maxRangMap.put("amountMoney", tradeDetail.getAmountMoney().compareTo(maxAmountMoney) < 0 ? maxAmountMoney : tradeDetail.getAmountMoney());
-        maxRangMap.put("unitPrice", tradeDetail.getUnitPrice().compareTo(maxUnitPrice) > 0 ? maxUnitPrice : tradeDetail.getUnitPrice());
+        maxRangMap.put("unitPrice", tradeDetail.getUnitPrice().compareTo(maxUnitPrice) < 0 ? maxUnitPrice : tradeDetail.getUnitPrice());
     }
 
 

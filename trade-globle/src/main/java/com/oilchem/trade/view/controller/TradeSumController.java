@@ -1,6 +1,7 @@
 package com.oilchem.trade.view.controller;
 
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
 import com.oilchem.trade.bean.ChartData;
 import com.oilchem.trade.chart.MyChart;
 import com.oilchem.trade.dao.ProductTypeDao;
@@ -14,6 +15,7 @@ import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeSumService;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
+import com.oilchem.trade.util.EHCacheUtil;
 import com.oilchem.trade.util.QueryUtils;
 import ofc4j.OFC;
 import ofc4j.model.Chart;
@@ -23,11 +25,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +42,7 @@ import static com.oilchem.trade.bean.DocBean.Config.chart_width;
 import static com.oilchem.trade.bean.DocBean.Config.upload_sumzip_dir;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.export_type;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.import_type;
+import static com.oilchem.trade.util.EHCacheUtil.setValue;
 
 /**
  * Created with IntelliJ IDEA.
@@ -166,14 +172,21 @@ public class TradeSumController extends CommonController {
         Object o = new MyChart().getSumLineChart(chartDataMap);
         List<String> chartList = new ArrayList<String>();
 
+        //缓存
+        int idx = 1;
         if(o!=null && o instanceof List){
             for(Object chart_o:(List)o){
                 if (Chart.class.isAssignableFrom(chart_o.getClass())) {
-                    chartList.add(OFC.instance.render((Chart) chart_o));
+                    Gson gson = new Gson();
+                    String chart = gson.toJson(chart_o,Chart.class);
+//                    String chart = OFC.instance.render((Chart) chart_o);
+                    setValue("chart", "chartList_"
+                            + idx, chart);
+                    idx++;
                 }
             }
         }
-        model.addAttribute("chartList",chartList)
+        model.addAttribute("idx", idx - 1)
                 .addAttribute("width", chart_width.value())
                 .addAttribute("height", chart_height.value());
 

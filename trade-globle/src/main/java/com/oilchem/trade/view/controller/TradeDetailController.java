@@ -1,6 +1,7 @@
 package com.oilchem.trade.view.controller;
 
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
 import com.oilchem.trade.bean.ChartData;
 import com.oilchem.trade.bean.DocBean;
 import com.oilchem.trade.chart.MyChart;
@@ -195,8 +196,10 @@ public class TradeDetailController extends CommonController {
         if (o != null && o instanceof List) {
             for (Object chart_o : (List) o) {
                 if (Chart.class.isAssignableFrom(chart_o.getClass())) {
-                    String chart = OFC.instance.render((Chart) chart_o);
-                    setValue("chart", "detail_chartList_"
+                    Gson gson = new Gson();
+                    String chart = gson.toJson(chart_o,Chart.class);
+//                    String chart = OFC.instance.render((Chart) chart_o);
+                    setValue("chart", "chartList_"
 //                            +session.getId()
                             + idx, chart);
 
@@ -218,13 +221,16 @@ public class TradeDetailController extends CommonController {
 
 
 
-
-    @ResponseBody
     @RequestMapping("/gdchart/{chartIdx}")
+    @ResponseBody
     public String getChart( HttpSession session,@PathVariable Integer chartIdx) {
-        String chart = (String) EHCacheUtil.getValue("chart", "detail_chartList_"
+         String chart = (String) EHCacheUtil.getValue("chart", "chartList_"
 //                +session.getId()
                 + chartIdx);
+        System.out.println("***************************************************************");
+        System.out.println(chart);
+        System.out.println("***************************************************************");
+//        return new ArrayList<String>(){{add(chart);}};
         return chart;
     }
 
