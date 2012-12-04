@@ -68,7 +68,9 @@ public class Log extends IdEntity implements Serializable {
     @Transient
     private Float progress;
 
-
+    public void setId(Long id) {
+        super.setId(id);
+    }
 
     public String getLogType() {
         return logType;

@@ -34,7 +34,7 @@
     </script>
 
 </head>
-<body>
+<body style="padding-top: 60px">
 
 <jsp:include page="../../common/breadcrumb.jsp" />
 

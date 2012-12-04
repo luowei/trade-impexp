@@ -31,28 +31,28 @@ public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implem
                                       Integer year,
                                       Integer month) throws SQLException {
         //产品代码
-        tradeDetail.setProductCode(rs.getString(access_product_code.value()));
+        tradeDetail.setProductCode(rs.getString(access_product_code.getValue()));
         //产品名称
-        tradeDetail.setProductName(rs.getString(access_product_name.value()));
+        tradeDetail.setProductName(rs.getString(access_product_name.getValue()));
         //企业性质
-        tradeDetail.setCompanyType(rs.getString(access_company_type.value()));
+        tradeDetail.setCompanyType(rs.getString(access_company_type.getValue()));
         //贸易方式
-        tradeDetail.setTradeType(rs.getString(access_trade_type.value()));
+        tradeDetail.setTradeType(rs.getString(access_trade_type.getValue()));
         //城市
-        tradeDetail.setCity(rs.getString(access_city.value()));
+        tradeDetail.setCity(rs.getString(access_city.getValue()));
         //产销国家
-        tradeDetail.setCountry(rs.getString(access_country.value()));
+        tradeDetail.setCountry(rs.getString(access_country.getValue()));
         //出口海关
-        tradeDetail.setCustoms(rs.getString(access_customs.value()));
+        tradeDetail.setCustoms(rs.getString(access_customs.getValue()));
         //运输方式
-        tradeDetail.setTransportation(rs.getString(access_transportation.value()));
+        tradeDetail.setTransportation(rs.getString(access_transportation.getValue()));
         //单位
-        tradeDetail.setUnit(rs.getString(access_unit.value()));
+        tradeDetail.setUnit(rs.getString(access_unit.getValue()));
         //数量
-        BigDecimal amount =  rs.getBigDecimal(access_amount.value());
+        BigDecimal amount =  rs.getBigDecimal(access_amount.getValue());
         tradeDetail.setAmount(amount);
         //金额
-        BigDecimal amountMoney = rs.getBigDecimal(access_acountmoney.value());
+        BigDecimal amountMoney = rs.getBigDecimal(access_acountmoney.getValue());
         tradeDetail.setAmountMoney(amountMoney);
         //平均价格
         tradeDetail.setUnitPrice(amountMoney.divide(amount).setScale(2,BigDecimal.ROUND_HALF_UP));

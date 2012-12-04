@@ -140,7 +140,7 @@ public class CommonServiceImpl implements CommonService {
         try {
             //城市
             DetailCriteria cityCri = new DetailCriteria(
-                    access_city.value(),
+                    access_city.getValue(),
                     City.class,
                     CityDao.class,
                     CityDao.class.getDeclaredMethod("findByCity", String.class),
@@ -150,7 +150,7 @@ public class CommonServiceImpl implements CommonService {
 
             //国家
             DetailCriteria countryCri = new DetailCriteria(
-                    access_country.value(),
+                    access_country.getValue(),
                     Country.class,
                     CountryDao.class,
                     CountryDao.class.getDeclaredMethod("findByCountry", String.class),
@@ -160,7 +160,7 @@ public class CommonServiceImpl implements CommonService {
 
             //企业性质
             DetailCriteria companyTypeCri = new DetailCriteria(
-                    access_company_type.value(),
+                    access_company_type.getValue(),
                     CompanyType.class,
                     CompanyTypeDao.class,
                     CompanyTypeDao.class.getDeclaredMethod("findByCompanyType", String.class),
@@ -170,7 +170,7 @@ public class CommonServiceImpl implements CommonService {
 
             //海关
             DetailCriteria customsCri = new DetailCriteria(
-                    access_customs.value(),
+                    access_customs.getValue(),
                     Customs.class,
                     CustomsDao.class,
                     CustomsDao.class.getDeclaredMethod("findByCustoms", String.class),
@@ -180,7 +180,7 @@ public class CommonServiceImpl implements CommonService {
 
             //贸易类型
             DetailCriteria tradeTypeCri = new DetailCriteria(
-                    access_trade_type.value(),
+                    access_trade_type.getValue(),
                     TradeType.class,
                     TradeTypeDao.class,
                     TradeTypeDao.class.getDeclaredMethod("findByTradeType", String.class),
@@ -190,7 +190,7 @@ public class CommonServiceImpl implements CommonService {
 
             //运输方式
             DetailCriteria transportationCri = new DetailCriteria(
-                    access_transportation.value(),
+                    access_transportation.getValue(),
                     Transportation.class,
                     TransportationDao.class,
                     TransportationDao.class.getDeclaredMethod("findByTransportation", String.class),
@@ -374,7 +374,7 @@ public class CommonServiceImpl implements CommonService {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
-        return getLogMap(tableType, unextract_flag.value(),
+        return getLogMap(tableType, unextract_flag.getValue(),
                 findByMethod);
     }
 
@@ -395,7 +395,7 @@ public class CommonServiceImpl implements CommonService {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
-        return getLogMap(tableType, unimport_flag.value(),
+        return getLogMap(tableType, unimport_flag.getValue(),
                 findByMethod);
     }
 
@@ -419,10 +419,10 @@ public class CommonServiceImpl implements CommonService {
 
         //查找操作
         try {
-            if (tableType.equals(detail.value())) {
-                obj = findByMethod.invoke(logDao, process_flag, detail.value());
-            } else if (tableType.equals(sum.value())) {
-                obj = findByMethod.invoke(logDao, process_flag, sum.value());
+            if (tableType.equals(detail.getValue())) {
+                obj = findByMethod.invoke(logDao, process_flag, detail.getValue());
+            } else if (tableType.equals(sum.getValue())) {
+                obj = findByMethod.invoke(logDao, process_flag, sum.getValue());
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -643,7 +643,7 @@ public class CommonServiceImpl implements CommonService {
                     new File(logEntry.getValue().getExtractPath()));
             Sheet sheet = workbook.getSheet(0);
             int rows = sheet.getRows();
-            int rowIdx = sheet.findCell(excel_product_name.value()).getRow() + 1;
+            int rowIdx = sheet.findCell(excel_product_name.getValue()).getRow() + 1;
             Integer year = yearMonthDto.getYear();
             Integer month = yearMonthDto.getMonth();
             String yearMonth = year + yearmonth_split.value() + (month < 10 ? "0" + month : month);

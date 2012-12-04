@@ -20,13 +20,13 @@
 
 
 </head>
-<body onload="showChart()">
+<body onload="showChart()"  style="padding-top: 60px">
 
 <jsp:include page="../../common/breadcrumb.jsp"/>
 
 <c:url var='chart' value='/manage/gdchart/'/>
 
-<h2>${idx}</h2>
+<%--<h2>${idx}</h2>--%>
 
 <script type="text/javascript">
 

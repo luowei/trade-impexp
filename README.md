@@ -56,7 +56,7 @@ https://github.com/springside/springside4
  public static class ConfigName {
 
         //json配置文件的名字
-        public static String CONFIG_COMMON_JSON = "config_common.json";
+        public static String CONFIG_COMMON_JSON = "config.json";
         public static String CONFIG_FLAG_JSON = "config_flag.json";
         public static String CONFIG_MAPPER_JSON = "config_mapper.json";
 

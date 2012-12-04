@@ -23,8 +23,8 @@ import static com.oilchem.trade.bean.DocBean.Config.unzip_detail_dir;
 import static com.oilchem.trade.bean.DocBean.Config.unzip_sum_dir;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.export_type;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.import_type;
-import static com.oilchem.trade.bean.DocBean.TableType.detail;
-import static com.oilchem.trade.bean.DocBean.TableType.sum;
+import static com.oilchem.trade.bean.DocBean.TableType.*;
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -49,7 +49,7 @@ public class TaskServiceImpl implements TaskService {
     LogDao logDao;
 
 
-    long delay = 2L;
+    long delay = 1L;
 
     /**
      * 解压明细数据包与导入任务
@@ -63,13 +63,13 @@ public class TaskServiceImpl implements TaskService {
             @Override
             public void run() {
                 //解包
-                Map<Long, Log> unExtractMap = commonService.getUnExtractPackage(detail.value());
+                Map<Long, Log> unExtractMap = commonService.getUnExtractPackage(detail.getValue());
                 for (Map.Entry<Long, Log> entry : unExtractMap.entrySet()) {
                     commonService.unpackageFile(entry, unzip_detail_dir.value());
                 }
 
                 //导入数据
-                Map<Long, Log> unImportMap = commonService.getUnImportFile(detail.value());
+                Map<Long, Log> unImportMap = commonService.getUnImportFile(detail.getValue());
                 for (Map.Entry<Long, Log> entry : unImportMap.entrySet()) {
                     tradeDetailService.importAccess(entry, yearMonthDto);
                 }
@@ -90,13 +90,13 @@ public class TaskServiceImpl implements TaskService {
             @Override
             public void run() {
                 //解包
-                Map<Long, Log> unExtractMap = commonService.getUnExtractPackage(sum.value());
+                Map<Long, Log> unExtractMap = commonService.getUnExtractPackage(sum.getValue());
                 for (Map.Entry<Long, Log> entry : unExtractMap.entrySet()) {
                     commonService.unpackageFile(entry, unzip_sum_dir.value());
                 }
 
                 //导入数据
-                Map<Long, Log> unImportMap = commonService.getUnImportFile(sum.value());
+                Map<Long, Log> unImportMap = commonService.getUnImportFile(sum.getValue());
                 for (Map.Entry<Long, Log> entry : unImportMap.entrySet()) {
                     tradeSumService.importExcel(entry, yearMonthDto);
                 }
@@ -120,10 +120,10 @@ public class TaskServiceImpl implements TaskService {
                 Map.Entry<Long, Log> entry = map.entrySet().iterator().next();
                 String tableType = log.getTableType().trim();
 
-                if (detail.value().equals(tableType) && entry != null) {
+                if (detail.getValue().equals(tableType) && entry != null) {
                     commonService.unpackageFile(entry, unzip_detail_dir.value());
                 }
-                if (sum.value().equals(tableType) && entry != null) {
+                if (sum.getValue().equals(tableType) && entry != null) {
                     commonService.unpackageFile(entry, unzip_sum_dir.value());
                 }
             }
@@ -147,14 +147,16 @@ public class TaskServiceImpl implements TaskService {
 
                 Integer impExpType = null;
                 YearMonthDto yearMonthDto = null;
-                if (import_type.equals(log.getTradeType())) {
+                if ( detail.equals(log.getTableType())
+                        || detail.getValue().equals(log.getTableType())) {
                     impExpType = import_type.ordinal();
                     yearMonthDto = new YearMonthDto(log.getYear(), log.getMonth(), impExpType,
                             log.getProductType(), tableType);
                     tradeDetailService.importAccess(entry, yearMonthDto);
                 }
 
-                if (export_type.equals(log.getTradeType())) {
+                if (sum.equals(log.getTableType())
+                        || sum.getValue().equals(log.getTableType())) {
                     impExpType = export_type.ordinal();
                     yearMonthDto = new YearMonthDto(log.getYear(), log.getMonth(), impExpType,
                             log.getProductType(), tableType);
@@ -163,6 +165,7 @@ public class TaskServiceImpl implements TaskService {
 
             }
         };
+        new Timer().schedule(task, delay);
     }
 
 }

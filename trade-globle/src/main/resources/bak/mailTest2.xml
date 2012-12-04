@@ -28,5 +28,5 @@
     <logger name="com.util.PrintUtil" level="EMAIL">
         <appender-ref ref="PrintUtil"/>
     </logger>
-       <root level="OFF"> </root>
+     <root level="OFF"> </root>
 </configuration>

@@ -4,7 +4,10 @@
 <configuration>
     <jmxConfigurator />
     <!-- 配置文件路径 -->
-    <property file="logback-default.properties" />
+    <property resource="logback.properties" />
+
+    <!--<property file="src/vvv/logback.properties" />-->
+    <!--<property name ="LOG_HOME" value="./logs"/>-->
 
     <!--logback的版本必须是0.9.21以上才支持-->
     <timestamp key="byDay" datePattern="yyyyMMdd"/>
@@ -19,20 +22,19 @@
     <!-- 文件输出日志 (文件大小策略进行文件输出，超过指定大小对文件压缩(.zip)备份)-->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 文件的路径及文件名 -->
-        <File>${LOG_HOME}/${fileName}.log</File>
+        <File>${LOG_HOME}/${FILE_NAME}.log</File>
 
         <!-- 定义窗口滚动策略 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <!-- 每触发一次，自动压缩日志文件，%i在1-3之间循环变化 -->
-            <FileNamePattern>${LOG_HOME}/${fileName}_%i.log.zip</FileNamePattern>
+            <FileNamePattern>${LOG_HOME}/${FILE_NAME}_%i.log.zip</FileNamePattern>
             <MinIndex>1</MinIndex>  <!-- %i的最小值为1-->
             <MaxIndex>3</MaxIndex>  <!-- %i的最大值为3-->
         </rollingPolicy>
 
         <!-- 触发策略，通常rollingPolicy与triggeringPolicy联合使用 -->
-        <triggeringPolicy
-                class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>${MaxFileSize}</MaxFileSize>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>${MAX_FILE_SIZE}</MaxFileSize>
         </triggeringPolicy>
 
         <!-- 格式化输出 -->
@@ -66,14 +68,14 @@
             <OnMismatch>DENY</OnMismatch>  	<!-- 如果不匹配，则拒绝处理 -->
             <OnMatch>ACCEPT</OnMatch>  		<!-- 如果匹配，则立即处理 -->
         </filter>
-        <File>${LOG_HOME}/${fileName}Err.log</File>  <!-- 文件名即路径 -->
+        <File>${LOG_HOME}/${FILE_NAME}Err.log</File>  <!-- 文件名即路径 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <FileNamePattern>${LOG_HOME}/${fileName}Err_%i.log.zip</FileNamePattern>
+            <FileNamePattern>${LOG_HOME}/${FILE_NAME}Err_%i.log.zip</FileNamePattern>
             <MinIndex>1</MinIndex>
             <MaxIndex>10</MaxIndex>
         </rollingPolicy>
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>${MaxFileSize}</MaxFileSize>
+            <MaxFileSize>${MAX_FILE_SIZE}</MaxFileSize>
         </triggeringPolicy>
 
         <!-- 格式化输出 -->
@@ -92,11 +94,20 @@
     <!--这里指定logger name 是为jmx设置日志级别做铺垫 -->
     <!-- 分别将STDOUT与FILE appender都添加到自定义的logger中，否则将不会输出到appender指定的 目的地-->
     <logger name="org.springframework" level="info">
-        <appender-ref ref="stdout"/>
+        <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="com.oilchem" level="info">
-        <appender-ref ref="stdout"/>
-        <appender-ref ref="file-error"/>
+        <appender-ref ref="STDOUT"/>
     </logger>
+
+    <root level="warn">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </root>
+    <root level="error">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE-ERROR" />
+    </root>
 
 </configuration>

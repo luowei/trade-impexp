@@ -35,7 +35,7 @@
     </script>
 
 </head>
-<body>
+<body style="padding-top: 60px">
 
 <jsp:include page="../../common/breadcrumb.jsp"/>
 
@@ -193,8 +193,8 @@
         <i class="icon-search icon-white"></i>查询
     </button>
     <%--<div class="btn-group">--%>
-    <%--<input id="chart" type="button" class="btn-small btn-primary" value="生成曲线" onclick="genDetailChart()"/>--%>
-    <a  href="" target="_blank" class="btn btn-small btn-primary" onclick="genDetailChart()">生成曲线</a>
+    <input id="chart" type="button" class="btn-small btn-primary" value="生成曲线" onclick="genDetailChart()"/>
+    <%--<a  href="" target="_blank"  class="btn btn-small btn-primary" onclick="genDetailChart()">生成曲线</a>--%>
 
     <%--</div>--%>
 

@@ -31,33 +31,5 @@ public interface ImpTradeDetailDao extends CrudRepository<ImpTradeDetail, Long>,
 //    @Query(value = "from ImpTradeDetail where :wheres")
 //    Page<ImpTradeDetail> pageByCriteria(@Param("wheres")String wheres,Pageable pageable);
 
-    @Query(value = " select o from ImpTradeDetail o where " +
-            "    o.productCode=:productCode and" +
-            "    o.city=:city and" +
-            "    o.country=:country and" +
-            "    o.customs=:customs and" +
-            "    o.tradeType=:tradeType and" +
-            "    o.transportation=:transportation and" +
-            "    o.companyType=:companyType and" +
-            "    o.year >=:lowYear and" +
-            "    o.month >=:lowMonth and" +
-            "    o.year <:highYear and" +
-            "    o.month <:highMonth and" +
-            "    o.productName like :productName")
-    Page<ImpTradeDetail> pageByCriteria(
-            @Param("productCode") String productCode,
-            @Param("city") String city,
-            @Param("country") String country,
-            @Param("customs") String customs,
-            @Param("tradeType") String tradeType,
-            @Param("transportation") String transportation,
-            @Param("companyType") String companyType,
-            @Param("lowYear") Integer lowYear,
-            @Param("lowMonth") Integer lowMonth,
-            @Param("highYear") Integer highYear,
-            @Param("highMonth") Integer highMonth,
-            @Param("productName") String productName,
-            Pageable pageable);
-
     List<ImpTradeDetail> findByProductCodeAndYearMonth(String productCode, String yearMonth);
 }

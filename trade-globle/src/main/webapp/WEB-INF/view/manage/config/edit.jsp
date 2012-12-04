@@ -16,7 +16,7 @@
 
 <jsp:include page="../../common/breadcrumb.jsp" />
 
-<div class="wrapper">
+<div class="wrapper"  style="padding-top: 60px">
 <c:url var="action" value="/manage/updatecfg"/>
 <form:form modelAttribute="configBean" action="${action}" method="post" id="configForm" cssClass="form-horizontal">
     <fieldset>

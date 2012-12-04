@@ -1,26 +1,13 @@
 package com.oilchem.trade.view.controller;
 
-import com.google.common.collect.Lists;
-import com.google.gson.Gson;
-import com.oilchem.trade.bean.ChartData;
-import com.oilchem.trade.bean.DocBean;
-import com.oilchem.trade.chart.MyChart;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.domain.*;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
-import com.oilchem.trade.service.ChartService;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
-import com.oilchem.trade.util.CommonUtil;
-import com.oilchem.trade.util.ConfigUtil;
-import com.oilchem.trade.util.EHCacheUtil;
-import ofc4j.OFC;
-import ofc4j.model.Chart;
-import ofc4j.model.axis.Label;
-import org.hibernate.cfg.CollectionSecondPass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -32,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
 import java.util.*;
 
 import static com.oilchem.trade.bean.DocBean.Config.chart_height;
@@ -135,15 +121,24 @@ public class TradeDetailController extends CommonController {
         }
 
         StringBuffer message = new StringBuffer();
+
+        //上传
         try {
             String uploadUrl = tradeDetailService.uploadFile(file, yearMonthDto);
-            message.append("文件已上传到：" + upload_detailzip_dir.value() +
+            message.append("文件已上传到：<em>" + upload_detailzip_dir.value() +
                     uploadUrl.substring(uploadUrl.lastIndexOf("/")));
-            taskService.unDetailPackageAndImportTask(yearMonthDto);
-
+            message.append("</em>");
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            message.append("<br/>文件上传或数据导入发生了错误");
+            message.append("<br/>文件上传发生了错误");
+        }
+
+        //导入
+        try{
+            taskService.unDetailPackageAndImportTask(yearMonthDto);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            message.append("<br/>文件解压或导入发生了错误");
         }
 
         redirectAttrs.addFlashAttribute("message", message.toString());

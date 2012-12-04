@@ -69,7 +69,7 @@ public class TradeDetailServiceImpl implements TradeDetailService {
      */
     public String uploadFile(MultipartFile file, YearMonthDto yearMonthDto) {
 
-        yearMonthDto.setTableType(detail.value());
+        yearMonthDto.setTableType(detail.getValue());
         return commonService.uploadFile(file, upload_detailzip_dir.value(), yearMonthDto);
     }
 

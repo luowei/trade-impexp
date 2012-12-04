@@ -1,15 +1,9 @@
 package com.oilchem.trade.view.controller;
 
-import com.oilchem.trade.bean.DocBean;
-import com.oilchem.trade.chart.MyChart;
-import com.oilchem.trade.domain.abstrac.TradeDetail;
-import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.util.*;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.bean.CommonDto;
-import ofc4j.OFC;
-import ofc4j.model.Chart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -202,7 +196,7 @@ public class CommonController {
 //        }
 
         //方法三
-//        Object o = new MyChart().getLineChart(list, chartProps,chartType);
+//        Object o = new DetailChart().getLineChart(list, chartProps,chartType);
 
 //        if (Chart.class.isAssignableFrom(o.getClass())) {
 //            return OFC.instance.render((Chart) o);

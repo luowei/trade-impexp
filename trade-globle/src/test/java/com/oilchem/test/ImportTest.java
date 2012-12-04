@@ -61,7 +61,7 @@ public class ImportTest {
         yearMonth = new YearMonthDto();
         yearMonth.setImpExpType(import_type.ordinal());
 //        yearMonth.setImpExpType(ImpExpType.出口.getCode());
-        yearMonth.setImportType(import_type.value());
+        yearMonth.setImportType(import_type.getValue());
         yearMonth.setProductType("有机化工");
         yearMonth.setTableType(detail.name());
         yearMonth.setYear(2012);
@@ -95,7 +95,7 @@ public class ImportTest {
 //    @Test(expected = Exception.class)
     public void testUnpackageFile() throws Exception {
         try {
-            Map<Long, Log> unExtractMap = commonService.getUnExtractPackage(detail.value());
+            Map<Long, Log> unExtractMap = commonService.getUnExtractPackage(detail.getValue());
             for (Map.Entry<Long, Log> entry : unExtractMap.entrySet()) {
                 commonService.unpackageFile(
                         entry, unzip_detail_dir.value());
@@ -115,7 +115,7 @@ public class ImportTest {
     public void testImportAccess() throws Exception {
         Boolean isSuccess = false;
         try {
-            Map<Long, Log> unImportMap = commonService.getUnImportFile(detail.value());
+            Map<Long, Log> unImportMap = commonService.getUnImportFile(detail.getValue());
             if (unImportMap != null)
                 for (Map.Entry<Long, Log> entry : unImportMap.entrySet()) {
                     tradeDetailService.importAccess(entry, yearMonth);
@@ -138,7 +138,7 @@ public class ImportTest {
 
         Boolean isSuccess = false;
         try {
-            Map<Long, Log> unImportMap = commonService.getUnImportFile(sum.value());
+            Map<Long, Log> unImportMap = commonService.getUnImportFile(sum.getValue());
             if (unImportMap != null)
                 for (Map.Entry<Long, Log> logEntry : unImportMap.entrySet()) {
                     isSuccess = tradeSumService.importExcel(logEntry, yearMonth);

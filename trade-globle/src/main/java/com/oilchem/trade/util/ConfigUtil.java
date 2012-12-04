@@ -23,7 +23,7 @@ public class ConfigUtil {
      */
     protected static Logger logger = (Logger) LoggerFactory.getLogger(ConfigUtil.class);
 
-    public static String CONFIG_COMMON_JSON = "config_common.json";
+    public static String CONFIG_COMMON_JSON = "config.json";
 
     /**
      * ConfigUtil实例

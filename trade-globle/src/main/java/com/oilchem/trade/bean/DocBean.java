@@ -93,7 +93,7 @@ public class DocBean {
             this.value = value;
         }
 
-        public String value() {
+        public String getValue() {
             return this.value;
         }
 
@@ -113,7 +113,7 @@ public class DocBean {
             this.value = value;
         }
 
-        public String value() {
+        public String getValue() {
             return this.value;
         }
 
@@ -132,7 +132,7 @@ public class DocBean {
             this.value = value;
         }
 
-        public String value() {
+        public String getValue() {
             return this.value;
         }
     }
@@ -156,7 +156,7 @@ public class DocBean {
         ChartType(String value){
             this.value = value;
         }
-        public String value(){
+        public String getValue(){
             return this.value;
         }
 
@@ -186,7 +186,7 @@ public class DocBean {
             this.value = value;
         }
 
-        public String value() {
+        public String getValue() {
             return this.value;
         }
     }
@@ -206,7 +206,7 @@ public class DocBean {
         access_unit,
         access_acountmoney,;
 
-        public String value() {
+        public String getValue() {
             return getDefault(this);
         }
 
@@ -226,8 +226,8 @@ public class DocBean {
         excel_py,
         excel_pq,;
 
-        public String value() {
-            return getDefault(this);
+        public String getValue() {
+            return getDefault(this).trim();
         }
     }
 

@@ -65,9 +65,9 @@ public class ConfigController {
             map.put(configBean.getKey(),configBean);
         }
 
-        String message = "更新 "+configBean.getKey()+" 为:"+configBean.getValue()+" 失败";
+        String message = "更新 :<em>"+configBean.getKey()+"</em> 为:<em>"+configBean.getValue()+"</em> 失败";
         if(ConfigUtil.setConfigMap(map)){
-            message = "更新 "+configBean.getKey()+" 为:"+configBean.getValue()+" 成功";
+            message = "更新 <em>"+configBean.getKey()+"</em> 为:<em>"+configBean.getValue()+"</em> 成功";
         }
         redirectAttrs.addFlashAttribute("configmaps",ConfigUtil.getConfigMap())
             .addFlashAttribute("message",message);

@@ -36,7 +36,7 @@
 
 </head>
 
-<body>
+<body style="padding-top: 60px">
 
 <jsp:include page="../../common/breadcrumb.jsp"/>
 
@@ -116,8 +116,8 @@
         <button type="submit" class="btn btn-success">
             <i class="icon-search icon-white"></i>查询
         </button>
-        <%--<input id="chart" type="button" class="btn-small btn-primary" value="生成曲线" onclick="genSumChart()"/>--%>
-        <a  href="" target="_blank" class="btn btn-small btn-primary" onclick="genSumChart()">生成曲线</a>
+        <input id="chart" type="button" class="btn-small btn-primary" value="生成曲线" onclick="genSumChart()"/>
+        <%--<a  href="" target="_blank" class="btn btn-small btn-primary" onclick="genSumChart()">生成曲线</a>--%>
 
         <div class="pagination-centered">
             <jsp:include page="../../common/pagination.jsp"/>

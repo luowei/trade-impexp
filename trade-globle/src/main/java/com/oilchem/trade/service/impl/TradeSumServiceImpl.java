@@ -1,6 +1,5 @@
 package com.oilchem.trade.service.impl;
 
-import com.oilchem.trade.bean.ChartData;
 import com.oilchem.trade.dao.ExpTradeSumDao;
 import com.oilchem.trade.dao.ImpTradeSumDao;
 import com.oilchem.trade.dao.LogDao;
@@ -18,7 +17,6 @@ import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
 import com.oilchem.trade.util.DynamicSpecifications;
 import com.oilchem.trade.util.QueryUtils;
-import ofc4j.model.axis.Label;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,15 +26,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 import static com.oilchem.trade.bean.DocBean.Config.*;
-import static com.oilchem.trade.bean.DocBean.ExcelFiled.*;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.export_type;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.import_type;
 import static com.oilchem.trade.bean.DocBean.TableType.sum;
-import static java.math.BigDecimal.ROUND_HALF_UP;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static com.oilchem.trade.util.QueryUtils.*;
 
@@ -158,7 +153,7 @@ public class TradeSumServiceImpl implements TradeSumService {
     public String uploadFile(MultipartFile file,
                              YearMonthDto yearMonthDto) {
 
-        yearMonthDto.setTableType(sum.value());
+        yearMonthDto.setTableType(sum.getValue());
         return commonService.uploadFile(file,
                 upload_sumzip_dir.value(), yearMonthDto);
     }

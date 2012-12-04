@@ -5,7 +5,8 @@ import com.google.gson.Gson;
 import com.oilchem.trade.bean.ChartData;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
-import com.oilchem.trade.chart.MyChart;
+import com.oilchem.trade.chart.DetailChart;
+import com.oilchem.trade.chart.SumChart;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.service.ChartService;
@@ -70,7 +71,7 @@ public class ChartController extends CommonController{
         Map<String, ChartData<TradeDetail>> chartDataMap = chartService.getChartDetailList(labels,codes, yearMonthDto);
 
 
-        Object o = new MyChart().getDetailLineChart(chartDataMap);
+        Object o = new DetailChart().getDetailLineChart(chartDataMap);
 
         //缓存
         int idx = 1;
@@ -120,7 +121,7 @@ public class ChartController extends CommonController{
         Map<String, ChartData<TradeSum>> chartDataMap = chartService.getChartSumList(labels,names,yearMonthDto );
 
 
-        Object o = new MyChart().getSumLineChart(chartDataMap);
+        Object o = new SumChart().getSumLineChart(chartDataMap);
         List<String> chartList = new ArrayList<String>();
 
         //缓存
