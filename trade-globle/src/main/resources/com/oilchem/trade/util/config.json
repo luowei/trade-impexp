@@ -31,7 +31,7 @@
     "root_url":{
         "key":"root_url",
         "name":"应用根url",
-        "value":"http://com.oilchem.trade.vvvv.org",
+        "value":"http://trade.vvvv.org",
         "describe":"应用根url"
     },
 
@@ -80,7 +80,7 @@
     "access_product_code":{
         "key":"access_product_code",
         "name":"产品代码",
-        "value":"col002",
+        "value":"PCode",
         "describe":"value配成要导入的access表中[产品代码]列的列名"
     },
 
@@ -136,7 +136,7 @@
     "access_amount":{
         "key":"access_amount",
         "name":"数量",
-        "value":"Col012",
+        "value":"Col008",
         "describe":"value配成要导入的access表中[数量]列的列名"
     },
 
@@ -150,7 +150,7 @@
     "access_acountmoney":{
         "key":"access_acountmoney",
         "name":"金额",
-        "value":"Col013",
+        "value":"Col011",
         "describe":"value配成要导入的access表中[金额]列的列名"
     },
 
@@ -242,7 +242,7 @@
     "chart_width":{
         "key":"chart_width",
         "name":"图表宽度",
-        "value":"800",
+        "value":"1000",
         "describe":"图表的宽度"
     },
 

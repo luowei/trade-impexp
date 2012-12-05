@@ -13,6 +13,7 @@ import ofc4j.model.elements.LineChart
 import static java.lang.Integer.toHexString
 import static java.lang.Integer.toHexString
 import static java.lang.Integer.toHexString
+import ofc4j.model.elements.BarChart
 
 /**
  * Created with IntelliJ IDEA.
@@ -73,6 +74,10 @@ class Common {
         return lineChart.setWidth(2)
                 .setColour(getRadomColor())
                 .setDotSize(5)
+    }
+
+    BarChart newBarElement(BarChart barChart){
+        return barChart.setColour(getRadomColor())
     }
 
     /**

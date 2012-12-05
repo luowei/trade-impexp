@@ -30,40 +30,65 @@ public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implem
                                       ResultSet rs,
                                       Integer year,
                                       Integer month) throws SQLException {
+
         //产品代码
-        tradeDetail.setProductCode(rs.getString(access_product_code.getValue()));
+        tradeDetail.setProductCode(getString(access_product_code.getValue(), rs));
         //产品名称
-        tradeDetail.setProductName(rs.getString(access_product_name.getValue()));
+        tradeDetail.setProductName(getString(access_product_name.getValue(),rs));
         //企业性质
-        tradeDetail.setCompanyType(rs.getString(access_company_type.getValue()));
+        tradeDetail.setCompanyType(getString(access_company_type.getValue(),rs));
         //贸易方式
-        tradeDetail.setTradeType(rs.getString(access_trade_type.getValue()));
+        tradeDetail.setTradeType(getString(access_trade_type.getValue(),rs));
         //城市
-        tradeDetail.setCity(rs.getString(access_city.getValue()));
+        tradeDetail.setCity(getString(access_city.getValue(),rs));
         //产销国家
-        tradeDetail.setCountry(rs.getString(access_country.getValue()));
+        tradeDetail.setCountry(getString(access_country.getValue(),rs));
         //出口海关
-        tradeDetail.setCustoms(rs.getString(access_customs.getValue()));
+        tradeDetail.setCustoms(getString(access_customs.getValue(),rs));
         //运输方式
-        tradeDetail.setTransportation(rs.getString(access_transportation.getValue()));
+        tradeDetail.setTransportation(getString(access_transportation.getValue(),rs));
         //单位
-        tradeDetail.setUnit(rs.getString(access_unit.getValue()));
+        tradeDetail.setUnit(getString(access_unit.getValue(),rs));
         //数量
-        BigDecimal amount =  rs.getBigDecimal(access_amount.getValue());
+        BigDecimal amount = getBigDecimal(access_amount.getValue(),rs);
         tradeDetail.setAmount(amount);
         //金额
-        BigDecimal amountMoney = rs.getBigDecimal(access_acountmoney.getValue());
+        BigDecimal amountMoney = getBigDecimal(access_acountmoney.getValue(),rs);
         tradeDetail.setAmountMoney(amountMoney);
         //平均价格
-        tradeDetail.setUnitPrice(amountMoney.divide(amount).setScale(2,BigDecimal.ROUND_HALF_UP));
+        if(!amount.equals(0)){
+            tradeDetail.setUnitPrice(BigDecimal.valueOf(0));
+        } else {
+            tradeDetail.setUnitPrice(amountMoney.divide(amount,2, BigDecimal.ROUND_HALF_UP));
+        }
+
         //年
         tradeDetail.setYear(year);
         //月
         tradeDetail.setMonth(month);
         //年月
-        tradeDetail.setYearMonth(year+ yearmonth_split.value() +(month<10 ? "0"+month:month));
+        tradeDetail.setYearMonth(year + yearmonth_split.value() + (month < 10 ? "0" + month : month));
         return tradeDetail;
     }
+
+    private String getString(String columnName, ResultSet rs) {
+        try {
+            return rs.getString(columnName);
+        } catch (Exception e) {
+            throw new RuntimeException("Can't found " + access_product_code.getValue()
+                    + " column in the importing access file", e);
+        }
+    }
+
+    private BigDecimal getBigDecimal(String columnName, ResultSet rs) {
+        try {
+            return rs.getBigDecimal(columnName);
+        } catch (Exception e) {
+            throw new RuntimeException("Can't found " + access_product_code.getValue()
+                    + " column in the importing access file", e);
+        }
+    }
+
 
     @Override
     public T mapRow(ResultSet rs, int rowNum) throws SQLException {

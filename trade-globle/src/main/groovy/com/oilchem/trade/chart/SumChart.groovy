@@ -16,6 +16,7 @@ import static com.oilchem.trade.bean.DocBean.ExcelFiled.excel_avg_price_sum
 import static com.oilchem.trade.bean.DocBean.ExcelFiled.excel_pm
 import static com.oilchem.trade.bean.DocBean.ExcelFiled.excel_py
 import static com.oilchem.trade.bean.DocBean.ExcelFiled.excel_pq
+import ofc4j.model.elements.BarChart
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,7 +27,7 @@ import static com.oilchem.trade.bean.DocBean.ExcelFiled.excel_pq
  */
 class SumChart extends Common{
 
-    def List<Chart> getSumLineChart(Map<String, ChartData<TradeSum>> chartDataMap) {
+    def List<Chart> getSumChart(Map<String, ChartData<TradeSum>> chartDataMap, String chartType) {
 
         //--------------tradeSum----------------------------
         List<Chart> sumChartList = new ArrayList<Chart>();
@@ -56,43 +57,48 @@ class SumChart extends Common{
         for(Map.Entry<String,ChartData<TradeSum>> it:chartDataMap) {
             String code = it.key
             ChartData<TradeSum> chartData = it.value
-            List<List<LineChart>> sumFiledLineList = getSumFiledLineList(code, chartData.elementList)
 
+            List<LineChart> sumElementList = null
+            if ("barChart".equals(chartType)) {
+                sumElementList = getSumBarList(code, chartData.elementList)
+            } else {
+                sumElementList = getSumLineList(code, chartData.elementList)
+            }
 
             nummonthChat = newChart(nummonthChat, chartData, excel_num_month.getValue(),minRangMap,maxRangMap,stepMap)
-                    .addElements(sumFiledLineList.get(0))
+                    .addElements(sumElementList.get(0))
 
             numSumChat = newChart(numSumChat, chartData, excel_num_sum.getValue(),minRangMap,maxRangMap,stepMap)
-                    .addElements(sumFiledLineList.get(1))
+                    .addElements(sumElementList.get(1))
 
             moneyMonthChat = newChart(moneyMonthChat, chartData, excel_money_month.getValue(),minRangMap,maxRangMap,stepMap)
-                    .addElements(sumFiledLineList.get(2))
+                    .addElements(sumElementList.get(2))
 
             moneySumChat = newChart(moneySumChat, chartData, excel_money_sum.getValue(),minRangMap,maxRangMap,stepMap)
-                    .addElements(sumFiledLineList.get(3))
+                    .addElements(sumElementList.get(3))
 
             avgPriceMonthChat = newChart(avgPriceMonthChat, chartData, excel_avg_price_month.getValue(),minRangMap,maxRangMap,stepMap)
-                    .addElements(sumFiledLineList.get(4))
+                    .addElements(sumElementList.get(4))
 
             avgPriceSumChat = newChart(avgPriceSumChat, chartData, excel_avg_price_sum.getValue(),minRangMap,maxRangMap,stepMap)
-                    .addElements(sumFiledLineList.get(5))
+                    .addElements(sumElementList.get(5))
 
             pmChart = newChart(pmChart, chartData, excel_pm.getValue(),minRangMap,maxRangMap,stepMap)
-                    .addElements(sumFiledLineList.get(6))
+                    .addElements(sumElementList.get(6))
 
             pyChart = newChart(pyChart, chartData, excel_py.getValue(),minRangMap,maxRangMap,stepMap)
-                    .addElements(sumFiledLineList.get(7))
+                    .addElements(sumElementList.get(7))
 
             pqChart = newChart(pqChart, chartData, excel_pq.getValue(),minRangMap,maxRangMap,stepMap)
-                    .addElements(sumFiledLineList.get(8))
+                    .addElements(sumElementList.get(8))
 
         }
         [nummonthChat,numSumChat,moneyMonthChat,moneySumChat,avgPriceMonthChat,avgPriceSumChat,pmChart,pyChart,pqChart]
     }
 
 
-    def getSumFiledLineList(String code, List<TradeSum> sumsList) {
-        List<List<LineChart>> sumFiledLineList = new ArrayList<List<LineChart>>(9)
+    def getSumLineList(String code, List<TradeSum> sumsList) {
+
         LineChart numMonthLineChart = new LineChart().setText(code)
         LineChart numSumLineChart = new LineChart().setText(code)
         LineChart moneyMonthLineChart = new LineChart().setText(code)
@@ -116,6 +122,33 @@ class SumChart extends Common{
         }
         [numMonthLineChart,numSumLineChart,moneyMonthLineChart,moneySumhLineChart,
                 avgPriceMonthhLineChart,avgPriceSumLineChart,pmLineChart,pyLineChart,pqLineChart]
+    }
+
+    def getSumBarList(String code, List<TradeSum> sumsList) {
+
+        BarChart numMonthBarChart = new BarChart(BarChart.Style.GLASS).setText(code)
+        BarChart numSumBarChart = new BarChart(BarChart.Style.GLASS).setText(code)
+        BarChart moneyMonthBarChart = new BarChart(BarChart.Style.GLASS).setText(code)
+        BarChart moneySumhBarChart = new BarChart(BarChart.Style.GLASS).setText(code)
+        BarChart avgPriceMonthhBarChart = new BarChart(BarChart.Style.GLASS).setText(code)
+        BarChart avgPriceSumBarChart = new BarChart(BarChart.Style.GLASS).setText(code)
+        BarChart pmBarChart = new BarChart(BarChart.Style.GLASS).setText(code)
+        BarChart pyBarChart = new BarChart(BarChart.Style.GLASS).setText(code)
+        BarChart pqBarChart = new BarChart(BarChart.Style.GLASS).setText(code)
+
+        sumsList.each {
+            numMonthBarChart = newBarElement(numMonthBarChart).addValues(it==null ? 0 : it.numMonth.doubleValue())
+            numSumBarChart = newBarElement(numSumBarChart).addValues(it==null ? 0 : it.numSum.doubleValue())
+            moneyMonthBarChart = newBarElement(moneyMonthBarChart).addValues(it==null ? 0 :it.moneyMonth.doubleValue())
+            moneySumhBarChart = newBarElement(moneySumhBarChart).addValues(it==null ? 0 :it.moneySum.doubleValue())
+            avgPriceMonthhBarChart = newBarElement(avgPriceMonthhBarChart).addValues(it==null ? 0 :it.avgPriceMonth.doubleValue())
+            avgPriceSumBarChart = newBarElement(avgPriceSumBarChart).addValues(it==null ? 0 :it.avgPriceSum.doubleValue())
+            pmBarChart = newBarElement(pmBarChart).addValues(it==null ? 0 :it.pm.doubleValue())
+            pyBarChart = newBarElement(pyBarChart).addValues(it==null ? 0 :it.py.doubleValue())
+            pqBarChart = newBarElement(pqBarChart).addValues(it==null ? 0 :it.pq.doubleValue())
+        }
+        [numMonthBarChart,numSumBarChart,moneyMonthBarChart,moneySumhBarChart,
+                avgPriceMonthhBarChart,avgPriceSumBarChart,pmBarChart,pyBarChart,pqBarChart]
     }
 
 }

@@ -38,8 +38,8 @@
             <tr>
                 <th><a href="#" id="key">key</a></th>
                 <th><a href="#" id="name">name</a></th>
-                <th><a href="#" id="value">value</a></th>
-                <th><a href="#" id="describe">describe</a></th>
+                <th><a href="#" id="value">value(access文件中的列名)</a></th>
+                <th><a href="#" id="describe">描述信息</a></th>
                 <th><a href="#" id="update">修改</a></th>
             </tr>
             </thead>
@@ -75,8 +75,8 @@
             <tr>
                 <th><a href="#">key</a></th>
                 <th><a href="#">name</a></th>
-                <th><a href="#">value</a></th>
-                <th><a href="#">describe</a></th>
+                <th><a href="#">value(Excel文件中的列名)</a></th>
+                <th><a href="#">描述信息</a></th>
                 <th><a href="#">修改</a></th>
             </tr>
             </thead>

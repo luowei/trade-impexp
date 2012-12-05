@@ -22,10 +22,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static com.oilchem.trade.bean.DocBean.ChartType.barChart;
+import static com.oilchem.trade.bean.DocBean.ChartType.lineChart;
 import static com.oilchem.trade.bean.DocBean.Config.chart_height;
 import static com.oilchem.trade.bean.DocBean.Config.chart_width;
 import static com.oilchem.trade.util.EHCacheUtil.setValue;
@@ -39,7 +41,7 @@ import static com.oilchem.trade.util.EHCacheUtil.setValue;
  */
 @Controller
 @RequestMapping("/manage")
-public class ChartController extends CommonController{
+public class ChartController extends CommonController {
 
     @Autowired
     ChartService chartService;
@@ -68,34 +70,48 @@ public class ChartController extends CommonController{
 
         List<Label> labels = chartService.getYearMonthLabels(yearMonthDto);
 
-        Map<String, ChartData<TradeDetail>> chartDataMap = chartService.getChartDetailList(labels,codes, yearMonthDto);
+        Map<String, ChartData<TradeDetail>> chartDataMap = chartService.getChartDetailList(labels, codes, yearMonthDto);
 
 
-        Object o = new DetailChart().getDetailLineChart(chartDataMap);
+        Object lineChartList_o = new DetailChart().getDetailLineChart(chartDataMap, lineChart.name());
+        Object barChartList_o = new DetailChart().getDetailLineChart(chartDataMap, barChart.name());
 
         //缓存
         int idx = 1;
-        if (o != null && o instanceof List) {
-            for (Object chart_o : (List) o) {
-                if (Chart.class.isAssignableFrom(chart_o.getClass())) {
-                    Gson gson = new Gson();
-                    String chart = gson.toJson(chart_o,Chart.class);
-//                    String chart = OFC.instance.render((Chart) chart_o);
-                    setValue("chart", "chartList_"
-//                            +session.getId()
-                            + idx, chart);
+        Gson gson = new Gson();
 
-                    System.out.println("=================================================");
-                    System.out.println(chart);
-                    System.out.println("=================================================");
+        if (lineChartList_o != null && lineChartList_o instanceof List &&
+                barChartList_o != null && barChartList_o instanceof List) {
+
+            List lineCharts = (List) lineChartList_o;
+            List barCharts = (List) barChartList_o;
+            Iterator lineIt = lineCharts.iterator();
+            Iterator barIt = barCharts.iterator();
+
+            for (; lineIt.hasNext() && barIt.hasNext(); ) {
+                Object lineObj = lineIt.next();
+                Object barObj = barIt.next();
+                if (Chart.class.isAssignableFrom(lineObj.getClass()) &&
+                        Chart.class.isAssignableFrom(barObj.getClass())  ) {
+
+                    String lineChartStr = gson.toJson(lineObj, Chart.class);
+                    String barChartStr = gson.toJson(barObj, Chart.class);
+//                    String lineChartStr = OFC.instance.render((Chart) lineIt);
+
+                    setValue("chart", "chartList_" + lineChart.name() + "_"
+//                            +session.getId()
+                            + idx, lineChartStr,1800);
+                    setValue("chart", "chartList_" + barChart.name() + "_"
+//                            +session.getId()
+                            + idx, barChartStr,1800);
 
                     idx++;
                 }
             }
+
         }
 
-
-        model.addAttribute("idx",idx-1).addAttribute("width", chart_width.value())
+        model.addAttribute("idx", idx - 1).addAttribute("width", chart_width.value())
                 .addAttribute("height", chart_height.value());
 
         return "manage/trade/chart";
@@ -103,12 +119,12 @@ public class ChartController extends CommonController{
 
 
     @RequestMapping("/sumchart")
-    public String getSumChartData(Model model,YearMonthDto yearMonthDto,
-                                  CommonDto commonDto,String chartType,
-                                  TradeSum tradeSum,RedirectAttributes redirectAttr){
+    public String getSumChartData(Model model, YearMonthDto yearMonthDto,
+                                  CommonDto commonDto, String chartType,
+                                  TradeSum tradeSum, RedirectAttributes redirectAttr) {
 
-        if (commonDto.getCodes()==null || commonDto.getCodes().length < 1) {
-            return "redirect:/manage/sumchart/" + (commonDto.getPageNumber()==null?1:commonDto.getPageNumber());
+        if (commonDto.getCodes() == null || commonDto.getCodes().length < 1) {
+            return "redirect:/manage/listsum/" + (commonDto.getPageNumber() == null ? 1 : commonDto.getPageNumber());
         }
 
         List<String> names = removeDuplicateWithOrder(
@@ -116,46 +132,70 @@ public class ChartController extends CommonController{
 
         List<Label> labels = chartService.getYearMonthLabels(yearMonthDto);
 
+        Map<String, ChartData<TradeSum>> chartDataMap = chartService.getChartSumList(labels, names, yearMonthDto);
 
-
-        Map<String, ChartData<TradeSum>> chartDataMap = chartService.getChartSumList(labels,names,yearMonthDto );
-
-
-        Object o = new SumChart().getSumLineChart(chartDataMap);
-        List<String> chartList = new ArrayList<String>();
+        Object lineChartList_o = new SumChart().getSumChart(chartDataMap, lineChart.name());
+        Object barChartList_o = new SumChart().getSumChart(chartDataMap, barChart.name());
 
         //缓存
         int idx = 1;
-        if(o!=null && o instanceof List){
-            for(Object chart_o:(List)o){
-                if (Chart.class.isAssignableFrom(chart_o.getClass())) {
-                    Gson gson = new Gson();
-                    String chart = gson.toJson(chart_o,Chart.class);
-//                    String chart = OFC.instance.render((Chart) chart_o);
-                    setValue("chart", "chartList_"
-                            + idx, chart);
+        Gson gson = new Gson();
+
+        if (lineChartList_o != null && lineChartList_o instanceof List &&
+                barChartList_o != null && barChartList_o instanceof List) {
+
+            List lineCharts = (List) lineChartList_o;
+            List barCharts = (List) barChartList_o;
+            Iterator lineIt = lineCharts.iterator();
+            Iterator barIt = barCharts.iterator();
+
+
+            for (; lineIt.hasNext() && barIt.hasNext(); ) {
+                Object lineObj = lineIt.next();
+                Object barObj = barIt.next();
+                if (Chart.class.isAssignableFrom(lineObj.getClass()) &&
+                        Chart.class.isAssignableFrom(barObj.getClass())  ) {
+
+                    String lineChartStr = gson.toJson(lineObj, Chart.class);
+                    String barChartStr = gson.toJson(barObj, Chart.class);
+//                    String lineChartStr = OFC.instance.render((Chart) lineIt);
+
+                    setValue("chart", "chartList_" + lineChart.name() + "_"
+//                            +session.getId()
+                            + idx, lineChartStr,1800);
+                    setValue("chart", "chartList_" + barChart.name() + "_"
+//                            +session.getId()
+                            + idx, barChartStr,1800);
+
                     idx++;
                 }
             }
+
         }
         model.addAttribute("idx", idx - 1)
                 .addAttribute("width", chart_width.value())
                 .addAttribute("height", chart_height.value());
 
-        return  "manage/trade/chart";
+        return "manage/trade/chart";
     }
 
 
-    @RequestMapping("/gdchart/{chartIdx}")
+    @RequestMapping("/gdchart/{chartType}/{chartIdx}")
     @ResponseBody
-    public String getChart( HttpSession session,@PathVariable Integer chartIdx) {
-        String chart = (String) EHCacheUtil.getValue("chart", "chartList_"
+    public String getChart(HttpSession session,
+                           @PathVariable Integer chartIdx,
+                           @PathVariable String chartType) {
+        String chart = null;
+
+        if (barChart.name().equals(chartType)) {
+            chart = (String) EHCacheUtil.getValue("chart", "chartList_" + barChart.name() + "_"
 //                +session.getId()
-                + chartIdx);
-        System.out.println("***************************************************************");
-        System.out.println(chart);
-        System.out.println("***************************************************************");
-//        return new ArrayList<String>(){{add(chart);}};
+                    + chartIdx);
+        } else {
+            chart = (String) EHCacheUtil.getValue("chart", "chartList_" + lineChart.name() + "_"
+//                +session.getId()
+                    + chartIdx);
+        }
         return chart;
     }
 }

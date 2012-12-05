@@ -15,16 +15,15 @@ import static java.lang.Integer.toHexString
 import static com.oilchem.trade.bean.DocBean.ExcelFiled.*
 import static com.oilchem.trade.bean.DocBean.Config.scale_size
 import com.oilchem.trade.bean.DocBean
+import ofc4j.model.elements.BarChart
 
 class DetailChart extends Common {
-
-
 
     /**
      * 获得拆线图
      * @return
      */
-    def List<Chart> getDetailLineChart(Map<String, ChartData<TradeDetail>> chartDataMap) {
+    def List<Chart> getDetailLineChart(Map<String, ChartData<TradeDetail>> chartDataMap, String chartType) {
 
         //-------------tradeDetail  ----------------------
         Chart amountChat = new Chart()
@@ -34,19 +33,24 @@ class DetailChart extends Common {
         Chart unitpriceChart = new Chart()
                 .setTitle(new Text("单价")).setYLegend(new Text("单价", style))
 
-        Map<String,BigDecimal> minRangMap =  new TreeMap<String, BigDecimal>();
-        Map<String,BigDecimal> maxRangMap = new TreeMap<String, BigDecimal>();
-        Map<String,BigDecimal> stepMap = new TreeMap<String, BigDecimal>();
+        Map<String, BigDecimal> minRangMap = new TreeMap<String, BigDecimal>();
+        Map<String, BigDecimal> maxRangMap = new TreeMap<String, BigDecimal>();
+        Map<String, BigDecimal> stepMap = new TreeMap<String, BigDecimal>();
         //遍历每一种产品
         chartDataMap.each {
 
             String code = it.key;
             ChartData<TradeDetail> chartData = it.value
-            List<LineChart> detailLineList = getDetailLineList(code, chartData.elementList)
+            List<LineChart> detailElementList = null
+            if ("barChart".equals(chartType)) {
+                detailElementList = getDetailBarList(code, chartData.elementList)
+            } else {
+                detailElementList = getDetailLineList(code, chartData.elementList)
+            }
 
-            amountChat = newChart(amountChat, chartData, "amount",minRangMap,maxRangMap,stepMap).addElements(detailLineList.get(0))
-            amountMoneyChart = newChart(amountMoneyChart, chartData, "amountMoney",minRangMap,maxRangMap,stepMap).addElements(detailLineList.get(1))
-            unitpriceChart = newChart(unitpriceChart, chartData, "unitPrice",minRangMap,maxRangMap,stepMap).addElements(detailLineList.get(2))
+            amountChat = newChart(amountChat, chartData, "amount", minRangMap, maxRangMap, stepMap).addElements(detailElementList.get(0))
+            amountMoneyChart = newChart(amountMoneyChart, chartData, "amountMoney", minRangMap, maxRangMap, stepMap).addElements(detailElementList.get(1))
+            unitpriceChart = newChart(unitpriceChart, chartData, "unitPrice", minRangMap, maxRangMap, stepMap).addElements(detailElementList.get(2))
         }
         [amountChat, amountMoneyChart, unitpriceChart]
     }
@@ -60,25 +64,28 @@ class DetailChart extends Common {
 
         //遍历每个月
         detailList.each {
-            amountLineChart = newLineElement(amountLineChart, it).addValues(it==null ? 0 : it.amount.doubleValue())
-            amountMoneyLineChart = newLineElement(amountMoneyLineChart, it).addValues(it==null ? 0 : it.amountMoney.doubleValue())
-            unitPriceLineChart = newLineElement(unitPriceLineChart, it).addValues(it==null ? 0 : it.unitPrice.doubleValue())
+            amountLineChart = newLineElement(amountLineChart, it).addValues(it == null ? 0 : it.amount.doubleValue())
+            amountMoneyLineChart = newLineElement(amountMoneyLineChart, it).addValues(it == null ? 0 : it.amountMoney.doubleValue())
+            unitPriceLineChart = newLineElement(unitPriceLineChart, it).addValues(it == null ? 0 : it.unitPrice.doubleValue())
         }
         [amountLineChart, amountMoneyLineChart, unitPriceLineChart]
 
     }
 
+    def getDetailBarList(String code, List<TradeDetail> detailList) {
 
+        //建立三个柱
+        BarChart amountBarChart = new BarChart(BarChart.Style.GLASS).setText(code)
+        BarChart amountMoneyBarChart = new BarChart(BarChart.Style.GLASS).setText(code)
+        BarChart unitPriceBarChart = new BarChart(BarChart.Style.GLASS).setText(code)
 
-
-
-    /**
-     * 获得柱状图
-     * @return
-     */
-    def getBarChart(List<TradeSum> tradeSumList, ArrayList<LineChart> lineElements,
-                    List<TradeDetail> tradeDetailList, ArrayList<Label> labels,
-                    DocBean.ChartProps chartProps) {
+        //遍历每个月
+        detailList.each {
+            amountBarChart = newBarElement(amountBarChart).addValues(it == null ? 0 : it.amount.doubleValue())
+            amountMoneyBarChart = newBarElement(amountMoneyBarChart).addValues(it == null ? 0 : it.amountMoney.doubleValue())
+            unitPriceBarChart = newBarElement(unitPriceBarChart).addValues(it == null ? 0 : it.unitPrice.doubleValue())
+        }
+        [amountBarChart, amountMoneyBarChart, unitPriceBarChart]
 
     }
 

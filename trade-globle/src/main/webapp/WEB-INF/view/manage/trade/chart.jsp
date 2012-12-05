@@ -20,7 +20,7 @@
 
 
 </head>
-<body onload="showChart()"  style="padding-top: 60px">
+<body onload="showChart('lineChart')"  style="padding-top: 60px">
 
 <jsp:include page="../../common/breadcrumb.jsp"/>
 
@@ -30,9 +30,10 @@
 
 <script type="text/javascript">
 
-    function showChart() {
+    function showChart(chartType) {
         for (idx = 1; idx <=${idx}; idx = idx + 1) {
-            var chart = "${chart}" + idx;
+            <%--var chart = "${chart}"+ $(obj).val()+"/" + idx;--%>
+            var chart = "${chart}"+ chartType+"/" + idx;
             swfobject.embedSWF(
                     "<c:url value="/resources/openflashchart/open-flash-chart-2alpha8.swf"/>",
                     "chart_" + idx,
@@ -46,7 +47,7 @@
 
 <div class="container well inline">
     <label class="label "> 图表类型
-        <select id="chartType" name="chartType">
+        <select id="chartType" name="chartType" onchange="showChart(this.value)">
             <option value="lineChart" selected="selected">折线图</option>
             <option value="barChart">柱状图</option>
         </select>

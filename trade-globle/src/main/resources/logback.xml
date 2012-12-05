@@ -47,7 +47,7 @@
 
         <!-- 或者用下面的形式格式(推荐)-->
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}%relative%thread%mdc%level%logger%msg</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}%relative%thread%mdc%level%logger%msg%n</pattern>
         </encoder>
 
         <!-- 以html文件输出 -->
@@ -85,7 +85,7 @@
         </layout>
          -->
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}%relative%thread%mdc%level%logger%msg</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}%relative%thread%mdc%level%logger%msg%n</pattern>
         </encoder>
 
     </appender>
