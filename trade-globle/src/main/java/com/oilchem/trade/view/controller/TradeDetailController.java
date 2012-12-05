@@ -185,6 +185,7 @@ public class TradeDetailController extends CommonController {
 
         model = yearMonthDto.getMonth() != null ? model.addAttribute("month", yearMonthDto.getMonth()) : model;
         model = yearMonthDto.getLowYear() != null ? model.addAttribute("lowYear", yearMonthDto.getLowYear()) : model;
+        model = yearMonthDto.getLowMonth() != null ? model.addAttribute("lowMonth", yearMonthDto.getLowMonth()) : model;
         model = yearMonthDto.getHighYear() != null ? model.addAttribute("highYear", yearMonthDto.getHighYear()) : model;
         model = yearMonthDto.getHighMonth() != null ? model.addAttribute("highMonth", yearMonthDto.getHighMonth()) : model;
         model = yearMonthDto.getImpExpType() != null ? model.addAttribute("impExpType", yearMonthDto.getImpExpType()) : model;

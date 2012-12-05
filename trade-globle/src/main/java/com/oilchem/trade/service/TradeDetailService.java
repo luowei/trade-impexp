@@ -1,15 +1,13 @@
 package com.oilchem.trade.service;
 
-import com.oilchem.trade.bean.ChartData;
 import com.oilchem.trade.domain.ExpTradeDetail;
 import com.oilchem.trade.domain.ImpTradeDetail;
 import com.oilchem.trade.domain.Log;
-import com.oilchem.trade.domain.ProductType;
+import com.oilchem.trade.domain.SumType;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.util.QueryUtils;
-import ofc4j.model.axis.Label;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -86,7 +84,7 @@ public interface TradeDetailService {
      * 获得productType列表
      * @return
      */
-    public List<ProductType> getProductList();
+    public List<SumType> getProductList();
 
     /**
      * 获得查询属性

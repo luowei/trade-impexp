@@ -13,38 +13,46 @@ GO
 --企业性质表
 create table t_company_type(
 	id bigint primary key identity(1,1) not null,
-	company_type nvarchar(50) not null --企业性质
+	company_type nvarchar(50) unique --企业性质
 )
 
 --贸易方式
 create table t_trade_type(
 	id bigint primary key identity(1,1) not null,
-	trade_type nvarchar(50) not null --贸易方式
+	trade_type nvarchar(50) unique --贸易方式
 )
 
 --运输方式
 create table t_transportation(
 	id bigint primary key identity(1,1) not null,
-	transportation nvarchar(20) not null, --运输方式
+	transportation nvarchar(20) unique, --运输方式
 )
 
 --海关
 create table t_customs(
 	id bigint primary key identity(1,1) not null,
-	customs nvarchar(20) not null, --海关
+	customs nvarchar(20) unique, --海关
 )
 
 --城市
 create table t_city(
 	id bigint primary key identity(1,1) not null,
-	city nvarchar(20) not null, --城市
+	city nvarchar(20) unique, --城市
 )
 
 --产销国家
 create table t_country(
 	id bigint primary key identity(1,1) not null,
-	country nvarchar(20) not null, --产销国家
+	country nvarchar(20) unique, --产销国家
 )
+
+--明细表产品类型
+create table t_detail_type(
+    id bigint primary key identity(1,1) not null,
+    code nvarchar(20) unique,
+	detail_type nvarchar(200) unique,
+)
+go
 
 --进口明细表
 create table t_import_detail(
@@ -63,6 +71,8 @@ create table t_import_detail(
 	unit nvarchar(10), --计量单位
 	amount_money numeric(20,2), --金额
 	unit_price numeric(20,2), --单价
+	year_month nvarchar(20), --年月
+    product_type nvarchar(200), --产品类型
 	company_type_id bigint foreign key references t_company_type(id),
 	trade_type_id bigint foreign key references t_trade_type(id),
 	transportation_id bigint foreign key references t_transportation(id),
@@ -90,6 +100,8 @@ create table t_export_detail(
 	unit nvarchar(10), --计量单位
 	amount_money numeric(20,2), --金额
 	unit_price numeric(20,2), --单价
+    year_month nvarchar(20), --年月
+    product_type nvarchar(200), --产品类型
 	company_type_id bigint foreign key references t_company_type(id),
 	trade_type_id bigint foreign key references t_trade_type(id),
 	transportation_id bigint foreign key references t_transportation(id),
@@ -101,9 +113,9 @@ create table t_export_detail(
 go
 
 --产品类型表
-create table t_product_type(
+create table t_sum_type(
 	id bigint primary key identity(1,1) not null,
-	product_type nvarchar(20),
+	product_type nvarchar(20)  unique,
 )
 go
 
@@ -188,7 +200,9 @@ delete from t_customs;
 delete from t_trade_type;
 delete from t_transportation;
 
-delete from t_product_type;
+delete from t_detail_product_type;
+
+delete from t_sum_product_type;
 
 delete from t_export_detail;
 delete from t_import_detail;

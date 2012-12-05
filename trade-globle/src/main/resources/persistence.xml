@@ -16,7 +16,7 @@
         <class>com.oilchem.trade.domain.ImpTradeDetail</class>
         <class>com.oilchem.trade.domain.ImpTradeSum</class>
         <class>com.oilchem.trade.domain.Log</class>
-        <class>com.oilchem.trade.domain.ProductType</class>
+        <class>com.oilchem.trade.domain.SumType</class>
         <class>com.oilchem.trade.domain.TradeType</class>
         <class>com.oilchem.trade.domain.Transportation</class>
 

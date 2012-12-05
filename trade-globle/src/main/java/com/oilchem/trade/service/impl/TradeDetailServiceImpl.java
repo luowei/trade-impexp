@@ -7,7 +7,7 @@ import com.oilchem.trade.dao.map.ImpTradeDetailRowMapper;
 import com.oilchem.trade.domain.ExpTradeDetail;
 import com.oilchem.trade.domain.ImpTradeDetail;
 import com.oilchem.trade.domain.Log;
-import com.oilchem.trade.domain.ProductType;
+import com.oilchem.trade.domain.SumType;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeDetailService;
@@ -241,8 +241,8 @@ public class TradeDetailServiceImpl implements TradeDetailService {
      *
      * @return
      */
-    public List<ProductType> getProductList() {
-        return (List<ProductType>) productTypeDao.findAll();
+    public List<SumType> getProductList() {
+        return (List<SumType>) productTypeDao.findAll();
     }
 
 

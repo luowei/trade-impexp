@@ -9,7 +9,7 @@ import com.oilchem.trade.dao.map.ImpTradeSumRowMapper;
 import com.oilchem.trade.domain.ExpTradeSum;
 import com.oilchem.trade.domain.ImpTradeSum;
 import com.oilchem.trade.domain.Log;
-import com.oilchem.trade.domain.ProductType;
+import com.oilchem.trade.domain.SumType;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeSumService;
@@ -137,7 +137,7 @@ public class TradeSumServiceImpl implements TradeSumService {
         if (productTypeDao.findByProductType(
                 yearMonthDto.getProductType()) == null)
             isSuccess = isSuccess && productTypeDao.save(
-                    new ProductType(yearMonthDto.getProductType())) != null;
+                    new SumType(yearMonthDto.getProductType())) != null;
 
         return isSuccess;
     }

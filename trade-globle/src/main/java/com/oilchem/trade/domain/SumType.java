@@ -15,15 +15,15 @@ import java.io.Serializable;
  * To change this template use File | Settings | File Templates.
  */
 @Entity
-@Table(name = "t_product_type")
-public class ProductType extends IdEntity implements Serializable {
+@Table(name = "t_sum_type")
+public class SumType extends IdEntity implements Serializable {
     @Column(name = "product_type")
     private String productType;
 
-    public ProductType() {
+    public SumType() {
     }
 
-    public ProductType(String productType) {
+    public SumType(String productType) {
         this.productType = productType;
     }
 

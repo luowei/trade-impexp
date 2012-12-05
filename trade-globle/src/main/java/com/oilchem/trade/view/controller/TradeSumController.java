@@ -3,7 +3,7 @@ package com.oilchem.trade.view.controller;
 import com.oilchem.trade.dao.ProductTypeDao;
 import com.oilchem.trade.domain.ExpTradeSum;
 import com.oilchem.trade.domain.ImpTradeSum;
-import com.oilchem.trade.domain.ProductType;
+import com.oilchem.trade.domain.SumType;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.service.ChartService;
 import com.oilchem.trade.service.CommonService;
@@ -74,7 +74,7 @@ public class TradeSumController extends CommonController {
                             yearMonthDto, getPageRequest(commonDto));
 
             findAllIdEntity(addPageInfo(model, impTradeSums, "/manage/listsum"),
-                    ProductTypeDao.class, ProductType.class.getSimpleName())
+                    ProductTypeDao.class, SumType.class.getSimpleName())
                     .addAttribute("tradeSumList", impTradeSums);
         }
 
@@ -85,7 +85,7 @@ public class TradeSumController extends CommonController {
                             yearMonthDto, getPageRequest(commonDto));
 
             findAllIdEntity(addPageInfo(model, expTradeSums, "/manage/listsum"),
-                    ProductTypeDao.class, ProductType.class.getSimpleName())
+                    ProductTypeDao.class, SumType.class.getSimpleName())
                     .addAttribute("tradeSumList", expTradeSums);
         }
 
