@@ -18,8 +18,7 @@
     <title>进出口总表</title>
 
     <link rel="stylesheet" type="text/css" href="<c:url value='/resources/bootstrap/css/bootstrap.min.css' />"/>
-    <link rel="stylesheet" type="text/css"
-          href="<c:url value='/resources/bootstrap/css/bootstrap-responsive.min.css' />"/>
+    <link rel="stylesheet" type="text/css" href="<c:url value='/resources/bootstrap/css/bootstrap-responsive.min.css' />"/>
     <script type="text/javascript" src="<c:url value="/resources/js/jquery/1.7.2/jquery.js" />"></script>
     <script type="text/javascript" src="<c:url value="/resources/js/trade.js" />"></script>
     <script type="text/javascript">
@@ -48,16 +47,16 @@
         <label class="label">起始年月:
             <select name="lowYear" class="input-mini">
                 <option value="" selected="selected">--</option>
-                <c:forEach var="yr" begin="2000" end="2050" step="1">
-                    <option value="${yr}" <c:if test="${lowYear eq yr}">selected="selected" </c:if>>
-                            ${yr}</option>
+                <c:forEach var="lyr" begin="2000" end="2050" step="1">
+                    <option value="${lyr}" <c:if test="${lowYear eq lyr}">selected="selected" </c:if>>
+                            ${lyr}</option>
                 </c:forEach>
             </select> 年&nbsp;
             <select name="lowMonth" class="input-mini">
                 <option value="" selected="selected">--</option>
-                <c:forEach var="mth" begin="1" end="12" step="1">
-                    <option value="${mth}" <c:if test="${lowMonth eq mth}">selected="selected" </c:if>>
-                            ${mth}</option>
+                <c:forEach var="lmth" begin="1" end="12" step="1">
+                    <option value="${lmth}" <c:if test="${lowMonth eq lmth}">selected="selected" </c:if>>
+                            ${lmth}</option>
                 </c:forEach>
             </select>月
         </label>
@@ -66,16 +65,16 @@
         <label class="label">结束年月:
             <select name="highYear" class="input-mini">
                 <option value="" selected="selected">--</option>
-                <c:forEach var="yr" begin="2000" end="2050" step="1">
-                    <option value="${yr}" <c:if test="${highYear eq yr}">selected="selected" </c:if>>
-                            ${yr}</option>
+                <c:forEach var="hyr" begin="2000" end="2050" step="1">
+                    <option value="${yr}" <c:if test="${highYear eq hyr}">selected="selected" </c:if>>
+                            ${hyr}</option>
                 </c:forEach>
             </select> 年&nbsp;
             <select name="highMonth" class="input-mini">
                 <option value="" selected="selected">--</option>
-                <c:forEach var="mth" begin="1" end="12" step="1">
-                    <option value="${mth}" <c:if test="${highMonth eq mth}">selected="selected" </c:if>>
-                            ${mth}</option>
+                <c:forEach var="hmth" begin="1" end="12" step="1">
+                    <option value="${hmth}" <c:if test="${highMonth eq hmth}">selected="selected" </c:if>>
+                            ${hmth}</option>
                 </c:forEach>
             </select>月
         </label>
@@ -97,14 +96,16 @@
                         <c:if test='${productName ne null}'>value="${productName}" </c:if> />
         </label>
 
-        <select name="productType" class="input-mini">
-            <option value="" selected="selected">--</option>
-            <c:forEach var="prodType" items="${productTypeList}">
-                <option value="${prodType.productType}"
-                        <c:if test="${productType eq prodType.productType}">selected="selected" </c:if>>
-                        ${prodType.productType}</option>
-            </c:forEach>
-        </select>
+        <label class="label">产品类型:
+            <select name="sumType" class="input-mini">
+                <option value="" selected="selected">--</option>
+                <c:forEach var="prodType" items="${sumTypeList}">
+                    <option value="${prodType.sumType}"
+                            <c:if test="${sumType eq prodType.sumType}">selected="selected" </c:if>>
+                            ${prodType.sumType}</option>
+                </c:forEach>
+            </select>
+        </label>
 
         <label class="label">进出口类型:
             <select name="impExpType" class=" input-small">
@@ -123,11 +124,33 @@
             <jsp:include page="../../common/pagination.jsp"/>
         </div>
 
+        <h4> <span> 过滤条件:</span>
+            <label class="label"> 进出口类型:
+                <c:if test="${impExpType eq 0}"><span style="color: yellow;">进口</span></c:if>
+                <c:if test="${impExpType eq 1}"><span style="color: yellow;">出口</span></c:if> </label>
+            <c:if test="${lowYear ne null and lowMonth ne null}">
+                <label class="label"> 起始年月:<span style="color: yellow;">${lowYear}-${lowMonth} </span> </label>
+            </c:if>
+            <c:if test="${highYear ne null}">
+                <label class="label">结束年月: <span style="color: yellow;">${highYear}-${highMonth} </span> </label>
+            </c:if>
+            <c:if test="${month ne null}">
+                <label class="label"> 月同期: <span style="color: yellow;">${month} </span> </label>
+            </c:if>
+            <c:if test="${sumType ne null}">
+                <label class="label"> 企业性质: <span style="color: yellow;">${sumType} </span> </label>
+            </c:if>
+            <c:if test="${productName ne null}">
+                <label class="label">产品名称: <span style="color: yellow;">${productName}</span> </label>
+            </c:if>
+
+        </h4>
+
         <table class="table table-bordered table-striped table-condensed">
             <thead>
             <tr>
                 <th>曲线</th>
-                <%--<th><label><input type="checkbox" id="all"/>曲线</label></th>--%>
+                    <%--<th><label><input type="checkbox" id="all"/>曲线</label></th>--%>
                 <td>年月</td>
                 <td>产品名称</td>
                 <td>产品类型</td>
@@ -148,7 +171,7 @@
                     <td><input type="checkbox" name="codes" value="${sum.productName}"/></td>
                     <td>${sum.yearMonth}</td>
                     <td>${sum.productName}</td>
-                    <td>${sum.productType}</td>
+                    <td>${sum.sumType}</td>
                     <td>${sum.numMonth}</td>
                     <td>${sum.numSum}</td>
                     <td>${sum.moneyMonth}</td>

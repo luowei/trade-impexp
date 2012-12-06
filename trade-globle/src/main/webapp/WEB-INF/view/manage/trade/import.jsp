@@ -148,12 +148,12 @@
         <br/>
 
         <label class="label"> 产品类型:
-            <input type="text" name="productType" class="input-small" onblur="checkValue()">
-            <select name="productType" class="input-mini" onchange="changeProductTypeInput()">
+            <input type="text" name="sumType" class="input-small" onblur="checkValue()">
+            <select name="sumType" class="input-mini" onchange="changeProductTypeInput()">
                 <option value="" selected="selected">--</option>
-                <c:forEach var="productType" items="${productTypeList}">
-                    <option value="${productType.productType}">
-                            ${productType.productType}</option>
+                <c:forEach var="sumType" items="${sumTypeList}">
+                    <option value="${sumType.sumType}">
+                            ${sumType.sumType}</option>
                 </c:forEach>
             </select>
         </label>

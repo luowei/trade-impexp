@@ -1,13 +1,9 @@
 package com.oilchem.trade.service;
 
-import com.oilchem.trade.bean.ChartData;
-import com.oilchem.trade.domain.ExpTradeSum;
-import com.oilchem.trade.domain.ImpTradeSum;
-import com.oilchem.trade.domain.Log;
+import com.oilchem.trade.domain.*;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
-import ofc4j.model.axis.Label;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +21,12 @@ import static com.oilchem.trade.util.QueryUtils.PropertyFilter;
  * To change this template use File | Settings | File Templates.
  */
 public interface TradeSumService {
+
+    /**
+     * 获得productType列表
+     * @return
+     */
+    public List<SumType> getSumTypeList();
 
     /**
      * 解包

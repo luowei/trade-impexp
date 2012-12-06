@@ -9,6 +9,7 @@ import com.oilchem.trade.chart.DetailChart;
 import com.oilchem.trade.chart.SumChart;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeSum;
+import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.service.ChartService;
 import com.oilchem.trade.util.EHCacheUtil;
 import ofc4j.model.Chart;

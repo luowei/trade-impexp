@@ -21,11 +21,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.ContextLoader;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,6 +40,7 @@ import static com.oilchem.trade.bean.DocBean.Flag.unextract_flag;
 import static com.oilchem.trade.bean.DocBean.Flag.unimport_flag;
 import static com.oilchem.trade.bean.DocBean.TableType.detail;
 import static com.oilchem.trade.bean.DocBean.TableType.sum;
+import static com.oilchem.trade.service.impl.AppContextManager.getAppContext;
 import static com.oilchem.trade.util.FileUtil.getFileSuffix;
 import static com.oilchem.trade.util.FileUtil.upload;
 import static com.oilchem.trade.util.QueryUtils.PropertyFilter;
@@ -47,6 +48,7 @@ import static com.oilchem.trade.util.QueryUtils.Type.GE;
 import static com.oilchem.trade.util.QueryUtils.Type.LT;
 import static com.oilchem.trade.util.ZipUtil.unRar;
 import static com.oilchem.trade.util.ZipUtil.unZip;
+import static org.springframework.web.context.ContextLoader.getCurrentWebApplicationContext;
 
 /**
  * Created with IntelliJ IDEA.
@@ -71,7 +73,7 @@ public class CommonServiceImpl implements CommonService {
     @Resource
     TransportationDao transportationDao;
     @Resource
-    ProductTypeDao productTypeDao;
+    SumTypeDao sumTypeDao;
     @Resource
     LogDao logDao;
 
@@ -134,7 +136,7 @@ public class CommonServiceImpl implements CommonService {
         if (StringUtils.isBlank(sql) || StringUtils.isBlank(accessPath))
             return;
 
-        ApplicationContext ctx = AppContextManager.getAppContext();
+        ApplicationContext ctx = getAppContext();
         List<DetailCriteria> detailCriteriaList = new ArrayList<DetailCriteria>();
 
         try {
@@ -401,6 +403,7 @@ public class CommonServiceImpl implements CommonService {
 
     /**
      * 获得logMap
+     *
      * @param tableType
      * @param process_flag
      * @param findByMethod
@@ -435,7 +438,7 @@ public class CommonServiceImpl implements CommonService {
         //把记录放到map中
         if (logList != null && !logList.isEmpty()) {
             for (Log log : logList) {
-                    packaeMap.put(log.getId(), log);
+                packaeMap.put(log.getId(), log);
             }
         }
 
@@ -444,7 +447,6 @@ public class CommonServiceImpl implements CommonService {
 
     /**
      * 获得数据模型的数据列表
-     *
      * @param daoClass     daoClass
      * @param idEntityName
      * @return
@@ -456,9 +458,9 @@ public class CommonServiceImpl implements CommonService {
         Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, idEntityName));
 
         List<T> idEntityList = null;
-        Object t = ContextLoader.getCurrentWebApplicationContext().getBean(daoClass);
         try {
-            Object obj = daoClass.getMethod("findAll", Sort.class).invoke(t, sort);
+            Object obj = daoClass.getMethod("findAll", Sort.class)
+                    .invoke(getCurrentWebApplicationContext().getBean(daoClass), sort);
             if (obj != null) {
                 idEntityList = (List<T>) obj;
             }
@@ -468,6 +470,156 @@ public class CommonServiceImpl implements CommonService {
         }
         return idEntityList;
     }
+
+    /**
+     * 更新实体
+     * @param daoClass
+     * @param entity
+     * @param <T>
+     */
+    public <T extends IdEntity> void updateEntity(Class daoClass, T entity) {
+
+        Object obj = null;
+        try {
+            obj = daoClass.getMethod("save", entity.getClass())
+                    .invoke(getCurrentWebApplicationContext().getBean(daoClass), entity);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+//        entity.getClass().cast(obj);
+    }
+
+
+    private String domainPkgName = Log.class.getPackage().getName();
+    private String daoPkgName = LogDao.class.getPackage().getName();
+
+    public <E> List<E> findAllEntityList(String type) {
+
+        //约定：传入的type值必须与name字段的名称相同
+        String entityName = type.substring(0, 1).toUpperCase() + type.substring(1);
+        String daoClassName = daoPkgName+"." + entityName + "Dao";
+        String entityClassName = domainPkgName+"." + entityName;
+
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, type));
+        List<E> idEntityList = null;
+        try {
+            Class daoClass = Class.forName(daoClassName);
+
+            Object obj = daoClass.getMethod("findAll", Sort.class)
+                    .invoke(getCurrentWebApplicationContext().getBean(daoClass), sort);
+            if (obj != null) {
+                idEntityList = (List<E>) obj;
+            }
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+        return idEntityList;
+    }
+
+    /**
+     * 添加一条记录
+     * @param type
+     * @param name
+     */
+    public void add(String type, String name) {
+        //约定：传入的type值必须与name字段的名称相同
+        String entityName = type.substring(0, 1).toUpperCase() + type.substring(1);
+        String daoClassName = daoPkgName+"." + entityName + "Dao";
+        String entityClassName = domainPkgName+"." + entityName;
+        try{
+            Class daoClass = Class.forName(daoClassName);
+            Class entityClass = Class.forName(entityClassName);
+
+            Object daoObj = getCurrentWebApplicationContext().getBean(daoClass);
+            Object entityObj = entityClass.getConstructor(String.class).newInstance(name);
+
+            daoClass.getMethod("save", Object.class) .invoke(daoObj, entityObj);
+
+        }   catch (Exception e){
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    /**
+     * 更新指定id的记录
+     * @param type
+     * @param name
+     */
+    public void update(
+            String type,Long id, String name) {
+
+        //约定：传入的type值必须与name字段的名称相同
+        String entityName = type.substring(0, 1).toUpperCase() + type.substring(1);
+        String daoClassName = daoPkgName+"." + entityName + "Dao";
+        String entityClassName = domainPkgName+"." + entityName;
+        try {
+            Class daoClass = Class.forName(daoClassName);
+            Class entityClass = Class.forName(entityClassName);
+
+            Object daoObj = getCurrentWebApplicationContext().getBean(daoClass);
+//            Object daoObj =  getAppContext().getBean(daoClass);
+
+            Object entityObj = daoClass.getMethod("findOne", Serializable.class).invoke(daoObj, id);
+            entityClass.getMethod("set" + entityName, String.class).invoke(entityObj, name);
+            daoClass.getMethod("save", Object.class) .invoke(daoObj, entityObj);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+    /**
+     * 删除指定id的记录
+     * @param type
+     * @param id
+     */
+    public void delete(String type, Long id) {
+
+        //约定：传入的type值必须与name字段的名称相同
+        String entityName = type.substring(0, 1).toUpperCase() + type.substring(1);
+        String daoClassName = daoPkgName+"." + entityName + "Dao";
+
+        try {
+            Class daoClass = Class.forName(daoClassName);
+            Object daoObj = getCurrentWebApplicationContext().getBean(daoClass);
+            daoClass.getMethod("delete",Serializable.class).invoke(daoObj,id);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    /**
+     * 删除一条记录
+     * @param daoClass
+     * @param id
+     * @param <T>
+     */
+    public <T extends IdEntity> void delEntity(Class daoClass, Long id) {
+
+        try {
+            daoClass.getMethod("delete",Long.class)
+                    .invoke(getCurrentWebApplicationContext().getBean(daoClass), id);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
 
     /**
      * 从Access获得过滤后查询条件数据
@@ -720,6 +872,7 @@ public class CommonServiceImpl implements CommonService {
 
     /**
      * 设置year month属性到到查询的Properties当中去
+     *
      * @param yearMonthDto
      */
     public List<PropertyFilter> getYearMonthQueryProps(YearMonthDto yearMonthDto) {
@@ -730,18 +883,18 @@ public class CommonServiceImpl implements CommonService {
             filterList.add(new PropertyFilter("month", yearMonthDto.getMonth()));
         }
 
-        if(yearMonthDto.getLowYear()!=null){
-            Integer lowYear =  yearMonthDto.getLowYear();
-            Integer lowMonth = yearMonthDto.getLowMonth()==null?1:yearMonthDto.getLowMonth();
-            String yearMont = lowYear+yearmonth_split.value()+(lowMonth<10? "0"+lowMonth:lowMonth);
-            filterList.add(new PropertyFilter("yearMonth",yearMont,GE));
+        if (yearMonthDto.getLowYear() != null) {
+            Integer lowYear = yearMonthDto.getLowYear();
+            Integer lowMonth = yearMonthDto.getLowMonth() == null ? 1 : yearMonthDto.getLowMonth();
+            String yearMont = lowYear + yearmonth_split.value() + (lowMonth < 10 ? "0" + lowMonth : lowMonth);
+            filterList.add(new PropertyFilter("yearMonth", yearMont, GE));
         }
 
-        if(yearMonthDto.getHighYear()!=null){
+        if (yearMonthDto.getHighYear() != null) {
             Integer highYear = yearMonthDto.getHighYear();
-            Integer highMonth = yearMonthDto.getHighMonth()==null?1:yearMonthDto.getHighMonth();
-            String yearMonth = highYear+yearmonth_split.value()+(highMonth<10?"0"+highMonth:highMonth);
-            filterList.add(new PropertyFilter("yearMonth",yearMonth,LT));
+            Integer highMonth = yearMonthDto.getHighMonth() == null ? 1 : yearMonthDto.getHighMonth();
+            String yearMonth = highYear + yearmonth_split.value() + (highMonth < 10 ? "0" + highMonth : highMonth);
+            filterList.add(new PropertyFilter("yearMonth", yearMonth, LT));
         }
 
         return filterList;

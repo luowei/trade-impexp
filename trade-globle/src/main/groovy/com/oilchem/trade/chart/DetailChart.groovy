@@ -1,20 +1,15 @@
 package com.oilchem.trade.chart
 
 import ofc4j.model.Chart
-import ofc4j.model.axis.YAxis
+
 import ofc4j.model.elements.LineChart
-import ofc4j.model.axis.XAxis
+
 import ofc4j.model.axis.Label
 import com.oilchem.trade.domain.abstrac.TradeSum
 import com.oilchem.trade.domain.abstrac.TradeDetail
 import ofc4j.model.Text
 import com.oilchem.trade.bean.ChartData
 
-import static com.oilchem.trade.bean.DocBean.Config.axis_steps;
-import static java.lang.Integer.toHexString
-import static com.oilchem.trade.bean.DocBean.ExcelFiled.*
-import static com.oilchem.trade.bean.DocBean.Config.scale_size
-import com.oilchem.trade.bean.DocBean
 import ofc4j.model.elements.BarChart
 
 class DetailChart extends Common {

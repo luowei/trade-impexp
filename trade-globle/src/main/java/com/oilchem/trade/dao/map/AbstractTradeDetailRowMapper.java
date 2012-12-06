@@ -1,5 +1,6 @@
 package com.oilchem.trade.dao.map;
 
+import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.util.GenericsUtils;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import org.slf4j.Logger;

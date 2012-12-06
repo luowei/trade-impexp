@@ -3,7 +3,7 @@ package com.oilchem.trade.service.impl;
 import com.oilchem.trade.dao.ExpTradeSumDao;
 import com.oilchem.trade.dao.ImpTradeSumDao;
 import com.oilchem.trade.dao.LogDao;
-import com.oilchem.trade.dao.ProductTypeDao;
+import com.oilchem.trade.dao.SumTypeDao;
 import com.oilchem.trade.dao.map.ExpTradeSumRowMapper;
 import com.oilchem.trade.dao.map.ImpTradeSumRowMapper;
 import com.oilchem.trade.domain.ExpTradeSum;
@@ -53,10 +53,19 @@ public class TradeSumServiceImpl implements TradeSumService {
     @Resource
     ExpTradeSumDao expTradeSumDao;
     @Resource
-    ProductTypeDao productTypeDao;
+    SumTypeDao sumTypeDao;
 
     @Resource
     LogDao logDao;
+
+    /**
+     * 获得productType列表
+     *
+     * @return
+     */
+    public List<SumType> getSumTypeList() {
+        return (List<SumType>) sumTypeDao.findAll();
+    }
 
     /**
      * 解包
@@ -134,9 +143,9 @@ public class TradeSumServiceImpl implements TradeSumService {
         }
 
         //导入产品类型
-        if (productTypeDao.findByProductType(
+        if (sumTypeDao.findBySumType(
                 yearMonthDto.getProductType()) == null)
-            isSuccess = isSuccess && productTypeDao.save(
+            isSuccess = isSuccess && sumTypeDao.save(
                     new SumType(yearMonthDto.getProductType())) != null;
 
         return isSuccess;
@@ -213,8 +222,8 @@ public class TradeSumServiceImpl implements TradeSumService {
         if (isNotBlank(tradeSum.getProductName())) {
             propList.add(new QueryUtils.PropertyFilter("productName", tradeSum.getProductName(), Type.LIKE));
         }
-        if (isNotBlank(tradeSum.getProductType())) {
-            propList.add(new PropertyFilter("productType", tradeSum.getProductType()));
+        if (isNotBlank(tradeSum.getSumType())) {
+            propList.add(new PropertyFilter("sumType", tradeSum.getSumType()));
         }
         return propList;
     }

@@ -1,5 +1,7 @@
 package com.oilchem.trade.domain.abstrac;
 
+import com.oilchem.trade.domain.abstrac.IdEntity;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -26,7 +28,7 @@ public class TradeSum extends IdEntity implements Serializable {
     private String yearMonth;
     //产品类型
     @Column(name = "product_type")
-    private String productType;
+    private String sumType;
     // 产品名称
     @Column(name = "product_name")
     private String productName;
@@ -62,11 +64,11 @@ public class TradeSum extends IdEntity implements Serializable {
     }
 
     public TradeSum(Integer year, Integer month,
-                    String yearMonth, String productType) {
+                    String yearMonth, String sumType) {
         this.year = year;
         this.month = month;
         this.yearMonth = yearMonth;
-        this.productType = productType;
+        this.sumType = sumType;
     }
 
     public TradeSum(BigDecimal numMonth, BigDecimal numSum,
@@ -121,12 +123,12 @@ public class TradeSum extends IdEntity implements Serializable {
         return this;
     }
 
-    public String getProductType() {
-        return productType;
+    public String getSumType() {
+        return sumType;
     }
 
-    public TradeSum setProductType(String productType) {
-        this.productType = productType;
+    public TradeSum setSumType(String sumType) {
+        this.sumType = sumType;
         return this;
     }
 

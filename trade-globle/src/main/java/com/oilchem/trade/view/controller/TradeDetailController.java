@@ -8,6 +8,7 @@ import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
+import com.oilchem.trade.service.TradeSumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -15,14 +16,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
 
-import static com.oilchem.trade.bean.DocBean.Config.chart_height;
-import static com.oilchem.trade.bean.DocBean.Config.chart_width;
 import static com.oilchem.trade.bean.DocBean.Config.upload_detailzip_dir;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.export_type;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.import_type;
@@ -45,6 +43,8 @@ public class TradeDetailController extends CommonController {
 
     @Autowired
     TradeDetailService tradeDetailService;
+    @Autowired
+    TradeSumService tradeSumService;
 
     @Autowired
     TaskService taskService;
@@ -96,7 +96,7 @@ public class TradeDetailController extends CommonController {
     @RequestMapping("/import")
     public String importpage(Model model) {
 
-        model.addAttribute("productTypeList", tradeDetailService.getProductList());
+        model.addAttribute("sumTypeList", tradeSumService.getSumTypeList());
         return "manage/trade/import";
     }
 

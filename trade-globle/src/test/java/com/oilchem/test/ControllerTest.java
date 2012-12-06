@@ -2,6 +2,7 @@ package com.oilchem.test;
 
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.DocBean;
+import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.service.CommonService;

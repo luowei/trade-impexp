@@ -148,11 +148,25 @@ public class CommonController {
     }
 
     /**
-     * 删除list中重复的元素
-     * @param list
-     * @param <T>
+     * 查询所有实体
+     * @param model
+     * @param type
+     * @param <E>
      * @return
      */
+    public <E extends IdEntity> Model findAllEntity(Model model, String type) {
+
+        List<E> eList = commonService.findAllEntityList(type);
+        model.addAttribute(eList);
+        return model;
+    }
+
+        /**
+        * 删除list中重复的元素
+        * @param list
+        * @param <T>
+        * @return
+        */
     public <T> List<T>  removeDuplicateWithOrder(List<T> list)   {
         Set<T> set  =   new  HashSet<T>();
         List newList  =   new  ArrayList();

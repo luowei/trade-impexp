@@ -14,15 +14,15 @@ import java.io.Serializable;
  */
 @MappedSuperclass
 public abstract class IdEntity extends AbstractPersistable<Long> implements Serializable {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    protected Integer id;
-//
-//    public Integer getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        super.setId(id);
-//    }
+////    @Id
+////    @GeneratedValue(strategy = GenerationType.IDENTITY)
+////    protected Integer id;
+////
+////    public Integer getId() {
+////        return id;
+////    }
+////
+////    public void setId(Long id) {
+////        super.setId(id);
+////    }
 }

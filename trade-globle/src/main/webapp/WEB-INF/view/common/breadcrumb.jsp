@@ -37,6 +37,9 @@
                     <a href="${pageContext.request.contextPath}/manage/listsum/1">总表</a>
                 </li>
                 <li>
+                    <a href="${pageContext.request.contextPath}/manage/list/allfilter">条件表</a>
+                </li>
+                <li>
                     <a href="javascript:" onclick="history.back();">返回</a>
                 </li>
             </ul>

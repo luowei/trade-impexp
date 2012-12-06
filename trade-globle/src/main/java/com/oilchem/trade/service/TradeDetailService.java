@@ -1,9 +1,6 @@
 package com.oilchem.trade.service;
 
-import com.oilchem.trade.domain.ExpTradeDetail;
-import com.oilchem.trade.domain.ImpTradeDetail;
-import com.oilchem.trade.domain.Log;
-import com.oilchem.trade.domain.SumType;
+import com.oilchem.trade.domain.*;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
@@ -80,11 +77,6 @@ public interface TradeDetailService {
     findExpWithCriteria(ExpTradeDetail tradeDetail, CommonDto commonDto,
                         YearMonthDto yearMonthDto, PageRequest pageRequest);
 
-    /**
-     * 获得productType列表
-     * @return
-     */
-    public List<SumType> getProductList();
 
     /**
      * 获得查询属性

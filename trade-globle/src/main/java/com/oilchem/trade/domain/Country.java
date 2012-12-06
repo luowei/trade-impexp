@@ -31,7 +31,8 @@ public class Country extends IdEntity implements Serializable {
         return country;
     }
 
-    public void setCountry(String country) {
+    public Country setCountry(String country) {
         this.country = country;
+        return this;
     }
 }

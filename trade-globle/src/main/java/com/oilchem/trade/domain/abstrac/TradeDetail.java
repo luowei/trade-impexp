@@ -1,5 +1,7 @@
 package com.oilchem.trade.domain.abstrac;
 
+import com.oilchem.trade.domain.abstrac.IdEntity;
+
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;

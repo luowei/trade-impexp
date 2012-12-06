@@ -18,20 +18,20 @@ import java.io.Serializable;
 @Table(name = "t_sum_type")
 public class SumType extends IdEntity implements Serializable {
     @Column(name = "product_type")
-    private String productType;
+    private String sumType;
 
     public SumType() {
     }
 
-    public SumType(String productType) {
-        this.productType = productType;
+    public SumType(String sumType) {
+        this.sumType = sumType;
     }
 
-    public String getProductType() {
-        return productType;
+    public String getSumType() {
+        return sumType;
     }
 
-    public void setProductType(String productType) {
-        this.productType = productType;
+    public void setSumType(String sumType) {
+        this.sumType = sumType;
     }
 }

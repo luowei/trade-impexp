@@ -11,7 +11,7 @@ pcdb.dbo.TariffPass
 GO
 DELETE FROM lzdb.dbo.t_customs
 WHERE lzdb.dbo.t_customs.customs = ''
-OR   lzdb.dbo.t_customs.customs = null;
+OR   lzdb.dbo.t_customs.customs = null
 OR  lzdb.dbo.t_customs.customs = 'null'
 
 --导入贸易方式
@@ -27,7 +27,7 @@ GO
 
 DELETE FROM lzdb.dbo.t_trade_type
 WHERE lzdb.dbo.t_trade_type.trade_type = ''
-OR   lzdb.dbo.t_trade_type.trade_type = null;
+OR   lzdb.dbo.t_trade_type.trade_type = null
 OR  lzdb.dbo.t_trade_type.trade_type = 'null'
 
 --导入城市
@@ -43,7 +43,7 @@ pcdb.dbo.TariffCity
 GO
 DELETE FROM lzdb.dbo.t_city
 WHERE lzdb.dbo.t_city.city = ''
-OR   lzdb.dbo.t_city.city = null;
+OR   lzdb.dbo.t_city.city = null
 OR  lzdb.dbo.t_city.city = 'null'
 
 
@@ -60,7 +60,7 @@ GO
 
 DELETE FROM lzdb.dbo.t_country
 WHERE lzdb.dbo.t_country.country = ''
-OR   lzdb.dbo.t_country.country = null;
+OR   lzdb.dbo.t_country.country = null
 OR  lzdb.dbo.t_country.country = 'null';
 
 --导入企业性质
@@ -76,7 +76,7 @@ GO
 
 DELETE FROM lzdb.dbo.t_company_type
 WHERE lzdb.dbo.t_company_type.company_type = ''
-OR   lzdb.dbo.t_company_type.company_type = null;
+OR   lzdb.dbo.t_company_type.company_type = null
 OR  lzdb.dbo.t_company_type.company_type = 'null';
 
 
@@ -93,7 +93,7 @@ pcdb.dbo.TariffTranName
 GO
 DELETE FROM lzdb.dbo.t_transportation
 WHERE lzdb.dbo.t_transportation.transportation = ''
-OR lzdb.dbo.t_transportation.transportation = null;
+OR lzdb.dbo.t_transportation.transportation = null
 OR  lzdb.dbo.t_transportation.transportation = 'null';
 
 
@@ -112,7 +112,7 @@ GO
 
 DELETE FROM lzdb.dbo.t_detail_type
 WHERE  lzdb.dbo.t_detail_type.code = ''
-OR   lzdb.dbo.t_detail_type.code = null;
+OR   lzdb.dbo.t_detail_type.code = null
 OR   lzdb.dbo.t_detail_type.code = 'null'
 OR   lzdb.dbo.t_detail_type.detail_type = ''
 OR   lzdb.dbo.t_detail_type.detail_type = null

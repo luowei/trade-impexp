@@ -38,7 +38,7 @@ public class ExpTradeSum extends TradeSum {
                 .setPy(tradeSum.getPy())
                 .setPq(tradeSum.getPq())
                 .setProductName(tradeSum.getProductName())
-                .setProductType(tradeSum.getProductType())
+                .setSumType(tradeSum.getSumType())
                 .setYearMonth(tradeSum.getYearMonth());
     }
 }

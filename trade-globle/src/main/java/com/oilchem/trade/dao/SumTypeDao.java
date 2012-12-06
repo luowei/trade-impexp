@@ -10,7 +10,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * Time: 下午5:03
  * To change this template use File | Settings | File Templates.
  */
-public interface ProductTypeDao extends PagingAndSortingRepository<SumType, Long> {
+public interface SumTypeDao extends PagingAndSortingRepository<SumType, Long> {
 
-    SumType findByProductType(String productType);
+    SumType findBySumType(String sumType);
 }

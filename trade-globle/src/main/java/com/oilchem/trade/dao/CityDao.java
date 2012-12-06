@@ -14,4 +14,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface CityDao extends PagingAndSortingRepository<City, Long> {
 
     City findByCity(String city);
+
 }
