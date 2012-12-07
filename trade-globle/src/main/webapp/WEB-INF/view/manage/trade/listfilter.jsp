@@ -39,7 +39,9 @@
             <%--</div>--%>
             <%--<div class="span2">--%>
                 <a id="addCompanyType"
-                   href="javascript:location.href='${pageContext.request.contextPath}/manage/add/companyType'
+                   href="javascript:if(document.getElementById('companyType').value.trim()==''){alert('值不能为空');return void(0);}
+                   if(confirm('您确定要添加此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/add/companyType/'
                    +document.getElementById('companyType').value"
                    class="btn btn-small btn-success">添加</a>  </label>
             </div>
@@ -53,11 +55,13 @@
             <td>
                 <input id="companyType_${vs.index}" style="width: 100px" value="${companyType.companyType}"/>
                 <a id="editCompanyType"
-                   href="javascript:if(confirm('您确定要修改此项吗?'))location.href='${pageContext.request.contextPath}/manage/update/companyType/${companyType.id}/'
+                   href="javascript:if(confirm('您确定要修改此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/update/companyType/${companyType.id}/'
                    +document.getElementById('companyType_${vs.index}').value"
                    class="btn btn-small ">修改</a>
                 <a id="delCompanyType"
-                   href="javascript:if(confirm('您确定要删除此项吗?')) location.href='${pageContext.request.contextPath}/manage/del/companyType/${companyType.id}'"
+                   href="javascript:if(confirm('您确定要删除此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/del/companyType/${companyType.id}/'"
                    class="btn btn-small ">删除</a>
             </td>
 
@@ -83,7 +87,8 @@
                     <%--</div>--%>
                     <%--<div class="span2">--%>
                 <a id="addCustoms"
-                   href="javascript:location.href='${pageContext.request.contextPath}/manage/add/customs/'
+                   href="javascript:if(document.getElementById('customs').value.trim()==''){alert('值不能为空');return void(0);}
+                   if(confirm('您确定要添加此项吗?'))location.href='${pageContext.request.contextPath}/manage/add/customs/'
                    +document.getElementById('customs').value"
                    class="btn btn-small btn-success">添加</a>  </label>
         </div>
@@ -97,11 +102,13 @@
             <td>
                 <input id="customs_${vs.index}" style="width: 100px" value="${customs.customs}"/>
                 <a id="editCustoms"
-                   href="javascript:if(confirm('您确定要修改此项吗?'))location.href='${pageContext.request.contextPath}/manage/update/customs/${customs.id}/'
+                   href="javascript:if(confirm('您确定要修改此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/update/customs/${customs.id}/'
                    +document.getElementById('customs_${vs.index}').value"
                    class="btn btn-small ">修改</a>
                 <a id="delCustoms"
-                   href="javascript:if(confirm('您确定要删除此项吗?')) location.href='${pageContext.request.contextPath}/manage/del/customs/${customs.id}'"
+                   href="javascript:if(confirm('您确定要删除此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/del/customs/${customs.id}'"
                    class="btn btn-small ">删除</a>
             </td>
 
@@ -127,7 +134,8 @@
                     <%--</div>--%>
                     <%--<div class="span2">--%>
                 <a id="addTradeType"
-                   href="javascript:location.href='${pageContext.request.contextPath}/manage/add/tradeType/'
+                   href="javascript:if(document.getElementById('tradeType').value.trim()==''){alert('值不能为空');return void(0);}
+                   if(confirm('您确定要添加此项吗?'))location.href='${pageContext.request.contextPath}/manage/add/tradeType/'
                    +document.getElementById('tradeType').value"
                    class="btn btn-small btn-success">添加</a>  </label>
         </div>
@@ -141,11 +149,13 @@
             <td>
                 <input id="tradeType_${vs.index}" style="width: 100px" value="${tradeType.tradeType}"/>
                 <a id="editTradeType"
-                   href="javascript:if(confirm('您确定要修改此项吗?'))location.href='${pageContext.request.contextPath}/manage/update/tradeType/${tradeType.id}/'
+                   href="javascript:if(confirm('您确定要修改此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/update/tradeType/${tradeType.id}/'
                    +document.getElementById('tradeType_${vs.index}').value"
                    class="btn btn-small ">修改</a>
                 <a id="delTradeType"
-                   href="javascript:if(confirm('您确定要删除此项吗?')) location.href='${pageContext.request.contextPath}/manage/del/tradeType/${tradeType.id}'"
+                   href="javascript:if(confirm('您确定要删除此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/del/tradeType/${tradeType.id}/'"
                    class="btn btn-small ">删除</a>
             </td>
 
@@ -171,7 +181,8 @@
                     <%--</div>--%>
                     <%--<div class="span2">--%>
                 <a id="addTransportation"
-                   href="javascript:location.href='${pageContext.request.contextPath}/manage/add/transportation/'
+                   href="javascript:if(document.getElementById('transportation').value.trim()==''){alert('值不能为空');return void(0);}
+                   if(confirm('您确定要添加此项吗?'))location.href='${pageContext.request.contextPath}/manage/add/transportation/'
                    +document.getElementById('transportation').value"
                    class="btn btn-small btn-success">添加</a>  </label>
         </div>
@@ -185,11 +196,13 @@
             <td>
                 <input id="transportation_${vs.index}" style="width: 100px" value="${transportation.transportation}"/>
                 <a id="editTransportation"
-                   href="javascript:if(confirm('您确定要修改此项吗?'))location.href='${pageContext.request.contextPath}/manage/update/transportation/${transportation.id}/'
+                   href="javascript:if(confirm('您确定要修改此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/update/transportation/${transportation.id}/'
                    +document.getElementById('transportation_${vs.index}').value"
                    class="btn btn-small ">修改</a>
                 <a id="delTransportation"
-                   href="javascript:if(confirm('您确定要删除此项吗?')) location.href='${pageContext.request.contextPath}/manage/del/transportation/${transportation.id}'"
+                   href="javascript:if(confirm('您确定要删除此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/del/transportation/${transportation.id}/'"
                    class="btn btn-small ">删除</a>
             </td>
 
@@ -215,11 +228,13 @@
             <td>
                 <input id="detailType_${vs.index}" style="width: 100px" value="${detailType.detailType}"/>
                 <a id="editDetailType"
-                   href="javascript:if(confirm('您确定要修改此项吗?'))location.href='${pageContext.request.contextPath}/manage/update/detailType/${detailType.id}/'
+                   href="javascript:if(confirm('您确定要修改此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/update/detailType/${detailType.id}/'
                    +document.getElementById('detailType_${vs.index}').value"
                    class="btn btn-small ">修改</a>
                 <a id="delDetailType"
-                   href="javascript:if(confirm('您确定要删除此项吗?')) location.href='${pageContext.request.contextPath}/manage/del/detailType/${detailType.id}'"
+                   href="javascript:if(confirm('您确定要删除此项吗?'))
+                    location.href='${pageContext.request.contextPath}/manage/del/detailType/${detailType.id}/'"
                    class="btn btn-small ">删除</a>
             </td>
 
@@ -245,7 +260,8 @@
                     <%--</div>--%>
                     <%--<div class="span2">--%>
                 <a id="addSumType"
-                   href="javascript:location.href='${pageContext.request.contextPath}/manage/add/sumType/'
+                   href="javascript:if(document.getElementById('sumType').value.trim()==''){alert('值不能为空');return void(0);}
+                   if(confirm('您确定要添加此项吗?'))location.href='${pageContext.request.contextPath}/manage/add/sumType/'
                    +document.getElementById('sumType').value"
                    class="btn btn-small btn-success">添加</a>  </label>
         </div>
@@ -259,11 +275,13 @@
             <td>
                 <input id="sumType_${vs.index}" style="width: 100px" value="${sumType.sumType}"/>
                 <a id="editSumType"
-                   href="javascript:if(confirm('您确定要修改此项吗?'))location.href='${pageContext.request.contextPath}/manage/update/sumType/${sumType.id}/'
+                   href="javascript:if(confirm('您确定要修改此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/update/sumType/${sumType.id}/'
                     +document.getElementById('sumType_${vs.index}').value"
                    class="btn btn-small ">修改</a>
                 <a id="delSumType"
-                   href="javascript:if(confirm('您确定要删除此项吗?')) location.href='${pageContext.request.contextPath}/manage/del/sumType/${sumType.id}'"
+                   href="javascript:if(confirm('您确定要删除此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/del/sumType/${sumType.id}'"
                    class="btn btn-small ">删除</a>
             </td>
 
@@ -289,7 +307,8 @@
                     <%--</div>--%>
                     <%--<div class="span2">--%>
                 <a id="addCountry"
-                   href="javascript:location.href='${pageContext.request.contextPath}/manage/add/country/'
+                   href="javascript:if(document.getElementById('country').value.trim()==''){alert('值不能为空');return void(0);}
+                   if(confirm('您确定要添加此项吗?'))location.href='${pageContext.request.contextPath}/manage/add/country/'
                    +document.getElementById('country').value"
                    class="btn btn-small btn-success">添加</a>  </label>
         </div>
@@ -303,11 +322,13 @@
             <td>
                 <input id="country_${vs.index}" style="width: 100px" value="${country.country}"/>
                 <a id="editCountry"
-                   href="javascript:if(confirm('您确定要修改此项吗?'))location.href='${pageContext.request.contextPath}/manage/update/country/${country.id}/'
+                   href="javascript:if(confirm('您确定要修改此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/update/country/${country.id}/'
                    +document.getElementById('country_${vs.index}').value"
                    class="btn btn-small ">修改</a>
                 <a id="delCountr"
-                   href="javascript:if(confirm('您确定要删除此项吗?')) location.href='${pageContext.request.contextPath}/manage/del/country/${country.id}'"
+                   href="javascript:if(confirm('您确定要删除此项吗?'))
+                    location.href='${pageContext.request.contextPath}/manage/del/country/${country.id}'"
                    class="btn btn-small ">删除</a>
             </td>
 
@@ -333,7 +354,8 @@
                     <%--</div>--%>
                     <%--<div class="span2">--%>
                 <a id="addCity"
-                   href="javascript:location.href='${pageContext.request.contextPath}/manage/add/city/'
+                   href="javascript:if(document.getElementById('city').value.trim()==''){alert('值不能为空');return void(0);}
+                   if(confirm('您确定要添加此项吗?'))location.href='${pageContext.request.contextPath}/manage/add/city/'
                    +document.getElementById('city').value"
                    class="btn btn-small btn-success">添加</a>  </label>
         </div>
@@ -347,11 +369,13 @@
             <td>
                 <input id="city_${vs.index}" style="width: 100px" value="${city.city}"/>
                 <a id="editCity"
-                   href="javascript:if(confirm('您确定要修改此项吗?'))location.href='${pageContext.request.contextPath}/manage/update/city/${city.id}/'
+                   href="javascript:if(confirm('您确定要修改此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/update/city/${city.id}/'
                     +document.getElementById('city_${vs.index}').value"
                    class="btn btn-small ">修改</a>
                 <a id="delCity"
-                   href="javascript:if(confirm('您确定要删除此项吗?')) location.href='${pageContext.request.contextPath}/manage/del/city/${city.id}'"
+                   href="javascript:if(confirm('您确定要删除此项吗?'))
+                    location.href='${pageContext.request.contextPath}/manage/del/city/${city.id}'"
                    class="btn btn-small ">删除</a>
             </td>
 

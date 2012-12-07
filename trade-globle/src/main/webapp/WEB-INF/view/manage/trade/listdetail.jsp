@@ -94,6 +94,13 @@
     </select>月
 </label>
 
+<label class="label">进出口类型:
+    <select name="impExpType" class=" input-small">
+        <option value="0" <c:if test="${impExpType eq 0}">selected="selected" </c:if>>进口</option>
+        <option value="1" <c:if test="${impExpType eq 1}">selected="selected" </c:if>>出口</option>
+    </select>
+</label>
+
 <br/>
 
 <label class="label">企业性质:
@@ -177,15 +184,6 @@
 <label class="label">
     产品名称:<input name="productName" cssClass="input-mini search-query"
                 <c:if test='${productName ne null}'>value="${productName}" </c:if> />
-</label>
-
-<br/>
-
-<label class="label">进出口类型:
-    <select name="impExpType" class=" input-small">
-        <option value="0" <c:if test="${impExpType eq 0}">selected="selected" </c:if>>进口</option>
-        <option value="1" <c:if test="${impExpType eq 1}">selected="selected" </c:if>>出口</option>
-    </select>
 </label>
 
 

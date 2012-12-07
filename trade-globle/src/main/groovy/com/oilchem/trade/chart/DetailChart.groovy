@@ -85,50 +85,50 @@ class DetailChart extends Common {
     }
 
 
-    static void main(agrs) {
-        def x_legend = "aaa"
-        def y_legend = "bbb"
-        List<TradeSum> tradeSumList = null
-        List<TradeDetail> tradeDetailList1 = new ArrayList<TradeDetail>()
-        List<TradeDetail> tradeDetailList2 = new ArrayList<TradeDetail>()
-        tradeDetailList1 << new TradeDetail().setAmount(12345).setUnitPrice(11111).setProductName("aaaaaaaa").setAmountMoney(555555).setYearMonth("2010-05")
-        tradeDetailList1 << new TradeDetail().setAmount(23333).setUnitPrice(22222).setProductName("bbbbbbbb").setAmountMoney(666666).setYearMonth("2010-05")
-        tradeDetailList2 << new TradeDetail().setAmount(33563).setUnitPrice(33333).setProductName("cccccccc").setAmountMoney(777777).setYearMonth("2012-11")
-        tradeDetailList2 << new TradeDetail().setAmount(44524).setUnitPrice(44444).setProductName("dddddddd").setAmountMoney(888888).setYearMonth("2012-11")
-
-        ChartData<TradeDetail> chartData1 = new ChartData<TradeDetail>();
-        ChartData<TradeDetail> chartData2 = new ChartData<TradeDetail>();
-
-        List<Label> labels = []
-        labels << new Label("2010-05")
-        labels << new Label("2012-11")
-
-        chartData1.elementList << tradeDetailList1
-        chartData2.elementList << tradeDetailList2
-        chartData1.labels << labels
-        chartData2.labels << labels
-
-        chartData1.minRangMap.put("amount", 3.234)
-        chartData2.minRangMap.put("amount", 1.264)
-        chartData1.maxRangMap.put("amount", 2534.32)
-        chartData2.maxRangMap.put("amount", 5635.32)
-
-        chartData1.minRangMap.put("amountMoney", 3.234)
-        chartData2.minRangMap.put("amountMoney", 1.264)
-        chartData1.maxRangMap.put("amountMoney", 2534.32)
-        chartData2.maxRangMap.put("amountMoney", 5635.32)
-
-        chartData1.minRangMap.put("unitPrice", 3.234)
-        chartData2.minRangMap.put("unitPrice", 1.264)
-        chartData1.maxRangMap.put("unitPrice", 2534.32)
-        chartData2.maxRangMap.put("unitPrice", 5635.32)
-
-        List<ChartData<TradeDetail>> chartDataList = [];
-        chartDataList << chartData1
-        chartDataList << chartData2
-
-        List<Chart> chartList = new DetailChart().getDetailLineChart(chartDataList)
-        println chartList;
-    }
+//    static void main(agrs) {
+//        def x_legend = "aaa"
+//        def y_legend = "bbb"
+//        List<TradeSum> tradeSumList = null
+//        List<TradeDetail> tradeDetailList1 = new ArrayList<TradeDetail>()
+//        List<TradeDetail> tradeDetailList2 = new ArrayList<TradeDetail>()
+//        tradeDetailList1 << new TradeDetail().setAmount(12345).setUnitPrice(11111).setProductName("aaaaaaaa").setAmountMoney(555555).setYearMonth("2010-05")
+//        tradeDetailList1 << new TradeDetail().setAmount(23333).setUnitPrice(22222).setProductName("bbbbbbbb").setAmountMoney(666666).setYearMonth("2010-05")
+//        tradeDetailList2 << new TradeDetail().setAmount(33563).setUnitPrice(33333).setProductName("cccccccc").setAmountMoney(777777).setYearMonth("2012-11")
+//        tradeDetailList2 << new TradeDetail().setAmount(44524).setUnitPrice(44444).setProductName("dddddddd").setAmountMoney(888888).setYearMonth("2012-11")
+//
+//        ChartData<TradeDetail> chartData1 = new ChartData<TradeDetail>();
+//        ChartData<TradeDetail> chartData2 = new ChartData<TradeDetail>();
+//
+//        List<Label> labels = []
+//        labels << new Label("2010-05")
+//        labels << new Label("2012-11")
+//
+//        chartData1.elementList << tradeDetailList1
+//        chartData2.elementList << tradeDetailList2
+//        chartData1.labels << labels
+//        chartData2.labels << labels
+//
+//        chartData1.minRangMap.put("amount", 3.234)
+//        chartData2.minRangMap.put("amount", 1.264)
+//        chartData1.maxRangMap.put("amount", 2534.32)
+//        chartData2.maxRangMap.put("amount", 5635.32)
+//
+//        chartData1.minRangMap.put("amountMoney", 3.234)
+//        chartData2.minRangMap.put("amountMoney", 1.264)
+//        chartData1.maxRangMap.put("amountMoney", 2534.32)
+//        chartData2.maxRangMap.put("amountMoney", 5635.32)
+//
+//        chartData1.minRangMap.put("unitPrice", 3.234)
+//        chartData2.minRangMap.put("unitPrice", 1.264)
+//        chartData1.maxRangMap.put("unitPrice", 2534.32)
+//        chartData2.maxRangMap.put("unitPrice", 5635.32)
+//
+//        List<ChartData<TradeDetail>> chartDataList = [];
+//        chartDataList << chartData1
+//        chartDataList << chartData2
+//
+//        List<Chart> chartList = new DetailChart().getDetailLineChart(chartDataList)
+//        println chartList;
+//    }
 
 }

@@ -34,6 +34,9 @@
                     <a href="${pageContext.request.contextPath}/manage/listdetail/1">明细表</a>
                 </li>
                 <li>
+                    <a href="${pageContext.request.contextPath}/manage/list/detailCount/1">明细统计表</a>
+                </li>
+                <li>
                     <a href="${pageContext.request.contextPath}/manage/listsum/1">总表</a>
                 </li>
                 <li>

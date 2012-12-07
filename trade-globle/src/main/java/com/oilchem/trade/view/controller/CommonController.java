@@ -1,5 +1,6 @@
 package com.oilchem.trade.view.controller;
 
+import com.oilchem.trade.bean.YearMonthDto;
 import com.oilchem.trade.util.*;
 import com.oilchem.trade.domain.abstrac.IdEntity;
 import com.oilchem.trade.service.CommonService;
@@ -104,7 +105,7 @@ public class CommonController {
      * @param <T>
      * @return
      */
-    public <T extends IdEntity> Model addPageInfo(Model model, Page<T> page, String contextUrl) {
+    public <T> Model addPageInfo(Model model, Page<T> page, String contextUrl) {
 
         int current = page.getNumber() + 1;
         int begin = Math.max(1, current - 5);
@@ -123,6 +124,16 @@ public class CommonController {
                 .addAttribute("pageSize", pageSize)
                 .addAttribute("sort", sort);
     }
+
+    public Model yearMonth2Model(Model model, YearMonthDto yearMonthDto) {
+        model = yearMonthDto.getMonth() != null ? model.addAttribute("month", yearMonthDto.getMonth()) : model;
+        model = yearMonthDto.getLowYear() != null ? model.addAttribute("lowYear", yearMonthDto.getLowYear()) : model;
+        model = yearMonthDto.getLowMonth() != null ? model.addAttribute("lowMonth", yearMonthDto.getLowMonth()) : model;
+        model = yearMonthDto.getHighYear() != null ? model.addAttribute("highYear", yearMonthDto.getHighYear()) : model;
+        model = yearMonthDto.getHighMonth() != null ? model.addAttribute("highMonth", yearMonthDto.getHighMonth()) : model;
+        model = yearMonthDto.getImpExpType() != null ? model.addAttribute("impExpType", yearMonthDto.getImpExpType()) : model;
+        return model;
+    };
 
     /**
      * 获得servlet的指定context的rootUrl

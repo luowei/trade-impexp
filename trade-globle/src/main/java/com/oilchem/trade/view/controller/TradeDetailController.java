@@ -63,8 +63,8 @@ public class TradeDetailController extends CommonController {
      * @return
      */
     @RequestMapping("/listdetail/{pageNumber}")
-    public String listexpTradeDetail(Model model, @PathVariable Integer pageNumber,
-                                     CommonDto commonDto, YearMonthDto yearMonthDto,
+    public String listexpTradeDetail(Model model, CommonDto commonDto,
+                                     YearMonthDto yearMonthDto,
                                      TradeDetail tradeDetail) {
         Integer impExp = yearMonthDto.getImpExpType();
         if (impExp == null)
@@ -173,7 +173,6 @@ public class TradeDetailController extends CommonController {
 
     /**
      * 将属性添加到模型中
-     *
      * @param model
      * @param tradeDetail
      * @param commonDto
@@ -183,12 +182,7 @@ public class TradeDetailController extends CommonController {
     private Model addAtrribute2Model(Model model, TradeDetail tradeDetail,
                                      CommonDto commonDto, YearMonthDto yearMonthDto) {
 
-        model = yearMonthDto.getMonth() != null ? model.addAttribute("month", yearMonthDto.getMonth()) : model;
-        model = yearMonthDto.getLowYear() != null ? model.addAttribute("lowYear", yearMonthDto.getLowYear()) : model;
-        model = yearMonthDto.getLowMonth() != null ? model.addAttribute("lowMonth", yearMonthDto.getLowMonth()) : model;
-        model = yearMonthDto.getHighYear() != null ? model.addAttribute("highYear", yearMonthDto.getHighYear()) : model;
-        model = yearMonthDto.getHighMonth() != null ? model.addAttribute("highMonth", yearMonthDto.getHighMonth()) : model;
-        model = yearMonthDto.getImpExpType() != null ? model.addAttribute("impExpType", yearMonthDto.getImpExpType()) : model;
+        model = yearMonth2Model(model, yearMonthDto);
 
         for (PropertyFilter filter : tradeDetailService
                 .getdetailQueryProps(tradeDetail, commonDto)) {

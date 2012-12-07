@@ -57,10 +57,10 @@ go
 --进口明细表
 create table t_import_detail(
 	id bigint identity(1,1) not null, --主键的关键字primary key
-	col_year int check(col_year>2000 and col_year<2500), --年
-	col_month int check(col_month>0 and col_month<13), --月
+	col_year int , --年
+	col_month int , --月
 	product_code nvarchar(20), --产品代码
-	product_name nvarchar(50), --产品名称
+	product_name nvarchar(200), --产品名称
 	company_type nvarchar(20), --企业性质--
 	trade_type nvarchar(20), --贸易方式--
 	transportation nvarchar(20), --运输方式--
@@ -73,23 +73,54 @@ create table t_import_detail(
 	unit_price numeric(20,2), --单价
 	year_month nvarchar(20), --年月
     product_type nvarchar(200), --产品类型
-	company_type_id bigint foreign key references t_company_type(id),
-	trade_type_id bigint foreign key references t_trade_type(id),
-	transportation_id bigint foreign key references t_transportation(id),
-	customs_id bigint foreign key references t_customs(id),
-	city_id bigint foreign key references t_city(id),
-	country_id bigint foreign key references t_country(id),
 	constraint [PK__t_import_detail__id] primary key nonclustered (id)
 )
+go
+
+--进口明细表统计表
+create table t_import_detail_count(
+    id bigint identity(1,1) not null, --主键的关键字primary key
+    col_year int , --年
+	col_month int , --月
+    year_month nvarchar(20), --年月
+    product_code nvarchar(20), --产品代码
+	product_name nvarchar(200), --产品名称
+	num numeric(20,2),	--数量
+	unit nvarchar(10), --计量单位
+	money numeric(20,2), --金额
+	avg_price numeric(20,2), --平均价
+	constraint [PK__t_import_detail_count__id] primary key nonclustered (id)
+)
+go
+
+--进口明细表统计视图
+create view v_import_detail_count
+as
+select
+product_code as id ,
+year_month ,
+product_code ,
+product_name ,
+sum(amount) as num,
+unit ,
+sum(amount_money) as money,
+case sum(amount)
+	when 0 then 0
+	else sum(amount_money)/sum(amount)
+end as avg_price
+from
+t_import_detail
+group by
+year_month,product_code,product_name,unit
 go
 
 --出口明细表
 create table t_export_detail(
 	id bigint identity(1,1) not null, --主键的关键字primary key
-	col_year int check(col_year>2000 and col_year<2500), --年
-	col_month int check(col_month>0 and col_month<13), --月
+	col_year int , --年
+	col_month int , --月
 	product_code nvarchar(20), --产品代码
-	product_name nvarchar(50), --产品名称
+	product_name nvarchar(200), --产品名称
 	company_type nvarchar(20), --企业性质--
 	trade_type nvarchar(20), --贸易方式--
 	transportation nvarchar(20), --运输方式--
@@ -102,14 +133,45 @@ create table t_export_detail(
 	unit_price numeric(20,2), --单价
     year_month nvarchar(20), --年月
     product_type nvarchar(200), --产品类型
-	company_type_id bigint foreign key references t_company_type(id),
-	trade_type_id bigint foreign key references t_trade_type(id),
-	transportation_id bigint foreign key references t_transportation(id),
-	customs_id bigint foreign key references t_customs(id),
-	city_id bigint foreign key references t_city(id),
-	country_id bigint foreign key references t_country(id),
 	constraint [PK__t_export_detail__id] primary key nonclustered (id)
 )
+go
+
+--出口明细表统计表
+create table t_export_detail_count(
+    id bigint identity(1,1) not null, --主键的关键字primary key
+    col_year int , --年
+	col_month int , --月
+    year_month nvarchar(20), --年月
+    product_code nvarchar(20), --产品代码
+	product_name nvarchar(200), --产品名称
+	num numeric(20,2),	--数量
+	unit nvarchar(10), --计量单位
+	money numeric(20,2), --金额
+	avg_price numeric(20,2), --平均价
+	constraint [PK__t_export_detail_count__id] primary key nonclustered (id)
+)
+go
+
+--出口明细表统计视图
+create view v_export_detail_count
+as
+select
+product_code as id ,
+year_month ,
+product_code ,
+product_name ,
+sum(amount) as num,
+unit ,
+sum(amount_money) as money,
+case sum(amount)
+	when 0 then 0
+	else sum(amount_money)/sum(amount)
+end as avg_price
+from
+t_export_detail
+group by
+year_month,product_code,product_name,unit
 go
 
 --产品类型表
@@ -125,7 +187,7 @@ create table t_import_sum(
 	col_year int,      --年
 	col_month int,      --月
 	product_type nvarchar(20), --产品类型
-	product_name nvarchar(50), --产品名称
+	product_name nvarchar(200), --产品名称
 	num_month numeric(20,3), --当月数量
 	num_sum numeric(20,3),	--累计总数量
 	money_month numeric(20,2), --当月金额
@@ -135,7 +197,6 @@ create table t_import_sum(
 	num_premonth_incratio numeric(20,2), --与上月数量增长比
 	num_preyearsamemonth_incratio numeric(20,2), --与上年同月数量增长比
 	num_preyearsamequarter_incratio numeric(20,2), --与上年同期数量增长比
-	product_type_id bigint foreign key references t_product_type(id),
 	constraint [PK__t_import_sum__id] primary key nonclustered (id)
 )
 
@@ -145,7 +206,7 @@ create table t_export_sum(
 	col_year int,      --年
 	col_month int,      --月
 	product_type nvarchar(20), --产品类型
-	product_name nvarchar(50), --产品名称
+	product_name nvarchar(200), --产品名称
 	num_month numeric(20,3), --当月数量
 	num_sum numeric(20,3),	--累计总数量
 	money_month numeric(20,2), --当月金额
@@ -155,7 +216,6 @@ create table t_export_sum(
 	num_premonth_incratio numeric(20,2), --与上月数量增长比
 	num_preyearsamemonth_incratio numeric(20,2), --与上年同月数量增长比
 	num_preyearsamequarter_incratio numeric(20,2), --与上年同期数量增长比
-	product_type_id bigint foreign key references t_product_type(id),
 	constraint [PK__t_export_sum__id] primary key nonclustered (id)
 )
 
@@ -238,3 +298,9 @@ delete from t_export_sum;
 -- GO
 -- RECONFIGURE;
 -- GO
+
+
+ --=============================================================================================
+
+
+
