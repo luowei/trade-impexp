@@ -2,6 +2,7 @@ package com.oilchem.trade.service;
 
 import com.oilchem.trade.bean.ChartData;
 import com.oilchem.trade.bean.YearMonthDto;
+import com.oilchem.trade.domain.abstrac.DetailCount;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import ofc4j.model.axis.Label;
@@ -48,5 +49,6 @@ public interface ChartService {
             YearMonthDto yearMonthDto);
 
 
+    Map<String,ChartData<DetailCount>> getChartDetailCountList(List<Label> labels, List<String> codes, YearMonthDto yearMonthDto);
 
 }

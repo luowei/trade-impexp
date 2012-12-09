@@ -22,9 +22,9 @@ class DetailChart extends Common {
 
         //-------------tradeDetail  ----------------------
         Chart amountChat = new Chart()
-                .setTitle(new Text("数量")).setYLegend(new Text("数量", style))
+                .setTitle(new Text("平均数量")).setYLegend(new Text("平均数量", style))
         Chart amountMoneyChart = new Chart()
-                .setTitle(new Text("金额")).setYLegend(new Text("金额", style))
+                .setTitle(new Text("平均金额")).setYLegend(new Text("平均金额", style))
         Chart unitpriceChart = new Chart()
                 .setTitle(new Text("单价")).setYLegend(new Text("单价", style))
 

@@ -6,7 +6,9 @@ import com.oilchem.trade.bean.ChartData;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
 import com.oilchem.trade.chart.DetailChart;
+import com.oilchem.trade.chart.DetailCountChart;
 import com.oilchem.trade.chart.SumChart;
+import com.oilchem.trade.domain.abstrac.DetailCount;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.TradeSum;
@@ -175,6 +177,77 @@ public class ChartController extends CommonController {
         }
         model.addAttribute("idx", idx - 1)
                 .addAttribute("width", chart_width.value())
+                .addAttribute("height", chart_height.value());
+
+        return "manage/trade/chart";
+    }
+
+
+    /**
+     * 获得图表
+     *
+     * @param model
+     * @param yearMonthDto
+     * @param chartType
+     * @return
+     */
+    @RequestMapping("/detailcountchart")
+    public String getDetailCountChartData(Model model, YearMonthDto yearMonthDto,
+                                     CommonDto commonDto, String chartType,
+                                     DetailCount detailCount, HttpSession session,
+                                     RedirectAttributes redirectAttributes) {
+
+        if (commonDto.getCodes() == null || commonDto.getCodes().length < 1) {
+            return "redirect:/manage/list/detailCount/" + (commonDto.getPageNumber() == null ? 1 : commonDto.getPageNumber());
+        }
+
+        List<String> codes = removeDuplicateWithOrder(
+                Lists.asList(commonDto.getCodes()[0], commonDto.getCodes()));
+
+        List<Label> labels = chartService.getYearMonthLabels(yearMonthDto);
+
+        Map<String, ChartData<DetailCount>> chartDataMap = chartService.getChartDetailCountList(labels, codes, yearMonthDto);
+
+
+        Object lineChartList_o = new DetailCountChart().getDetailCountLineChart(chartDataMap, lineChart.name());
+        Object barChartList_o = new DetailCountChart().getDetailCountLineChart(chartDataMap, barChart.name());
+
+        //缓存
+        int idx = 1;
+        Gson gson = new Gson();
+
+        if (lineChartList_o != null && lineChartList_o instanceof List &&
+                barChartList_o != null && barChartList_o instanceof List) {
+
+            List lineCharts = (List) lineChartList_o;
+            List barCharts = (List) barChartList_o;
+            Iterator lineIt = lineCharts.iterator();
+            Iterator barIt = barCharts.iterator();
+
+            for (; lineIt.hasNext() && barIt.hasNext(); ) {
+                Object lineObj = lineIt.next();
+                Object barObj = barIt.next();
+                if (Chart.class.isAssignableFrom(lineObj.getClass()) &&
+                        Chart.class.isAssignableFrom(barObj.getClass())  ) {
+
+                    String lineChartStr = gson.toJson(lineObj, Chart.class);
+                    String barChartStr = gson.toJson(barObj, Chart.class);
+//                    String lineChartStr = OFC.instance.render((Chart) lineIt);
+
+                    setValue("chart", "chartList_" + lineChart.name() + "_"
+//                            +session.getId()
+                            + idx, lineChartStr,1800);
+                    setValue("chart", "chartList_" + barChart.name() + "_"
+//                            +session.getId()
+                            + idx, barChartStr,1800);
+
+                    idx++;
+                }
+            }
+
+        }
+
+        model.addAttribute("idx", idx - 1).addAttribute("width", chart_width.value())
                 .addAttribute("height", chart_height.value());
 
         return "manage/trade/chart";

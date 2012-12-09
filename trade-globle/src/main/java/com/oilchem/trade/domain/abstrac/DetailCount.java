@@ -35,6 +35,17 @@ public class DetailCount extends IdEntity  implements Serializable {
     @Column(name="avg_price")
     private BigDecimal unitPrice;
 
+
+    public DetailCount() {
+    }
+
+    public DetailCount(BigDecimal num, BigDecimal money,
+                       BigDecimal unitPrice) {
+        this.num = num;
+        this.money = money;
+        this.unitPrice = unitPrice;
+    }
+
     public Integer getYear() {
         return year;
     }

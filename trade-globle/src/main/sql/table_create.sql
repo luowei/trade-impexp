@@ -260,9 +260,8 @@ delete from t_customs;
 delete from t_trade_type;
 delete from t_transportation;
 
-delete from t_detail_product_type;
-
-delete from t_sum_product_type;
+delete from t_detail_type;
+delete from t_sum_type;
 
 delete from t_export_detail;
 delete from t_import_detail;

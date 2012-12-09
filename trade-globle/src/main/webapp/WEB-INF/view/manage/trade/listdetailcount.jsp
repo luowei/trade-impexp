@@ -28,8 +28,8 @@
             checkAll("all", "codes");
         });
 
-        function genDetailChart() {
-            $("#form1").attr("action", "${pageContext.request.contextPath}/manage/detailchart");
+        function genDetailCountChart() {
+            $("#form1").attr("action", "${pageContext.request.contextPath}/manage/detailcountchart");
             $("#form1").submit();
         }
     </script>
@@ -155,7 +155,7 @@
             <i class="icon-search icon-white"></i>查询
         </button>
         <%--<div class="btn-group">--%>
-        <input id="chart" type="button" class="btn-small btn-primary" value="生成曲线" onclick="genDetailChart()"/>
+        <input id="chart" type="button" class="btn-small btn-primary" value="生成曲线" onclick="genDetailCountChart()"/>
 
         <div class="pagination-centered">
             <jsp:include page="../../common/pagination.jsp"/>
