@@ -61,7 +61,8 @@
                    class="btn btn-small ">修改</a>
                 <a id="delCompanyType"
                    href="javascript:if(confirm('您确定要删除此项吗?'))
-                   location.href='${pageContext.request.contextPath}/manage/del/companyType/${companyType.id}/'"
+                   location.href='${pageContext.request.contextPath}/manage/del/companyType/${companyType.id}/'
+                   +document.getElementById('companyType_${vs.index}').value"
                    class="btn btn-small ">删除</a>
             </td>
 
@@ -108,7 +109,8 @@
                    class="btn btn-small ">修改</a>
                 <a id="delCustoms"
                    href="javascript:if(confirm('您确定要删除此项吗?'))
-                   location.href='${pageContext.request.contextPath}/manage/del/customs/${customs.id}'"
+                   location.href='${pageContext.request.contextPath}/manage/del/customs/${customs.id}/'
+                   +document.getElementById('customs_${vs.index}').value"
                    class="btn btn-small ">删除</a>
             </td>
 
@@ -155,7 +157,8 @@
                    class="btn btn-small ">修改</a>
                 <a id="delTradeType"
                    href="javascript:if(confirm('您确定要删除此项吗?'))
-                   location.href='${pageContext.request.contextPath}/manage/del/tradeType/${tradeType.id}/'"
+                   location.href='${pageContext.request.contextPath}/manage/del/tradeType/${tradeType.id}/'
+                   +document.getElementById('tradeType_${vs.index}').value"
                    class="btn btn-small ">删除</a>
             </td>
 
@@ -202,7 +205,8 @@
                    class="btn btn-small ">修改</a>
                 <a id="delTransportation"
                    href="javascript:if(confirm('您确定要删除此项吗?'))
-                   location.href='${pageContext.request.contextPath}/manage/del/transportation/${transportation.id}/'"
+                   location.href='${pageContext.request.contextPath}/manage/del/transportation/${transportation.id}/'
+                    +document.getElementById('transportation_${vs.index}').value"
                    class="btn btn-small ">删除</a>
             </td>
 
@@ -234,7 +238,8 @@
                    class="btn btn-small ">修改</a>
                 <a id="delDetailType"
                    href="javascript:if(confirm('您确定要删除此项吗?'))
-                    location.href='${pageContext.request.contextPath}/manage/del/detailType/${detailType.id}/'"
+                    location.href='${pageContext.request.contextPath}/manage/del/detailType/${detailType.id}/'
+                    +document.getElementById('detailType_${vs.index}').value"
                    class="btn btn-small ">删除</a>
             </td>
 
@@ -281,7 +286,8 @@
                    class="btn btn-small ">修改</a>
                 <a id="delSumType"
                    href="javascript:if(confirm('您确定要删除此项吗?'))
-                   location.href='${pageContext.request.contextPath}/manage/del/sumType/${sumType.id}'"
+                   location.href='${pageContext.request.contextPath}/manage/del/sumType/${sumType.id}/'
+                   +document.getElementById('sumType_${vs.index}').value"
                    class="btn btn-small ">删除</a>
             </td>
 
@@ -328,7 +334,8 @@
                    class="btn btn-small ">修改</a>
                 <a id="delCountr"
                    href="javascript:if(confirm('您确定要删除此项吗?'))
-                    location.href='${pageContext.request.contextPath}/manage/del/country/${country.id}'"
+                    location.href='${pageContext.request.contextPath}/manage/del/country/${country.id}/'
+                    +document.getElementById('country_${vs.index}').value"
                    class="btn btn-small ">删除</a>
             </td>
 
@@ -375,7 +382,8 @@
                    class="btn btn-small ">修改</a>
                 <a id="delCity"
                    href="javascript:if(confirm('您确定要删除此项吗?'))
-                    location.href='${pageContext.request.contextPath}/manage/del/city/${city.id}'"
+                    location.href='${pageContext.request.contextPath}/manage/del/city/${city.id}/'
+                    +document.getElementById('city_${vs.index}').value"
                    class="btn btn-small ">删除</a>
             </td>
 

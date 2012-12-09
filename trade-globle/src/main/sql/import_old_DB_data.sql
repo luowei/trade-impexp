@@ -4,7 +4,7 @@ INSERT INTO
 lzdb.dbo.t_customs(
 lzdb.dbo.t_customs.customs
 )
-SELECT
+SELECT DISTINCT
 ltrim(rtrim(pcdb.dbo.TariffPass.PassName))
 FROM
 pcdb.dbo.TariffPass
@@ -21,7 +21,7 @@ INSERT INTO
 lzdb.dbo.t_trade_type(
 lzdb.dbo.t_trade_type.trade_type
 )
-SELECT
+SELECT DISTINCT
 ltrim(rtrim(pcdb.dbo.TariffTrade.name))
 FROM
 pcdb.dbo.TariffTrade
@@ -38,7 +38,7 @@ INSERT INTO
 lzdb.dbo.t_city(
 lzdb.dbo.t_city.city
 )
-SELECT
+SELECT DISTINCT
 ltrim(rtrim(pcdb.dbo.TariffCity.name))
 FROM
 pcdb.dbo.TariffCity
@@ -56,7 +56,7 @@ INSERT INTO
 lzdb.dbo.t_country(
 lzdb.dbo.t_country.country
 )
-SELECT
+SELECT DISTINCT
 ltrim(rtrim(pcdb.dbo.TariffCountry.name))
 FROM
 pcdb.dbo.TariffCountry
@@ -73,7 +73,7 @@ INSERT INTO
 lzdb.dbo.t_company_type(
 lzdb.dbo.t_company_type.company_type
 )
-SELECT
+SELECT DISTINCT
 ltrim(rtrim(pcdb.dbo.TariffCompanyType.name))
 FROM
 pcdb.dbo.TariffCompanyType
@@ -91,7 +91,7 @@ INSERT INTO
 lzdb.dbo.t_transportation(
 lzdb.dbo.t_transportation.transportation
 )
-SELECT
+SELECT DISTINCT
 ltrim(rtrim(pcdb.dbo.TariffTranName.name))
 FROM
 pcdb.dbo.TariffTranName
@@ -110,7 +110,7 @@ lzdb.dbo.t_detail_type(
 lzdb.dbo.t_detail_type.code,
 lzdb.dbo.t_detail_type.detail_type
 )
-SELECT
+SELECT DISTINCT
 ltrim(rtrim(pcdb.dbo.TariffType.pcode)),
 ltrim(rtrim(pcdb.dbo.TariffType.pCodeName))
 FROM
@@ -166,7 +166,7 @@ lzdb.dbo.t_import_detail.company_type,
 lzdb.dbo.t_import_detail.transportation
 )
 
-SELECT
+SELECT DISTINCT
 ltrim(rtrim(pcdb.dbo.Tariff1.ProductName)),
 ltrim(rtrim(pcdb.dbo.Tariff1.TariffNum)),
 ltrim(rtrim(pcdb.dbo.Tariff1.Pass)),
@@ -219,7 +219,7 @@ lzdb.dbo.t_export_detail.company_type,
 lzdb.dbo.t_export_detail.transportation
 )
 
-SELECT
+SELECT DISTINCT
 ltrim(rtrim(pcdb.dbo.Tariff1.ProductName)),
 ltrim(rtrim(pcdb.dbo.Tariff1.TariffNum)),
 ltrim(rtrim(pcdb.dbo.Tariff1.Pass)),
@@ -270,7 +270,7 @@ lzdb.dbo.t_import_sum.avgprice_sum,
 lzdb.dbo.t_import_sum.num_preyearsamemonth_incratio
 )
 
-SELECT
+SELECT DISTINCT
 SUBSTRING(CONVERT(CHAR(19),pcdb.dbo.jckxx.RQ,20), 1, 4) as col_year,
 SUBSTRING(CONVERT(CHAR(19),pcdb.dbo.jckxx.RQ,20), 6, 2) as col_month,
 SUBSTRING(CONVERT(CHAR(19),pcdb.dbo.jckxx.RQ,20), 1, 7) as col_month,
@@ -314,7 +314,7 @@ lzdb.dbo.t_export_sum.avgprice_sum,
 lzdb.dbo.t_export_sum.num_preyearsamemonth_incratio
 )
 
-SELECT
+SELECT DISTINCT
 SUBSTRING(CONVERT(CHAR(19),pcdb.dbo.jckxx.RQ,20), 1, 4) as col_year,
 SUBSTRING(CONVERT(CHAR(19),pcdb.dbo.jckxx.RQ,20), 6, 2) as col_month,
 SUBSTRING(CONVERT(CHAR(19),pcdb.dbo.jckxx.RQ,20), 1, 7) as year_month,

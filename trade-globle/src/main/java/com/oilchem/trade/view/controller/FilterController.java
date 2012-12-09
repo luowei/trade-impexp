@@ -112,6 +112,7 @@ public class FilterController extends CommonController {
     @RequestMapping("/del/{type}/{id}/{name}")
     public String del(@PathVariable String type,
                       @PathVariable Long id,
+                      @PathVariable String name,
                       RedirectAttributes redirectAttrs) {
 
         StringBuffer message = new StringBuffer();
@@ -119,9 +120,9 @@ public class FilterController extends CommonController {
         try {
             commonService.delete(type, id);
 
-            message.append("删除记录成功");
+            message.append("删除"+name+"成功");
         } catch (Exception e) {
-            message.append("删除记录失败");
+            message.append("删除"+name+"失败");
             logger.error(e.getMessage(),e);
             throw new RuntimeException(e);
         }
