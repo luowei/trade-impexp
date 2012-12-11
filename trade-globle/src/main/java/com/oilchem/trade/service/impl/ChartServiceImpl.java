@@ -218,11 +218,6 @@ public class ChartServiceImpl implements ChartService {
     }
 
 
-    //默认最大值
-    BigDecimal maxAmount = defaultMax;
-    BigDecimal maxAmountMoney = defaultMax;
-    BigDecimal maxUnitPrice = defaultMax;
-
     /**
      * 存入最大值
      *
@@ -230,9 +225,9 @@ public class ChartServiceImpl implements ChartService {
      * @param tradeDetail
      */
     private void putMaxRangMap(Map<String, BigDecimal> maxRangMap, TradeDetail tradeDetail) {
-        put2maxRangMap(maxRangMap, "amount", tradeDetail.getAmount(), maxAmount);
-        put2maxRangMap(maxRangMap, "amountMoney", tradeDetail.getAmountMoney(), maxAmountMoney);
-        put2maxRangMap(maxRangMap, "unitPrice", tradeDetail.getUnitPrice(), maxUnitPrice);
+        put2maxRangMap(maxRangMap, "amount", tradeDetail.getAmount());
+        put2maxRangMap(maxRangMap, "amountMoney", tradeDetail.getAmountMoney());
+        put2maxRangMap(maxRangMap, "unitPrice", tradeDetail.getUnitPrice());
     }
 
 
@@ -327,11 +322,6 @@ public class ChartServiceImpl implements ChartService {
         minRangMap.put("unitPrice", detailCoun.getUnitPrice().compareTo(minCountUnitPrice) > 0 ? minCountUnitPrice : detailCoun.getUnitPrice());
     }
 
-    //默认最大值
-    BigDecimal maxNum = defaultMax,
-            maxMoney = defaultMax,
-            maxCountUnitPrice = defaultMax;
-
     /**
      * 存入最大值
      *
@@ -339,9 +329,9 @@ public class ChartServiceImpl implements ChartService {
      * @param detailCount
      */
     private void putCountMaxRangMap(Map<String, BigDecimal> maxRangMap, DetailCount detailCount) {
-        put2maxRangMap(maxRangMap, "num", detailCount.getNum(), maxNum);
-        put2maxRangMap(maxRangMap, "money", detailCount.getMoney(), maxMoney);
-        put2maxRangMap(maxRangMap, "unitPrice", detailCount.getUnitPrice(), maxCountUnitPrice);
+        put2maxRangMap(maxRangMap, "num", detailCount.getNum());
+        put2maxRangMap(maxRangMap, "money", detailCount.getMoney());
+        put2maxRangMap(maxRangMap, "unitPrice", detailCount.getUnitPrice());
     }
 
 
@@ -462,47 +452,24 @@ public class ChartServiceImpl implements ChartService {
                 moneyMonth, moneySum, avgPriceMonth, avgPriceSum, pm, py, pq);
     }
 
-
-    //默认最小值
-    BigDecimal minnumMonth = defaultMin,
-            minnumSum = defaultMin,
-            minmoneyMonth = defaultMin,
-            minmoneySum = defaultMin,
-            minavgPriceMonth = defaultMin,
-            minavgPriceSum = defaultMin,
-            minPM = defaultMin,
-            minPY = defaultMin,
-            minPQ = defaultMin;
-
     /**
      * 存入最小值
-     *
      * @param minRangMap
      * @param tradeSum
      */
     private void putMinRangMap(Map<String, BigDecimal> minRangMap, TradeSum tradeSum) {
-        minRangMap.put(excel_num_month.getValue(), tradeSum.getNumMonth().compareTo(minnumMonth) > 0 ? minnumMonth : tradeSum.getNumMonth());
-        minRangMap.put(excel_num_sum.getValue(), tradeSum.getMoneySum().compareTo(minnumSum) > 0 ? minnumSum : tradeSum.getMoneySum());
-        minRangMap.put(excel_money_month.getValue(), tradeSum.getMoneyMonth().compareTo(minmoneyMonth) > 0 ? minmoneyMonth : tradeSum.getMoneyMonth());
-        minRangMap.put(excel_money_sum.getValue(), tradeSum.getMoneySum().compareTo(minmoneySum) > 0 ? minmoneySum : tradeSum.getMoneySum());
-        minRangMap.put(excel_avg_price_month.getValue(), tradeSum.getAvgPriceMonth().compareTo(minavgPriceMonth) > 0 ? minavgPriceMonth : tradeSum.getAvgPriceMonth());
-        minRangMap.put(excel_avg_price_sum.getValue(), tradeSum.getAvgPriceSum().compareTo(minavgPriceSum) > 0 ? minavgPriceSum : tradeSum.getAvgPriceSum());
-        minRangMap.put(excel_pm.getValue(), tradeSum.getPm().compareTo(minPM) > 0 ? minPM : tradeSum.getPm());
-        minRangMap.put(excel_py.getValue(), tradeSum.getPy().compareTo(minPY) > 0 ? minPY : tradeSum.getPy());
-        minRangMap.put(excel_pq.getValue(), tradeSum.getPq().compareTo(minPQ) > 0 ? minPQ : tradeSum.getPq());
+        put2minRangMap(minRangMap, excel_num_month.getValue(), tradeSum.getNumMonth());
+        put2minRangMap(minRangMap, excel_num_sum.getValue(), tradeSum.getNumSum());
+        put2minRangMap(minRangMap, excel_money_month.getValue(), tradeSum.getMoneyMonth());
+        put2minRangMap(minRangMap, excel_money_sum.getValue(), tradeSum.getMoneySum());
+        put2minRangMap(minRangMap, excel_avg_price_month.getValue(), tradeSum.getAvgPriceMonth());
+        put2minRangMap(minRangMap, excel_avg_price_sum.getValue(), tradeSum.getAvgPriceSum());
+        put2minRangMap(minRangMap, excel_pm.getValue(), tradeSum.getPm());
+        put2minRangMap(minRangMap, excel_py.getValue(), tradeSum.getPy());
+        put2minRangMap(minRangMap, excel_pq.getValue(), tradeSum.getPq());
     }
 
 
-    //默认最大值
-    BigDecimal maxnumMonth = defaultMax,
-            maxnumSum = defaultMax,
-            maxmoneyMonth = defaultMax,
-            maxmoneySum = defaultMax,
-            maxavgPriceMonth = defaultMax,
-            maxavgPriceSum = defaultMax,
-            maxPM = defaultMax,
-            maxPY = defaultMax,
-            maxPQ = defaultMax;
 
     /**
      * 存入最大值
@@ -511,16 +478,31 @@ public class ChartServiceImpl implements ChartService {
      * @param tradeSum
      */
     private void putMaxRangMap(Map<String, BigDecimal> maxRangMap, TradeSum tradeSum) {
-        put2maxRangMap(maxRangMap, excel_num_month.getValue(), tradeSum.getNumMonth(), maxnumMonth);
-        put2maxRangMap(maxRangMap, excel_num_sum.getValue(), tradeSum.getNumSum(), maxnumSum);
-        put2maxRangMap(maxRangMap, excel_money_month.getValue(), tradeSum.getMoneyMonth(), maxmoneyMonth);
-        put2maxRangMap(maxRangMap, excel_money_sum.getValue(), tradeSum.getMoneySum(), maxmoneySum);
-        put2maxRangMap(maxRangMap, excel_avg_price_month.getValue(), tradeSum.getAvgPriceMonth(), maxavgPriceMonth);
-        put2maxRangMap(maxRangMap, excel_avg_price_sum.getValue(), tradeSum.getAvgPriceSum(), maxavgPriceSum);
-        put2maxRangMap(maxRangMap, excel_pm.getValue(), tradeSum.getPm(), maxPM);
-        put2maxRangMap(maxRangMap, excel_py.getValue(), tradeSum.getPy(), maxPY);
-        put2maxRangMap(maxRangMap, excel_pq.getValue(), tradeSum.getPq(), maxPQ);
+        put2maxRangMap(maxRangMap, excel_num_month.getValue(), tradeSum.getNumMonth());
+        put2maxRangMap(maxRangMap, excel_num_sum.getValue(), tradeSum.getNumSum());
+        put2maxRangMap(maxRangMap, excel_money_month.getValue(), tradeSum.getMoneyMonth());
+        put2maxRangMap(maxRangMap, excel_money_sum.getValue(), tradeSum.getMoneySum());
+        put2maxRangMap(maxRangMap, excel_avg_price_month.getValue(), tradeSum.getAvgPriceMonth());
+        put2maxRangMap(maxRangMap, excel_avg_price_sum.getValue(), tradeSum.getAvgPriceSum());
+        put2maxRangMap(maxRangMap, excel_pm.getValue(), tradeSum.getPm());
+        put2maxRangMap(maxRangMap, excel_py.getValue(), tradeSum.getPy());
+        put2maxRangMap(maxRangMap, excel_pq.getValue(), tradeSum.getPq());
 
+    }
+
+    /**
+     * 最小值放入Map
+     * @param minRangMap
+     * @param fieldKey
+     * @param fieldValue
+     */
+    private void put2minRangMap(Map<String, BigDecimal> minRangMap,
+                                String fieldKey, BigDecimal fieldValue) {
+        if (minRangMap.get(fieldKey) == null ||
+                minRangMap.get(fieldKey).compareTo(fieldValue) > 0) {
+            BigDecimal numMonth = fieldValue.compareTo(defaultMin) > 0 ? defaultMin : fieldValue;
+            minRangMap.put(fieldKey, numMonth);
+        }
     }
 
     /**
@@ -529,13 +511,12 @@ public class ChartServiceImpl implements ChartService {
      * @param maxRangMap
      * @param fieldKey
      * @param fieldValue
-     * @param defaultMaxValue
      */
     private void put2maxRangMap(Map<String, BigDecimal> maxRangMap,
-                                String fieldKey, BigDecimal fieldValue, BigDecimal defaultMaxValue) {
+                                String fieldKey, BigDecimal fieldValue) {
         if (maxRangMap.get(fieldKey) == null ||
                 maxRangMap.get(fieldKey).compareTo(fieldValue) < 0) {
-            BigDecimal numMonth = fieldValue.compareTo(defaultMaxValue) < 0 ? defaultMaxValue : fieldValue;
+            BigDecimal numMonth = fieldValue.compareTo(defaultMax) < 0 ? defaultMax : fieldValue;
             maxRangMap.put(fieldKey, numMonth);
         }
     }
