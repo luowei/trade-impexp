@@ -132,7 +132,6 @@ INSERT INTO lzdb.dbo.t_sum_type(product_type) VALUES('其它化工品');
 INSERT INTO lzdb.dbo.t_sum_type(product_type) VALUES('合成橡胶');
 INSERT INTO lzdb.dbo.t_sum_type(product_type) VALUES('合成纤维');
 INSERT INTO lzdb.dbo.t_sum_type(product_type) VALUES('化肥');
-INSERT INTO lzdb.dbo.t_sum_type(product_type) VALUES('化肥');
 GO
 
 

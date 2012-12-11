@@ -3,10 +3,7 @@ package com.oilchem.trade.service.impl;
 import com.oilchem.trade.bean.DocBean;
 import com.oilchem.trade.dao.LogDao;
 import com.oilchem.trade.domain.Log;
-import com.oilchem.trade.service.CommonService;
-import com.oilchem.trade.service.TaskService;
-import com.oilchem.trade.service.TradeDetailService;
-import com.oilchem.trade.service.TradeSumService;
+import com.oilchem.trade.service.*;
 import com.oilchem.trade.bean.YearMonthDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +41,8 @@ public class TaskServiceImpl implements TaskService {
     TradeDetailService tradeDetailService;
     @Autowired
     TradeSumService tradeSumService;
+    @Autowired
+    DetailCountService detailCountService;
 
     @Resource
     LogDao logDao;
@@ -167,6 +166,19 @@ public class TaskServiceImpl implements TaskService {
                     tradeSumService.importExcel(entry, yearMonthDto);
                 }
 
+            }
+        };
+        new Timer().schedule(task, delay);
+    }
+
+    /**
+     * 生成明细统计数据
+     */
+    public void genAllDetailCount(){
+        TimerTask task = new TimerTask() {
+
+            public void run() {
+                detailCountService.genAllDetailCount();
             }
         };
         new Timer().schedule(task, delay);

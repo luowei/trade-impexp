@@ -188,6 +188,7 @@ create table t_import_sum(
 	id bigint identity(1,1) not null, --主键的关键字primary key--
 	col_year int,      --年
 	col_month int,      --月
+	year_month nvarchar(20), --年月
 	product_type nvarchar(20), --产品类型
 	product_name nvarchar(200), --产品名称
 	num_month numeric(20,3), --当月数量
@@ -207,6 +208,7 @@ create table t_export_sum(
 	id bigint identity(1,1) not null, --主键的关键字primary key--
 	col_year int,      --年
 	col_month int,      --月
+	year_month nvarchar(20), --年月
 	product_type nvarchar(20), --产品类型
 	product_name nvarchar(200), --产品名称
 	num_month numeric(20,3), --当月数量
@@ -255,20 +257,20 @@ GO
 
 --===============================================================
 --删除表数据
-delete from t_city;
-delete from t_company_type;
-delete from t_country;
-delete from t_customs;
-delete from t_trade_type;
-delete from t_transportation;
-
-delete from t_detail_type;
-delete from t_sum_type;
-
-delete from t_export_detail;
-delete from t_import_detail;
-delete from t_import_sum;
-delete from t_export_sum;
+-- delete from t_city;
+-- delete from t_company_type;
+-- delete from t_country;
+-- delete from t_customs;
+-- delete from t_trade_type;
+-- delete from t_transportation;
+--
+-- delete from t_detail_type;
+-- delete from t_sum_type;
+--
+-- delete from t_export_detail;
+-- delete from t_import_detail;
+-- delete from t_import_sum;
+-- delete from t_export_sum;
 
 -----------------------------------------
 

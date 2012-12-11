@@ -40,22 +40,23 @@ class Common {
                            Map<String,BigDecimal> minRangMap,Map<String,BigDecimal> maxRangMap,Map<String,BigDecimal> stepMap) {
 
         int scale = Integer.parseInt(scale_size.value())
-        def steps = BigDecimal.valueOf(Long.valueOf(axis_steps.value()))
+         BigDecimal steps = BigDecimal.valueOf(Long.valueOf(axis_steps.value()))
 
-        def minRang = chartData.minRangMap.get(key) == null  ? 0:chartData.minRangMap.get(key)
-        def maxRang = chartData.maxRangMap.get(key) == null  ? steps:chartData.maxRangMap.get(key)
+         BigDecimal minRang = chartData.minRangMap.get(key) == null  ? 0:chartData.minRangMap.get(key)
+         BigDecimal maxRang = chartData.maxRangMap.get(key) == null  ? steps:chartData.maxRangMap.get(key)
 
         maxRang = maxRang.multiply(BigDecimal.valueOf(1.2))
 
         //设定最大值最小值
-        if(minRangMap.get(key)==null||minRangMap.get(key) < minRang){
+        if(minRangMap.get(key)==null||minRangMap.get(key).compareTo(minRang) > 0){
             minRangMap.put(key,minRang)
         }
-        if( maxRangMap.get(key)==null||maxRangMap.get(key) < maxRang){
+        if( maxRangMap.get(key)==null||maxRangMap.get(key).compareTo(maxRang) < 0){
             maxRangMap.put(key,maxRang)
         }
 
-        def step = maxRangMap.get(key).divide(steps, scale, BigDecimal.ROUND_HALF_UP).intValue()
+         BigDecimal rang = maxRangMap.get(key).subtract(minRangMap.get(key))
+        Integer step = rang.divide(steps, scale, BigDecimal.ROUND_HALF_UP).intValue()
         stepMap.put(key,step)
 
         return chart.setXAxis(new XAxis().addLabels(chartData.labels))

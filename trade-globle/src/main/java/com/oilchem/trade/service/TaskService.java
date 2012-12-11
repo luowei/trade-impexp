@@ -35,4 +35,9 @@ public interface TaskService {
      */
     public void importData(final Long logId);
 
+    /**
+     * 生成明细统计数据
+     */
+    public void genAllDetailCount();
+
 }

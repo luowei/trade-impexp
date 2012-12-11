@@ -61,7 +61,7 @@ public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implem
         BigDecimal amountMoney = getBigDecimal(access_acountmoney.getValue(),rs);
         tradeDetail.setAmountMoney(amountMoney);
         //平均价格
-        if(!amount.equals(0)){
+        if(amount.intValue()==0){
             tradeDetail.setUnitPrice(BigDecimal.valueOf(0));
         } else {
             tradeDetail.setUnitPrice(amountMoney.divide(amount,2, BigDecimal.ROUND_HALF_UP));
@@ -78,8 +78,10 @@ public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implem
 
     private String getString(String columnName, ResultSet rs) {
         try {
-            return rs.getString(columnName).trim();
+            String val = rs.getString(columnName);
+            return val==null?"":val.trim();
         } catch (Exception e) {
+            log.error(e.getMessage(),e);
             throw new RuntimeException("Can't found " + access_product_code.getValue()
                     + " column in the importing access file", e);
         }
@@ -87,7 +89,8 @@ public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implem
 
     private BigDecimal getBigDecimal(String columnName, ResultSet rs) {
         try {
-            return rs.getBigDecimal(columnName);
+            BigDecimal val = rs.getBigDecimal(columnName);
+            return val==null?BigDecimal.valueOf(0):val;
         } catch (Exception e) {
             throw new RuntimeException("Can't found " + access_product_code.getValue()
                     + " column in the importing access file", e);

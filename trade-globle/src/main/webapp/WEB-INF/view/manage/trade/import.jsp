@@ -21,16 +21,16 @@
 
     <script type="text/javascript">
         function changeProductTypeInput() {
-            var selectVal = $("select[name=sumType]").val().trim();
-            $("input[name=sumType]").val(selectVal);
+            var selectVal = $("select[name=productType]").val().trim();
+            $("input[name=productType]").val(selectVal);
         }
 
         function checkValue() {
-            var inputVal = $("input[name=sumType]").val().trim();
-            var selectVal = $("select[name=sumType]").val().trim();
+            var inputVal = $("input[name=productType]").val().trim();
+            var selectVal = $("select[name=productType]").val().trim();
             if (inputVal != selectVal) {
                 if (selectVal != "") {
-                    $("input[name=sumType]").val(selectVal);
+                    $("input[name=productType]").val(selectVal);
                 }
             }
         }
@@ -145,8 +145,8 @@
         <br/>
 
         <label class="label"> 产品类型:
-            <input type="text" name="sumType" class="input-small" onblur="checkValue()">
-            <select name="sumType" class="input-mini" onchange="changeProductTypeInput()">
+            <input type="text" name="productType" class="input-small" onblur="checkValue()">
+            <select name="productType" class="input-mini" onchange="changeProductTypeInput()">
                 <option value="" selected="selected">--</option>
                 <c:forEach var="sumType" items="${sumTypeList}">
                     <option value="${sumType.sumType}">

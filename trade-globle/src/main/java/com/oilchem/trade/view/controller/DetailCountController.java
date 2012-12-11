@@ -7,6 +7,7 @@ import com.oilchem.trade.domain.ImpDetailCount;
 import com.oilchem.trade.domain.abstrac.DetailCount;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.DetailCountService;
+import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.util.QueryUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ public class DetailCountController extends CommonController{
     CommonService commonService;
     @Autowired
     DetailCountService detailCountService;
+    @Autowired
+    TaskService taskService;
 
 
     @RequestMapping("/list/detailCount/{pageNumber}")
@@ -88,8 +91,8 @@ public class DetailCountController extends CommonController{
     public String genAllDetailCount(RedirectAttributes redirectAttrs){
 
         try {
-            detailCountService.genAllDetailCount();
-            addRedirectMessage(redirectAttrs,"生成统计数据**成功**");
+            taskService.genAllDetailCount();
+            addRedirectMessage(redirectAttrs,"生成统计数据任务**正在后台执行**");
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
             addRedirectError(redirectAttrs,"生成统计数据**失败**");
