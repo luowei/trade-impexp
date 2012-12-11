@@ -18,8 +18,27 @@ import java.io.Serializable;
 @Table(name = "t_detail_type")
 public class DetailType extends IdEntity implements Serializable {
 
+    @Column(name = "code")
+    private Integer type_code;
+
     @Column(name = "detail_type")
     private String detailType;
+
+    public DetailType() {
+    }
+
+    public DetailType(Integer type_code, String detailType) {
+        this.type_code = type_code;
+        this.detailType = detailType;
+    }
+
+    public Integer getType_code() {
+        return type_code;
+    }
+
+    public void setType_code(Integer type_code) {
+        this.type_code = type_code;
+    }
 
     public String getDetailType() {
         return detailType;

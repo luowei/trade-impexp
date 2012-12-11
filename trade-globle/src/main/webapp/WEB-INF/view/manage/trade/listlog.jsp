@@ -32,12 +32,11 @@
     </script>
 
 </head>
-<body onload="init()" style="padding-top: 60px">
+<body onload="init()" >
 
 
-<jsp:include page="../../common/breadcrumb.jsp"/>
+<%--<jsp:include page="../../common/breadcrumb.jsp"/>--%>
 
-<div class="container">
     <h2>日志列表</h2>
 
     <div class="pagination-centered">
@@ -163,7 +162,7 @@
         <a href="#" class="btn" data-dismiss="modal">取消</a>
         <a href="#" class="btn btn-primary">重新解压</a>
     </div>
-</div>
+
 
 </body>
 </html>

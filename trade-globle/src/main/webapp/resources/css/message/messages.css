@@ -1,0 +1,44 @@
+/* message styles */
+div.info, div.success, div.warning, div.error {
+    border: 1px solid;
+    margin: 0;
+    padding: 10px;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+}
+
+div.info {
+    color: #00529B;
+    background-color: #BDE5F8;
+    background-image: url('info.png');
+}
+
+div.success {
+    color: #5DBB5D;
+    /*background-color: #5DBB5D;*/
+    background-image: url('success.png');
+}
+
+div.warning {
+    color: #9F6000;
+    background-color: #FEEFB3;
+    background-image: url('warning.png');
+}
+
+div.error {
+    color: #D8000C;
+    background-color: #FFBABA;
+    background-image: url('error.png');
+}
+
+span {
+    margin: 5px 5px 5px 5px;
+}
+
+span.success {
+    color: #4F8A10;
+}
+
+span.error {
+    color: #D8000C;
+}

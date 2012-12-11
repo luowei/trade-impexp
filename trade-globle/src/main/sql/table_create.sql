@@ -49,7 +49,7 @@ create table t_country(
 --明细表产品类型
 create table t_detail_type(
     id bigint primary key identity(1,1) not null,
-    code nvarchar(20) unique,
+    code int unique,
 	detail_type nvarchar(200) unique,
 )
 go
@@ -73,6 +73,7 @@ create table t_import_detail(
 	unit_price numeric(20,2), --单价
 	year_month nvarchar(20), --年月
     product_type nvarchar(200), --产品类型
+    type_code int,
 	constraint [PK__t_import_detail__id] primary key nonclustered (id)
 )
 go
@@ -93,26 +94,26 @@ create table t_import_detail_count(
 )
 go
 
---进口明细表统计视图
-create view v_import_detail_count
-as
-select
-product_code as id ,
-year_month ,
-product_code ,
-product_name ,
-sum(amount) as num,
-unit ,
-sum(amount_money) as money,
-case sum(amount)
-	when 0 then 0
-	else sum(amount_money)/sum(amount)
-end as avg_price
-from
-t_import_detail
-group by
-year_month,product_code,product_name,unit
-go
+-- --进口明细表统计视图
+-- create view v_import_detail_count
+-- as
+-- select
+-- product_code as id ,
+-- year_month ,
+-- product_code ,
+-- product_name ,
+-- sum(amount) as num,
+-- unit ,
+-- sum(amount_money) as money,
+-- case sum(amount)
+-- 	when 0 then 0
+-- 	else sum(amount_money)/sum(amount)
+-- end as avg_price
+-- from
+-- t_import_detail
+-- group by
+-- year_month,product_code,product_name,unit
+-- go
 
 --出口明细表
 create table t_export_detail(
@@ -133,6 +134,7 @@ create table t_export_detail(
 	unit_price numeric(20,2), --单价
     year_month nvarchar(20), --年月
     product_type nvarchar(200), --产品类型
+    type_code int,
 	constraint [PK__t_export_detail__id] primary key nonclustered (id)
 )
 go
@@ -153,26 +155,26 @@ create table t_export_detail_count(
 )
 go
 
---出口明细表统计视图
-create view v_export_detail_count
-as
-select
-product_code as id ,
-year_month ,
-product_code ,
-product_name ,
-sum(amount) as num,
-unit ,
-sum(amount_money) as money,
-case sum(amount)
-	when 0 then 0
-	else sum(amount_money)/sum(amount)
-end as avg_price
-from
-t_export_detail
-group by
-year_month,product_code,product_name,unit
-go
+-- --出口明细表统计视图
+-- create view v_export_detail_count
+-- as
+-- select
+-- product_code as id ,
+-- year_month ,
+-- product_code ,
+-- product_name ,
+-- sum(amount) as num,
+-- unit ,
+-- sum(amount_money) as money,
+-- case sum(amount)
+-- 	when 0 then 0
+-- 	else sum(amount_money)/sum(amount)
+-- end as avg_price
+-- from
+-- t_export_detail
+-- group by
+-- year_month,product_code,product_name,unit
+-- go
 
 --产品类型表
 create table t_sum_type(

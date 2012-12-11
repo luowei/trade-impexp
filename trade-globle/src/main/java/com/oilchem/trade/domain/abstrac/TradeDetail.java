@@ -32,6 +32,12 @@ public class TradeDetail
     //产品名称
     @Column(name = "product_name")
     private String productName;
+    //产品名称
+    @Column(name = "product_type")
+    private String productType;
+    //产品类型码
+    @Column(name = "type_code")
+    private Integer typeCode;
     //企业性质
     @Column(name = "company_type")
     private String companyType;
@@ -63,18 +69,6 @@ public class TradeDetail
     @Column(name = "unit_price")
     private BigDecimal unitPrice;
 
-    @Column(name = "company_type_id")
-    private Integer companyTypeId;
-    @Column(name = "trade_type_id")
-    private Integer tradeTypeId;
-    @Column(name = "transportation_id")
-    private Integer transportaionId;
-    @Column(name = "customs_id")
-    private Integer customsId;
-    @Column(name = "city_id")
-    private Integer cityId;
-    @Column(name = "country_id")
-    private Integer countryId;
 
     public TradeDetail() {
     }
@@ -138,6 +132,22 @@ public class TradeDetail
     public TradeDetail setProductName(String productName) {
         this.productName = productName;
         return this;
+    }
+
+    public String getProductType() {
+        return productType;
+    }
+
+    public void setProductType(String productType) {
+        this.productType = productType;
+    }
+
+    public Integer getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(Integer typeCode) {
+        this.typeCode = typeCode;
     }
 
     public String getCompanyType() {
@@ -230,57 +240,5 @@ public class TradeDetail
         return this;
     }
 
-    public Integer getCompanyTypeId() {
-        return companyTypeId;
-    }
 
-    public TradeDetail setCompanyTypeId(Integer companyTypeId) {
-        this.companyTypeId = companyTypeId;
-        return this;
-    }
-
-    public Integer getTradeTypeId() {
-        return tradeTypeId;
-    }
-
-    public TradeDetail setTradeTypeId(Integer tradeTypeId) {
-        this.tradeTypeId = tradeTypeId;
-        return this;
-    }
-
-    public Integer getTransportaionId() {
-        return transportaionId;
-    }
-
-    public TradeDetail setTransportaionId(Integer transportaionId) {
-        this.transportaionId = transportaionId;
-        return this;
-    }
-
-    public Integer getCustomsId() {
-        return customsId;
-    }
-
-    public TradeDetail setCustomsId(Integer customsId) {
-        this.customsId = customsId;
-        return this;
-    }
-
-    public Integer getCityId() {
-        return cityId;
-    }
-
-    public TradeDetail setCityId(Integer cityId) {
-        this.cityId = cityId;
-        return this;
-    }
-
-    public Integer getCountryId() {
-        return countryId;
-    }
-
-    public TradeDetail setCountryId(Integer countryId) {
-        this.countryId = countryId;
-        return this;
-    }
 }

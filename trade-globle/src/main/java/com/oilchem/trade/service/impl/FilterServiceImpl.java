@@ -29,74 +29,17 @@ public class FilterServiceImpl  implements FilterService {
 
     Logger logger = LoggerFactory.getLogger(FilterServiceImpl.class);
 
-    //    @Resource
-//    CityDao cityDao;
-//    @Resource
-//    CompanyTypeDao companyTypeDao;
-//    @Resource
-//    CountryDao countryDao;
-//    @Resource
-//    CustomsDao customsDao;
-//    @Resource
-//    TradeTypeDao tradeTypeDao;
-//    @Resource
-//    TransportationDao transportationDao;
-//    @Resource
-//    DetailTypeDao detailTypeDao;
-//
-//    @Resource
-//    SumTypeDao sumTypeDao;
-//
-//
-//    public String list(Model model) {
-//
-//        return null;
-//    }
+    @Resource
+    DetailTypeDao detailTypeDao;
 
-
-
-
-//    if ("city".equals(type)) {
-//        City city = cityDao.findOne(id);
-//        city.setCity(name);
-//        updateEntity(CityDao.class, city);
-//    }
-//    if ("companyType".equals(type)) {
-//        CompanyType companyType = companyTypeDao.findOne(id);
-//        companyType.setCompanyType(name);
-//        updateEntity(CompanyTypeDao.class, companyType);
-//    }
-//    if ("country".equals(type)) {
-//        Country country = countryDao.findOne(id);
-//        country.setCountry(name);
-//        updateEntity(CountryDao.class, country);
-//    }
-//    if ("customs".equals(type)) {
-//        Customs customs = customsDao.findOne(id);
-//        customs.setCustoms(name);
-//        updateEntity(CustomsDao.class, customs);
-//    }
-//    if ("tradeType".equals(type)) {
-//        TradeType tradeType = tradeTypeDao.findOne(id);
-//        tradeType.setTradeType(name);
-//        updateEntity(TradeTypeDao.class, tradeType);
-//    }
-//    if ("transportation".equals(type)) {
-//        Transportation transportation = transportationDao.findOne(id);
-//        transportation.setTransportation(name);
-//        updateEntity(TransportationDao.class, transportation);
-//    }
-//    if ("detailType".equals(type)) {
-//        DetailType detailType = detailTypeDao.findOne(id);
-//        detailType.setDetailType(name);
-//        updateEntity(DetailTypeDao.class, detailType);
-//    }
-//    if ("sumType".equals(type)) {
-//        SumType sumType = sumTypeDao.findOne(id);
-//        sumType.setSumType(name);
-//        updateEntity(SumTypeDao.class, sumType);
-//    }
-//
-//    return null;
+    /**
+    * 添加detailType
+    * @param code
+    * @param name
+    */
+    public void addDetailType(Integer code, String name) {
+        DetailType detailType = new DetailType(code,name);
+        detailTypeDao.save(detailType);
+    }
 
 }

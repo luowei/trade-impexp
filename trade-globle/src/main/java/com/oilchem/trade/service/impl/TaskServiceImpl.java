@@ -72,6 +72,8 @@ public class TaskServiceImpl implements TaskService {
                 Map<Long, Log> unImportMap = commonService.getUnImportFile(detail.getValue());
                 for (Map.Entry<Long, Log> entry : unImportMap.entrySet()) {
                     tradeDetailService.importAccess(entry, yearMonthDto);
+                    //更新明细产品类型
+                    tradeDetailService.updateDetailType(entry,yearMonthDto);
                 }
             }
         };
@@ -153,6 +155,8 @@ public class TaskServiceImpl implements TaskService {
                     yearMonthDto = new YearMonthDto(log.getYear(), log.getMonth(), impExpType,
                             log.getProductType(), tableType);
                     tradeDetailService.importAccess(entry, yearMonthDto);
+                    //更新明细产品类型
+                    tradeDetailService.updateDetailType(entry,yearMonthDto);
                 }
 
                 if (sum.equals(log.getTableType())

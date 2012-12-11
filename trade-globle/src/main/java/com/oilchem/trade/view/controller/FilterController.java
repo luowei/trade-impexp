@@ -38,7 +38,7 @@ public class FilterController extends CommonController {
 
     @RequestMapping("/list/allfilter")
     public String listAll(Model model) {
-        String[] types = {"city", "country", "companyType", "customs", "tradeType", "transportation", "sumType"};
+        String[] types = {"city", "country", "companyType", "customs", "tradeType", "transportation", "sumType","detailType"};
         for (String type : types) {
             findAllEntity(model, type);
         }
@@ -57,19 +57,15 @@ public class FilterController extends CommonController {
                       @PathVariable String type,
                       RedirectAttributes redirectAttrs){
 
-        StringBuffer message = new StringBuffer();
-
         try{
             commonService.add(type,name);
-            message.append("添加" + name + "成功");
+            addRedirectMessage(redirectAttrs,"添加" + name + "成功");
 
         }   catch (Exception e){
-            message.append("添加" + name + "失败");
+            addRedirectError(redirectAttrs,"添加" + name + "失败");
             logger.error(e.getMessage(),e);
             throw new RuntimeException(e);
         }
-
-        redirectAttrs.addFlashAttribute("message", message.toString());
         return "redirect:/manage/list/" + type;
     }
 
@@ -86,19 +82,17 @@ public class FilterController extends CommonController {
                          @PathVariable String type,
                          @PathVariable Long id,
                          RedirectAttributes redirectAttrs) {
-        StringBuffer message = new StringBuffer();
 
         try {
             commonService.update(type,id, name);
-            message.append("更新为" + name + "成功");
+            addRedirectMessage(redirectAttrs,"更新为" + name + "成功");
 
         } catch (Exception e) {
-            message.append("更新为" + name + "失败");
+            addRedirectError(redirectAttrs,"更新为" + name + "失败");
             logger.error(e.getMessage(),e);
             throw new RuntimeException(e);
         }
 
-        redirectAttrs.addFlashAttribute("message", message.toString());
         return "redirect:/manage/list/" + type;
     }
 
@@ -115,20 +109,48 @@ public class FilterController extends CommonController {
                       @PathVariable String name,
                       RedirectAttributes redirectAttrs) {
 
-        StringBuffer message = new StringBuffer();
-
         try {
             commonService.delete(type, id);
-
-            message.append("删除"+name+"成功");
+            addRedirectMessage(redirectAttrs,"删除"+name+"成功");
         } catch (Exception e) {
-            message.append("删除"+name+"失败");
+            addRedirectError(redirectAttrs,"删除"+name+"失败");
+            logger.error(e.getMessage(),e);
+            throw new RuntimeException(e);
+        }
+
+        return "redirect:/manage/list/" + type;
+    }
+
+    /**
+     * 添加明细类型记录
+     * @param name
+     * @param code
+     * @param redirectAttrs
+     * @return
+     */
+    @RequestMapping("/addDetailType/{code}/{name}")
+    public String addDetailType(@PathVariable Integer code,
+                      @PathVariable String name,
+                      RedirectAttributes redirectAttrs){
+
+        StringBuffer message = new StringBuffer();
+
+        try{
+            filterService.addDetailType(code,name);
+            addRedirectMessage(redirectAttrs,"删除"+name+"成功");
+
+        }   catch (Exception e){
+            addRedirectError(redirectAttrs,"删除"+name+"失败");
             logger.error(e.getMessage(),e);
             throw new RuntimeException(e);
         }
 
         redirectAttrs.addFlashAttribute("message", message.toString());
-        return "redirect:/manage/list/" + type;
+        return "redirect:/manage/list/detailType";
     }
+
+
+
+
 
 }

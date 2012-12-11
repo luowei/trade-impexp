@@ -69,15 +69,15 @@ public class DetailCountController extends CommonController{
 
         Boolean validate = isNotBlank(countYear) && isNotBlank(countMonth) && countImpExp!=null;
         if (!validate) {
-            redirectAttrs.addFlashAttribute("message", "请选择正确的年月");
+            addRedirectError(redirectAttrs,"请选择正确的年月");
             return "redirect:/manage/list/detailCount/1";
         }
         try {
             detailCountService.genDetailCount(countYear,countMonth,countImpExp);
-            redirectAttrs.addFlashAttribute("message", "生成"+countYear+"年"+countMonth+"月的统计数据**成功**");
+            addRedirectMessage(redirectAttrs, "生成"+countYear+"年"+countMonth+"月的统计数据**成功**");
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
-            redirectAttrs.addFlashAttribute("message", "生成"+countYear+"年"+countMonth+"月的统计数据**失败**");
+            addRedirectError(redirectAttrs,"生成"+countYear+"年"+countMonth+"月的统计数据**失败**");
         }
 
         return "redirect:/manage/list/detailCount/1";
@@ -89,10 +89,10 @@ public class DetailCountController extends CommonController{
 
         try {
             detailCountService.genAllDetailCount();
-            redirectAttrs.addFlashAttribute("message", "生成统计数据**成功**");
+            addRedirectMessage(redirectAttrs,"生成统计数据**成功**");
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
-            redirectAttrs.addFlashAttribute("message", "生成统计数据**失败**");
+            addRedirectError(redirectAttrs,"生成统计数据**失败**");
         }
 
         return "redirect:/manage/list/detailCount/1";

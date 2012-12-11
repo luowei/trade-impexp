@@ -35,11 +35,11 @@
     </script>
 
 </head>
-<body style="padding-top: 60px">
+<body >
 
-<jsp:include page="../../common/breadcrumb.jsp"/>
+<%--<jsp:include page="../../common/breadcrumb.jsp"/>--%>
 
-<div class="container">
+
 <h2>进出口明细</h2>
 <form:form id="form1" modelAttribute="tradeDetail"
            action="${pageContext.request.contextPath}${contextUrl}/1"
@@ -286,7 +286,6 @@
     <jsp:include page="../../common/pagination.jsp"/>
 </div>
 
-</div>
 
 
 </body>

@@ -103,7 +103,7 @@ public class AbstractTradeSumRowMapper<E extends TradeSum> implements MyRowMappe
 
 
     private String getContents(String name) {
-        return sheet.getCell(sheet.findCell(name).getColumn(), rowIdx).getContents();
+        return sheet.getCell(sheet.findCell(name).getColumn(), rowIdx).getContents().trim();
     }
 
     //特殊字符串处理

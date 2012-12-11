@@ -21,11 +21,10 @@
           href="<c:url value='/resources/bootstrap/css/bootstrap-responsive.min.css' />"/>
 
 </head>
-<body style="padding-top: 60px">
+<body >
 
-<jsp:include page="../../common/breadcrumb.jsp"/>
+<%--<jsp:include page="../../common/breadcrumb.jsp"/>--%>
 
-<div class="container">
 
 <c:if test="${type eq null or type eq 'companyType'}">
 
@@ -222,7 +221,24 @@
 
 
 <c:if test="${type eq null or type eq 'detailType'}">
-    <h3>明细表产品类型列表</h3>
+
+    <div class="row">
+        <div class="span2"><h3>明细表产品类型列表</h3></div>
+
+        <div class="span2">
+            <label class="label" style="display: inline-block;width: 300px;height: 30px;padding-top: 3px">
+                类型码:<input id="typeCode" class="input-small" style="width: 30px;display: inline-block;"/>
+                名称：<input id="detailType" class="input-small"  style="width: 100px;display: inline-block;"/>
+                    <%--</div>--%>
+                    <%--<div class="span2">--%>
+                <a id="addTransportation"
+                   href="javascript:if(document.getElementById('detailType').value.trim()==''
+                   ||document.getElementById('typeCode').value.trim()=='' ){alert('值不能为空');return void(0);}
+                   if(confirm('您确定要添加此项吗?'))location.href='${pageContext.request.contextPath}/manage/addDetailType/'
+                   +document.getElementById('typeCode').value+'/'+document.getElementById('detailType').value"
+                   class="btn btn-small btn-success" style="display: inline;">添加</a>  </label>
+        </div>
+    </div>
 
     <table class="table table-bordered table-striped table-condensed">
         <tbody>
@@ -230,6 +246,7 @@
 
             <c:forEach items="${detailTypeList}" var="detailType" varStatus="vs">
             <td>
+                <input id="typeCode_${vs.index}" style="width: 30px" readonly="readonly" value="${detailType.type_code}"/>
                 <input id="detailType_${vs.index}" style="width: 100px" value="${detailType.detailType}"/>
                 <a id="editDetailType"
                    href="javascript:if(confirm('您确定要修改此项吗?'))
@@ -276,7 +293,7 @@
         <tbody>
         <tr>
 
-            <c:forEach items="${sumTypeyList}" var="sumType" varStatus="vs">
+            <c:forEach items="${sumTypeList}" var="sumType" varStatus="vs">
             <td>
                 <input id="sumType_${vs.index}" style="width: 100px" value="${sumType.sumType}"/>
                 <a id="editSumType"
@@ -396,7 +413,6 @@
     </table>
 </c:if>
 
-</div>
 
 </body>
 </html>

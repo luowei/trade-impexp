@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 import static com.oilchem.trade.bean.DocBean.Config.axis_steps;
@@ -269,6 +270,8 @@ public class ChartServiceImpl implements ChartService {
                     labelMap.put(label.getText(), new DetailCount(BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
                 }
 
+                int scale = Integer.parseInt(scale_size.value());
+
                 if (impExpType.equals(import_type.ordinal())) {
                     List<ImpDetailCount> impDetailCounts = impDetailCountDao.findByProductCodeAndYearMonth(code, label.getText());
 
@@ -283,6 +286,12 @@ public class ChartServiceImpl implements ChartService {
                     if (!expDetailCounts.isEmpty()) {
                         detailCount = expDetailCounts.iterator().next();
                     }
+                }
+
+                if(detailCount!=null){
+                    detailCount.setMoney(detailCount.getMoney().divide(BigDecimal.valueOf(1000),scale+1,  ROUND_HALF_UP));
+                    detailCount.setNum(detailCount.getNum().setScale(scale,ROUND_HALF_UP));
+                    detailCount.setUnitPrice(detailCount.getUnitPrice().setScale(scale,ROUND_HALF_UP));
                 }
 
                 labelMap.put(labelText, detailCount);

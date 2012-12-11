@@ -1,5 +1,6 @@
 package com.oilchem.trade.service.impl;
 
+import com.oilchem.trade.bean.DocBean;
 import com.oilchem.trade.dao.*;
 import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
 import com.oilchem.trade.dao.map.ExpTradeDetailRowMapper;
@@ -56,6 +57,8 @@ public class TradeDetailServiceImpl implements TradeDetailService {
     ImpTradeDetailDao impTradeDetailDao;
     @Resource
     LogDao logDao;
+    @Resource
+    DetailTypeDao detailTypeDao;
 
     /**
      * 上传文件包
@@ -232,12 +235,14 @@ public class TradeDetailServiceImpl implements TradeDetailService {
 
     /**
      * 获得出口数据列表
+     *
      * @param ids
      * @return
      */
     public List<ExpTradeDetail> getExpDetailList(List<Long> ids) {
         return ids != null ? (List<ExpTradeDetail>) expTradeDetailDao.findAll(ids) : null;
     }
+
 
     /**
      * 获得进口数据列表
@@ -286,6 +291,27 @@ public class TradeDetailServiceImpl implements TradeDetailService {
         }
         return propList;
     }
+
+
+    /**
+     * 更新detail表中的产品类型
+     *
+     * @param entry
+     * @param yearMonthDto
+     */
+    public void updateDetailType(Map.Entry<Long, Log> entry, YearMonthDto yearMonthDto) {
+
+        if (yearMonthDto.getImpExpType().equals(import_type.ordinal())) {
+            detailTypeDao.updateImpDetailTypeWithYearMonth(yearMonthDto.getYear()
+                    + DocBean.Config.yearmonth_split.value() + yearMonthDto.getMonth());
+        }
+        if (yearMonthDto.getImpExpType().equals(export_type.ordinal())) {
+            detailTypeDao.updateExpDetailTypeWithYearMonth(yearMonthDto.getYear()
+                    + DocBean.Config.yearmonth_split.value() + yearMonthDto.getMonth());
+        }
+    }
+
+
 
 
 }

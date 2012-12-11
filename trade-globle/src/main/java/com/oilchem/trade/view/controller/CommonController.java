@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.context.ContextLoader;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -43,6 +44,25 @@ public class CommonController {
 //        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 //        binder.registerCustomEditor(Date.class, new CustomDateEditor(sdf,true));
 //    }
+
+    /**
+     * 重定向时添加消息
+     * @param redirectAttrs
+     * @param messageText
+     */
+    public void addRedirectMessage(RedirectAttributes redirectAttrs, String messageText) {
+        redirectAttrs.addFlashAttribute("message", messageText);
+    }
+
+
+    /**
+     * 重定向时添加错误消息
+     * @param redirectAttrs
+     * @param messageText
+     */
+    public void addRedirectError(RedirectAttributes redirectAttrs, String messageText) {
+        redirectAttrs.addFlashAttribute("error", messageText);
+    }
 
     /**
      * 获得page请求参数

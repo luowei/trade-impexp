@@ -109,22 +109,19 @@ public class TradeSumController extends CommonController {
                 && yearMonthDto.validYearMonth(yearMonthDto)
                 && yearMonthDto.getProductType()!= null;
         if (!validate){
-            redirectAttrs.addFlashAttribute("message","输入的年月、或文件、或产品类型格式错误！");
+            addRedirectError(redirectAttrs,"输入的年月、或文件、或产品类型格式错误！");
             return "redirect:/manage/import";
         }
-
-        StringBuffer message = new StringBuffer();
 
         //上传
         try {
             String uploadUrl = tradeSumService.uploadFile(file, yearMonthDto);
+            addRedirectMessage(redirectAttrs,"文件已上传到：<em>" + upload_sumzip_dir.value() +
+                    uploadUrl.substring(uploadUrl.lastIndexOf("/"))+"</em>");
 
-            message.append("文件已上传到：<em>" + upload_sumzip_dir.value() +
-                    uploadUrl.substring(uploadUrl.lastIndexOf("/")));
-            message.append("</em>");
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            message.append("<br/>文件上传发生了错误");
+            addRedirectError(redirectAttrs,"<br/>文件上传发生了错误");
         }
 
         //导入
@@ -136,10 +133,9 @@ public class TradeSumController extends CommonController {
             taskService.unSumPackageAndImportTask(yearMonthDto);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            message.append("<br/>文件解压或导入发生了错误");
+            addRedirectError(redirectAttrs,"<br/>文件解压或导入发生了错误");
         }
 
-        redirectAttrs.addFlashAttribute("message",message.toString());
         return "redirect:/manage/import";
     }
 

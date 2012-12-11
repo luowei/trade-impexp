@@ -9,24 +9,28 @@
 <head>
     <title>数据导入</title>
 
-    <link rel="stylesheet" type="text/css" href="<c:url value='/resources/bootstrap/css/bootstrap.min.css' />"/>
-    <link rel="stylesheet" type="text/css"
-          href="<c:url value='/resources/bootstrap/css/bootstrap-responsive.min.css' />"/>
-    <script type="text/javascript" src="<c:url value="/resources/js/jquery/1.7.2/jquery.js" />"></script>
-    <script type="text/javascript" src="<c:url value="/resources/js/trade.js"/> "></script>
+    <%--<script type="text/javascript" src="<c:url value="/resources/js/jquery/1.7.2/jquery.js" />"></script>--%>
+    <%--<script type="text/javascript" src="<c:url value='/resources/bootstrap/js/bootstrap.js' />"></script>--%>
+    <%--<script type="text/javascript" src="<c:url value='/resources/bootstrap/js/bootstrap-dropdown.js' />"></script>--%>
+
+    <%--<script type="text/javascript" src="<c:url value="/resources/js/trade.js"/> "></script>--%>
+
+    <%--<link rel="stylesheet" type="text/css" href="<c:url value='/resources/bootstrap/css/bootstrap.min.css' />"/>--%>
+    <%--<link rel="stylesheet" type="text/css"  href="<c:url value='/resources/bootstrap/css/bootstrap-responsive.min.css' />"/>--%>
+
 
     <script type="text/javascript">
         function changeProductTypeInput() {
-            var selectVal = $("select[name=productType]").val().trim();
-            $("input[name=productType]").val(selectVal);
+            var selectVal = $("select[name=sumType]").val().trim();
+            $("input[name=sumType]").val(selectVal);
         }
 
         function checkValue() {
-            var inputVal = $("input[name=productType]").val().trim();
-            var selectVal = $("select[name=productType]").val().trim();
+            var inputVal = $("input[name=sumType]").val().trim();
+            var selectVal = $("select[name=sumType]").val().trim();
             if (inputVal != selectVal) {
                 if (selectVal != "") {
-                    $("input[name=productType]").val(selectVal);
+                    $("input[name=sumType]").val(selectVal);
                 }
             }
         }
@@ -36,77 +40,70 @@
 </head>
 <body style="padding-top: 60px">
 
-<jsp:include page="../../common/breadcrumb.jsp" />
+<%--<jsp:include page="../../common/breadcrumb.jsp" />--%>
 
 
-<div class="container">
-    <h3>明细表导入</h3>
-    <c:url var="importDetail" value="/manage/importdetail"/>
-    <form id="importDetail" class="well form-inline"
-          enctype="multipart/form-data" action="${importDetail}" method="post">
+<h3>明细表导入</h3>
+<c:url var="importDetail" value="/manage/importdetail"/>
+<form id="importDetail" class="well form-inline"
+      enctype="multipart/form-data" action="${importDetail}" method="post">
 
-        <h5>上传文件：</h5>
+    <h5>上传文件：</h5>
 
-        <input type="hidden" name="tableType" value="明细表">
+    <input type="hidden" name="tableType" value="明细表">
 
-        <label class="label"> 年月:
-            <select name="year" class="input-mini">
-                <option value="">--</option>
-                <c:forEach var="year" begin="2000" end="2050" step="1">
-                    <option value="${year}">${year}</option>
-                </c:forEach>
-            </select>年
-            <select name="month" class="input-mini">
-                <option value="">--</option>
-                <c:forEach var="month" begin="1" end="12" step="1">
-                    <option value="${month}">${month}</option>
-                </c:forEach>
-            </select>月
-        </label>
+    <label class="label"> 年月:
+        <select name="year" class="input-mini">
+            <option value="">--</option>
+            <c:forEach var="year" begin="2000" end="2050" step="1">
+                <option value="${year}">${year}</option>
+            </c:forEach>
+        </select>年
+        <select name="month" class="input-mini">
+            <option value="">--</option>
+            <c:forEach var="month" begin="1" end="12" step="1">
+                <option value="${month}">${month}</option>
+            </c:forEach>
+        </select>月
+    </label>
 
-        <br/>
+    <br/>
 
-        <label class="label">zip或rar的Access数据包文件包:</label>
-        <input name="file" type="file">
+    <label class="label">zip或rar的Access数据包文件包:</label>
+    <input name="file" type="file">
 
 
-        <br/>
+    <br/>
 
-        <label class="label"> 进出口类型:
-            <select name="impExpType" class="input-mini">
-                <option value="">--</option>
-                <option value="0">进口</option>
-                <option value="1">出口</option>
-            </select>
-        </label>
+    <label class="label"> 进出口类型:
+        <select name="impExpType" class="input-mini">
+            <option value="">--</option>
+            <option value="0">进口</option>
+            <option value="1">出口</option>
+        </select>
+    </label>
 
-        <%--<label class="label"> 导入方式:--%>
-        <%--<select name="importType" class="input-mini">--%>
-        <%--<option value="0" selected="selected">自动</option>--%>
-        <%--<option value="1">手动</option>--%>
-        <%--</select>--%>
-        <%--</label>--%>
 
-        <br/> <br/>
+    <br/> <br/>
 
-        <div class="row">
-            <div class="span1">
-                <input type="submit" class="btn-success" value="提交">
-            </div>
-
-            <div class="span1">
-                <a class="span1 btn btn-small btn-primary"
-                   href="${pageContext.request.contextPath}/manage/listlog/0/1">查看日志</a>
-            </div>
-
-            <div class="span1 offset1">
-                <a class="span1 btn btn-small btn-primary"
-                   href="${pageContext.request.contextPath}/manage/listdetail/1">查看明细表</a>
-            </div>
-
+    <div class="row">
+        <div class="span1">
+            <input type="submit" class="btn-success" value="提交">
         </div>
 
-    </form>
+        <div class="span1">
+            <a class="span1 btn btn-small btn-primary"
+               href="${pageContext.request.contextPath}/manage/listlog/0/1">查看日志</a>
+        </div>
+
+        <div class="span1 offset1">
+            <a class="span1 btn btn-small btn-primary"
+               href="${pageContext.request.contextPath}/manage/listdetail/1">查看明细表</a>
+        </div>
+
+    </div>
+
+</form>
 
 </div>
 
@@ -192,7 +189,6 @@
         </div>
     </form>
 
-</div>
 
 </body>
 </html>

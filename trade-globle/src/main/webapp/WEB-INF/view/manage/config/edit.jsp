@@ -14,13 +14,14 @@
 </head>
 <body>
 
-<jsp:include page="../../common/breadcrumb.jsp" />
+<%--<jsp:include page="../../common/breadcrumb.jsp" />--%>
 
-<div class="container"  style="padding-top: 60px">
+
+
 <c:url var="action" value="/manage/updatecfg"/>
 <form:form modelAttribute="configBean" action="${action}" method="post" id="configForm" cssClass="form-horizontal">
     <fieldset>
-        <legend>编辑配置</legend>
+        <legend><h3>编辑配置</h3></legend>
 
         <div class="control-group">
             <label class="control-label">key</label>
@@ -59,7 +60,7 @@
         </div>
     </fieldset>
 </form:form>
-</div>
+
 
 </body>
 </html>

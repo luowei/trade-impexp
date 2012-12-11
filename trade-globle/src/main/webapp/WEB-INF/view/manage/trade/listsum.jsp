@@ -35,11 +35,10 @@
 
 </head>
 
-<body style="padding-top: 60px">
+<body >
 
-<jsp:include page="../../common/breadcrumb.jsp"/>
+<%--<jsp:include page="../../common/breadcrumb.jsp"/>--%>
 
-<div class="container">
     <h2>进出口总表</h2>
     <c:url var="action" value="${contextUrl}/1"/>
     <form:form id="form1" modelAttribute="tradeSum" action="${action}" method="post" cssClass="well form-inline">
@@ -61,12 +60,12 @@
             </select>月
         </label>
 
-
         <label class="label">结束年月:
+
             <select name="highYear" class="input-mini">
                 <option value="" selected="selected">--</option>
                 <c:forEach var="hyr" begin="2000" end="2050" step="1">
-                    <option value="${yr}" <c:if test="${highYear eq hyr}">selected="selected" </c:if>>
+                    <option value="${hyr}" <c:if test="${highYear eq hyr}">selected="selected" </c:if>>
                             ${hyr}</option>
                 </c:forEach>
             </select> 年&nbsp;
@@ -191,6 +190,6 @@
     <div class="pagination-centered">
         <jsp:include page="../../common/pagination.jsp"/>
     </div>
-</div>
+
 </body>
 </html>

@@ -102,9 +102,10 @@ public interface TradeDetailService {
      */
     public List<ExpTradeDetail> getExpDetailList(List<Long> ids);
 
-
-
-
-
-
+    /**
+     * 更新detail表中的产品类型段
+     * @param entry
+     * @param yearMonthDto
+     */
+    void updateDetailType(Map.Entry<Long, Log> entry, YearMonthDto yearMonthDto);
 }

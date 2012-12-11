@@ -8,4 +8,14 @@ package com.oilchem.trade.service;
  * To change this template use File | Settings | File Templates.
  */
 public interface FilterService {
+
+    /**
+     * 添加detailType
+     * @param code
+     * @param name
+     */
+    public void addDetailType(Integer code, String name);
+
+
+
 }

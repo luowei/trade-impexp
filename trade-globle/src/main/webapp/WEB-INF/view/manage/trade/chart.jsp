@@ -6,23 +6,38 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
+
 <head>
     <title>图表</title>
 
-    <link rel="stylesheet" type="text/css" href="<c:url value='/resources/bootstrap/css/bootstrap.min.css' />"/>
-    <link rel="stylesheet" type="text/css"
-          href="<c:url value='/resources/bootstrap/css/bootstrap-responsive.min.css' />"/>
-    <script type="text/javascript" src="<c:url value="/resources/js/jquery/1.7.2/jquery.js" />"></script>
+    <%--<link rel="stylesheet" type="text/css" href="<c:url value='/resources/bootstrap/css/bootstrap.min.css' />"/>--%>
+    <%--<link rel="stylesheet" type="text/css"  href="<c:url value='/resources/bootstrap/css/bootstrap-responsive.min.css' />"/>--%>
+    <%--<script type="text/javascript" src="<c:url value="/resources/js/jquery/1.7.2/jquery.js" />"></script>--%>
     <script type="text/javascript" src="<c:url value="/resources/openflashchart/json/json2.js" />"></script>
     <script type="text/javascript" src="<c:url value="/resources/openflashchart/swfobject.js" />"></script>
     <script type="text/javascript" src="<c:url value="/resources/openflashchart/prototype.js" />"></script>
 
+    <script type="text/javascript">
+        //        $(function () {
+        //            showChart('lineChart');
+        //        })
+
+//        jQuery(document).ready(function ($) {
+//            showChart('lineChart');
+//        });
+
+//        $(document).ready(function() {
+//            showChart('lineChart');
+//        });
+
+    </script>
+
 
 </head>
-<body onload="showChart('lineChart')"  style="padding-top: 60px">
 
-<jsp:include page="../../common/breadcrumb.jsp"/>
+<body onload="showChart('lineChart')">
+
+<%--<jsp:include page="../../common/breadcrumb.jsp"/>--%>
 
 <c:url var='chart' value='/manage/gdchart/'/>
 
@@ -32,8 +47,8 @@
 
     function showChart(chartType) {
         for (idx = 1; idx <=${idx}; idx = idx + 1) {
-            <%--var chart = "${chart}"+ $(obj).val()+"/" + idx;--%>
-            var chart = "${chart}"+ chartType+"/" + idx;
+        <%--var chart = "${chart}"+ $(obj).val()+"/" + idx;--%>
+            var chart = "${chart}" + chartType + "/" + idx;
             swfobject.embedSWF(
                     "<c:url value="/resources/openflashchart/open-flash-chart-2alpha8.swf"/>",
                     "chart_" + idx,
@@ -46,11 +61,14 @@
 </script>
 
 <div class="container well inline">
-    <label class="label "> 图表类型
-        <select id="chartType" name="chartType" onchange="showChart(this.value)">
+
+    <label class="label " style="display: inline-table;width: 300px;height: 20px;padding-top: 10px;">
+        图表类型: <select id="chartType" name="chartType" style="width: 100px;display: inline;">
             <option value="lineChart" selected="selected">折线图</option>
             <option value="barChart">柱状图</option>
-        </select>
+        </select> &nbsp;&nbsp;
+        <input type="button" class="btn btn-small " style="width: 100px;display: inline;"
+               onclick="showChart(document.getElementById('chartType').value)" value="显示图表"/>
     </label>
 </div>
 

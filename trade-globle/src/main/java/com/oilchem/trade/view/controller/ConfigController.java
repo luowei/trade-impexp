@@ -22,7 +22,7 @@ import static com.oilchem.trade.util.ConfigUtil.ConfigBean;
  */
 @Controller
 @RequestMapping("/manage")
-public class ConfigController {
+public class ConfigController extends CommonController {
 
     /**
      * 显示ConfigUtil map 中各种元素列表信息
@@ -65,12 +65,15 @@ public class ConfigController {
             map.put(configBean.getKey(),configBean);
         }
 
-        String message = "更新 :<em>"+configBean.getKey()+"</em> 为:<em>"+configBean.getValue()+"</em> 失败";
+
         if(ConfigUtil.setConfigMap(map)){
-            message = "更新 <em>"+configBean.getKey()+"</em> 为:<em>"+configBean.getValue()+"</em> 成功";
+            String message = "更新 <em>"+configBean.getKey()+"</em> 为:<em>"+configBean.getValue()+"</em> 成功";
+            addRedirectMessage(redirectAttrs,message);
+        }else {
+            String error = "更新 :<em>"+configBean.getKey()+"</em> 为:<em>"+configBean.getValue()+"</em> 失败";
+           addRedirectError(redirectAttrs,error);
         }
-        redirectAttrs.addFlashAttribute("configmaps",ConfigUtil.getConfigMap())
-            .addFlashAttribute("message",message);
+        redirectAttrs.addFlashAttribute("configmaps",ConfigUtil.getConfigMap());
         return "redirect:/manage/configlist";
     }
 }

@@ -26,7 +26,7 @@ class DetailCountChart  extends Common {
         Chart numChat = new Chart()
                 .setTitle(new Text("总数量")).setYLegend(new Text("总数量", style))
         Chart moneyChart = new Chart()
-                .setTitle(new Text("总金额")).setYLegend(new Text("总金额", style))
+                .setTitle(new Text("总金额(X1000)")).setYLegend(new Text("总金额(X1000)", style))
         Chart unitpriceChart = new Chart()
                 .setTitle(new Text("平均价")).setYLegend(new Text("平均价", style))
 

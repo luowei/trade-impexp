@@ -14,6 +14,7 @@ import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.service.ChartService;
 import com.oilchem.trade.util.EHCacheUtil;
+import ofc4j.OFC;
 import ofc4j.model.Chart;
 import ofc4j.model.axis.Label;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -232,7 +233,8 @@ public class ChartController extends CommonController {
 
                     String lineChartStr = gson.toJson(lineObj, Chart.class);
                     String barChartStr = gson.toJson(barObj, Chart.class);
-//                    String lineChartStr = OFC.instance.render((Chart) lineIt);
+//                    String lineChartStr = OFC.instance.render((Chart) lineObj);
+//                    String barChartStr = OFC.instance.render((Chart)barObj);
 
                     setValue("chart", "chartList_" + lineChart.name() + "_"
 //                            +session.getId()

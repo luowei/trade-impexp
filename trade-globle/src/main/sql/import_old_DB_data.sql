@@ -111,16 +111,14 @@ lzdb.dbo.t_detail_type.code,
 lzdb.dbo.t_detail_type.detail_type
 )
 SELECT DISTINCT
-ltrim(rtrim(pcdb.dbo.TariffType.pcode)),
+convert(int,ltrim(rtrim(pcdb.dbo.TariffType.pcode))),
 ltrim(rtrim(pcdb.dbo.TariffType.pCodeName))
 FROM
 pcdb.dbo.TariffType
 GO
 
 DELETE FROM lzdb.dbo.t_detail_type
-WHERE  lzdb.dbo.t_detail_type.code = ''
-OR   lzdb.dbo.t_detail_type.code = null
-OR   lzdb.dbo.t_detail_type.code = 'null'
+WHERE  lzdb.dbo.t_detail_type.code = null
 OR   lzdb.dbo.t_detail_type.detail_type = ''
 OR   lzdb.dbo.t_detail_type.detail_type = null
 OR   lzdb.dbo.t_detail_type.detail_type = 'null'
@@ -150,6 +148,7 @@ INSERT INTO
 lzdb.dbo.t_import_detail(
 lzdb.dbo.t_import_detail.product_name,
 lzdb.dbo.t_import_detail.product_code,
+lzdb.dbo.t_import_detail.type_code,
 lzdb.dbo.t_import_detail.customs,
 lzdb.dbo.t_import_detail.amount_money,
 lzdb.dbo.t_import_detail.amount,
@@ -169,6 +168,12 @@ lzdb.dbo.t_import_detail.transportation
 SELECT DISTINCT
 ltrim(rtrim(pcdb.dbo.Tariff1.ProductName)),
 ltrim(rtrim(pcdb.dbo.Tariff1.TariffNum)),
+case substring(ltrim(rtrim(pcdb.dbo.Tariff1.TariffNum)),1,1)
+when '0' then
+convert(int,substring(ltrim(rtrim(pcdb.dbo.Tariff1.TariffNum)),2,1))
+else
+convert(int,substring(ltrim(rtrim(pcdb.dbo.Tariff1.TariffNum)),1,2))
+end,
 ltrim(rtrim(pcdb.dbo.Tariff1.Pass)),
 pcdb.dbo.Tariff1.Money,
 pcdb.dbo.Tariff1.Amount,
@@ -203,6 +208,7 @@ INSERT INTO
 lzdb.dbo.t_export_detail(
 lzdb.dbo.t_export_detail.product_name,
 lzdb.dbo.t_export_detail.product_code,
+lzdb.dbo.t_export_detail.type_code,
 lzdb.dbo.t_export_detail.customs,
 lzdb.dbo.t_export_detail.amount_money,
 lzdb.dbo.t_export_detail.amount,
@@ -222,6 +228,12 @@ lzdb.dbo.t_export_detail.transportation
 SELECT DISTINCT
 ltrim(rtrim(pcdb.dbo.Tariff1.ProductName)),
 ltrim(rtrim(pcdb.dbo.Tariff1.TariffNum)),
+case substring(ltrim(rtrim(pcdb.dbo.Tariff1.TariffNum)),1,1)
+when '0' then
+convert(int,substring(ltrim(rtrim(pcdb.dbo.Tariff1.TariffNum)),2,1))
+else
+convert(int,substring(ltrim(rtrim(pcdb.dbo.Tariff1.TariffNum)),1,2))
+end,
 ltrim(rtrim(pcdb.dbo.Tariff1.Pass)),
 pcdb.dbo.Tariff1.Money,
 pcdb.dbo.Tariff1.Amount,

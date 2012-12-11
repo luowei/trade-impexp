@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<decorators defaultDir="/WEB-INF/layout">
+    <excludes>
+        <pattern>/resources/*</pattern>
+        <!--<pattern>/import.jsp</pattern>-->
+        <!--<pattern>/chart.jsp</pattern>-->
+        <!--<pattern>/login*</pattern>-->
+        <!--<pattern>/unauthorize*</pattern>-->
+    </excludes>
+
+    <decorator name="main" page="main.jsp">
+        <pattern>/*</pattern>
+
+    </decorator>
+</decorators>

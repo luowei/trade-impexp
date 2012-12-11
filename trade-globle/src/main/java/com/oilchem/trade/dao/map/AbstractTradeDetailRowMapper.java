@@ -36,6 +36,10 @@ public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implem
         tradeDetail.setProductCode(getString(access_product_code.getValue(), rs));
         //产品名称
         tradeDetail.setProductName(getString(access_product_name.getValue(),rs));
+        //产品类型码
+        String code = tradeDetail.getProductCode().substring(0,1).equals("0")?tradeDetail.getProductCode().substring(1,2)
+                :tradeDetail.getProductCode().substring(0,2);
+        tradeDetail.setTypeCode(Integer.parseInt(code));
         //企业性质
         tradeDetail.setCompanyType(getString(access_company_type.getValue(),rs));
         //贸易方式
@@ -74,7 +78,7 @@ public abstract class AbstractTradeDetailRowMapper<T extends TradeDetail> implem
 
     private String getString(String columnName, ResultSet rs) {
         try {
-            return rs.getString(columnName);
+            return rs.getString(columnName).trim();
         } catch (Exception e) {
             throw new RuntimeException("Can't found " + access_product_code.getValue()
                     + " column in the importing access file", e);

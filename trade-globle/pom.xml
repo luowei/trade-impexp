@@ -195,6 +195,13 @@
             <artifactId>gson</artifactId>
         </dependency>
 
+        <!-- sitemesh 2 -->
+        <dependency>
+            <groupId>opensymphony</groupId>
+            <artifactId>sitemesh</artifactId>
+            <version>${sitemesh.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.vvvv.app</groupId>
             <artifactId>ofc4j</artifactId>

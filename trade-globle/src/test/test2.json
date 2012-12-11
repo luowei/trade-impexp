@@ -1,0 +1,58 @@
+{"title":{
+    "text":"总数量"
+}, "x_axis":{
+    "labels":{
+        "labels":[
+            {
+                "text":"2006-02"
+            },
+            {
+                "text":"2006-03"
+            },
+            {
+                "text":"2006-04"
+            },
+            {
+                "text":"2006-05"
+            }
+        ]
+    }
+}, "y_axis":{
+    "steps":11888,
+    "min":0,
+    "max":237769
+}, "y_legend":{
+    "text":"总数量",
+    "style":"{color:#736AEF; font-size:12px;}"
+}, "x_legend":{
+    "text":"年月",
+    "style":"{color:#736AEF; font-size:12px;}"
+}, "elements":[
+    {
+        "width":2,
+        "dotSize":5,
+        "colour":"#7e72f5",
+        "type":"line",
+        "text":"29025000",
+        "fontSize":10,
+        "values":[0, 0, 198141.0, 154030.0]
+    },
+    {
+        "width":2,
+        "dotSize":5,
+        "colour":"#1d802e",
+        "type":"line",
+        "text":"29072300",
+        "fontSize":10,
+        "values":[0, 0, 28141.0, 0]
+    },
+    {
+        "width":2,
+        "dotSize":5,
+        "colour":"#b0a613",
+        "type":"line",
+        "text":"29071212",
+        "fontSize":10,
+        "values":[0, 0, 683.0, 0]
+    }
+]}

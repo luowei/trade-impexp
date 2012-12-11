@@ -6,6 +6,11 @@
  * To change this template use File | Settings | File Templates.
  */
 
+//消息div一定时间后隐藏
+$(function(){
+    $("div.messagePlace").fadeOut(5000);
+});
+
 /**
  * 全选功能
  * @param controlCheckboxId 控制全选checkbox的id
@@ -39,3 +44,18 @@ function checkAll(controlCheckboxId, name){
         }
     });
 }
+
+//function changeProductTypeInput() {
+//    var selectVal = $("select[name=productType]").val().trim();
+//    $("input[name=productType]").val(selectVal);
+//}
+//
+//function checkValue() {
+//    var inputVal = $("input[name=productType]").val().trim();
+//    var selectVal = $("select[name=productType]").val().trim();
+//    if (inputVal != selectVal) {
+//        if (selectVal != "") {
+//            $("input[name=productType]").val(selectVal);
+//        }
+//    }
+//}

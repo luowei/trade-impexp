@@ -26,11 +26,11 @@
 
     </script>
 </head>
-<body style="padding-top: 60px">
+<body >
 
-<jsp:include page="../../common/breadcrumb.jsp" />
+<%--<jsp:include page="../../common/breadcrumb.jsp" />--%>
 
-<div class="container">
+
     <h3>数据库表与Access表字段对应的配置</h3>
     <form:form modelAttribute="userCommand" method="post" id="form1">
         <table class="table table-bordered table-striped table-condensed">
@@ -137,7 +137,7 @@
             </tbody>
         </table>
     </form:form>
-</div>
+
 
 </body>
 </html>
