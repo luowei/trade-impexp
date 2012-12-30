@@ -3,6 +3,7 @@
 
 ##trade-globle
 [trade-globle](https://github.com/luowei/trade-impexp/tree/master/trade-globle)也是一个maven项目，是trade-impexp的一个子模块
+
 1. web框架使用的是spring mvc，采用rest风格；
 2. 持久框架主要使用spring data jpa 结合hibernate provide,部分程序直接使用了jdbc,结合spring jdbcTemplate使用；
 3. 连接池使用了BoneCP，因BoneCP相比C3P0更稳定；
