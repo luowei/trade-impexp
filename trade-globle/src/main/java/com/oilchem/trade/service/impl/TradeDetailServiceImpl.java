@@ -2,11 +2,16 @@ package com.oilchem.trade.service.impl;
 
 import com.oilchem.trade.bean.DocBean;
 import com.oilchem.trade.dao.*;
-import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
-import com.oilchem.trade.dao.map.ExpTradeDetailRowMapper;
-import com.oilchem.trade.dao.map.ImpTradeDetailRowMapper;
+import com.oilchem.trade.dao.condition.DetailTypeDao;
+import com.oilchem.trade.dao.condition.ProductDao;
+import com.oilchem.trade.dao.others.map.AbstractTradeDetailRowMapper;
+import com.oilchem.trade.dao.others.map.ExpTradeDetailRowMapper;
+import com.oilchem.trade.dao.others.map.ImpTradeDetailRowMapper;
 import com.oilchem.trade.domain.*;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
+import com.oilchem.trade.domain.condition.Product;
+import com.oilchem.trade.domain.detail.ExpTradeDetail;
+import com.oilchem.trade.domain.detail.ImpTradeDetail;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.bean.CommonDto;
@@ -59,6 +64,8 @@ public class TradeDetailServiceImpl implements TradeDetailService {
     LogDao logDao;
     @Resource
     DetailTypeDao detailTypeDao;
+    @Resource
+    ProductDao productDao;
 
     /**
      * 上传文件包
@@ -272,7 +279,11 @@ public class TradeDetailServiceImpl implements TradeDetailService {
             propList.add(new PropertyFilter("productCode", tradeDetail.getProductCode(), LIKE));
         }
         if (isNotBlank(tradeDetail.getProductName())) {
-            propList.add(new PropertyFilter("productName", tradeDetail.getProductName(), LIKE));
+            if (Type.LIKE.name().equals(commonDto.getNameSelType())) {
+                propList.add(new PropertyFilter("productName", tradeDetail.getProductName(), LIKE));
+            } else {
+                propList.add(new PropertyFilter("productName", tradeDetail.getProductName(), EQ));
+            }
         }
         if (isNotBlank(tradeDetail.getCountry())) {
             propList.add(new PropertyFilter("country", tradeDetail.getCountry()));
@@ -296,22 +307,25 @@ public class TradeDetailServiceImpl implements TradeDetailService {
     /**
      * 更新detail表中的产品类型
      *
-     * @param entry
      * @param yearMonthDto
      */
-    public void updateDetailType(Map.Entry<Long, Log> entry, YearMonthDto yearMonthDto) {
+    public void updateDetailType(YearMonthDto yearMonthDto) {
+
+        String yearMonth = yearMonthDto.getYear()
+                + DocBean.Config.yearmonth_split.value() + (yearMonthDto.getMonth() < 10 ? "0"+yearMonthDto.getMonth() : yearMonthDto.getMonth());
 
         if (yearMonthDto.getImpExpType().equals(import_type.ordinal())) {
-            detailTypeDao.updateImpDetailTypeWithYearMonth(yearMonthDto.getYear()
-                    + DocBean.Config.yearmonth_split.value() + yearMonthDto.getMonth());
+            detailTypeDao.updateImpDetailTypeWithYearMonth(yearMonth);
         }
         if (yearMonthDto.getImpExpType().equals(export_type.ordinal())) {
-            detailTypeDao.updateExpDetailTypeWithYearMonth(yearMonthDto.getYear()
-                    + DocBean.Config.yearmonth_split.value() + yearMonthDto.getMonth());
+            detailTypeDao.updateExpDetailTypeWithYearMonth(yearMonth);
         }
     }
 
-
+    @Override
+    public List<Product> findAllProduct() {
+        return (List<Product>) productDao.findAll();
+    }
 
 
 }

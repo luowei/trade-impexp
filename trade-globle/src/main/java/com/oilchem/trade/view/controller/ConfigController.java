@@ -24,6 +24,29 @@ import static com.oilchem.trade.util.ConfigUtil.ConfigBean;
 @RequestMapping("/manage")
 public class ConfigController extends CommonController {
 
+    @RequestMapping(value = "/acsconf")
+    public String acsconf(Model model){
+        Map<String ,ConfigBean> map = ConfigUtil.getConfigMap();
+        model.addAttribute("configmaps",map);
+        return "/manage/config/acsconf";
+    }
+
+
+    @RequestMapping(value = "/exlconf")
+    public String exlconf(Model model){
+        Map<String ,ConfigBean> map = ConfigUtil.getConfigMap();
+        model.addAttribute("configmaps",map);
+        return "/manage/config/exlconf";
+    }
+
+    @RequestMapping(value = "/sysconf")
+    public String sysconf(Model model){
+        Map<String ,ConfigBean> map = ConfigUtil.getConfigMap();
+        model.addAttribute("configmaps",map);
+        return "/manage/config/sysconf";
+    }
+
+
     /**
      * 显示ConfigUtil map 中各种元素列表信息
      * @param model   model
@@ -44,11 +67,11 @@ public class ConfigController extends CommonController {
      * @param model   model
      * @return  修改页面
      */
-    @RequestMapping(value = "/toeditcfg/{key}", method = RequestMethod.GET)
-    public String toedit( @PathVariable String key, Model model) {
+    @RequestMapping(value = "/toeditcfg/{key}/{type}", method = RequestMethod.GET)
+    public String toedit( Model model,@PathVariable String key,@PathVariable String type ) {
         Map<String ,ConfigBean> map = ConfigUtil.getConfigMap();
         ConfigBean configBean = map.get(key);
-        model.addAttribute("configBean", configBean);
+        model.addAttribute("configBean", configBean).addAttribute("type",type);
         return "/manage/config/edit";
 
     }
@@ -59,7 +82,7 @@ public class ConfigController extends CommonController {
      * @return   新的列表页
      */
     @RequestMapping(value = "/updatecfg")
-    public String update(ConfigBean configBean,RedirectAttributes redirectAttrs) {
+    public String update(ConfigBean configBean,String type,RedirectAttributes redirectAttrs) {
         Map<String ,ConfigBean> map = ConfigUtil.getConfigMap();
         if(null != configBean && StringUtils.isNotBlank(configBean.getKey())){
             map.put(configBean.getKey(),configBean);
@@ -74,6 +97,13 @@ public class ConfigController extends CommonController {
            addRedirectError(redirectAttrs,error);
         }
         redirectAttrs.addFlashAttribute("configmaps",ConfigUtil.getConfigMap());
+        if(type.equals("sys")){
+            return "redirect:/manage/sysconf";
+        }else if(type.equals("exl")){
+            return "redirect:/manage/exlconf";
+        }else if(type.equals("acs")){
+            return "redirect:/manage/acsconf";
+        }
         return "redirect:/manage/configlist";
     }
 }

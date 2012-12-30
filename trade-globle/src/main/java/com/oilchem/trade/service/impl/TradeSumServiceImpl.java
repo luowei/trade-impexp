@@ -3,13 +3,13 @@ package com.oilchem.trade.service.impl;
 import com.oilchem.trade.dao.ExpTradeSumDao;
 import com.oilchem.trade.dao.ImpTradeSumDao;
 import com.oilchem.trade.dao.LogDao;
-import com.oilchem.trade.dao.SumTypeDao;
-import com.oilchem.trade.dao.map.ExpTradeSumRowMapper;
-import com.oilchem.trade.dao.map.ImpTradeSumRowMapper;
-import com.oilchem.trade.domain.ExpTradeSum;
-import com.oilchem.trade.domain.ImpTradeSum;
+import com.oilchem.trade.dao.condition.SumTypeDao;
+import com.oilchem.trade.dao.others.map.ExpTradeSumRowMapper;
+import com.oilchem.trade.dao.others.map.ImpTradeSumRowMapper;
+import com.oilchem.trade.domain.sum.ExpTradeSum;
+import com.oilchem.trade.domain.sum.ImpTradeSum;
 import com.oilchem.trade.domain.Log;
-import com.oilchem.trade.domain.SumType;
+import com.oilchem.trade.domain.condition.SumType;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TradeSumService;
@@ -188,6 +188,18 @@ public class TradeSumServiceImpl implements TradeSumService {
         return expTradeSumDao.findAll(spec, pageRequest);
     }
 
+    public List<ExpTradeSum> findExpWithCriteria(
+            ExpTradeSum tradeSum, CommonDto commonDto, YearMonthDto yearMonthDto) {
+
+        List<QueryUtils.PropertyFilter> filterList = getSumQueryProps(tradeSum, commonDto);
+        filterList.addAll(commonService.getYearMonthQueryProps(yearMonthDto));
+
+        Specification<ExpTradeSum> spec = DynamicSpecifications
+                .byPropertyFilter(filterList, ExpTradeSum.class);
+
+        return expTradeSumDao.findAll(spec);
+    }
+
     /**
      * 根据条件查找进口记录
      *
@@ -209,6 +221,18 @@ public class TradeSumServiceImpl implements TradeSumService {
         return impTradeSumDao.findAll(spec, pageRequest);
     }
 
+    public List<ImpTradeSum> findImpWithCriteria(
+            ImpTradeSum tradeSum, CommonDto commonDto, YearMonthDto yearMonthDto) {
+
+        List<QueryUtils.PropertyFilter> filterList = getSumQueryProps(tradeSum, commonDto);
+        filterList.addAll(commonService.getYearMonthQueryProps(yearMonthDto));
+
+        Specification<ImpTradeSum> spec = DynamicSpecifications
+                .byPropertyFilter(filterList, ImpTradeSum.class);
+
+        return impTradeSumDao.findAll(spec);
+    }
+
     /**
      * 获得总表的条件列表
      *
@@ -220,7 +244,11 @@ public class TradeSumServiceImpl implements TradeSumService {
     getSumQueryProps(TradeSum tradeSum, CommonDto commonDto) {
         List<QueryUtils.PropertyFilter> propList = new ArrayList<QueryUtils.PropertyFilter>();
         if (isNotBlank(tradeSum.getProductName())) {
-            propList.add(new QueryUtils.PropertyFilter("productName", tradeSum.getProductName(), Type.LIKE));
+            if (Type.LIKE.name().equals(commonDto.getNameSelType())) {
+                propList.add(new QueryUtils.PropertyFilter("productName", tradeSum.getProductName(), Type.LIKE));
+            } else {
+                propList.add(new QueryUtils.PropertyFilter("productName", tradeSum.getProductName(), Type.EQ));
+            }
         }
         if (isNotBlank(tradeSum.getSumType())) {
             propList.add(new PropertyFilter("sumType", tradeSum.getSumType()));

@@ -36,4 +36,6 @@ public interface BaseDao<T extends IdEntity> {
      */
     Long countWithYearMonth(Integer year, Integer month, Class<T> idEntityClz);
 
+      void excuteSql(String sql);
+
 }

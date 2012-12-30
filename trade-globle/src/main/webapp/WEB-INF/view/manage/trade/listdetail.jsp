@@ -17,47 +17,137 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>进出口明细</title>
 
-    <link rel="stylesheet" type="text/css" href="<c:url value='/resources/bootstrap/css/bootstrap.min.css' />"/>
-    <link rel="stylesheet" type="text/css"
-          href="<c:url value='/resources/bootstrap/css/bootstrap-responsive.min.css' />"/>
-    <script type="text/javascript" src="<c:url value="/resources/js/jquery/1.7.2/jquery.js" />"></script>
-    <script type="text/javascript" src="<c:url value="/resources/js/trade.js" />"></script>
-
     <script type="text/javascript">
         $(function () {
             checkAll("all", "codes");
         });
 
         function genDetailChart() {
-            $("#form1").attr("action", "${pageContext.request.contextPath}/manage/detailchart");
-            $("#form1").submit();
+            $("#form1").attr("target","_blank")
+                    .attr("action", "${pageContext.request.contextPath}/manage/detailchart")
+                    .submit();
+            $("#form1").attr("target","_self")
+                    .attr("action", "${pageContext.request.contextPath}${contextUrl}/1")
         }
+
+        //导出数据
+        $(function () {
+            // Dialog
+            $('#dialog').dialog({
+                autoOpen: false,
+                width: 600,
+                buttons: {
+                    "确定": function () {
+
+                        var pageSize = $('#expPageSize').val() == '' ? parseInt(${pageSize}) : parseInt($('#expPageSize').val())
+                        var pageNumber = $('#expPageNumber').val() == '' ? 1 : parseInt($('#expPageNumber').val())
+
+                        if (pageSize < 1 || pageSize > 65535 || pageNumber < 1) {
+                            alert('请输入合法的页数 或 页大小')
+                            return
+                        }
+                        if (pageNumber > parseInt(${totalElements}) / pageSize + 1) {
+                            alert("输入的页大于总页数")
+                            return
+                        }
+
+                        $('#expForm').attr("target", "_blank").submit()
+                        $(this).dialog("close");
+                    },
+                    "取消": function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+
+            // Dialog Link
+            $('#dialog_link').click(function () {
+
+                var impType = $('input[name=impType]').val()==null?"": $('input[name=impType]').val()
+                var lowYear = $('select[name=lowYear]').val()==null?"": $('select[name=lowYear]').val()
+                var lowMonth = $('select[name=lowMonth]').val()==null?"":$('select[name=lowMonth]').val()
+                var highYear = $('select[name=highYear]').val()==null?"": $('select[name=highYear]').val()
+                var highMonth = $('select[name=highMonth]').val()==null?"":$('select[name=highMonth]').val()
+                var month = $('select[name=month]').val()==null?"":$('select[name=month]').val()
+                var productName = $('#productName').val()==null?"":$('#productName').val()
+                var impExpType = $('select[name=impExpType]').val()==null?"0":$('select[name=impExpType]').val()
+
+                var info = new Object();
+                info.impType = impType
+                info.lowYear = parseInt(lowYear)
+                info.lowMonth = parseInt(lowMonth)
+                info.highYear = parseInt(highYear)
+                info.highMonth = parseInt(highMonth)
+                info.month = parseInt(month)
+                info.productName = productName
+                if (impExpType == '0') {
+                    info.impExpType = "进口"
+                }
+                if (impExpType == '1') {
+                    info.impExpType = "出口"
+                }
+
+                var title = '导出 ' +
+                        lowYear + '-' +
+                        lowMonth + " ~ " +
+                        highYear + '-' +
+                        highMonth + " " +
+                        month + " " +
+                        productName + " " +
+                        info.impExpType + "数据"
+
+                var infoJson = jQuery.toJSON(info)
+
+                $('#info').text(title)
+                $('#param').val(infoJson)
+                $('#expForm').attr('action',$('#expAction').val())
+
+                $('#dialog').dialog('open');
+                return false;
+            });
+        });
+
     </script>
 
 </head>
 <body >
 
-<%--<jsp:include page="../../common/breadcrumb.jsp"/>--%>
+<div class="navbar navbar-fixed-top ">
+    <div class="navbar-inner">
+
+        <div class="wrapper">
+            <a class="brand" href="#">进出口管理</a>
+
+            <div class="nav-collapse collapse navbar-responsive-collapse">
+                <ul class="nav nav-tabs">
+                    <li><a href="${pageContext.request.contextPath}/manage/listdetail/1">明细表</a></li>
+                    <li><a href="javascript:" onclick="history.back();">返回</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 
 <h2>进出口明细</h2>
 <form:form id="form1" modelAttribute="tradeDetail"
            action="${pageContext.request.contextPath}${contextUrl}/1"
            method="post" cssClass="well form-inline">
-<input type="hidden" name="pageSize" value="${pageSize}"/>
-<input type="hidden" name="sort" value="${sort}"/>
-<input type="hidden" name="highValue" value=""/>
-<input type="hidden" name="lowValue" value=""/>
+<input type="hidden" id="pageSize" name="pageSize" value="${pageSize}"/>
+<input type="hidden" id="sort" name="sort" value="${sort}"/>
+<input type="hidden" id="highValue" name="highValue" value=""/>
+<input type="hidden" id="lowValue" name="lowValue" value=""/>
 
 <label class="label ">起始年月:
-    <select name="lowYear" class=" input-mini" onchange="">
+    <select id="lowYear" name="lowYear" class=" input-mini" onchange="">
         <option value="" selected="selected">--</option>
-        <c:forEach var="lyr" begin="2000" end="2050" step="1">
+        <c:forEach var="lyr" begin="2000" end="2020" step="1">
             <option value="${lyr}" <c:if test="${lowYear eq lyr}">selected="selected" </c:if>>
                     ${lyr}</option>
         </c:forEach>
     </select> 年&nbsp;
-    <select name="lowMonth" class=" input-mini">
+    <select id="lowMonth" name="lowMonth" class=" input-mini">
         <option value="" selected="selected">--</option>
         <c:forEach var="lmth" begin="1" end="12" step="1">
             <option value="${lmth}" <c:if test="${lowMonth eq lmth}">selected="selected" </c:if>>
@@ -67,14 +157,14 @@
 </label>
 
 <label class="label">结束年月:
-    <select name="highYear" class=" input-mini" onchange="">
+    <select id="highYear" name="highYear" class=" input-mini" onchange="">
         <option value="" selected="selected">--</option>
-        <c:forEach var="hyr" begin="2000" end="2050" step="1">
+        <c:forEach var="hyr" begin="2000" end="2020" step="1">
             <option value="${hyr}" <c:if test="${highYear eq hyr}">selected="selected" </c:if>>
                     ${hyr}</option>
         </c:forEach>
     </select> 年&nbsp;
-    <select name="highMonth" class=" input-mini">
+    <select id="highMonth" name="highMonth" class=" input-mini">
         <option value="" selected="selected">--</option>
         <c:forEach var="hmth" begin="1" end="12" step="1">
             <option value="${hmth}" <c:if test="${highMonth eq hmth}">selected="selected" </c:if>>
@@ -85,7 +175,7 @@
 
 
 <label class="label">月同期查询:
-    <select name="month" class=" input-mini">
+    <select id="month" name="month" class=" input-mini">
         <option value="" selected="selected">--</option>
         <c:forEach var="mth" begin="1" end="12" step="1">
             <option value="${mth}" <c:if test="${month eq mth}">selected="selected" </c:if>>
@@ -94,17 +184,11 @@
     </select>月
 </label>
 
-<label class="label">进出口类型:
-    <select name="impExpType" class=" input-small">
-        <option value="0" <c:if test="${impExpType eq 0}">selected="selected" </c:if>>进口</option>
-        <option value="1" <c:if test="${impExpType eq 1}">selected="selected" </c:if>>出口</option>
-    </select>
-</label>
 
 <br/>
 
 <label class="label">企业性质:
-    <select name="companyType" class=" input-mini">
+    <select id="companyType" name="companyType" class=" input-mini">
         <option value="">--</option>
         <c:forEach items="${companyTypeList}" var="companyTypeItem">
             <option value="${companyTypeItem.companyType}"
@@ -116,7 +200,7 @@
 </label>
 
 <label class="label">贸易方式:
-    <select name="tradeType" class=" input-mini">
+    <select id="tradeType" name="tradeType" class=" input-mini">
         <option value="">--</option>
         <c:forEach items="${tradeTypeList}" var="tradeTypeItem">
             <option value="${tradeTypeItem.tradeType}"
@@ -128,7 +212,7 @@
 </label>
 
 <label class="label">运输方式:
-    <select name="transportation" class=" input-mini">
+    <select id="transportation" name="transportation" class=" input-mini">
         <option value="">--</option>
         <c:forEach items="${transportationList}" var="transportationItem">
             <option value="${transportationItem.transportation}"
@@ -140,7 +224,7 @@
 </label>
 
 <label class="label">海关:
-    <select name="customs" class=" input-mini">
+    <select id="customs" name="customs" class=" input-mini">
         <option value="">--</option>
         <c:forEach items="${customsList}" var="customsItem">
             <option value="${customsItem.customs}"
@@ -152,7 +236,7 @@
 </label>
 
 <label class="label">产销国家:
-    <select name="country" class=" input-mini">
+    <select id="country" name="country" class=" input-mini">
         <option value="">--</option>
         <c:forEach items="${countryList}" var="countryItem">
             <option value="${countryItem.country}"
@@ -164,7 +248,7 @@
 </label>
 
 <label class="label">城市:
-    <select name="city" class=" input-mini">
+    <select id= "city" name="city" class=" input-mini">
         <option value="">--</option>
         <c:forEach items="${cityList}" var="cityItem">
             <option value="${cityItem.city}"
@@ -178,21 +262,43 @@
 <br/>
 
 <label class="label">
-    产品代码:<input name="productCode" cssClass="input-mini search-query"
+    产品代码:<input id="productCode" name="productCode" cssClass="input search-query" style="width: 100px"
                 <c:if test='${productCode ne null}'>value="${productCode}" </c:if> />
 </label>
 <label class="label">
-    产品名称:<input name="productName" cssClass="input-mini search-query"
-                <c:if test='${productName ne null}'>value="${productName}" </c:if> />
+    产品名称:
+    <input id="productName" name="productName" cssClass="input search-query"
+           <c:if test='${productName ne null}'>value="${productName}" </c:if> />
+    <label><input type="radio" name="nameSelType" value="EQ"
+                  <c:if test="${nameSelType eq 'EQ' or nameSelType eq null}">checked="checked"</c:if> />等于</label>
+    <label><input type="radio" name="nameSelType" value="LIKE"
+                  <c:if test="${nameSelType eq 'LIKE'}">checked="checked"</c:if> />包含</label>
+</label>
+
+<label class="label">进出口类型:&nbsp;
+    <label><input  type="radio" name="impExpType" value="0"
+                  <c:if test="${impExpType eq 0}">checked="checked"</c:if> />
+        <input type="button" class="btn btn-mini" style="width: 60px" value="进口"></label>
+    <label><input type="radio" name="impExpType" value="1"
+                  <c:if test="${impExpType eq 1}">checked="checked"</c:if> />
+        <input type="button" class="btn btn-mini"  style="width: 60px" value="出口"></label>
 </label>
 
 
 <button type="submit" class="btn btn-success">
     <i class="icon-search icon-white"></i>查询
 </button>
-<%--<div class="btn-group">--%>
-<input id="chart" type="button" class="btn-small btn-primary" value="生成曲线" onclick="genDetailChart()"/>
-<%--<a  href="" target="_blank"  class="btn btn-small btn-primary" onclick="genDetailChart()">生成曲线</a>--%>
+&nbsp;&nbsp;
+<a href="#" id="dialog_link" class="btn btn-primary">导出数据</a>
+
+<%--<br/>--%>
+
+<%--<label class="label">--%>
+    <%--产品代码:<input id="autoproductCode" name="autoproductCode" cssClass="input-mini search-query autocomplete" />--%>
+<%--</label>--%>
+<%--&lt;%&ndash;<div class="btn-group">&ndash;%&gt;--%>
+<%--<input id="chart" type="button" class="btn-small btn-primary" value="生成曲线" onclick="genDetailChart()"/>--%>
+<%--&lt;%&ndash;<a  href="javascript:window.open('#')" target="_blank"  class="btn btn-small btn-primary" onclick="genDetailChart()">生成曲线</a>&ndash;%&gt;--%>
 
 <%--</div>--%>
 
@@ -240,29 +346,47 @@
 
 </h4>
 
-<table class="table table-bordered table-striped table-condensed">
+<table class="table table-hover table-bordered table-striped table-condensed">
     <thead>
     <tr>
-        <th><label><input type="checkbox" id="all"/>曲线</label></th>
-        <th>年月</th>
-        <th>产品代码</th>
-        <th>产品名称</th>
+        <th>Id
+            <a href="javascript:void(0)" onclick="ascOrder('id','form1')"><i class="icon-chevron-up"></i></a>
+            <a href="javascript:void(0)" onclick="descOrder('id','form1')"><i class="icon-chevron-down"></i></a>
+        </th>
+        <th>年月
+            <a href="javascript:void(0)" onclick="ascOrder('yearMonth','form1')"><i class="icon-chevron-up"></i></a>
+            <a href="javascript:void(0)" onclick="descOrder('yearMonth','form1')"><i class="icon-chevron-down"></i></a>
+        </th>
+        <th>产品代码
+            <a href="javascript:void(0)" onclick="ascOrder('productCode','form1')"><i class="icon-chevron-up"></i></a>
+            <a href="javascript:void(0)" onclick="descOrder('productCode','form1')"><i class="icon-chevron-down"></i></a>
+        </th>
+        <th>产品名称
+            <a href="javascript:void(0)" onclick="ascOrder('productName','form1')"><i class="icon-chevron-up"></i></a>
+            <a href="javascript:void(0)" onclick="descOrder('productName','form1')"><i class="icon-chevron-down"></i></a>
+        </th>
         <th>贸易方式</th>
         <th>企业性质</th>
         <th>运输方式</th>
         <th>城市</th>
         <th>海关</th>
         <th>产销国家</th>
-        <th>数量</th>
+        <th>数量
+            <a href="javascript:void(0)" onclick="ascOrder('amount','form1')"><i class="icon-chevron-up"></i></a>
+            <a href="javascript:void(0)" onclick="descOrder('amount','form1')"><i class="icon-chevron-down"></i></a>
+        </th>
         <th>单位</th>
-        <th>美元价值</th>
-        <th>均价</th>
+        <th>美元价值
+            <a href="javascript:void(0)" onclick="ascOrder('amountMoney','form1')"><i class="icon-chevron-up"></i></a>
+            <a href="javascript:void(0)" onclick="descOrder('amountMoney','form1')"><i class="icon-chevron-down"></i></a>
+        </th>
+        <th>单价</th>
     </tr>
     </thead>
     <tbody>
     <c:forEach items="${tradeDetailList.content}" var="detail" varStatus="st">
-        <tr>
-            <td><input type="checkbox" name="codes" value="${detail.productCode}"/></td>
+        <tr <c:if test="${st.index%2 eq 1}">class="warning" </c:if>>
+            <td>${detail.id}</td>
             <td>${detail.yearMonth}</td>
             <td>${detail.productCode}</td>
             <td>${detail.productName}</td>
@@ -281,6 +405,37 @@
     </tbody>
 </table>
 </form:form>
+
+
+<!-- ui-dialog -->
+<input type="hidden" id="expAction" name="expAction" value="${pageContext.request.contextPath}/manage/exportDetail">
+<div id="dialog" title="导出数据">
+    <form:form id="expForm" name="expForm" modelAttribute="detailCount"
+               action="${pageContext.request.contextPath}/manage/exportDetail"
+               method="post" cssClass="well form-inline">
+        <input id="param" type="hidden" name="param" value="">
+
+        <p align="center"><b id="info"></b></p>
+
+        <p align="center">总记录数:${totalElements}&nbsp;&nbsp;默认页大小:${pageSize}&nbsp;总页数:${totalPages}</p>
+
+        <p align="center">
+
+        <div class="input-prepend" >
+            <span class="add-on">页大小:</span>
+            <input id="expPageSize" name="expPageSize" type="text" style="width: 80px;margin-top: 5px;">
+            <span class="add-on">第几页:</span>
+            <input id="expPageNumber" name="expPageNumber" type="text" style="width: 80px;margin-top: 5px;">
+        </div>
+
+        <br/><br/>
+
+
+        </p>
+
+    </form:form>
+</div>
+
 
 <div class="pagination-centered">
     <jsp:include page="../../common/pagination.jsp"/>

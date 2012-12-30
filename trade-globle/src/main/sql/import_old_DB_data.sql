@@ -135,12 +135,6 @@ INSERT INTO lzdb.dbo.t_sum_type(product_type) VALUES('化肥');
 GO
 
 
-
-
-
-
-
-
 --========================导入明细表================================
 -- 导入 t_import_detail
 INSERT INTO
@@ -260,6 +254,22 @@ where
 pcdb.dbo.Tariff1.IMP_EXP = 1;
 
 GO
+
+--导入明细产品表
+INSERT INTO
+lzdb.dbo.t_product(product_code,product_name,type_code,product_type)
+SELECT DISTINCT
+product_code,product_name,type_code,product_type
+FROM (
+	SELECT DISTINCT product_code,product_name,type_code,product_type
+	FROM t_import_detail
+	UNION
+	SELECT DISTINCT product_code,product_name,type_code,product_type
+	FROM t_export_detail
+) as prod
+
+GO
+
 
 --======================导入总表============================
 --导入t_import_sum

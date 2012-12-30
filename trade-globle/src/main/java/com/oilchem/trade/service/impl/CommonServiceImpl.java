@@ -1,9 +1,11 @@
 package com.oilchem.trade.service.impl;
 
+import com.oilchem.trade.dao.condition.*;
+import com.oilchem.trade.domain.condition.*;
 import com.oilchem.trade.util.EHCacheUtil;
 import com.oilchem.trade.dao.*;
-import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
-import com.oilchem.trade.dao.map.MyRowMapper;
+import com.oilchem.trade.dao.others.map.AbstractTradeDetailRowMapper;
+import com.oilchem.trade.dao.others.map.MyRowMapper;
 import com.oilchem.trade.domain.*;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeSum;
@@ -45,7 +47,7 @@ import static com.oilchem.trade.util.FileUtil.getFileSuffix;
 import static com.oilchem.trade.util.FileUtil.upload;
 import static com.oilchem.trade.util.QueryUtils.PropertyFilter;
 import static com.oilchem.trade.util.QueryUtils.Type.GE;
-import static com.oilchem.trade.util.QueryUtils.Type.LT;
+import static com.oilchem.trade.util.QueryUtils.Type.LE;
 import static com.oilchem.trade.util.ZipUtil.unRar;
 import static com.oilchem.trade.util.ZipUtil.unZip;
 import static org.springframework.web.context.ContextLoader.getCurrentWebApplicationContext;
@@ -447,6 +449,7 @@ public class CommonServiceImpl implements CommonService {
 
     /**
      * 获得数据模型的数据列表
+     *
      * @param daoClass     daoClass
      * @param idEntityName
      * @return
@@ -473,6 +476,7 @@ public class CommonServiceImpl implements CommonService {
 
     /**
      * 更新实体
+     *
      * @param daoClass
      * @param entity
      * @param <T>
@@ -492,15 +496,15 @@ public class CommonServiceImpl implements CommonService {
     }
 
 
-    private String domainPkgName = Log.class.getPackage().getName();
-    private String daoPkgName = LogDao.class.getPackage().getName();
+    private String domainPkgName = City.class.getPackage().getName();
+    private String daoPkgName = CityDao.class.getPackage().getName();
 
     public <E> List<E> findAllEntityList(String type) {
 
         //约定：传入的type值必须与name字段的名称相同
         String entityName = type.substring(0, 1).toUpperCase() + type.substring(1);
-        String daoClassName = daoPkgName+"." + entityName + "Dao";
-        String entityClassName = domainPkgName+"." + entityName;
+        String daoClassName = daoPkgName + "." + entityName + "Dao";
+        String entityClassName = domainPkgName + "." + entityName;
 
         Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, type));
         List<E> idEntityList = null;
@@ -522,24 +526,25 @@ public class CommonServiceImpl implements CommonService {
 
     /**
      * 添加一条记录
+     *
      * @param type
      * @param name
      */
     public void add(String type, String name) {
         //约定：传入的type值必须与name字段的名称相同
         String entityName = type.substring(0, 1).toUpperCase() + type.substring(1);
-        String daoClassName = daoPkgName+"." + entityName + "Dao";
-        String entityClassName = domainPkgName+"." + entityName;
-        try{
+        String daoClassName = daoPkgName + "." + entityName + "Dao";
+        String entityClassName = domainPkgName + "." + entityName;
+        try {
             Class daoClass = Class.forName(daoClassName);
             Class entityClass = Class.forName(entityClassName);
 
             Object daoObj = getCurrentWebApplicationContext().getBean(daoClass);
             Object entityObj = entityClass.getConstructor(String.class).newInstance(name);
 
-            daoClass.getMethod("save", Object.class) .invoke(daoObj, entityObj);
+            daoClass.getMethod("save", Object.class).invoke(daoObj, entityObj);
 
-        }   catch (Exception e){
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
@@ -549,16 +554,17 @@ public class CommonServiceImpl implements CommonService {
 
     /**
      * 更新指定id的记录
+     *
      * @param type
      * @param name
      */
     public void update(
-            String type,Long id, String name) {
+            String type, Long id, String name) {
 
         //约定：传入的type值必须与name字段的名称相同
         String entityName = type.substring(0, 1).toUpperCase() + type.substring(1);
-        String daoClassName = daoPkgName+"." + entityName + "Dao";
-        String entityClassName = domainPkgName+"." + entityName;
+        String daoClassName = daoPkgName + "." + entityName + "Dao";
+        String entityClassName = domainPkgName + "." + entityName;
         try {
             Class daoClass = Class.forName(daoClassName);
             Class entityClass = Class.forName(entityClassName);
@@ -568,7 +574,7 @@ public class CommonServiceImpl implements CommonService {
 
             Object entityObj = daoClass.getMethod("findOne", Serializable.class).invoke(daoObj, id);
             entityClass.getMethod("set" + entityName, String.class).invoke(entityObj, name);
-            daoClass.getMethod("save", Object.class) .invoke(daoObj, entityObj);
+            daoClass.getMethod("save", Object.class).invoke(daoObj, entityObj);
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -580,6 +586,7 @@ public class CommonServiceImpl implements CommonService {
 
     /**
      * 删除指定id的记录
+     *
      * @param type
      * @param id
      */
@@ -587,12 +594,12 @@ public class CommonServiceImpl implements CommonService {
 
         //约定：传入的type值必须与name字段的名称相同
         String entityName = type.substring(0, 1).toUpperCase() + type.substring(1);
-        String daoClassName = daoPkgName+"." + entityName + "Dao";
+        String daoClassName = daoPkgName + "." + entityName + "Dao";
 
         try {
             Class daoClass = Class.forName(daoClassName);
             Object daoObj = getCurrentWebApplicationContext().getBean(daoClass);
-            daoClass.getMethod("delete",Serializable.class).invoke(daoObj,id);
+            daoClass.getMethod("delete", Serializable.class).invoke(daoObj, id);
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -603,6 +610,7 @@ public class CommonServiceImpl implements CommonService {
 
     /**
      * 删除一条记录
+     *
      * @param daoClass
      * @param id
      * @param <T>
@@ -610,16 +618,14 @@ public class CommonServiceImpl implements CommonService {
     public <T extends IdEntity> void delEntity(Class daoClass, Long id) {
 
         try {
-            daoClass.getMethod("delete",Long.class)
+            daoClass.getMethod("delete", Long.class)
                     .invoke(getCurrentWebApplicationContext().getBean(daoClass), id);
 
         } catch (Exception e) {
-            logger.error(e.getMessage(),e);
+            logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
-
-
 
 
     /**
@@ -694,10 +700,26 @@ public class CommonServiceImpl implements CommonService {
             EHCacheUtil.removeAllElment("detail_cache");
             for (int i = 1; result.next(); i++) {
 
-                fillTradeDetailList(result, tradeDetailMapper, yearMonthDto, detailClz, tradeDetailList);
+                if(Boolean.valueOf(ignore_import_fail.value()).booleanValue()){
+                    try {
+                        fillTradeDetailList(result, tradeDetailMapper, yearMonthDto, detailClz, tradeDetailList);
+                    } catch (Exception e) {
+                        logger.error("此行记录导入发生错误:i=" + i + "  j=" + j);
+                        int size = tradeDetailList.size() < 1 ? 1 : tradeDetailList.size();
+                        String code = tradeDetailList.get(size - 1).getProductCode();
+                        String country = tradeDetailList.get(size - 1).getCountry();
+                        logger.error("产品代码与产销国家:code=" + code + " ,country=" + country);
+                        logger.error(e.getMessage(), e);
+                    }
+                } else {
+                    fillTradeDetailList(result, tradeDetailMapper, yearMonthDto, detailClz, tradeDetailList);
+                }
+
+
+
                 if (i >= listSize) {
                     EHCacheUtil.setValue("detail_cache", "detail_list_" + j, tradeDetailList);
-                    i = 0;
+                    i = 1;
                     j++;
                     tradeDetailList = new ArrayList<E>(listSize);
                 }
@@ -832,7 +854,7 @@ public class CommonServiceImpl implements CommonService {
         prop.put("charSet", "GBK");
         prop.put("user", "");
         prop.put("password", "");
-        String url = "jdbc:odbc:driver={Microsoft Access Driver (*.mdb)};DBQ="
+        String url = "jdbc:odbc:driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ="
                 + accessPath;
 
         //创建连接
@@ -895,7 +917,7 @@ public class CommonServiceImpl implements CommonService {
             Integer highYear = yearMonthDto.getHighYear();
             Integer highMonth = yearMonthDto.getHighMonth() == null ? 1 : yearMonthDto.getHighMonth();
             String yearMonth = highYear + yearmonth_split.value() + (highMonth < 10 ? "0" + highMonth : highMonth);
-            filterList.add(new PropertyFilter("yearMonth", yearMonth, LT));
+            filterList.add(new PropertyFilter("yearMonth", yearMonth, LE));
         }
 
         return filterList;

@@ -12,8 +12,7 @@
     <title>配置管理</title>
 
     <link rel="stylesheet" type="text/css" href="<c:url value='/resources/bootstrap/css/bootstrap.min.css' />"/>
-    <link rel="stylesheet" type="text/css"
-          href="<c:url value='/resources/bootstrap/css/bootstrap-responsive.min.css' />"/>
+    <link rel="stylesheet" type="text/css"  href="<c:url value='/resources/bootstrap/css/bootstrap-responsive.min.css' />"/>
 
     <script type="text/javascript">
 
@@ -26,117 +25,124 @@
 
     </script>
 </head>
-<body >
+<body>
 
 <%--<jsp:include page="../../common/breadcrumb.jsp" />--%>
 
+<div class="navbar navbar-fixed-top ">
+    <div class="navbar-inner">
 
-    <h3>数据库表与Access表字段对应的配置</h3>
-    <form:form modelAttribute="userCommand" method="post" id="form1">
-        <table class="table table-bordered table-striped table-condensed">
-            <thead>
-            <tr>
-                <th><a href="#" id="key">key</a></th>
-                <th><a href="#" id="name">name</a></th>
-                <th><a href="#" id="value">value(access文件中的列名)</a></th>
-                <th><a href="#" id="describe">描述信息</a></th>
-                <th><a href="#" id="update">修改</a></th>
-            </tr>
-            </thead>
+        <div class="wrapper">
+            <a class="brand" href="#">进出口管理</a>
 
-            <tbody>
-            <c:forEach items="${configmaps}" var="entry" varStatus="st">
-                <c:set var="configBean" value="${entry.value}"/>
-                <c:if test="${fn:startsWith(entry.key,'access_')}">
-                    <tr>
-                        <td>${configBean.key}</td>
-                        <td>${configBean.name}</td>
-                        <td>${configBean.value}</td>
-                        <td>${configBean.describe}</td>
-                        <td>
-                            <s:url var="toedit" value="/manage/toeditcfg/${configBean.key}"/>
-                            <a href="${toedit}" class="btn btn-info">修改</a>
-                        </td>
-                    </tr>
-                </c:if>
-            </c:forEach>
-            </tbody>
-        </table>
-    </form:form>
+            <div class="nav-collapse collapse navbar-responsive-collapse">
+                <ul class="nav nav-tabs">
+                    <li><a href="${pageContext.request.contextPath}/manage/configlist">配置</a></li>
+                    <li><a href="javascript:" onclick="history.back();">返回</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
 </div>
+
+
+<h3>数据库表与Access表字段对应的配置</h3>
+<table class="table table-bordered table-striped table-condensed">
+    <thead>
+    <tr>
+        <th><a href="#" id="key">key</a></th>
+        <th><a href="#" id="name">name</a></th>
+        <th><a href="#" id="value">value(access文件中的列名)</a></th>
+        <th><a href="#" id="describe">描述信息</a></th>
+        <th><a href="#" id="update">修改</a></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <c:forEach items="${configmaps}" var="entry" varStatus="st">
+        <c:set var="configBean" value="${entry.value}"/>
+        <c:if test="${fn:startsWith(entry.key,'access_')}">
+            <tr>
+                <td>${configBean.key}</td>
+                <td>${configBean.name}</td>
+                <td>${configBean.value}</td>
+                <td>${configBean.describe}</td>
+                <td>
+                    <s:url var="toedit" value="/manage/toeditcfg/${configBean.key}"/>
+                    <a href="${toedit}" class="btn btn-info">修改</a>
+                </td>
+            </tr>
+        </c:if>
+    </c:forEach>
+    </tbody>
+</table>
 
 <hr/>
 
-<div class="container">
-    <h3>数据库表与Excel表字段对应的配置</h3>
-    <form:form modelAttribute="userCommand" method="post" id="form1">
-        <table class="table table-bordered table-striped table-condensed">
-            <thead>
-            <tr>
-                <th><a href="#">key</a></th>
-                <th><a href="#">name</a></th>
-                <th><a href="#">value(Excel文件中的列名)</a></th>
-                <th><a href="#">描述信息</a></th>
-                <th><a href="#">修改</a></th>
-            </tr>
-            </thead>
+<h3>数据库表与Excel表字段对应的配置</h3>
+<table class="table table-bordered table-striped table-condensed">
+    <thead>
+    <tr>
+        <th><a href="#">key</a></th>
+        <th><a href="#">name</a></th>
+        <th><a href="#">value(Excel文件中的列名)</a></th>
+        <th><a href="#">描述信息</a></th>
+        <th><a href="#">修改</a></th>
+    </tr>
+    </thead>
 
-            <tbody>
-            <c:forEach items="${configmaps}" var="entry" varStatus="st">
-                <c:set var="configBean" value="${entry.value}"/>
-                <c:if test="${fn:startsWith(entry.key,'excel_')}">
-                    <tr>
-                        <td>${configBean.key}</td>
-                        <td>${configBean.name}</td>
-                        <td>${configBean.value}</td>
-                        <td>${configBean.describe}</td>
-                        <td>
-                            <s:url var="toedit" value="/manage/toeditcfg/${configBean.key}"/>
-                            <a href="${toedit}" class="btn btn-info">修改</a>
-                        </td>
-                    </tr>
-                </c:if>
-            </c:forEach>
-            </tbody>
-        </table>
-    </form:form>
-</div>
+    <tbody>
+    <c:forEach items="${configmaps}" var="entry" varStatus="st">
+        <c:set var="configBean" value="${entry.value}"/>
+        <c:if test="${fn:startsWith(entry.key,'excel_')}">
+            <tr>
+                <td>${configBean.key}</td>
+                <td>${configBean.name}</td>
+                <td>${configBean.value}</td>
+                <td>${configBean.describe}</td>
+                <td>
+                    <s:url var="toedit" value="/manage/toeditcfg/${configBean.key}"/>
+                    <a href="${toedit}" class="btn btn-info">修改</a>
+                </td>
+            </tr>
+        </c:if>
+    </c:forEach>
+    </tbody>
+</table>
 
 <hr/>
 
-<div class="container">
-    <h3>系统配置</h3>
-    <form:form modelAttribute="userCommand" method="post" id="form1">
-        <table class="table table-bordered table-striped table-condensed">
-            <thead>
-            <tr>
-                <th><a href="#">key</a></th>
-                <th><a href="#">name</a></th>
-                <th><a href="#">value</a></th>
-                <th><a href="#">describe</a></th>
-                <th><a href="#">修改</a></th>
-            </tr>
-            </thead>
+<h3>系统配置</h3>
+<table class="table table-bordered table-striped table-condensed">
+    <thead>
+    <tr>
+        <th><a href="#">key</a></th>
+        <th><a href="#">name</a></th>
+        <th><a href="#">value</a></th>
+        <th><a href="#">describe</a></th>
+        <th><a href="#">修改</a></th>
+    </tr>
+    </thead>
 
-            <tbody>
-            <c:forEach items="${configmaps}" var="entry" varStatus="st">
-                <c:set var="configBean" value="${entry.value}"/>
-                <c:if test="${!fn:startsWith(entry.key,'access_') && !fn:startsWith(entry.key,'excel_')}">
-                    <tr>
-                        <td>${configBean.key}</td>
-                        <td>${configBean.name}</td>
-                        <td>${configBean.value}</td>
-                        <td>${configBean.describe}</td>
-                        <td>
-                            <s:url var="toedit" value="/manage/toeditcfg/${configBean.key}"/>
-                            <a href="${toedit}" class="btn btn-info">修改</a>
-                        </td>
-                    </tr>
-                </c:if>
-            </c:forEach>
-            </tbody>
-        </table>
-    </form:form>
+    <tbody>
+    <c:forEach items="${configmaps}" var="entry" varStatus="st">
+        <c:set var="configBean" value="${entry.value}"/>
+        <c:if test="${!fn:startsWith(entry.key,'access_') && !fn:startsWith(entry.key,'excel_')}">
+            <tr>
+                <td>${configBean.key}</td>
+                <td>${configBean.name}</td>
+                <td>${configBean.value}</td>
+                <td>${configBean.describe}</td>
+                <td>
+                    <s:url var="toedit" value="/manage/toeditcfg/${configBean.key}"/>
+                    <a href="${toedit}" class="btn btn-info">修改</a>
+                </td>
+            </tr>
+        </c:if>
+    </c:forEach>
+    </tbody>
+</table>
 
 
 </body>

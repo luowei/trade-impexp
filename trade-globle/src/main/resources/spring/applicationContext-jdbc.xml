@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="impTradeDetailDaoImpl" class="com.oilchem.trade.dao.custom.impl.ImpTradeDetailDaoImpl">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    <bean id="expTradeDetailDaoImpl" class="com.oilchem.trade.dao.custom.impl.ExpTradeDetailDaoImpl">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    <bean id="impTradeSumDaoImpl" class="com.oilchem.trade.dao.custom.impl.ImpTradeSumDaoImpl">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    <bean id="expTradeSumDaoImpl" class="com.oilchem.trade.dao.custom.impl.ExpTradeSumDaoImpl">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+</beans>

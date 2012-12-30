@@ -39,6 +39,10 @@ public class DetailCount extends IdEntity  implements Serializable {
     public DetailCount() {
     }
 
+    public DetailCount(String productName) {
+        this.productName = productName;
+    }
+
     public DetailCount(BigDecimal num, BigDecimal money,
                        BigDecimal unitPrice) {
         this.num = num;

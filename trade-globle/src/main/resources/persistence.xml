@@ -7,25 +7,37 @@
 
     <persistence-unit name="jpa.trade" >
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        <class>com.oilchem.trade.domain.City</class>
-        <class>com.oilchem.trade.domain.CompanyType</class>
-        <class>com.oilchem.trade.domain.Country</class>
-        <class>com.oilchem.trade.domain.Customs</class>
-        <class>com.oilchem.trade.domain.ExpTradeDetail</class>
-        <class>com.oilchem.trade.domain.ExpTradeSum</class>
-        <class>com.oilchem.trade.domain.ImpTradeDetail</class>
-        <class>com.oilchem.trade.domain.ImpTradeSum</class>
+        <class>com.oilchem.trade.domain.condition.Product</class>
+        <class>com.oilchem.trade.domain.condition.City</class>
+        <class>com.oilchem.trade.domain.condition.CompanyType</class>
+        <class>com.oilchem.trade.domain.condition.Country</class>
+        <class>com.oilchem.trade.domain.condition.Customs</class>
+        <class>com.oilchem.trade.domain.detail.ExpTradeDetail</class>
+        <class>com.oilchem.trade.domain.sum.ExpTradeSum</class>
+        <class>com.oilchem.trade.domain.detail.ImpTradeDetail</class>
+        <class>com.oilchem.trade.domain.sum.ImpTradeSum</class>
         <class>com.oilchem.trade.domain.Log</class>
-        <class>com.oilchem.trade.domain.SumType</class>
-        <class>com.oilchem.trade.domain.TradeType</class>
-        <class>com.oilchem.trade.domain.Transportation</class>
-        <class>com.oilchem.trade.domain.ImpDetailCount</class>
-        <class>com.oilchem.trade.domain.ExpDetailCount</class>
+        <class>com.oilchem.trade.domain.condition.SumType</class>
+        <class>com.oilchem.trade.domain.condition.TradeType</class>
+        <class>com.oilchem.trade.domain.condition.Transportation</class>
+        <class>com.oilchem.trade.domain.count.ImpDetailCount</class>
+        <class>com.oilchem.trade.domain.count.ExpDetailCount</class>
+        <class>com.oilchem.trade.domain.count.ExpDetailTradetype</class>
+        <class>com.oilchem.trade.domain.count.ImpDetailTradetype</class>
 
         <properties>
-            <property name="showSql" value="${hibernate.show_sql}" />
+            <property name="hibernate.archive.autodetection" value="class"/>
+            <property name="hibernate.show_sql" value="${hibernate.show_sql}"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hbm2ddl.auto" value="update"/>
+
+            <!--<property name="showSql" value="${hibernate.show_sql}" />-->
             <property name="generateDdl" value="true" />
             <property name="databasePlatform" value="${hibernate.dialect}" />
+            <!--<property name="hibernate.connection.url" value="jdbc:sqlserver://192.168.1.21:2433;DatabaseName=lzdb"/>-->
+            <!--<property name="hibernate.connection.driver_class" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>-->
+            <!--<property name="hibernate.connection.username" value="oilchemexp"/>-->
+            <!--<property name="hibernate.connection.password" value="4FGHJGKLH63543#$%^RFGHJK4"/>-->
         </properties>
 	</persistence-unit>
 	<!--<persistence-unit name="jpa.com.oilchem.trade.plain">-->

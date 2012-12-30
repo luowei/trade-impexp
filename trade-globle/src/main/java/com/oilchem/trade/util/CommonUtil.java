@@ -26,7 +26,6 @@ public abstract class CommonUtil {
      * @return 文件中的字符串
      */
     public static synchronized String readStringFromFile(String filePath) {
-        InputStream in = null;
         InputStreamReader read = null;
         BufferedReader reader = null;
         try {
@@ -54,19 +53,19 @@ public abstract class CommonUtil {
      * @return 成功或失败
      */
     public static synchronized Boolean writeString2File(String filePath, String string) {
-        OutputStream out = null;
+        OutputStreamWriter writer = null;
         try {
-            System.out.println(filePath);
+            logger.info(filePath);
             File file = new File(filePath);
-            out = new FileOutputStream(file);
-            out.write(string.getBytes());
-            out.flush();
+            writer = new OutputStreamWriter(new FileOutputStream(file),"UTF-8");
+            writer.write(string);
+            writer.flush();
             return true;
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             return false;
         } finally {
-            close(out);
+            close(writer);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.oilchem.test;
 
-import com.oilchem.trade.domain.ImpTradeDetail;
+import com.oilchem.trade.domain.detail.ImpTradeDetail;
 import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TaskService;
@@ -55,6 +55,7 @@ public class ImportTest {
 
     YearMonthDto yearMonth;
     MockMultipartFile file;
+
 
     @Before
     public void setUp() throws Exception {

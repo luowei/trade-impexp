@@ -1,0 +1,45 @@
+--查找明细记录中重复的数据
+
+
+-- --进口明细表统计视图
+-- create view v_import_detail_count
+-- as
+-- select
+-- product_code as id ,
+-- year_month ,
+-- product_code ,
+-- product_name ,
+-- sum(amount) as num,
+-- unit ,
+-- sum(amount_money) as money,
+-- case sum(amount)
+-- 	when 0 then 0
+-- 	else sum(amount_money)/sum(amount)
+-- end as avg_price
+-- from
+-- t_import_detail
+-- group by
+-- year_month,product_code,product_name,unit
+-- go
+
+-- --出口明细表统计视图
+-- create view v_export_detail_count
+-- as
+-- select
+-- product_code as id ,
+-- year_month ,
+-- product_code ,
+-- product_name ,
+-- sum(amount) as num,
+-- unit ,
+-- sum(amount_money) as money,
+-- case sum(amount)
+-- 	when 0 then 0
+-- 	else sum(amount_money)/sum(amount)
+-- end as avg_price
+-- from
+-- t_export_detail
+-- group by
+-- year_month,product_code,product_name,unit
+-- go
+

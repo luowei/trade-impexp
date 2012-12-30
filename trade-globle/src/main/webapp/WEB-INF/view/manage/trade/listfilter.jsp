@@ -15,36 +15,57 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>过滤条件列表</title>
-    <link rel="stylesheet" type="text/css" href="<c:url value='/resources/bootstrap/css/bootstrap.min.css' />"/>
-    <link rel="stylesheet" type="text/css"
-          href="<c:url value='/resources/bootstrap/css/bootstrap-responsive.min.css' />"/>
-
+    <title></title>
 </head>
-<body >
+<body>
 
-<%--<jsp:include page="../../common/breadcrumb.jsp"/>--%>
+<div class="navbar navbar-fixed-top ">
+    <div class="navbar-inner">
+
+        <div class="wrapper">
+            <a class="brand" href="#">进出口管理</a>
+
+            <div class="nav-collapse collapse navbar-responsive-collapse">
+                <ul class="nav nav-tabs">
+                    <li><a href="${pageContext.request.contextPath}/manage/list/companyType">企业性质表</a></li>
+                    <li><a href="${pageContext.request.contextPath}/manage/list/tradeType">贸易类型表</a></li>
+                    <li><a href="${pageContext.request.contextPath}/manage/list/transportation">运输方式表</a></li>
+                    <li><a href="${pageContext.request.contextPath}/manage/list/customs">海关表</a></li>
+                    <li><a href="${pageContext.request.contextPath}/manage/list/country">产销国家表</a></li>
+                    <li><a href="${pageContext.request.contextPath}/manage/list/city">出口城市表</a></li>
+                    <li><a href="${pageContext.request.contextPath}/manage/listProduct/1">明细产品表</a></li>
+
+                    <li><a href="${pageContext.request.contextPath}/manage/list/detailType">明细表产品类型表</a></li>
+                    <li><a href="${pageContext.request.contextPath}/manage/list/sumType">总表产品类型表</a></li>
+
+
+                    <li><a href="javascript:" onclick="history.back();">返回</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 
 <c:if test="${type eq null or type eq 'companyType'}">
 
 
-        <div class="row">
-            <div class="span2"><h3>企业性质列表 </h3></div>
+    <div class="row">
+        <div class="span2"><h3>企业性质列表 </h3></div>
 
-            <div class="span2">
-                <label class="label" style="display: inline-block;width: 210px;height: 30px;padding-top: 3px"> 名称：<input
-                        id="companyType" style="width: 100px;display: inline"/>
-            <%--</div>--%>
-            <%--<div class="span2">--%>
+        <div class="span2">
+            <label class="label" style="display: inline-block;width: 210px;height: 30px;padding-top: 3px"> 名称：<input
+                    id="companyType" style="width: 100px;display: inline"/>
+                    <%--</div>--%>
+                    <%--<div class="span2">--%>
                 <a id="addCompanyType"
-                   href="javascript:if(document.getElementById('companyType').value.trim()==''){alert('值不能为空');return void(0);}
-                   if(confirm('您确定要添加此项吗?'))
+                   href="javascript:if(document.getElementById('companyType').value.trim()!='' && confirm('您确定要添加此项吗?'))
                    location.href='${pageContext.request.contextPath}/manage/add/companyType/'
                    +document.getElementById('companyType').value"
-                   class="btn btn-small btn-success">添加</a>  </label>
-            </div>
+                   class="btn btn-small btn-success">添加</a> </label>
         </div>
+    </div>
 
     <table class="table table-bordered table-striped table-condensed">
         <tbody>
@@ -87,10 +108,10 @@
                     <%--</div>--%>
                     <%--<div class="span2">--%>
                 <a id="addCustoms"
-                   href="javascript:if(document.getElementById('customs').value.trim()==''){alert('值不能为空');return void(0);}
-                   if(confirm('您确定要添加此项吗?'))location.href='${pageContext.request.contextPath}/manage/add/customs/'
+                   href="javascript:if(document.getElementById('customs').value.trim()!='' && confirm('您确定要添加此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/add/customs/'
                    +document.getElementById('customs').value"
-                   class="btn btn-small btn-success">添加</a>  </label>
+                   class="btn btn-small btn-success">添加</a> </label>
         </div>
     </div>
 
@@ -135,10 +156,10 @@
                     <%--</div>--%>
                     <%--<div class="span2">--%>
                 <a id="addTradeType"
-                   href="javascript:if(document.getElementById('tradeType').value.trim()==''){alert('值不能为空');return void(0);}
-                   if(confirm('您确定要添加此项吗?'))location.href='${pageContext.request.contextPath}/manage/add/tradeType/'
+                   href="javascript:if(document.getElementById('tradeType').value.trim()!='' && confirm('您确定要添加此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/add/tradeType/'
                    +document.getElementById('tradeType').value"
-                   class="btn btn-small btn-success">添加</a>  </label>
+                   class="btn btn-small btn-success">添加</a> </label>
         </div>
     </div>
 
@@ -175,7 +196,7 @@
 <c:if test="${type eq null or type eq 'transportation'}">
 
     <div class="row">
-        <div class="span2"> <h3>运输方式列表</h3></div>
+        <div class="span2"><h3>运输方式列表</h3></div>
 
         <div class="span2">
             <label class="label" style="display: inline-block;width: 210px;height: 30px;padding-top: 3px"> 名称：<input
@@ -183,10 +204,10 @@
                     <%--</div>--%>
                     <%--<div class="span2">--%>
                 <a id="addTransportation"
-                   href="javascript:if(document.getElementById('transportation').value.trim()==''){alert('值不能为空');return void(0);}
-                   if(confirm('您确定要添加此项吗?'))location.href='${pageContext.request.contextPath}/manage/add/transportation/'
+                   href="javascript:if(document.getElementById('transportation').value.trim()!='' && confirm('您确定要添加此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/add/transportation/'
                    +document.getElementById('transportation').value"
-                   class="btn btn-small btn-success">添加</a>  </label>
+                   class="btn btn-small btn-success">添加</a> </label>
         </div>
     </div>
 
@@ -228,15 +249,15 @@
         <div class="span2">
             <label class="label" style="display: inline-block;width: 300px;height: 30px;padding-top: 3px">
                 类型码:<input id="typeCode" class="input-small" style="width: 30px;display: inline-block;"/>
-                名称：<input id="detailType" class="input-small"  style="width: 100px;display: inline-block;"/>
+                名称：<input id="detailType" class="input-small" style="width: 100px;display: inline-block;"/>
                     <%--</div>--%>
                     <%--<div class="span2">--%>
                 <a id="addTransportation"
-                   href="javascript:if(document.getElementById('detailType').value.trim()==''
-                   ||document.getElementById('typeCode').value.trim()=='' ){alert('值不能为空');return void(0);}
-                   if(confirm('您确定要添加此项吗?'))location.href='${pageContext.request.contextPath}/manage/addDetailType/'
+                   href="javascript:if(document.getElementById('detailType').value.trim()!=''
+                   && document.getElementById('typeCode').value.trim()!=''
+                   && confirm('您确定要添加此项吗?'))location.href='${pageContext.request.contextPath}/manage/addDetailType/'
                    +document.getElementById('typeCode').value+'/'+document.getElementById('detailType').value"
-                   class="btn btn-small btn-success" style="display: inline;">添加</a>  </label>
+                   class="btn btn-small btn-success" style="display: inline;">添加</a> </label>
         </div>
     </div>
 
@@ -246,8 +267,9 @@
 
             <c:forEach items="${detailTypeList}" var="detailType" varStatus="vs">
             <td>
-                <input id="typeCode_${vs.index}" style="width: 30px" readonly="readonly" value="${detailType.type_code}"/>
-                <input id="detailType_${vs.index}" style="width: 100px" value="${detailType.detailType}"/>
+                <input id="typeCode_${vs.index}" style="width: 30px" readonly="readonly"
+                       value="${detailType.type_code}"/>
+                <input id="detailType_${vs.index}" style="width: 200px" value="${detailType.detailType}"/>
                 <a id="editDetailType"
                    href="javascript:if(confirm('您确定要修改此项吗?'))
                    location.href='${pageContext.request.contextPath}/manage/update/detailType/${detailType.id}/'
@@ -282,10 +304,10 @@
                     <%--</div>--%>
                     <%--<div class="span2">--%>
                 <a id="addSumType"
-                   href="javascript:if(document.getElementById('sumType').value.trim()==''){alert('值不能为空');return void(0);}
-                   if(confirm('您确定要添加此项吗?'))location.href='${pageContext.request.contextPath}/manage/add/sumType/'
+                   href="javascript:if(document.getElementById('sumType').value.trim()!='' && confirm('您确定要添加此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/add/sumType/'
                    +document.getElementById('sumType').value"
-                   class="btn btn-small btn-success">添加</a>  </label>
+                   class="btn btn-small btn-success">添加</a> </label>
         </div>
     </div>
 
@@ -322,7 +344,7 @@
 <c:if test="${type eq null or type eq 'country'}">
 
     <div class="row">
-        <div class="span2"> <h3>国家列表</h3></div>
+        <div class="span2"><h3>国家列表</h3></div>
 
         <div class="span2">
             <label class="label" style="display: inline-block;width: 210px;height: 30px;padding-top: 3px"> 名称：<input
@@ -330,10 +352,10 @@
                     <%--</div>--%>
                     <%--<div class="span2">--%>
                 <a id="addCountry"
-                   href="javascript:if(document.getElementById('country').value.trim()==''){alert('值不能为空');return void(0);}
-                   if(confirm('您确定要添加此项吗?'))location.href='${pageContext.request.contextPath}/manage/add/country/'
+                   href="javascript:if(document.getElementById('country').value.trim()!='' && confirm('您确定要添加此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/add/country/'
                    +document.getElementById('country').value"
-                   class="btn btn-small btn-success">添加</a>  </label>
+                   class="btn btn-small btn-success">添加</a> </label>
         </div>
     </div>
 
@@ -378,10 +400,10 @@
                     <%--</div>--%>
                     <%--<div class="span2">--%>
                 <a id="addCity"
-                   href="javascript:if(document.getElementById('city').value.trim()==''){alert('值不能为空');return void(0);}
-                   if(confirm('您确定要添加此项吗?'))location.href='${pageContext.request.contextPath}/manage/add/city/'
+                   href="javascript:if(document.getElementById('city').value.trim()!='' && confirm('您确定要添加此项吗?'))
+                   location.href='${pageContext.request.contextPath}/manage/add/city/'
                    +document.getElementById('city').value"
-                   class="btn btn-small btn-success">添加</a>  </label>
+                   class="btn btn-small btn-success">添加</a> </label>
         </div>
     </div>
 

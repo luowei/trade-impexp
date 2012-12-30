@@ -20,6 +20,7 @@ public class YearMonthDto {
      * 进口/出口
      */
     private Integer impExpType;
+
     /**
      * 产品类型
      */
@@ -34,6 +35,17 @@ public class YearMonthDto {
     private String importType;
 
     public YearMonthDto() {
+    }
+
+    public YearMonthDto(Integer month,Integer impExpType,
+                        Integer lowYear,Integer lowMonth,
+                        Integer highYear,Integer highMonth) {
+        this.month = month;
+        this.impExpType = impExpType;
+        this.lowYear = lowYear;
+        this.lowMonth = lowMonth;
+        this.highYear = highYear;
+        this.highMonth = highMonth;
     }
 
     public YearMonthDto(Integer year, Integer month, Integer impExpType,
@@ -139,5 +151,24 @@ public class YearMonthDto {
          return yearMonthDto.getYear()!=null
                  && yearMonthDto.getMonth()!=null
                  && yearMonthDto.getImpExpType()!=null;
+    }
+
+    /**
+     * 起始年月，结束年月跨度不超过12
+     * @param yearMonthDto
+     * @return
+     */
+    public boolean validYearMonthRang(YearMonthDto yearMonthDto){
+
+        Integer lowMonth = yearMonthDto.getLowMonth();
+        Integer lowYear = yearMonthDto.getLowYear();
+        Integer highMonth = yearMonthDto.getHighMonth();
+        Integer highYear = yearMonthDto.getHighYear();
+        Boolean inValidate = lowMonth==null || lowYear==null || highMonth==null || highYear==null;
+        if(inValidate) return false;
+        if(lowYear > highYear) return false;
+        if(lowYear.equals(highYear) && lowMonth > highMonth) return false;
+        if(highMonth-lowMonth+(highYear-lowYear)*12 > 12) return false;
+        return true;
     }
 }

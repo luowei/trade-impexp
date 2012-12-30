@@ -1,13 +1,13 @@
 package com.oilchem.trade.dao;
 
-import com.oilchem.trade.domain.ExpTradeDetail;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.oilchem.trade.bean.ProductCount;
+import com.oilchem.trade.dao.custom.ExpTradeDetailDaoCustom;
+import com.oilchem.trade.domain.abstrac.TradeDetail;
+import com.oilchem.trade.domain.detail.ExpTradeDetail;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -29,4 +29,8 @@ public interface ExpTradeDetailDao extends CrudRepository<ExpTradeDetail,Long>,
     void delRepeatImpTradeDetail(Integer year,Integer month);
 
     List<ExpTradeDetail> findByProductCodeAndYearMonth(String productCode, String yearMonth);
+
+//    @Query("select productCode,productName,?3,sum(amount) as num,sum(amountMoney) as money " +
+//            " from ExpTradeDetail where productCode=?1 and yearMonth=?2 group by ?3")
+//    List<ProductCount> getProductCount(String productCode, String yearMonth, String condition);
 }

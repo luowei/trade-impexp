@@ -1,0 +1,25 @@
+<configuration>	  
+  <!-- 指定属性文件的位置 -->
+  <property file="src/com/ttpod/mail/gmailSSL.properties" />
+  
+  <!-- 目的指定向email的appender -->
+  <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
+    <SMTPHost>${SMTPHOST}</SMTPHost>
+    <SMTPPort>${SMTPPORT}</SMTPPort>
+    <STARTTLS>true</STARTTLS>
+    <Username>${EMAIL_USERNAME}</Username>
+    <Password>${EMAIL_PASSWORD}</Password> 
+    
+    <To>${EMAIL-DESTINATION}</To>
+    <To>${ANOTHER_EMAIL_DESTINATION}</To> <!-- additional destinations are possible -->
+    <From>${EMAIL_USERNAME}</From>
+    <Subject>TESTING: %logger{20} - %m</Subject>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <Pattern>%date %-5level %logger - %message%n</Pattern>
+    </layout>	    
+  </appender>
+
+  <root level="debug">
+    <appender-ref ref="EMAIL" />
+  </root>  
+</configuration>

@@ -1,0 +1,88 @@
+{
+    "y_axis":{
+        "min":0,
+        "max":24624,
+        "steps":1231
+    },
+
+    "title":{
+        "text":"titletitletitle"
+    },
+
+    "x_legend":{
+        "text":"aaaa",
+        "style":"{color:#736AEF; font-size:12px;}"
+    },
+
+    "y_legend":{
+        "text":"y_legendy_legendy_legend" ,
+        "style":"{color:#736AEF; font-size:12px;}"
+    },
+
+    "elements":[
+        {
+            "colour":"#0a3e7a",
+            "dot-size":5,
+            "values":[0, 20520.793, 0, 20520.793, 2436, 2355, 234, 456, 0, 8797, 5445, 6789],
+            "width":1,
+            "font-size":10,
+            "type":"line"
+        },
+        {
+            "colour":"#bda0ba",
+            "dot-size":5,
+            "values":[452, 324.793, 23450, 18520.793, 3546, 0, 450, 3450, 6780, 540,13450, 340],
+            "width":1,
+            "font-size":10,
+            "type":"line"
+        },
+        {
+            "colour":"#a7e07a",
+            "dot-size":5,
+            "values":[9780, 20520.793, 780, 20520.793, 8760, 240, 2340, 230, 6770, 8970, 3240, 3440],
+            "width":1,
+            "font-size":10,
+            "type":"line"
+        }
+    ], "x_axis":{
+    "labels":{
+        "labels":[
+            {
+                "text":"2011-12"
+            },
+            {
+                "text":"2012-01"
+            },
+            {
+                "text":"2012-02"
+            },
+            {
+                "text":"2012-03"
+            },
+            {
+                "text":"2012-04"
+            },
+            {
+                "text":"2012-05"
+            },
+            {
+                "text":"2012-06"
+            },
+            {
+                "text":"2012-07"
+            },
+            {
+                "text":"2012-08"
+            },
+            {
+                "text":"2012-09"
+            },
+            {
+                "text":"2012-10"
+            },
+            {
+                "text":"2012-11"
+            }
+        ]
+    }
+}}

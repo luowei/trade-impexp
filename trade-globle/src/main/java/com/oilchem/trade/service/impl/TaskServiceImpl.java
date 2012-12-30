@@ -1,6 +1,6 @@
 package com.oilchem.trade.service.impl;
 
-import com.oilchem.trade.bean.DocBean;
+import com.oilchem.trade.dao.ImpTradeDetailDao;
 import com.oilchem.trade.dao.LogDao;
 import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.service.*;
@@ -45,6 +45,8 @@ public class TaskServiceImpl implements TaskService {
     DetailCountService detailCountService;
 
     @Resource
+    ImpTradeDetailDao impTradeDetailDao;
+    @Resource
     LogDao logDao;
 
 
@@ -72,7 +74,7 @@ public class TaskServiceImpl implements TaskService {
                 for (Map.Entry<Long, Log> entry : unImportMap.entrySet()) {
                     tradeDetailService.importAccess(entry, yearMonthDto);
                     //更新明细产品类型
-                    tradeDetailService.updateDetailType(entry,yearMonthDto);
+                    tradeDetailService.updateDetailType(yearMonthDto);
                 }
             }
         };
@@ -148,20 +150,24 @@ public class TaskServiceImpl implements TaskService {
 
                 Integer impExpType = null;
                 YearMonthDto yearMonthDto = null;
+
+                if(import_type.getValue().equals(log.getTradeType())){
+                    impExpType = import_type.ordinal();
+                }else if(export_type.getValue().equals(log.getTradeType())) {
+                    impExpType = export_type.ordinal();
+                }
+
                 if ( detail.equals(log.getTableType())
                         || detail.getValue().equals(log.getTableType())) {
-                    impExpType = import_type.ordinal();
+
                     yearMonthDto = new YearMonthDto(log.getYear(), log.getMonth(), impExpType,
                             log.getProductType(), tableType);
                     tradeDetailService.importAccess(entry, yearMonthDto);
-                    //更新明细产品类型
-                    tradeDetailService.updateDetailType(entry,yearMonthDto);
                 }
 
                 if (sum.equals(log.getTableType())
                         || sum.getValue().equals(log.getTableType())) {
-                    impExpType = export_type.ordinal();
-                    yearMonthDto = new YearMonthDto(log.getYear(), log.getMonth(), impExpType,
+                    yearMonthDto = new YearMonthDto(log.getYear(), log.getMonth(),impExpType ,
                             log.getProductType(), tableType);
                     tradeSumService.importExcel(entry, yearMonthDto);
                 }
@@ -176,12 +182,43 @@ public class TaskServiceImpl implements TaskService {
      */
     public void genAllDetailCount(){
         TimerTask task = new TimerTask() {
-
             public void run() {
                 detailCountService.genAllDetailCount();
             }
         };
         new Timer().schedule(task, delay);
+    }
+
+    @Override
+    public void genAllDetailTradeType() {
+        TimerTask task = new TimerTask() {
+            public void run() {
+                detailCountService.genAllDetailTradeType();
+            }
+        };
+        new Timer().schedule(task, delay);
+    }
+
+    @Override
+    public void genAllDetailCompanyType() {
+        TimerTask task = new TimerTask() {
+            public void run() {
+                detailCountService.genAllDetailCompanyType();
+            }
+        };
+        new Timer().schedule(task, delay);
+    }
+
+    @Override
+    public void excuteService(final String excute) {
+        TimerTask task = new TimerTask() {
+
+            @Override
+            public void run() {
+                impTradeDetailDao.excuteSql(excute);
+            }
+        } ;
+        new Timer().schedule(task,delay);
     }
 
 }

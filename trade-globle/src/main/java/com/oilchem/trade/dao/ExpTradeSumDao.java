@@ -1,6 +1,7 @@
 package com.oilchem.trade.dao;
 
-import com.oilchem.trade.domain.ExpTradeSum;
+import com.oilchem.trade.dao.custom.ExpTradeSumDaoCustom;
+import com.oilchem.trade.domain.sum.ExpTradeSum;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -27,4 +28,6 @@ public interface ExpTradeSumDao extends CrudRepository<ExpTradeSum,Long>,
     void delRepeatExpTradeSum(@Param("year") Integer year,@Param("month") Integer month);
 
     List<ExpTradeSum> findByProductNameAndYearMonth(String productName,String yearMonth);
+
+    List<ExpTradeSum> findByIdAndYearMonth(Long aLong, String yearMonth);
 }

@@ -63,6 +63,10 @@ public class TradeSum extends IdEntity implements Serializable {
     public TradeSum() {
     }
 
+    public TradeSum(String productName) {
+        this.productName = productName;
+    }
+
     public TradeSum(Integer year, Integer month,
                     String yearMonth, String sumType) {
         this.year = year;

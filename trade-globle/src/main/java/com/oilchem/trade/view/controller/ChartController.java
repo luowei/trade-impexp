@@ -11,10 +11,8 @@ import com.oilchem.trade.chart.SumChart;
 import com.oilchem.trade.domain.abstrac.DetailCount;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeSum;
-import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.service.ChartService;
 import com.oilchem.trade.util.EHCacheUtil;
-import ofc4j.OFC;
 import ofc4j.model.Chart;
 import ofc4j.model.axis.Label;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +113,8 @@ public class ChartController extends CommonController {
 
         }
 
-        model.addAttribute("idx", idx - 1).addAttribute("width", chart_width.value())
+        model.addAttribute("idx", idx - 1)
+                .addAttribute("width", chart_width.value())
                 .addAttribute("height", chart_height.value());
 
         return "manage/trade/chart";

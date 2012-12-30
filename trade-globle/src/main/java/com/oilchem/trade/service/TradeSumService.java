@@ -4,6 +4,9 @@ import com.oilchem.trade.domain.*;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
+import com.oilchem.trade.domain.condition.SumType;
+import com.oilchem.trade.domain.sum.ExpTradeSum;
+import com.oilchem.trade.domain.sum.ImpTradeSum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -69,6 +72,11 @@ public interface TradeSumService {
             YearMonthDto yearMonthDto,
             PageRequest pageRequest);
 
+    List<ImpTradeSum> findImpWithCriteria(
+            ImpTradeSum tradeSum,
+            CommonDto commonDto,
+            YearMonthDto yearMonthDto);
+
     /**
      * 出口列表
      *
@@ -83,6 +91,11 @@ public interface TradeSumService {
             CommonDto commonDto,
             YearMonthDto yearMonthDto,
             PageRequest pageRequest);
+
+    List<ExpTradeSum> findExpWithCriteria(
+            ExpTradeSum tradeSum,
+            CommonDto commonDto,
+            YearMonthDto yearMonthDto);
 
     /**
      * 获得总量

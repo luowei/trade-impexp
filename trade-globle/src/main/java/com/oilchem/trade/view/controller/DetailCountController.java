@@ -2,14 +2,12 @@ package com.oilchem.trade.view.controller;
 
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
-import com.oilchem.trade.domain.ExpDetailCount;
-import com.oilchem.trade.domain.ImpDetailCount;
+import com.oilchem.trade.domain.count.*;
 import com.oilchem.trade.domain.abstrac.DetailCount;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.DetailCountService;
 import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.util.QueryUtils;
-import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -60,14 +58,100 @@ public class DetailCountController extends CommonController{
             addPageInfo(model, expDetailCounts, "/manage/list/detailCount") .addAttribute("detailCountList", expDetailCounts);
         }
 
+        for (QueryUtils.PropertyFilter filter : detailCountService
+                .getdetailQueryProps(detailCount, commonDto)) {
+            model.addAttribute(filter.getName(), filter.getValue());
+        }
+        yearMonth2Model(model,yearMonthDto);
+
+        return "manage/trade/count/listdetailcount";
+    }
+
+
+    @RequestMapping("/list/detailTradeType/{pageNumber}")
+    public String listDetailTradeType(Model model,CommonDto commonDto,
+                                  YearMonthDto yearMonthDto,
+                                  DetailCount detailCount) {
+
+        Integer impExp = yearMonthDto.getImpExpType();
+        if (impExp == null)
+            yearMonthDto.setImpExpType(impExp = 0);
+
+        if (impExp.equals(import_type.ordinal())) {
+            Page<ImpDetailTradetype> impTradeTypelCounts = detailCountService
+                    .findImpWithCriteria(new ImpDetailTradetype(detailCount), commonDto, yearMonthDto, getPageRequest(commonDto));
+            addPageInfo(model, impTradeTypelCounts, "/manage/list/detailTradeType") .addAttribute("tradeTypeList", impTradeTypelCounts);
+        }
+        if (impExp.equals(export_type.ordinal())) {
+            Page<ExpDetailTradetype> expTradeTypeCounts = detailCountService
+                    .findImpWithCriteria( new ExpDetailTradetype(detailCount),  commonDto, yearMonthDto,  getPageRequest(commonDto));
+            addPageInfo(model, expTradeTypeCounts, "/manage/list/detailTradeType") .addAttribute("tradeTypeList", expTradeTypeCounts);
+        }
+
         yearMonth2Model(model,yearMonthDto);
 
 
-        return "manage/trade/listdetailcount";
+        return "manage/trade/count/listdetailtradetype";
+    }
+
+    @RequestMapping("/list/detailCompanyType/{pageNumber}")
+    public String listDetailCompanyType(Model model,CommonDto commonDto,
+                                      YearMonthDto yearMonthDto,
+                                      DetailCount detailCount) {
+
+        Integer impExp = yearMonthDto.getImpExpType();
+        if (impExp == null)
+            yearMonthDto.setImpExpType(impExp = 0);
+
+        if (impExp.equals(import_type.ordinal())) {
+            Page<ImpDetailCompanytype> impDetailCounts = detailCountService
+                    .findImpWithCriteria(new ImpDetailCompanytype(detailCount), commonDto, yearMonthDto, getPageRequest(commonDto));
+            addPageInfo(model, impDetailCounts, "/manage/list/detailCompanyType") .addAttribute("companyTypeList", impDetailCounts);
+        }
+        if (impExp.equals(export_type.ordinal())) {
+            Page<ExpDetailCompanytype> expDetailCounts = detailCountService
+                    . findImpWithCriteria(  new ExpDetailCompanytype(detailCount),  commonDto, yearMonthDto,  getPageRequest(commonDto));
+            addPageInfo(model, expDetailCounts, "/manage/list/detailCompanyType") .addAttribute("companyTypeList", expDetailCounts);
+        }
+
+        yearMonth2Model(model,yearMonthDto);
+
+
+        return "manage/trade/count/listdetailcompanytype";
+    }
+
+
+    /**
+     * 前往往统计数据生成页面
+     * @return
+     */
+    @RequestMapping("/toGenCount")
+    public String toGenCount(){
+        return "manage/trade/count/gencount";
     }
 
     @RequestMapping("/genDetailCount")
     public String genDetailCount(String countYear,String countMonth,Integer countImpExp,
+                                 RedirectAttributes redirectAttrs){
+
+        Boolean validate = isNotBlank(countYear) && isNotBlank(countMonth) && countImpExp!=null;
+        if (!validate) {
+            addRedirectError(redirectAttrs,"请选择正确的年月");
+            return "redirect:/manage/list/detailCount/1";
+        }
+        try {
+            detailCountService.genDetailCount(countYear,countMonth,countImpExp);
+            addRedirectMessage(redirectAttrs, "生成"+countYear+"年"+countMonth+"月的统计数据**成功**");
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+            addRedirectError(redirectAttrs,"生成"+countYear+"年"+countMonth+"月的统计数据**失败**");
+        }
+
+        return "redirect:/manage/list/detailCount/1";
+    }
+
+    @RequestMapping("/genDetailTradeType")
+    public String genDetailTradeType(String countYear,String countMonth,Integer countImpExp,
                                  RedirectAttributes redirectAttrs){
 
         Boolean validate = isNotBlank(countYear) && isNotBlank(countMonth) && countImpExp!=null;
@@ -101,6 +185,34 @@ public class DetailCountController extends CommonController{
         return "redirect:/manage/list/detailCount/1";
     }
 
+    @RequestMapping("/genAllDetailTradeType")
+    public String genAllDetailTradeType(RedirectAttributes redirectAttrs){
+
+        try {
+            taskService.genAllDetailCount();
+            addRedirectMessage(redirectAttrs,"生成按贸易方式统计数据任务**正在后台执行**");
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+            addRedirectError(redirectAttrs,"生成按贸易方式统计数据**失败**");
+        }
+
+        return "redirect:/manage/list/detailtradetype/1";
+    }
+
+    @RequestMapping("/genAllDetailCompanyType")
+    public String genAllDetailCompanyType(RedirectAttributes redirectAttrs){
+
+        try {
+            taskService.genAllDetailCount();
+            addRedirectMessage(redirectAttrs,"生成按企业性质统计数据任务**正在后台执行**");
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+            addRedirectError(redirectAttrs,"生成按企业性质统计数据**失败**");
+        }
+
+        return "redirect:/manage/list/detailcompanytype/1";
+    }
+
 
     /**
      * 把属性放到model中
@@ -121,7 +233,5 @@ public class DetailCountController extends CommonController{
         }
         return model;
     }
-
-
 
 }

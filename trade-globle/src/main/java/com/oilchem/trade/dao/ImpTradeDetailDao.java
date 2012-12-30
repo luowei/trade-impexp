@@ -1,13 +1,12 @@
 package com.oilchem.trade.dao;
 
-import com.oilchem.trade.domain.ImpTradeDetail;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.oilchem.trade.bean.ProductCount;
+import com.oilchem.trade.dao.custom.ImpTradeDetailDaoCustom;
+import com.oilchem.trade.domain.detail.ImpTradeDetail;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -32,4 +31,29 @@ public interface ImpTradeDetailDao extends CrudRepository<ImpTradeDetail, Long>,
 //    Page<ImpTradeDetail> pageByCriteria(@Param("wheres")String wheres,Pageable pageable);
 
     List<ImpTradeDetail> findByProductCodeAndYearMonth(String productCode, String yearMonth);
+
+//    @Query("select yearMonth,productCode,productName,companyType,sum(amount) as num,unit,sum(amountMoney) as money " +
+//            " from ImpTradeDetail where productCode=?1 and yearMonth=?2 group by yearMonth,productCode,productName,unit,companyType")
+//    List<ProductCount> getCompanyTypeProductCount(String productCode, String yearMonth);
+//
+//    @Query("select yearMonth,productCode,productName,tradeType,sum(amount) as num,unit,sum(amountMoney) as money " +
+//            " from ImpTradeDetail where productCode=?1 and yearMonth=?2 group by yearMonth,productCode,productName,unit,tradeType")
+//    List<ProductCount> getTradeTypeProductCount(String productCode, String yearMonth);
+//
+//    @Query("select yearMonth,productCode,productName,customs,sum(amount) as num,unit,sum(amountMoney) as money " +
+//            " from ImpTradeDetail where productCode=?1 and yearMonth=?2 group by yearMonth,productCode,productName,unit,customs")
+//    List<ProductCount> getCustomsProductCount(String productCode, String yearMonth);
+//
+//    @Query("select yearMonth,productCode,productName,transportation,sum(amount) as num,unit,sum(amountMoney) as money " +
+//            " from ImpTradeDetail where productCode=?1 and yearMonth=?2 group by yearMonth,productCode,productName,unit,transportation")
+//    List<ProductCount> getTransportationProductCount(String productCode, String yearMonth);
+//
+//    @Query("select yearMonth,productCode,productName,country,sum(amount) as num,unit,sum(amountMoney) as money " +
+//            " from ImpTradeDetail where productCode=?1 and yearMonth=?2 group by yearMonth,productCode,productName,unit,country")
+//    List<ProductCount> getCountryProductCount(String productCode, String yearMonth);
+//
+//    @Query("select yearMonth,productCode,productName,city,sum(amount) as num,unit,sum(amountMoney) as money " +
+//            " from ImpTradeDetail where productCode=?1 and yearMonth=?2 group by yearMonth,productCode,productName,unit,city")
+//    List<ProductCount> getCityProductCount(String productCode, String yearMonth);
+
 }

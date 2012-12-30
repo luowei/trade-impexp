@@ -57,8 +57,8 @@
 
 
     <jpa:repositories base-package="com.oilchem.trade.dao">
-        <!--<include-filter type="regex" expression="com.oilchem.trade.dao.impl.*"/>-->
-        <repository:exclude-filter type="regex" expression="com.oilchem.trade.dao.impl.*"/>
+        <!--<include-filter type="regex" expression="com.oilchem.trade.dao.custom.impl.*"/>-->
+        <repository:exclude-filter type="regex" expression="com.oilchem.trade.dao.custom.impl.*"/>
         <repository:exclude-filter type="regex" expression="com.oilchem.trade.dao.*Custom"/>
     </jpa:repositories>
 </beans>

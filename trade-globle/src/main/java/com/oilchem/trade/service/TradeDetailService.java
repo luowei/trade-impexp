@@ -4,6 +4,9 @@ import com.oilchem.trade.domain.*;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
+import com.oilchem.trade.domain.condition.Product;
+import com.oilchem.trade.domain.detail.ExpTradeDetail;
+import com.oilchem.trade.domain.detail.ImpTradeDetail;
 import com.oilchem.trade.util.QueryUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -61,7 +64,7 @@ public interface TradeDetailService {
      * @param yearMonthDto
      *@param pageRequest  @return
      */
-    public Page<ImpTradeDetail>
+      Page<ImpTradeDetail>
     findImpWithCriteria(ImpTradeDetail tradeDetail, CommonDto commonDto,
                         YearMonthDto yearMonthDto, PageRequest pageRequest);
 
@@ -73,7 +76,7 @@ public interface TradeDetailService {
      * @param yearMonthDto
      *@param pageRequest  @return
      */
-    public Page<ExpTradeDetail>
+      Page<ExpTradeDetail>
     findExpWithCriteria(ExpTradeDetail tradeDetail, CommonDto commonDto,
                         YearMonthDto yearMonthDto, PageRequest pageRequest);
 
@@ -84,7 +87,7 @@ public interface TradeDetailService {
      * @param commonDto
      * @return
      */
-    public List<QueryUtils.PropertyFilter>
+      List<QueryUtils.PropertyFilter>
     getdetailQueryProps(TradeDetail tradeDetail, CommonDto commonDto);
 
 
@@ -100,12 +103,14 @@ public interface TradeDetailService {
      * @param ids
      * @return
      */
-    public List<ExpTradeDetail> getExpDetailList(List<Long> ids);
+      List<ExpTradeDetail> getExpDetailList(List<Long> ids);
 
     /**
      * 更新detail表中的产品类型段
-     * @param entry
      * @param yearMonthDto
      */
-    void updateDetailType(Map.Entry<Long, Log> entry, YearMonthDto yearMonthDto);
+    void updateDetailType(YearMonthDto yearMonthDto);
+
+    List<Product> findAllProduct();
+
 }

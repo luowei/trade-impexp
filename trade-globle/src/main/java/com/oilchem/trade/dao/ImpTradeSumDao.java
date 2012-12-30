@@ -1,6 +1,7 @@
 package com.oilchem.trade.dao;
 
-import com.oilchem.trade.domain.ImpTradeSum;
+import com.oilchem.trade.dao.custom.ImpTradeSumDaoCustom;
+import com.oilchem.trade.domain.sum.ImpTradeSum;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,7 +20,7 @@ import java.util.List;
  */
 public interface ImpTradeSumDao extends CrudRepository<ImpTradeSum,Long>,
         JpaSpecificationExecutor<ImpTradeSum>,
-        ImpTradeSumDaoCustom{
+        ImpTradeSumDaoCustom {
 
     @Modifying
     @Transactional
@@ -28,4 +29,7 @@ public interface ImpTradeSumDao extends CrudRepository<ImpTradeSum,Long>,
 
 
     List<ImpTradeSum> findByProductNameAndYearMonth(String productName,String yearMonth);
+
+    List<ImpTradeSum> findByIdAndYearMonth(Long aLong, String yearMonth);
+
 }

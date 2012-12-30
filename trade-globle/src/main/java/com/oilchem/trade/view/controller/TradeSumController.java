@@ -1,10 +1,9 @@
 package com.oilchem.trade.view.controller;
 
-import com.oilchem.trade.dao.SumTypeDao;
-import com.oilchem.trade.domain.ExpTradeSum;
-import com.oilchem.trade.domain.ImpTradeSum;
-import com.oilchem.trade.domain.SumType;
-import com.oilchem.trade.domain.abstrac.TradeSum;
+import com.oilchem.trade.dao.condition.SumTypeDao;
+import com.oilchem.trade.domain.sum.ExpTradeSum;
+import com.oilchem.trade.domain.sum.ImpTradeSum;
+import com.oilchem.trade.domain.condition.SumType;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.service.ChartService;
 import com.oilchem.trade.service.CommonService;
@@ -27,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import static com.oilchem.trade.bean.DocBean.Config.upload_sumzip_dir;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.export_type;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.import_type;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * Created with IntelliJ IDEA.
@@ -68,26 +68,26 @@ public class TradeSumController extends CommonController {
         if ( impExp== null)
             yearMonthDto.setImpExpType(impExp = 0);
 
+        if(isBlank(commonDto.getSort())){
+            commonDto.setSort("yearMonth:desc");
+        }
+
         //进口
         if (impExp.equals(import_type.ordinal())) {
-            Page<ImpTradeSum> impTradeSums = tradeSumService
-                    .findImpWithCriteria(new ImpTradeSum(tradeSum), commonDto,
-                            yearMonthDto, getPageRequest(commonDto));
+            Page<ImpTradeSum> impTradeSums = tradeSumService.findImpWithCriteria(
+                    new ImpTradeSum(tradeSum), commonDto,yearMonthDto, getPageRequest(commonDto));
 
             findAllIdEntity(addPageInfo(model, impTradeSums, "/manage/listsum"),
-                    SumTypeDao.class, SumType.class.getSimpleName())
-                    .addAttribute("tradeSumList", impTradeSums);
+                    SumTypeDao.class, SumType.class.getSimpleName()).addAttribute("tradeSumList", impTradeSums);
         }
 
         //出口
         if (impExp.equals(export_type.ordinal())) {
-            Page<ExpTradeSum> expTradeSums = tradeSumService
-                    .findExpWithCriteria(new ExpTradeSum(tradeSum), commonDto,
-                            yearMonthDto, getPageRequest(commonDto));
+            Page<ExpTradeSum> expTradeSums = tradeSumService .findExpWithCriteria(
+                    new ExpTradeSum(tradeSum), commonDto, yearMonthDto, getPageRequest(commonDto));
 
             findAllIdEntity(addPageInfo(model, expTradeSums, "/manage/listsum"),
-                    SumTypeDao.class, SumType.class.getSimpleName())
-                    .addAttribute("tradeSumList", expTradeSums);
+                    SumTypeDao.class, SumType.class.getSimpleName()).addAttribute("tradeSumList", expTradeSums);
         }
 
         addAtrribute2Model(model, tradeSum, commonDto, yearMonthDto);
@@ -156,6 +156,8 @@ public class TradeSumController extends CommonController {
         model = yearMonthDto.getHighYear() != null ? model.addAttribute("highYear", yearMonthDto.getHighYear()): model;
         model = yearMonthDto.getHighMonth() != null ? model.addAttribute("highMonth", yearMonthDto.getHighMonth()): model;
         model = yearMonthDto.getImpExpType() != null ? model.addAttribute("impExpType", yearMonthDto.getImpExpType()): model;
+
+        model.addAttribute("nameSelType",commonDto.getNameSelType());
 
         for (QueryUtils.PropertyFilter filter : tradeSumService
                 .getSumQueryProps(tradeSum, commonDto)) {

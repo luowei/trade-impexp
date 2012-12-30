@@ -2,16 +2,14 @@ package com.oilchem.trade.service;
 
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
-import com.oilchem.trade.domain.ExpDetailCount;
-import com.oilchem.trade.domain.ImpDetailCount;
+import com.oilchem.trade.domain.count.*;
 import com.oilchem.trade.domain.abstrac.DetailCount;
 import com.oilchem.trade.util.QueryUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
-import static com.oilchem.trade.util.QueryUtils.PropertyFilter;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,6 +32,10 @@ public interface DetailCountService {
             ImpDetailCount impDetailCount, CommonDto commonDto,
             YearMonthDto yearMonthDto, PageRequest pageRequest);
 
+    public List<ImpDetailCount> findImpWithCriteria(
+            ImpDetailCount impDetailCount, CommonDto commonDto,
+            YearMonthDto yearMonthDto);
+
 
     /**
      * 获得  ExpDetailCount 列表
@@ -46,6 +48,10 @@ public interface DetailCountService {
     Page<ExpDetailCount> findExpWithCriteria(
             ExpDetailCount expDetailCount, CommonDto commonDto,
             YearMonthDto yearMonthDto, PageRequest pageRequest);
+
+    List<ExpDetailCount> findExpWithCriteria(
+            ExpDetailCount expDetailCount, CommonDto commonDto,
+            YearMonthDto yearMonthDto);
 
     /**
      * 获得查询条件列表
@@ -68,5 +74,53 @@ public interface DetailCountService {
      * 生成所有统计数据
      */
     void genAllDetailCount();
+
+
+    public Page<ImpDetailTradetype> findImpWithCriteria(
+            ImpDetailTradetype impDetailTradetype, CommonDto commonDto,
+            YearMonthDto yearMonthDto, PageRequest pageRequest);
+
+    public Page<ExpDetailTradetype> findImpWithCriteria(
+            ExpDetailTradetype expDetailTradetype, CommonDto commonDto,
+            YearMonthDto yearMonthDto, PageRequest pageRequest);
+
+    /**
+     * 按贸易方式生成月统计数据
+     * @param countYear
+     * @param countMonth
+     * @param countImpExp
+     */
+    @Transactional
+    public void genDetailTradeType(
+            String countYear, String countMonth, Integer countImpExp);
+
+    /**
+     * 按贸易方式生成统计
+     */
+    void genAllDetailTradeType();
+
+
+    public Page<ImpDetailCompanytype> findImpWithCriteria(
+            ImpDetailCompanytype impDetailCompanytype, CommonDto commonDto,
+            YearMonthDto yearMonthDto, PageRequest pageRequest);
+
+    public Page<ExpDetailCompanytype> findImpWithCriteria(
+            ExpDetailCompanytype expDetailCompanytype, CommonDto commonDto,
+            YearMonthDto yearMonthDto, PageRequest pageRequest);
+
+    /**
+     * 按企业性质成月统计数据
+     * @param countYear
+     * @param countMonth
+     * @param countImpExp
+     */
+    @Transactional
+    public void genDetailCompanyType(
+            String countYear, String countMonth, Integer countImpExp);
+
+    /**
+     * 按企业性质生成统计
+     */
+    void genAllDetailCompanyType();
 
 }

@@ -73,6 +73,10 @@ public class TradeDetail
     public TradeDetail() {
     }
 
+    public TradeDetail(String productName) {
+        this.productName = productName;
+    }
+
     public TradeDetail(String productCode,String productName, BigDecimal amount,
                        BigDecimal amountMoney, BigDecimal unitPrice) {
         this.productCode = productCode;
@@ -239,6 +243,5 @@ public class TradeDetail
         this.unitPrice = unitPrice;
         return this;
     }
-
 
 }

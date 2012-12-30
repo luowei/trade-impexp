@@ -28,16 +28,32 @@ public interface TaskService {
      * 解包
      * @param logId
      */
-    public void extractPackage(final Long logId);
+      void extractPackage(final Long logId);
 
     /**
      * 导入数据
      */
-    public void importData(final Long logId);
+      void importData(final Long logId);
 
     /**
      * 生成明细统计数据
      */
-    public void genAllDetailCount();
+      void genAllDetailCount();
+
+    /**
+     * 生成按贸易方式统计数据
+     */
+      void genAllDetailTradeType();
+
+    /**
+     * 生成按企业性质统计数据
+     */
+      void genAllDetailCompanyType();
+
+    /**
+     * 执行指定任务
+      * @param excute
+     */
+    void excuteService(String excute);
 
 }

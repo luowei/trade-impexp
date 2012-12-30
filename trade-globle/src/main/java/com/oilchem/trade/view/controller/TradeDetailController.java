@@ -1,21 +1,24 @@
 package com.oilchem.trade.view.controller;
 
-import com.oilchem.trade.dao.*;
-import com.oilchem.trade.domain.*;
+import com.oilchem.trade.dao.condition.*;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
+import com.oilchem.trade.domain.condition.*;
+import com.oilchem.trade.domain.detail.ExpTradeDetail;
+import com.oilchem.trade.domain.detail.ImpTradeDetail;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.TaskService;
 import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.YearMonthDto;
 import com.oilchem.trade.service.TradeSumService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -26,6 +29,7 @@ import static com.oilchem.trade.bean.DocBean.ImpExpType.export_type;
 import static com.oilchem.trade.bean.DocBean.ImpExpType.import_type;
 import static com.oilchem.trade.util.EHCacheUtil.setValue;
 import static com.oilchem.trade.util.QueryUtils.*;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * Created with IntelliJ IDEA.
@@ -66,19 +70,26 @@ public class TradeDetailController extends CommonController {
     public String listexpTradeDetail(Model model, CommonDto commonDto,
                                      YearMonthDto yearMonthDto,
                                      TradeDetail tradeDetail) {
+
         Integer impExp = yearMonthDto.getImpExpType();
         if (impExp == null)
             yearMonthDto.setImpExpType(impExp = 0);
 
+        if(isBlank(commonDto.getSort())){
+            commonDto.setSort("yearMonth:desc");
+        }
+
         if (impExp.equals(import_type.ordinal())) {
-            Page<ImpTradeDetail> impTradeDetails = tradeDetailService
-                    .findImpWithCriteria(new ImpTradeDetail(tradeDetail), commonDto, yearMonthDto, getPageRequest(commonDto));
+            Page<ImpTradeDetail> impTradeDetails = tradeDetailService.findImpWithCriteria(
+                    new ImpTradeDetail(tradeDetail), commonDto, yearMonthDto, getPageRequest(commonDto));
+
             getDetailCriteriaData(addPageInfo(model, impTradeDetails, "/manage/listdetail"))
                     .addAttribute("tradeDetailList", impTradeDetails);
         }
         if (impExp.equals(export_type.ordinal())) {
-            Page<ExpTradeDetail> expTradeDetails = tradeDetailService
-                    .findExpWithCriteria(new ExpTradeDetail(tradeDetail), commonDto, yearMonthDto, getPageRequest(commonDto));
+            Page<ExpTradeDetail> expTradeDetails = tradeDetailService .findExpWithCriteria(
+                    new ExpTradeDetail(tradeDetail), commonDto, yearMonthDto, getPageRequest(commonDto));
+
             getDetailCriteriaData(addPageInfo(model, expTradeDetails, "/manage/listdetail"))
                     .addAttribute("tradeDetailList", expTradeDetails);
         }
@@ -87,6 +98,20 @@ public class TradeDetailController extends CommonController {
 
         return "manage/trade/listdetail";
     }
+
+
+    @RequestMapping("/getProduct")
+    @ResponseBody
+    public List<String> getProduct(){
+
+        List<Product> prodList = tradeDetailService.findAllProduct();
+        List<String> prodStrList = new ArrayList<String>();
+        for(Product product:prodList){
+            prodStrList.add(product.getProductCode()+"->"+product.getProductName());
+        }
+        return prodStrList;
+    }
+
 
     /**
      * 进入导入数据页面
@@ -102,7 +127,6 @@ public class TradeDetailController extends CommonController {
 
     /**
      * 导入明细数据
-     *
      * @param file         从 DefaultMultipartHttpServletRequest获得的file
      * @param yearMonthDto 年月。。。
      * @return
@@ -179,7 +203,8 @@ public class TradeDetailController extends CommonController {
     private Model addAtrribute2Model(Model model, TradeDetail tradeDetail,
                                      CommonDto commonDto, YearMonthDto yearMonthDto) {
 
-        model = yearMonth2Model(model, yearMonthDto);
+        model = yearMonth2Model(model, yearMonthDto)
+                .addAttribute("nameSelType",commonDto.getNameSelType());
 
         for (PropertyFilter filter : tradeDetailService
                 .getdetailQueryProps(tradeDetail, commonDto)) {

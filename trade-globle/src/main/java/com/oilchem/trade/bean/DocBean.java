@@ -13,7 +13,7 @@ import static com.oilchem.trade.util.ConfigUtil.getDefault;
  */
 public class DocBean {
 
-    public static class ChartProps{
+    public static class ChartProps {
         String x_legend;
         String y_legend;
         Integer minRang = 0;
@@ -140,7 +140,7 @@ public class DocBean {
     /**
      * 图表类型
      */
-    public static enum ChartType{
+    public static enum ChartType {
         lineChart("lineChart"),
         barChart("barChart"),
         pieChart("pieChart"),
@@ -150,13 +150,15 @@ public class DocBean {
 //        scatterChart("散点图"),
 //        sketchBarChart("速写柱状图"),
 //        stackedBarChart("堆叠柱状图")
-               ;
+        ;
 
         private String value;
-        ChartType(String value){
+
+        ChartType(String value) {
             this.value = value;
         }
-        public String getValue(){
+
+        public String getValue() {
             return this.value;
         }
 
@@ -182,6 +184,7 @@ public class DocBean {
         import_faild("导入失败"),;
 
         private String value;
+
         Flag(String value) {
             this.value = value;
         }
@@ -245,17 +248,50 @@ public class DocBean {
 
         yearmonth_split,
         thread_poolsize,
-        axis_steps,
         scale_size,
-        chart_width,
-        chart_height,
         need_import_criteria,
         batch_updatesize,
-        select_access_sql,;
+        select_access_sql,
+
+        axis_steps,
+        chart_width,
+        chart_height,
+
+        series_num_type,
+        series_money_type,
+        five_star,
+        num_axis,
+        money_axis,
+
+        exl_headrow_index, ignore_import_fail;
 
         public String value() {
             return getDefault(this);
         }
 
     }
+
+
+
+
+    public static enum Symbol {
+        left_square_bracket("["),
+        right_square_bracket("]"),
+        left_round_bracket("("),
+        right_round_bracket(")"),
+        underline("_"),
+        zero("0"),
+
+        ;
+
+        private String value;
+        private Symbol(String value) {
+            this.value = value;
+        }
+        public String value(){
+            return this.value;
+        }
+    }
+
+
 }

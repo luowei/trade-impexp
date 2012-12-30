@@ -6,10 +6,36 @@
  * To change this template use File | Settings | File Templates.
  */
 
+/**
+ * 降序
+ * @param field
+ */
+function descOrder(field,form) {
+    if($('#sort').val()!=field+':desc'){
+        $('#sort').attr('value',field+':desc')
+    }
+    $('#'+form).submit()
+}
+
+/**
+ * 升序
+ * @param field
+ */
+function ascOrder(field,form) {
+    if($('#sort').val()!=field+':asc'){
+        $('#sort').attr('value',field+':asc')
+    }
+    $('#'+form).submit()
+}
+
 //消息div一定时间后隐藏
 $(function(){
     $("div.messagePlace").fadeOut(5000);
 });
+
+String.prototype.trim = function(){
+    return this.replace(/^\s+(.*?)\s+$/,"$1")
+}
 
 /**
  * 全选功能

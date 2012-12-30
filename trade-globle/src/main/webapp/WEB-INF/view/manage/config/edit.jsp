@@ -6,7 +6,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>更新配置类</title>
+    <title>更新配置</title>
 
     <link rel="stylesheet" type="text/css" href="<c:url value='/resources/bootstrap/css/bootstrap.min.css' />"/>
     <link rel="stylesheet" type="text/css" href="<c:url value='/resources/bootstrap/css/bootstrap-responsive.min.css' />"/>
@@ -15,7 +15,22 @@
 <body>
 
 <%--<jsp:include page="../../common/breadcrumb.jsp" />--%>
+<div class="navbar navbar-fixed-top ">
+    <div class="navbar-inner">
 
+        <div class="wrapper">
+            <a class="brand" href="#">进出口管理</a>
+
+            <div class="nav-collapse collapse navbar-responsive-collapse">
+                <ul class="nav nav-tabs">
+                    <li><a href="${pageContext.request.contextPath}/manage/${type}conf">配置</a></li>
+                    <li><a href="javascript:" onclick="history.back();">返回</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 
 <c:url var="action" value="/manage/updatecfg"/>
@@ -51,6 +66,8 @@
                 <form:input path="describe" id="describe" cssClass="input-xlarge" />
             </div>
         </div>
+
+        <input type="hidden" name="type" value="${type}">
 
         <div class="control-group">
             <div class="controls">

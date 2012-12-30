@@ -3,10 +3,8 @@ package com.oilchem.trade.service.impl;
 import com.oilchem.trade.bean.CommonDto;
 import com.oilchem.trade.bean.DocBean;
 import com.oilchem.trade.bean.YearMonthDto;
-import com.oilchem.trade.dao.ExpDetailCountDao;
-import com.oilchem.trade.dao.ImpDetailCountDao;
-import com.oilchem.trade.domain.ExpDetailCount;
-import com.oilchem.trade.domain.ImpDetailCount;
+import com.oilchem.trade.dao.count.*;
+import com.oilchem.trade.domain.count.*;
 import com.oilchem.trade.domain.abstrac.DetailCount;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.DetailCountService;
@@ -46,6 +44,15 @@ public class DetailCountServiceImpl implements DetailCountService {
     ImpDetailCountDao impDetailCountDao;
     @Resource
     ExpDetailCountDao expDetailCountDao;
+    @Resource
+    ExpDetailCompanytypeDao expDetailCompanytypeDao;
+    @Resource
+    ExpDetailTradetypeDao expDetailTradetypeDao;
+    @Resource
+    ImpDetailCompanytypeDao impDetailCompanytypeDao;
+    @Resource
+    ImpDetailTradetypeDao impDetailTradetypeDao;
+
 
     @Autowired
     CommonService commonService;
@@ -72,6 +79,20 @@ public class DetailCountServiceImpl implements DetailCountService {
 
     }
 
+    public List<ImpDetailCount> findImpWithCriteria(
+            ImpDetailCount impDetailCount, CommonDto commonDto,
+            YearMonthDto yearMonthDto) {
+
+        final List<QueryUtils.PropertyFilter> filterList = getdetailQueryProps(impDetailCount, commonDto);
+
+        filterList.addAll(commonService.getYearMonthQueryProps(yearMonthDto));
+
+        Specification<ImpDetailCount> spec = DynamicSpecifications.<ImpDetailCount>byPropertyFilter(filterList, ImpDetailCount.class);
+        List<ImpDetailCount> detailCountList = impDetailCountDao.findAll(spec);
+        return detailCountList;
+
+    }
+
     /**
      * 获得  ExpDetailCount 列表
      * @param expDetailCount
@@ -91,6 +112,19 @@ public class DetailCountServiceImpl implements DetailCountService {
         Specification<ExpDetailCount> spec = DynamicSpecifications.<ExpDetailCount>byPropertyFilter(filterList, ExpDetailCount.class);
         Page<ExpDetailCount> detailCountPage = expDetailCountDao.findAll(spec, pageRequest);
         return detailCountPage;
+    }
+
+    public List<ExpDetailCount> findExpWithCriteria(
+            ExpDetailCount expDetailCount, CommonDto commonDto,
+            YearMonthDto yearMonthDto) {
+
+        final List<QueryUtils.PropertyFilter> filterList = getdetailQueryProps(expDetailCount, commonDto);
+
+        filterList.addAll(commonService.getYearMonthQueryProps(yearMonthDto));
+
+        Specification<ExpDetailCount> spec = DynamicSpecifications.<ExpDetailCount>byPropertyFilter(filterList, ExpDetailCount.class);
+        List<ExpDetailCount> detailCountList = expDetailCountDao.findAll(spec);
+        return detailCountList;
     }
 
     /**
@@ -152,4 +186,143 @@ public class DetailCountServiceImpl implements DetailCountService {
 
 
     }
+
+    //-----------------------------------------------------------------------
+
+    public Page<ImpDetailTradetype> findImpWithCriteria(
+            ImpDetailTradetype impDetailTradetype, CommonDto commonDto,
+            YearMonthDto yearMonthDto, PageRequest pageRequest) {
+
+        final List<QueryUtils.PropertyFilter> filterList = getdetailQueryProps(impDetailTradetype, commonDto);
+
+        filterList.addAll(commonService.getYearMonthQueryProps(yearMonthDto));
+
+        Specification<ImpDetailTradetype> spec = DynamicSpecifications.<ImpDetailTradetype>byPropertyFilter(filterList, ImpDetailTradetype.class);
+        Page<ImpDetailTradetype> detailCountPage = impDetailTradetypeDao.findAll(spec, pageRequest);
+        return detailCountPage;
+
+    }
+
+    public Page<ExpDetailTradetype> findImpWithCriteria(
+            ExpDetailTradetype expDetailTradetype, CommonDto commonDto,
+            YearMonthDto yearMonthDto, PageRequest pageRequest) {
+
+        final List<QueryUtils.PropertyFilter> filterList = getdetailQueryProps(expDetailTradetype, commonDto);
+
+        filterList.addAll(commonService.getYearMonthQueryProps(yearMonthDto));
+
+        Specification<ExpDetailTradetype> spec = DynamicSpecifications.<ExpDetailTradetype>byPropertyFilter(filterList, ExpDetailTradetype.class);
+        Page<ExpDetailTradetype> detailCountPage = expDetailTradetypeDao.findAll(spec, pageRequest);
+        return detailCountPage;
+
+    }
+
+    /**
+     * 按贸易方式生成月统计数据
+     * @param countYear
+     * @param countMonth
+     * @param countImpExp
+     */
+    @Transactional
+    public void genDetailTradeType(
+            String countYear, String countMonth, Integer countImpExp) {
+
+        String yearMonth = countYear+ DocBean.Config.yearmonth_split.value()+countMonth;
+
+        if (countImpExp.equals(import_type.ordinal())) {
+
+            impDetailTradetypeDao.deleteByYearMonth(yearMonth);
+            impDetailTradetypeDao.insertByYearMonth(yearMonth);
+
+        }
+        if(countImpExp.equals(export_type.ordinal())){
+
+            expDetailTradetypeDao.deleteByYearMonth(yearMonth);
+            expDetailTradetypeDao.insertByYearMonth(yearMonth);
+
+        }
+
+    }
+
+    //-----------------------------------------------------------------
+
+    /**
+     * 按贸易方式生成所有统计
+     */
+    @Transactional
+    public void genAllDetailTradeType() {
+        impDetailTradetypeDao.deleteAll();
+        impDetailTradetypeDao.insertAll();
+
+        impDetailTradetypeDao.deleteAll();
+        impDetailTradetypeDao.insertAll();
+    }
+
+
+    public Page<ImpDetailCompanytype> findImpWithCriteria(
+            ImpDetailCompanytype impDetailCompanytype, CommonDto commonDto,
+            YearMonthDto yearMonthDto, PageRequest pageRequest) {
+
+        final List<QueryUtils.PropertyFilter> filterList = getdetailQueryProps(impDetailCompanytype, commonDto);
+
+        filterList.addAll(commonService.getYearMonthQueryProps(yearMonthDto));
+
+        Specification<ImpDetailCompanytype> spec = DynamicSpecifications.<ImpDetailCompanytype>byPropertyFilter(filterList, ImpDetailCompanytype.class);
+        Page<ImpDetailCompanytype> detailCountPage = impDetailCompanytypeDao.findAll(spec, pageRequest);
+        return detailCountPage;
+
+    }
+
+    public Page<ExpDetailCompanytype> findImpWithCriteria(
+            ExpDetailCompanytype expDetailCompanytype, CommonDto commonDto,
+            YearMonthDto yearMonthDto, PageRequest pageRequest) {
+
+        final List<QueryUtils.PropertyFilter> filterList = getdetailQueryProps(expDetailCompanytype, commonDto);
+
+        filterList.addAll(commonService.getYearMonthQueryProps(yearMonthDto));
+
+        Specification<ExpDetailCompanytype> spec = DynamicSpecifications.<ExpDetailCompanytype>byPropertyFilter(filterList, ExpDetailCompanytype.class);
+        Page<ExpDetailCompanytype> detailCountPage = expDetailCompanytypeDao.findAll(spec, pageRequest);
+        return detailCountPage;
+
+    }
+
+    /**
+     * 按企业性质成月统计数据
+     * @param countYear
+     * @param countMonth
+     * @param countImpExp
+     */
+    @Transactional
+    public void genDetailCompanyType(String countYear, String countMonth, Integer countImpExp) {
+
+        String yearMonth = countYear+ DocBean.Config.yearmonth_split.value()+countMonth;
+
+        if (countImpExp.equals(import_type.ordinal())) {
+
+            impDetailCompanytypeDao.deleteByYearMonth(yearMonth);
+            impDetailCompanytypeDao.insertByYearMonth(yearMonth);
+
+        }
+        if(countImpExp.equals(export_type.ordinal())){
+
+            expDetailCompanytypeDao.deleteByYearMonth(yearMonth);
+            expDetailCompanytypeDao.insertByYearMonth(yearMonth);
+
+        }
+
+    }
+
+    /**
+     * 按企业性质生成所有统计
+     */
+    @Transactional
+    public void genAllDetailCompanyType() {
+        impDetailCompanytypeDao.deleteAll();
+        impDetailCompanytypeDao.insertAll();
+
+        impDetailCompanytypeDao.deleteAll();
+        impDetailCompanytypeDao.insertAll();
+    }
+
 }

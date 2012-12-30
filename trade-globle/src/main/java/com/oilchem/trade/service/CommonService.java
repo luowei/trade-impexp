@@ -1,11 +1,9 @@
 package com.oilchem.trade.service;
 
 import com.oilchem.trade.dao.BaseDao;
-import com.oilchem.trade.dao.map.AbstractTradeDetailRowMapper;
-import com.oilchem.trade.dao.map.MyRowMapper;
+import com.oilchem.trade.dao.others.map.AbstractTradeDetailRowMapper;
+import com.oilchem.trade.dao.others.map.MyRowMapper;
 import com.oilchem.trade.domain.Log;
-import com.oilchem.trade.domain.abstrac.TradeDetail;
-import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.TradeDetail;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import com.oilchem.trade.domain.abstrac.IdEntity;

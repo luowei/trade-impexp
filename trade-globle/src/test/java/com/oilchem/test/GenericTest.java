@@ -1,7 +1,7 @@
 package com.oilchem.test;
 
+import com.oilchem.trade.domain.condition.City;
 import com.oilchem.trade.util.GenericsUtils;
-import com.oilchem.trade.domain.City;
 
 /**
  * Created with IntelliJ IDEA.

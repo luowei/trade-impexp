@@ -1,10 +1,15 @@
 package com.oilchem.trade.view.controller;
 
+import com.oilchem.trade.bean.CommonDto;
+import com.oilchem.trade.bean.YearMonthDto;
+import com.oilchem.trade.domain.condition.Product;
 import com.oilchem.trade.service.CommonService;
 import com.oilchem.trade.service.FilterService;
+import com.oilchem.trade.util.QueryUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,19 +34,19 @@ public class FilterController extends CommonController {
     @Autowired
     CommonService commonService;
 
-    @RequestMapping("/list/{type}")
-    public String list(Model model, @PathVariable String type) {
-
-        findAllEntity(model.addAttribute("type", type), type);
-        return "manage/trade/listfilter";
-    }
-
     @RequestMapping("/list/allfilter")
     public String listAll(Model model) {
         String[] types = {"city", "country", "companyType", "customs", "tradeType", "transportation", "sumType","detailType"};
         for (String type : types) {
             findAllEntity(model, type);
         }
+        return "manage/trade/listfilter";
+    }
+
+    @RequestMapping("/list/{type}")
+    public String list(Model model, @PathVariable String type) {
+
+        findAllEntity(model.addAttribute("type", type), type);
         return "manage/trade/listfilter";
     }
 
@@ -137,16 +142,80 @@ public class FilterController extends CommonController {
 
         try{
             filterService.addDetailType(code,name);
-            addRedirectMessage(redirectAttrs,"删除"+name+"成功");
+            addRedirectMessage(redirectAttrs,"添加"+name+"成功");
 
         }   catch (Exception e){
-            addRedirectError(redirectAttrs,"删除"+name+"失败");
+            addRedirectError(redirectAttrs,"添加"+name+"失败");
             logger.error(e.getMessage(),e);
             throw new RuntimeException(e);
         }
 
         redirectAttrs.addFlashAttribute("message", message.toString());
         return "redirect:/manage/list/detailType";
+    }
+
+
+    //////////////////////////////对产品表的增删查改///////////////////////////////////
+
+    @RequestMapping("/listProduct/{pageNumber}")
+    public String listProduct(Model model,CommonDto commonDto,
+                              YearMonthDto yearMonthDto,Product product){
+
+        Page<Product> productList = filterService
+                .findProdWithCriteria(product, commonDto, yearMonthDto, getPageRequest(commonDto));
+
+        addPageInfo(model, productList, "/manage/listProduct").addAttribute("productList", productList);
+
+        yearMonth2Model(model, yearMonthDto);
+        for (QueryUtils.PropertyFilter filter : filterService
+                .getdetailQueryProps(product, commonDto)) {
+            model.addAttribute(filter.getName(), filter.getValue());
+        }
+
+        return "manage/trade/condition/listproduct";
+    }
+
+    /**
+     * 更新产品
+     * @param product
+     * @param redirectAttrs
+     * @return
+     */
+    @RequestMapping("/saveProduct")
+    public String addProduct(Product product,RedirectAttributes redirectAttrs){
+
+        try{
+            filterService.saveProduct(product);
+            addRedirectMessage(redirectAttrs, "保存" + product.getProductName() + "成功");
+
+        }   catch (Exception e){
+            addRedirectError(redirectAttrs,"保存" + product.getProductName() + "失败");
+            logger.error(e.getMessage(),e);
+            throw new RuntimeException(e);
+        }
+        return "redirect:/manage/listProduct/1";
+    }
+
+    @RequestMapping("/toUpdateProduct/{id}")
+    public String  toUpdateProduct(Model model,@PathVariable Long id){
+        Product product = filterService.findProductById(id);
+        model.addAttribute("product",product);
+        return "redirect:/manage/updateProduct";
+    }
+
+    @RequestMapping("/delProduct/{id}")
+    public String delProduct( @PathVariable Long id,RedirectAttributes redirectAttrs) {
+
+        try {
+            filterService.delProduct(id);
+            addRedirectMessage(redirectAttrs,"删除Id为"+id+"的产品成功");
+        } catch (Exception e) {
+            addRedirectError(redirectAttrs,"删除Id为"+id+"的产品失败");
+            logger.error(e.getMessage(),e);
+            throw new RuntimeException(e);
+        }
+
+        return "redirect:/manage/listProduct/1";
     }
 
 

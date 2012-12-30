@@ -8,6 +8,12 @@
 <c:url var="prevUrl" value="${contextUrl}/${currentIndex - 1}"/>
 <c:url var="nextUrl" value="${contextUrl}/${currentIndex + 1}"/>
 
+<script type="text/javascript">
+    function subform(obj){
+        $("#form1").attr("action",$(obj).attr("href1")).submit();
+    }
+
+</script>
 
 <div class="pagination">
     <ul>
@@ -17,18 +23,18 @@
                 <li class="disabled"><a href="#">&lt;</a></li>
             </c:when>
             <c:otherwise>
-                <li><a href="${firstUrl}">&lt;&lt;</a></li>
-                <li><a href="${prevUrl}">&lt;</a></li>
+                <li><a href1="${firstUrl}" href="#" onclick="subform(this)">&lt;&lt;</a></li>
+                <li><a href1="${prevUrl}" href="#" onclick="subform(this)">&lt;</a></li>
             </c:otherwise>
         </c:choose>
         <c:forEach var="i" begin="${beginIndex}" end="${endIndex}">
             <c:url var="pageUrl" value="${contextUrl}/${i}"/>
             <c:choose>
                 <c:when test="${i == currentIndex}">
-                    <li class="active"><a href="${pageUrl}"><c:out value="${i}"/></a></li>
+                    <li class="active"><a href1="${pageUrl}" href="#"><c:out value="${i}"/></a></li>
                 </c:when>
                 <c:otherwise>
-                    <li><a href="${pageUrl}"><c:out value="${i}"/></a></li>
+                    <li><a href1="${pageUrl}" href="#" onclick="subform(this)"><c:out value="${i}"/></a></li>
                 </c:otherwise>
             </c:choose>
         </c:forEach>
@@ -38,8 +44,8 @@
                 <li class="disabled"><a href="#">&gt;&gt;</a></li>
             </c:when>
             <c:otherwise>
-                <li><a href="${nextUrl}">&gt;</a></li>
-                <li><a href="${lastUrl}">&gt;&gt;</a></li>
+                <li><a href1="${nextUrl}" href="#" onclick="subform(this)">&gt;</a></li>
+                <li><a href1="${lastUrl}" href="#" onclick="subform(this)">&gt;&gt;</a></li>
             </c:otherwise>
         </c:choose>
     </ul>

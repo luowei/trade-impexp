@@ -22,6 +22,11 @@ public class CommonDto implements Serializable {
     private String sort;
     private String[] sorts;
 
+    /**
+     * 名字查询类型
+     */
+    private String nameSelType;
+
     public Long getId() {
         return id;
     }
@@ -108,6 +113,15 @@ public class CommonDto implements Serializable {
 
     public CommonDto setSorts(String[] sorts) {
         this.sorts = sorts;
+        return this;
+    }
+
+    public String getNameSelType() {
+        return nameSelType;
+    }
+
+    public CommonDto setNameSelType(String nameSelType) {
+        this.nameSelType = nameSelType;
         return this;
     }
 }

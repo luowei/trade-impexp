@@ -195,6 +195,18 @@
             <artifactId>gson</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-lgpl</artifactId>
+            <version>1.8.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-lgpl</artifactId>
+            <version>1.8.1</version>
+        </dependency>
+
         <!-- sitemesh 2 -->
         <dependency>
             <groupId>opensymphony</groupId>
@@ -207,6 +219,12 @@
             <artifactId>ofc4j</artifactId>
             <version>1.0</version>
             <classifier>alpha5</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>org.one2team</groupId>
+            <artifactId>Highcharts-serverside</artifactId>
+            <version>1.0</version>
         </dependency>
 
         <dependency>
@@ -224,6 +242,12 @@
             <groupId>org.codehaus.groovy.maven.runtime</groupId>
             <artifactId>gmaven-runtime-default</artifactId>
             <version>1.0-rc-3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.8-beta3</version>
         </dependency>
 
     </dependencies>
@@ -292,7 +316,6 @@
                     </execution>
                 </executions>
             </plugin>
-
 
 
             <plugin>

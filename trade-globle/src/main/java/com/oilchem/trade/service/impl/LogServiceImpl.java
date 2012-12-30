@@ -4,11 +4,13 @@ import com.oilchem.trade.dao.LogDao;
 import com.oilchem.trade.domain.Log;
 import com.oilchem.trade.service.LogService;
 import com.oilchem.trade.bean.YearMonthDto;
+import com.oilchem.trade.service.TradeDetailService;
 import com.oilchem.trade.util.DynamicSpecifications;
 import com.oilchem.trade.util.QueryUtils;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -244,7 +246,17 @@ public class LogServiceImpl implements LogService {
         log.setErrorOccur(imported_flag.getValue());
         log.setLogTime(new Date());
         logDao.save(log);
+
+        //更新明细产品类型
+        tradeDetailService.updateDetailType(yearMonthDto);
+        //更新产品表
+        //.....
+        //更新产品总统计表
+        //.....
     }
+
+    @Autowired
+    TradeDetailService tradeDetailService;
 
 
     @AfterThrowing("cutImportTradeDetail(logEntry,yearMonthDto)")

@@ -17,63 +17,25 @@
     <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/message/messages.css" />"/>
 
     <script type="text/javascript" src="<c:url value="/resources/js/jquery/1.7.2/jquery.js" />"></script>
-    <script type="text/javascript" src="<c:url value='/resources/bootstrap/js/bootstrap.js' />"></script>
+    <script type="text/javascript" src="<c:url value="/resources/js/jquery/jquery.json-2.4.js" />"></script>
+
+    <script type="text/javascript" src="<c:url value='/resources/bootstrap/js/bootstrap.min.js' />"></script>
     <script type="text/javascript" src="<c:url value='/resources/bootstrap/js/bootstrap-dropdown.js' />"></script>
+
+    <link rel="stylesheet" href="<c:url value='/resources/jquery-ui/custom-theme/jquery-ui-1.8.16.custom.css'/>" />
+    <script src="<c:url value='/resources/jquery-ui/jquery-ui-1.8.16.custom.min.js'/>"></script>
 
     <script type="text/javascript" src="<c:url value="/resources/js/trade.js"/> "></script>
 
     <decorator:head />
 </head>
-<body style="padding-top: 60px">
+<body style="padding-top: 60px;/*background-color: rgb(202, 215, 247)*/">
 
-<div class="navbar navbar-fixed-top ">
-    <div class="navbar-inner">
+<%--<jsp:include page="breadcrumb.jsp" />--%>
 
-        <div class="container">
-            <a class="brand" href="#">进出口管理</a>
-
-            <div class="nav-collapse collapse navbar-responsive-collapse">
-
-                <ul class="nav">
-                    <li>
-                        <a href="${pageContext.request.contextPath}/manage/configlist">配置</a>
-                    </li>
-                    <li>
-                        <a href="${pageContext.request.contextPath}/manage/import">导入</a>
-                    </li>
-                    <li>
-                        <a href="${pageContext.request.contextPath}/manage/listdetail/1">明细表</a>
-                    </li>
-                    <li>
-                        <a href="${pageContext.request.contextPath}/manage/list/detailCount/1">明细统计表</a>
-                    </li>
-                    <li>
-                        <a href="${pageContext.request.contextPath}/manage/listsum/1">总表</a>
-                    </li>
-                    <li>
-                        <a href="${pageContext.request.contextPath}/manage/list/allfilter">条件表</a>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">查看日志 <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="${pageContext.request.contextPath}/manage/listlog/0/1">明细表导入日志</a></li>
-                            <li><a href="${pageContext.request.contextPath}/manage/listlog/1/1">总表导入日志</a></li>
-                        </ul>
-                    </li>
-
-                    <li>
-                        <a href="javascript:" onclick="history.back();">返回</a>
-                    </li>
-                </ul>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-<div class="container" >
+<div class="wrapper">
     <c:if test="${not empty message or not empty error}">
-        <div class="messagePlace"  style="padding-top: 30px">
+        <div class="messagePlace"  style="padding-top: 60px">
             <c:if test="${not empty message}">
                 <div id="message" class="success" style="text-align: center;">${message}</div>
             </c:if>
@@ -87,12 +49,5 @@
     <decorator:body/>
 </div>
 
-
-<%--<div class="footer">--%>
-    <!--<div class="footer_inner">-->
-    <!--<p class="copyright">design by luowei e-mail:luowei010101@gmail.com</p>-->
-    <!--</div>-->
-
-<%--</div>--%>
 </body>
 </html>
