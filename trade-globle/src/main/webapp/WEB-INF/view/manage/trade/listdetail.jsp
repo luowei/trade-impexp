@@ -289,7 +289,7 @@
     <i class="icon-search icon-white"></i>查询
 </button>
 &nbsp;&nbsp;
-<a href="#" id="dialog_link" class="btn btn-primary">导出数据</a>
+<%--<a href="#" id="dialog_link" class="btn btn-primary">导出数据</a>--%>
 
 <%--<br/>--%>
 
@@ -349,10 +349,10 @@
 <table class="table table-hover table-bordered table-striped table-condensed">
     <thead>
     <tr>
-        <th>Id
-            <a href="javascript:void(0)" onclick="ascOrder('id','form1')"><i class="icon-chevron-up"></i></a>
-            <a href="javascript:void(0)" onclick="descOrder('id','form1')"><i class="icon-chevron-down"></i></a>
-        </th>
+        <%--<th>Id--%>
+            <%--<a href="javascript:void(0)" onclick="ascOrder('id','form1')"><i class="icon-chevron-up"></i></a>--%>
+            <%--<a href="javascript:void(0)" onclick="descOrder('id','form1')"><i class="icon-chevron-down"></i></a>--%>
+        <%--</th>--%>
         <th>年月
             <a href="javascript:void(0)" onclick="ascOrder('yearMonth','form1')"><i class="icon-chevron-up"></i></a>
             <a href="javascript:void(0)" onclick="descOrder('yearMonth','form1')"><i class="icon-chevron-down"></i></a>
@@ -386,7 +386,7 @@
     <tbody>
     <c:forEach items="${tradeDetailList.content}" var="detail" varStatus="st">
         <tr <c:if test="${st.index%2 eq 1}">class="warning" </c:if>>
-            <td>${detail.id}</td>
+            <%--<td>${detail.id}</td>--%>
             <td>${detail.yearMonth}</td>
             <td>${detail.productCode}</td>
             <td>${detail.productName}</td>

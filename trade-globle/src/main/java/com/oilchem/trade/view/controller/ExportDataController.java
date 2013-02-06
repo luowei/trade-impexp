@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -99,6 +100,12 @@ public class ExportDataController extends CommonController {
             }
         }
         return null;
+    }
+
+    @RequestMapping("toExportExl")
+    public String  toExportExl(Model model){
+
+        return "manage/trade/export";
     }
 
     @RequestMapping("/exportDetail")

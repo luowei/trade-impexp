@@ -22,6 +22,7 @@ import java.util.*;
 
 import static com.oilchem.trade.bean.DocBean.Config.chart_height;
 import static com.oilchem.trade.bean.DocBean.Config.chart_width;
+import static com.oilchem.trade.bean.DocBean.Config.max_monthes;
 import static com.oilchem.trade.util.CommonUtil.getYYYYMMDDHHMMSS;
 import static com.oilchem.trade.util.EHCacheUtil.getValue;
 import static com.oilchem.trade.util.EHCacheUtil.setValue;
@@ -72,8 +73,8 @@ public class HighChartController extends CommonController {
         if (invalid) {
             message.append("请选择要查询的进出类型,产品或统计的类型 ");
         }
-        if (invalid || yearMonths.size() > 12 || yearMonths.size() < 1) {
-            addRedirectError(redirectAttrs, message.append("  月份不能多于12小于1  操作不合理").toString());
+        if (invalid || yearMonths.size() > Integer.valueOf(max_monthes.value()).intValue() || yearMonths.size() < 1) {
+            addRedirectError(redirectAttrs, message.append("  月份不能多于"+max_monthes.value()+"小于1  操作不合理").toString());
             return "redirect:/manage/hchart/toNMDetail";
         }
 
@@ -86,14 +87,66 @@ public class HighChartController extends CommonController {
         yearMonth2Model(model, yearMonthDto)
                 .addAttribute("seriesList", seriesList)
                 .addAttribute("productCountList", productCountList)
+                .addAttribute("unit",!productCountList.isEmpty()?productCountList.get(0).getUnit():null)
+                .addAttribute("productCode",productCode)
                 .addAttribute("productName", StringUtils.substringBefore(productName, "("))
                 .addAttribute("yearMonths", new Gson().toJson(yearMonths))
+                .addAttribute("sumYear",yearMonthDto.getSumYear())
+                .addAttribute("beginSumMonth",yearMonthDto.getBeginSumMonth())
+                .addAttribute("endSumMonth",yearMonthDto.getEndSumMonth())
                 .addAttribute("contentTitle", "明细产品按自然月统计图表")
                 .addAttribute("size", seriesList.size())
                 .addAttribute("width", chart_width.value())
                 .addAttribute("height", chart_height.value())
                 .addAttribute("productCount", productCount)
                 .addAttribute("hhmmssRand",hhmmssRand);
+
+        setValue("productChart", "product_" + productCode + "_" + hhmmssRand, model, 1800);
+
+        return "manage/trade/count/naturalmonthdetail";
+    }
+
+    //----------------------累计月统计-------------------------------------
+
+    @RequestMapping("/sumMonthdetail")
+    public String sumMonthdetail(Model model, YearMonthDto yearMonthDto,
+                                     ProductCount productCount,RedirectAttributes redirectAttrs) {
+        StringBuffer message = new StringBuffer();
+        if(productCount.getAutoproductCode()==null){
+            message.append("请选择要查询的产品");
+            addRedirectError(redirectAttrs, message.toString().toString());
+            return "redirect:/manage/hchart/toNMDetail";
+        }
+
+        List<String> yearMonths = highChartService.getSumYearMonthLabels(yearMonthDto);
+        String productCode = substringBefore(productCount.getAutoproductCode(), "->").trim();
+        String productName = substringAfter(productCount.getAutoproductCode(), "->");
+
+        Boolean invalid = yearMonths==null || isBlank(productCode) ||
+                isBlank(productCount.getCondition()) || yearMonthDto.getImpExpType() == null;
+
+        if (invalid) {
+            message.append("请选择要查询的进出类型,产品或统计的类型 ");
+        }
+        if (invalid || yearMonths.size() < 1) {
+            addRedirectError(redirectAttrs, message.append("  月份不能小于1  操作不合理").toString());
+            return "redirect:/manage/hchart/toNMDetail";
+        }
+
+        List<ProductCount> productCountList =  highChartService.getSumCountList(yearMonthDto, productCount, yearMonths,productCode);
+
+        String hhmmssRand = getYYYYMMDDHHMMSS(new Date()).substring(8)+new Random().nextInt(1000);
+
+        yearMonth2Model(model, yearMonthDto)
+                .addAttribute("productCountList", productCountList)
+                .addAttribute("productCode",productCode)
+                .addAttribute("productName", StringUtils.substringBefore(productName, "("))
+                .addAttribute("countType", "sumCount")
+                .addAttribute("sumYear",yearMonthDto.getSumYear())
+                .addAttribute("beginSumMonth",yearMonthDto.getBeginSumMonth())
+                .addAttribute("endSumMonth",yearMonthDto.getEndSumMonth())
+                .addAttribute("unit",!productCountList.isEmpty()?productCountList.get(0).getUnit():null)
+                .addAttribute("productCount", productCount);
 
         setValue("productChart", "product_" + productCode + "_" + hhmmssRand, model, 1800);
 
@@ -140,7 +193,7 @@ public class HighChartController extends CommonController {
                 isBlank(productCount.getCondition()) || yearMonthDto.getImpExpType() == null;
 
         if (invalid) {
-            message.append("操作不合理 请选择要查询的进出类型,产品或统计条件 或月份不能多于36");
+            message.append("操作不合理 请选择要查询的进出类型,产品或统计条件 或月份不能多于"+max_monthes.value());
             addRedirectError(redirectAttrs, message.toString().toString());
             return "redirect:/manage/hchart/toSMDetail";
         }
@@ -154,6 +207,7 @@ public class HighChartController extends CommonController {
         yearMonth2Model(model, yearMonthDto)
                 .addAttribute("seriesList", seriesList)
                 .addAttribute("productCountList", productCountList)
+                .addAttribute("unit",!productCountList.isEmpty()?productCountList.get(0).getUnit():null)
                 .addAttribute("productName", StringUtils.substringBefore(productName, "("))
                 .addAttribute("yearMonths", new Gson().toJson(yearMonths))
                 .addAttribute("contentTitle", "明细产品按同期月统计图表")
@@ -268,7 +322,7 @@ public class HighChartController extends CommonController {
             invalidate = invalidate || inValidateTemp;
         }
         if(!yearMonthDto.validYearMonthRang(yearMonthDto)){
-            errorMsg.append("起始年月与结束年月选择不合理,不能小于1个月大于12个");
+            errorMsg.append("起始年月与结束年月选择不合理,不能小于1个月大于"+max_monthes.value()+"个");
             invalidate = invalidate || true;
         }
         return invalidate;

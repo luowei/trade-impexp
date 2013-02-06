@@ -45,7 +45,8 @@ public class ExpTradeDetailDaoImpl
         String sql = " select year_month,product_code,product_name," + condition + " as condition," +
                 " sum(amount) as num,unit,sum(amount_money) as money " +
                 " from t_export_detail where product_code = ? and year_month = ? " +
-                " group by year_month," + condition + ",unit,product_code,product_name ";
+                " group by year_month," + condition + ",unit,product_code,product_name order by num desc ";
         return getJdbcTemplate().query(sql, new ProductCountRowMapper(), productCode, yearMonth);
     }
+
 }

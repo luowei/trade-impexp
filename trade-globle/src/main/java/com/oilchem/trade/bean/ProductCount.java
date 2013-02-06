@@ -1,5 +1,6 @@
 package com.oilchem.trade.bean;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import static com.oilchem.trade.bean.DocBean.Config.scale_size;
@@ -12,7 +13,7 @@ import static java.math.BigDecimal.ROUND_HALF_UP;
  * Time: 上午8:49
  * To change this template use File | Settings | File Templates.
  */
-public class ProductCount {
+public class ProductCount implements Serializable {
 
     private String yearMonth;
     private String productCode;
@@ -26,6 +27,33 @@ public class ProductCount {
     private String condition;
     private String autoproductCode;
 
+
+    private BigDecimal monthSumNum;
+    //  num / monthSumNum -> monthNumRatio
+    private BigDecimal monthNumRatio;
+
+    private BigDecimal currentSumNum;
+    private BigDecimal yearSumNum;
+    //  currentSumNum / yearSumNum -> currentSumNumRato
+    private BigDecimal currentSumNumRato;
+
+    public ProductCount() {
+    }
+
+    public ProductCount(String productCode,String productName, String yearMonth, BigDecimal num,
+                        String unit, BigDecimal money, String condition,
+                        BigDecimal monthNumRatio, BigDecimal currentSumNum,BigDecimal currentSumNumRato) {
+        this.yearMonth = yearMonth;
+        this.productCode = productCode;
+        this.productName = productName;
+        this.num = num;
+        this.unit = unit;
+        this.money = money;
+        this.condition = condition;
+        this.monthNumRatio = monthNumRatio;
+        this.currentSumNumRato = currentSumNumRato;
+        this.currentSumNum = currentSumNum;
+    }
 
     public String getYearMonth() {
         return yearMonth;
@@ -99,16 +127,51 @@ public class ProductCount {
     }
 
     public BigDecimal getUnitPrice() {
-        if (num.equals(0)) {
-            unitPrice = BigDecimal.valueOf(0);
+        if (num==null || num.doubleValue()==0D) {
+            return BigDecimal.valueOf(0);
         }
         int scale = Integer.parseInt(scale_size.value());
         unitPrice = money.divide(num, scale, ROUND_HALF_UP);
         return unitPrice;
     }
 
-    public ProductCount setUnitPrice(BigDecimal unitPrice) {
+    public BigDecimal getMonthSumNum() {
+        return monthSumNum;
+    }
 
-        return this;
+    public void setMonthSumNum(BigDecimal monthSumNum) {
+        this.monthSumNum = monthSumNum;
+    }
+
+    public BigDecimal getMonthNumRatio() {
+        return monthNumRatio;
+    }
+
+    public void setMonthNumRatio(BigDecimal monthNumRatio) {
+        this.monthNumRatio = monthNumRatio;
+    }
+
+    public BigDecimal getCurrentSumNum() {
+        return currentSumNum;
+    }
+
+    public void setCurrentSumNum(BigDecimal currentSumNum) {
+        this.currentSumNum = currentSumNum;
+    }
+
+    public BigDecimal getYearSumNum() {
+        return yearSumNum;
+    }
+
+    public void setYearSumNum(BigDecimal yearSumNum) {
+        this.yearSumNum = yearSumNum;
+    }
+
+    public BigDecimal getCurrentSumNumRato() {
+        return currentSumNumRato;
+    }
+
+    public void setCurrentSumNumRato(BigDecimal currentSumNumRato) {
+        this.currentSumNumRato = currentSumNumRato;
     }
 }

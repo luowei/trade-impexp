@@ -123,6 +123,13 @@ public class DetailCount extends IdEntity  implements Serializable {
     }
 
     public BigDecimal getUnitPrice() {
+//        if (unitPrice==null || unitPrice.equals(BigDecimal.ZERO)){
+//            if(this.num.equals(BigDecimal.ZERO)){
+//                unitPrice=this.money.divide(this.num,2);
+//            }else {
+//                unitPrice=BigDecimal.ZERO;
+//            }
+//        }
         return unitPrice;
     }
 

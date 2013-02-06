@@ -153,7 +153,7 @@
     &nbsp;&nbsp;
     <input id="chart" type="button" class="btn btn-primary" value="查看曲线" onclick="showSumChart()"/>
     &nbsp;&nbsp;
-    <a href="#" id="dialog_link" class="btn btn-primary">导出数据</a>
+    <%--<a href="#" id="dialog_link" class="btn btn-primary">导出数据</a>--%>
     <%--<a  href="" target="_blank" class="btn btn-small btn-primary" onclick="genSumChart()">生成曲线</a>--%>
 
     <div class="pagination-centered">
@@ -186,10 +186,10 @@
         <thead>
         <tr>
             <th><label><input type="checkbox" id="all"/>曲线</label></th>
-            <th>Id
-                <a href="javascript:void(0)" onclick="ascOrder('id','form1')"><i class="icon-chevron-up"></i></a>
-                <a href="javascript:void(0)" onclick="descOrder('id','form1')"><i class="icon-chevron-down"></i></a>
-            </th>
+            <%--<th>Id--%>
+                <%--<a href="javascript:void(0)" onclick="ascOrder('id','form1')"><i class="icon-chevron-up"></i></a>--%>
+                <%--<a href="javascript:void(0)" onclick="descOrder('id','form1')"><i class="icon-chevron-down"></i></a>--%>
+            <%--</th>--%>
             <th>年月
                 <a href="javascript:void(0)" onclick="ascOrder('yearMonth','form1')"><i class="icon-chevron-up"></i></a>
                 <a href="javascript:void(0)" onclick="descOrder('yearMonth','form1')"><i class="icon-chevron-down"></i></a>
@@ -247,7 +247,7 @@
         <c:forEach items="${tradeSumList.content}" var="sum" varStatus="st">
             <tr <c:if test="${st.index%2 eq 1}">class="warning" </c:if>>
                 <td><input type="checkbox" name="codes" value="${sum.productName}"/></td>
-                <td>${sum.id}</td>
+                <%--<td>${sum.id}</td>--%>
                 <td>${sum.yearMonth}</td>
                 <td>${sum.productName}</td>
                 <td>${sum.sumType}</td>

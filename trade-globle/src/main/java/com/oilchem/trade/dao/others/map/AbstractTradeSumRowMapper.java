@@ -1,11 +1,14 @@
 package com.oilchem.trade.dao.others.map;
 
+import com.oilchem.trade.bean.DocBean;
 import com.oilchem.trade.domain.abstrac.TradeSum;
 import jxl.Sheet;
 
 import java.math.BigDecimal;
 
 import static com.oilchem.trade.bean.DocBean.ExcelFiled.*;
+import static com.oilchem.trade.bean.DocBean.Symbol.excel_percent_negative;
+import static com.oilchem.trade.bean.DocBean.Symbol.excle_percent_positive;
 import static org.codehaus.plexus.util.StringUtils.isBlank;
 import static org.springframework.util.StringUtils.*;
 
@@ -50,17 +53,27 @@ public class AbstractTradeSumRowMapper<E extends TradeSum> implements MyRowMappe
         String content = getContents(fieldName);
         if (content == null || content.equals(""))
             return null;
-        if (content.indexOf("$") != -1) {
-            content = content.substring(0, content.indexOf("$"));
+
+        String prefix = "";
+        if(content.endsWith(excel_percent_negative.value())){
+            prefix ="-";
         }
 
-        String retStr = setContent(content)
-                .delSymbols("[").delSymbols("]")
-                .delSymbols("-84").delSymbols("-8")
-                .delSymbols(",").delSymbols("$")
-                .delSymbols("%").delSymbols("0-")
-                .getRetStr();
-        retStr = isBlank(content) ? "0" : retStr;
+//        if (content.indexOf("$") != -1) {
+//            content = content.substring(0, content.indexOf("$"));
+//        }
+
+//        String retStr = setContent(content)
+//                .delSymbols("[").delSymbols("]")
+//                .delSymbols("-84").delSymbols("-8")
+//                .delSymbols(",").delSymbols("$")
+//                .delSymbols("%").delSymbols("0-")
+//                .getRetStr();
+
+        String retStr = setContent(content.replace(excel_percent_negative.value(),"").replace(excle_percent_positive.value(),""))
+                .delSymbols(",").delSymbols("0-").delSymbols("[").delSymbols("]").getRetStr();
+
+        retStr = isBlank(retStr) ? "0" : prefix+retStr;
 
         BigDecimal bigDecimal = null;
         bigDecimal = BigDecimal.valueOf(
@@ -82,19 +95,29 @@ public class AbstractTradeSumRowMapper<E extends TradeSum> implements MyRowMappe
             return null;
 
         String content = getContents(fieldName);
+
+        String prefix = "";
+        if(content.endsWith(excel_percent_negative.value())){
+            prefix ="-";
+        }
+
         if (content == null || content.equals(""))
             return null;
 
-        if (content.indexOf("$") != -1) {
-            content = content.substring(0, content.indexOf("$"));
-        }
+//        if (content.indexOf("$") != -1) {
+//            content = content.substring(0, content.indexOf("$"));
+//        }
+//
+//        String retStr = setContent(content)
+//                .delSymbols(",").delSymbols("$")
+//                .delSymbols("%").delSymbols("0-")
+//                .delSymbols("[").delSymbols("]")
+//                .getRetStr();
 
-        String retStr = setContent(content)
-                .delSymbols(",").delSymbols("$")
-                .delSymbols("%").delSymbols("0-")
-                .delSymbols("[").delSymbols("]")
-                .getRetStr();
-        retStr = isBlank(retStr) ? "0" : retStr;
+        String retStr = setContent(content.replace(excel_percent_negative.value(),"").replace(excle_percent_positive.value(),""))
+                .delSymbols(",").delSymbols("0-").delSymbols("[").delSymbols("]").getRetStr();
+
+        retStr = isBlank(retStr) ? "0" : prefix+retStr;
 
         return BigDecimal.valueOf(
                 Double.parseDouble(retStr)

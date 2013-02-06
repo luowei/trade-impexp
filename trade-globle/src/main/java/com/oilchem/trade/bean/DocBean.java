@@ -263,7 +263,7 @@ public class DocBean {
         num_axis,
         money_axis,
 
-        exl_headrow_index, ignore_import_fail;
+        exl_headrow_index, ignore_import_fail, max_monthes;
 
         public String value() {
             return getDefault(this);
@@ -281,6 +281,8 @@ public class DocBean {
         right_round_bracket(")"),
         underline("_"),
         zero("0"),
+        excel_percent_negative("$%-8"),
+        excle_percent_positive("[$%-84]")
 
         ;
 

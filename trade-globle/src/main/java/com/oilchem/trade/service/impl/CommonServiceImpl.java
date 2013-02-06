@@ -122,7 +122,9 @@ public class CommonServiceImpl implements CommonService {
             return unZip(uploadPath, unPackageDir, null);
         } else if (type.equals(".rar")) {
             return unRar(uploadPath, unPackageDir);
-        } else return null;
+        }else if(type.equals(".xls") || type.equals(".xlsx")){
+              return uploadPath;
+        }else return null;
     }
 
     /**

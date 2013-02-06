@@ -49,4 +49,8 @@ public interface HighChartService {
 
 
     List<String> getSameMonthLabels(YearMonthDto yearMonthDto);
+
+    List<String> getSumYearMonthLabels(YearMonthDto yearMonthDto);
+
+    List<ProductCount> getSumCountList(YearMonthDto yearMonthDto, ProductCount productCount, List<String> yearMonths, String productCode);
 }

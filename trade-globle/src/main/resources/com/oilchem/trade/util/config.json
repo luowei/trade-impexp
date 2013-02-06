@@ -66,7 +66,7 @@
     "select_access_sql": {
         "key": "select_access_sql",
         "name": "读取access表的sql语句",
-        "value": " select top 18000 * from 结果 ",
+        "value": " select * from 结果 ",
         "describe": "读取access表的sql语句"
     },
 
@@ -110,6 +110,13 @@
         "name": "忽略导入错误开关",
         "value": "false",
         "describe": "忽略导入过程中发生的运行时错误开关，true表示不忽略，false表示忽略"
+    },
+
+    "max_monthes": {
+        "key": "max_monthes",
+        "name": "月份跨度",
+        "value": "36",
+        "describe": "月份跨度，生成曲线时，可选择的最大月份数目"
     },
 
 

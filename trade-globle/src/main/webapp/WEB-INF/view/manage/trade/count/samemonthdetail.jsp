@@ -20,12 +20,6 @@
     <link href="<c:url value="/resources/js/autocomplete/styles.css" />" rel="stylesheet"/>
     <script type="text/javascript" src="<c:url value="/resources/js/autocomplete/jquery.autocomplete.js" />"></script>
     <script type="text/javascript">
-        //autocomplete
-        //        var options, a;
-        //        jQuery(function(){
-        //            options = { serviceUrl:'service/autocomplete.ashx' };
-        //            a = $('#productCode').autocomplete(options);
-        //        });
 
         $(function () {
             'use strict';
@@ -219,10 +213,10 @@
     <table class="table table-hover table-bordered table-striped table-condensed">
         <thead>
         <tr>
-            <td>年月</td>
-            <td>产品代码</td>
-            <td>产品名称</td>
-            <td>
+            <th>年月</th>
+            <th>产品代码</th>
+            <th>产品名称</th>
+            <th>
                 <c:if test="${productCount.condition eq 'tradeType'}">贸易方式</c:if>
                 <c:if test="${productCount.condition eq 'companyType'}">企业性质</c:if>
                 <c:if test="${productCount.condition eq 'transportation'}">运输方式</c:if>
@@ -230,11 +224,10 @@
                 <c:if test="${productCount.condition eq 'country'}">产销国家</c:if>
                 <c:if test="${productCount.condition eq 'city'}">城市</c:if>
                 <c:if test="${productCount.condition eq null or productCount.condition eq '' }">类型</c:if>
-            </td>
-            <td>数量(T)</td>
-            <td>单位</td>
-            <td>美元价值</td>
-            <td>均价</td>
+            </th>
+            <th>数量(${unit})</th>
+            <th>美元价值</th>
+            <th>均价</th>
         </tr>
         </thead>
         <tbody>
@@ -248,7 +241,6 @@
                 </td>
                 <td>${product.condition}</td>
                 <td>${product.num}</td>
-                <td>${product.unit}</td>
                 <td>${product.money}</td>
                 <td>${product.unitPrice}</td>
             </tr>

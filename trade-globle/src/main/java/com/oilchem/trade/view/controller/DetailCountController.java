@@ -137,7 +137,7 @@ public class DetailCountController extends CommonController{
         Boolean validate = isNotBlank(countYear) && isNotBlank(countMonth) && countImpExp!=null;
         if (!validate) {
             addRedirectError(redirectAttrs,"请选择正确的年月");
-            return "redirect:/manage/list/detailCount/1";
+            return "redirect:/manage/toGenCount";
         }
         try {
             detailCountService.genDetailCount(countYear,countMonth,countImpExp);
@@ -147,7 +147,7 @@ public class DetailCountController extends CommonController{
             addRedirectError(redirectAttrs,"生成"+countYear+"年"+countMonth+"月的统计数据**失败**");
         }
 
-        return "redirect:/manage/list/detailCount/1";
+        return "redirect:/manage/toGenCount";
     }
 
     @RequestMapping("/genDetailTradeType")

@@ -131,7 +131,8 @@ public class HighChartServiceImpl implements HighChartService {
             lowMonth = yearMonthDto.getLowMonth() == null ? 1 : yearMonthDto.getLowMonth();
             highMonth = yearMonthDto.getHighMonth() == null ? 12 : yearMonthDto.getHighMonth();
 
-            if ((highYear - lowYear) * (highMonth + 1 - lowMonth) > 36 || lowYear > highYear) {
+            Integer maxMonthes = Integer.valueOf(max_monthes.value());
+            if ((highYear - lowYear) * (highMonth + 1 - lowMonth) > maxMonthes.intValue() || lowYear > highYear) {
                 return null;
             }
 
@@ -154,6 +155,52 @@ public class HighChartServiceImpl implements HighChartService {
         return labelList;
     }
 
+    /**
+     * 获得月累计的label
+     *
+     * @param yearMonthDto
+     * @return
+     */
+    public List<String> getSumYearMonthLabels(YearMonthDto yearMonthDto) {
+        Integer year = yearMonthDto.getSumYear();
+        if (year == null) {
+            return null;
+        }
+        Integer beginSumMonth = yearMonthDto.getBeginSumMonth();
+        Integer endSumMonth = yearMonthDto.getEndSumMonth();
+        List<String> labelList = new ArrayList<String>();
+        while (beginSumMonth <= endSumMonth) {
+            labelList.add(year + "-" + (endSumMonth<10?"0"+endSumMonth:endSumMonth));
+            endSumMonth--;
+        }
+        return labelList;
+    }
+
+    @Override
+    public List<ProductCount> getSumCountList(
+            YearMonthDto yearMonthDto, ProductCount productCount, List<String> yearMonths, String productCode) {
+
+        List<ProductCount> productCountList = new ArrayList<ProductCount>();
+        Integer impExp = yearMonthDto.getImpExpType();
+        String condition = productCount.getCondition();
+        for (String yearMonth : yearMonths) {
+            if (impExp.equals(import_type.ordinal()) || impExp.equals(import_type.getValue())) {
+                List<ProductCount> tempProductCounts=impTradeDetailDao.getSumProductCount(condition, productCode, yearMonth,"t_import_detail", yearMonthDto);
+                if(tempProductCounts!=null){
+                    productCountList.addAll(tempProductCounts);
+                }
+            }
+
+            if (impExp.equals(export_type.ordinal()) || impExp.equals(export_type.getValue())) {
+                List<ProductCount> tempProductCounts=expTradeDetailDao.getSumProductCount(condition, productCode, yearMonth,"t_export_detail", yearMonthDto);
+                if(tempProductCounts!=null){
+                    productCountList.addAll(tempProductCounts);
+                }
+            }
+        }
+        return productCountList;
+    }
+
 
     public List<String> getSeriesJson(
             YearMonthDto yearMonthDto, ProductCount productCount,
@@ -163,6 +210,7 @@ public class HighChartServiceImpl implements HighChartService {
         Map<String, Series> numSeriesMap = new TreeMap<String, Series>();
         Map<String, Series> moneySeriesMap = new TreeMap<String, Series>();
 
+        Collections.reverse(yearMonths);
         for (String yearMonth : yearMonths) {
             List<ProductCount> productCounts = getProductCount(productCode, productCount.getCondition()
                     , yearMonth, yearMonthDto.getImpExpType());
@@ -232,6 +280,7 @@ public class HighChartServiceImpl implements HighChartService {
         Map<String, Series> numSeriesMap = new TreeMap<String, Series>();
         Map<String, Series> moneySeriesMap = new TreeMap<String, Series>();
 
+        Collections.reverse(yearMonths);
         for (String yearMonth : yearMonths) {
             List<ProductCount> productCounts = getProductCount(productCode, productCount.getCondition()
                     , yearMonth, yearMonthDto.getImpExpType());
@@ -427,7 +476,6 @@ public class HighChartServiceImpl implements HighChartService {
         for (Map<String, Series> seriesMap : seriesMaps) {
             List<Series> seriesList = new ArrayList<Series>(typeSet.size());
             List<Series> seriesList1 = new ArrayList<Series>(seriesMap.values());
-
 
 
             for (String type : typeSet) {
@@ -672,7 +720,7 @@ public class HighChartServiceImpl implements HighChartService {
                 List<Double> doubleList = new ArrayList<Double>();
                 doubleList.add(detailCount.getNum().doubleValue());
                 numSeriesMap.put(yearMonth + underline.value() + name,
-                        new Series(yearMonth + underline.value() + productName
+                        new Series(yearMonth + underline.value() + name
                                 + left_square_bracket.value() + detailCount.getUnit() + right_square_bracket.value(),
                                 series_num_type.value(), 0, doubleList));
             } else {
@@ -687,7 +735,7 @@ public class HighChartServiceImpl implements HighChartService {
                 List<Double> doubleList = new ArrayList<Double>();
                 doubleList.add(detailCount.getMoney().doubleValue());
                 moneySeriesMap.put(yearMonth + underline.value() + name,
-                        new Series(yearMonth + underline.value() + productName, series_money_type.value(), 1, doubleList));
+                        new Series(yearMonth + underline.value() + name, series_money_type.value(), 1, doubleList));
             } else {
                 moneySeriesMap.get(yearMonth + underline.value() + name).getData().add(detailCount.getMoney().doubleValue());
             }

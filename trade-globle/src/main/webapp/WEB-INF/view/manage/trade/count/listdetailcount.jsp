@@ -144,7 +144,7 @@
     &nbsp;&nbsp;
     <input id="chart" type="button" class="btn btn-primary" value="查看曲线" onclick="showDetailCountChart()"/>
     &nbsp;&nbsp;
-    <a href="#" id="dialog_link" class="btn btn-primary">导出数据</a>
+    <%--<a href="#" id="dialog_link" class="btn btn-primary">导出数据</a>--%>
     <%--<input id="chart" type="button" class="btn btn-small btn-primary" value="导出数据" onclick=""/>--%>
 
 

@@ -175,7 +175,7 @@
 
     <br/>
 
-    <label class="label">zip或rar格式的excel数据包文件:</label>
+    <label class="label">zip或rar或xls格式的excel数据包文件:</label>
     <input name="file" type="file">
 
     <br/>

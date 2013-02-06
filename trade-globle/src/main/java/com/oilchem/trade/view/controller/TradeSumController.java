@@ -105,7 +105,8 @@ public class TradeSumController extends CommonController {
                                  YearMonthDto yearMonthDto,
                                  RedirectAttributes redirectAttrs) {
         Boolean validate = (file.getOriginalFilename().endsWith(".rar")
-                ||file.getOriginalFilename().endsWith(".zip"))
+                ||file.getOriginalFilename().endsWith(".zip")
+                || file.getOriginalFilename().endsWith(".xls") || file.getOriginalFilename().endsWith(".xlsx"))
                 && yearMonthDto.validYearMonth(yearMonthDto)
                 && yearMonthDto.getProductType()!= null;
         if (!validate){

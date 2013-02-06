@@ -1,5 +1,7 @@
 package com.oilchem.trade.bean;
 
+import static com.oilchem.trade.bean.DocBean.Config.max_monthes;
+
 /**
  * Created with IntelliJ IDEA.
  * User: luowei
@@ -15,6 +17,10 @@ public class YearMonthDto {
     private Integer lowMonth;
     private Integer highYear;
     private Integer highMonth;
+
+    private Integer sumYear;
+    private Integer beginSumMonth;
+    private Integer endSumMonth;
 
     /**
      * 进口/出口
@@ -147,6 +153,32 @@ public class YearMonthDto {
         return this;
     }
 
+    public Integer getSumYear() {
+        return sumYear;
+    }
+
+    public YearMonthDto setSumYear(Integer sumYear) {
+        this.sumYear = sumYear;
+        return this;
+    }
+
+    public Integer getBeginSumMonth() {
+        return beginSumMonth;
+    }
+
+    public YearMonthDto setBeginSumMonth(Integer beginSumMonth) {
+        this.beginSumMonth = beginSumMonth;
+        return this;
+    }
+
+    public Integer getEndSumMonth() {
+        return endSumMonth;
+    }
+
+    public void setEndSumMonth(Integer endSumMonth) {
+        this.endSumMonth = endSumMonth;
+    }
+
     public boolean validYearMonth(YearMonthDto yearMonthDto){
          return yearMonthDto.getYear()!=null
                  && yearMonthDto.getMonth()!=null
@@ -168,7 +200,8 @@ public class YearMonthDto {
         if(inValidate) return false;
         if(lowYear > highYear) return false;
         if(lowYear.equals(highYear) && lowMonth > highMonth) return false;
-        if(highMonth-lowMonth+(highYear-lowYear)*12 > 12) return false;
+        Integer maxMonthes = Integer.valueOf(max_monthes.value());
+        if(highMonth-lowMonth+(highYear-lowYear)*12 > maxMonthes.intValue()) return false;
         return true;
     }
 }

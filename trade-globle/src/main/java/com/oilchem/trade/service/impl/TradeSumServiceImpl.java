@@ -97,7 +97,7 @@ public class TradeSumServiceImpl implements TradeSumService {
             return false;
         Boolean isSuccess = true;
 
-
+        String sumType = yearMonthDto.getProductType();
         Boolean isImp = yearMonthDto.getImpExpType().equals(import_type.ordinal());
         Boolean isExp = yearMonthDto.getImpExpType().equals(export_type.ordinal());
         //进口
@@ -107,11 +107,11 @@ public class TradeSumServiceImpl implements TradeSumService {
             synchronized ("synchronized_sumimp_lock".intern()) {
 
                 //处理重复数据
-                Long count = impTradeSumDao.countWithYearMonth(
-                        yearMonthDto.getYear(), yearMonthDto.getMonth(), ImpTradeSum.class);
+                Long count = impTradeSumDao.countByYearAndMonthAndSumType(
+                        yearMonthDto.getYear(), yearMonthDto.getMonth(),sumType);
                 if (count != null && count > 0)
                     impTradeSumDao.delRepeatImpTradeSum(
-                            yearMonthDto.getYear(), yearMonthDto.getMonth());
+                            yearMonthDto.getYear(), yearMonthDto.getMonth(), sumType);
 
                 //导入
                 isSuccess = isSuccess & commonService.importExcel(
@@ -128,11 +128,11 @@ public class TradeSumServiceImpl implements TradeSumService {
             synchronized ("synchronized_sumexp_lock".intern()) {
 
                 //处理重复数据
-                Long count = expTradeSumDao.countWithYearMonth(
-                        yearMonthDto.getYear(), yearMonthDto.getMonth(), ExpTradeSum.class);
+                Long count = expTradeSumDao.countByYearAndMonthAndSumType(
+                        yearMonthDto.getYear(), yearMonthDto.getMonth(),sumType);
                 if (count != null && count > 0)
                     expTradeSumDao.delRepeatExpTradeSum(
-                            yearMonthDto.getYear(), yearMonthDto.getMonth());
+                            yearMonthDto.getYear(), yearMonthDto.getMonth(), sumType);
 
                 //导入数据
                 isSuccess = isSuccess & commonService.importExcel(
@@ -163,6 +163,9 @@ public class TradeSumServiceImpl implements TradeSumService {
                              YearMonthDto yearMonthDto) {
 
         yearMonthDto.setTableType(sum.getValue());
+        if(file.getOriginalFilename().endsWith(".xls")||file.getOriginalFilename().endsWith(".xlsx")){
+            return commonService.uploadFile(file,unzip_sum_dir.value(),yearMonthDto);
+        }
         return commonService.uploadFile(file,
                 upload_sumzip_dir.value(), yearMonthDto);
     }

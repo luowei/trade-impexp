@@ -24,10 +24,13 @@ public interface ExpTradeSumDao extends CrudRepository<ExpTradeSum,Long>,
 
     @Modifying
     @Transactional
-    @Query("delete from ExpTradeSum t where t.year = :year and t.month = :month")
-    void delRepeatExpTradeSum(@Param("year") Integer year,@Param("month") Integer month);
+    @Query("delete from ExpTradeSum t where t.year = :year and t.month = :month and t.sumType=:sumType")
+    void delRepeatExpTradeSum(@Param("year") Integer year, @Param("month") Integer month, @Param("sumType") String sumType);
 
     List<ExpTradeSum> findByProductNameAndYearMonth(String productName,String yearMonth);
 
     List<ExpTradeSum> findByIdAndYearMonth(Long aLong, String yearMonth);
+
+    @Query("select count(*) from ExpTradeSum where year=?1 and month=?2 and sumType=?3 ")
+    Long countByYearAndMonthAndSumType(Integer year, Integer month, String sumType);
 }

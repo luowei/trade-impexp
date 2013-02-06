@@ -1,6 +1,7 @@
 package com.oilchem.trade.dao.custom;
 
 import com.oilchem.trade.bean.ProductCount;
+import com.oilchem.trade.bean.YearMonthDto;
 import com.oilchem.trade.dao.BaseDao;
 import com.oilchem.trade.domain.detail.ImpTradeDetail;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -18,4 +19,6 @@ import java.util.List;
 public interface ImpTradeDetailDaoCustom extends BaseDao<ImpTradeDetail> {
 
     List<ProductCount> getProductCount(String condition, String productCode, String yearMonth);
+
+    List<ProductCount> getSumProductCount(String condition, String productCode, String yearMonth, String tableName, YearMonthDto yearMonthDto);
 }

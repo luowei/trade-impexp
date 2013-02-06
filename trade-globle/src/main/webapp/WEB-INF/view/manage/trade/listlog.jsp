@@ -18,15 +18,8 @@
     <title>日志列表</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script type="text/javascript">
-        function init() {
-
-        }
-
-    </script>
-
 </head>
-<body onload="init()">
+<body >
 
 
 <div class="navbar navbar-fixed-top ">
@@ -43,11 +36,11 @@
                     </c:if>
 
                     <c:if test="${tableType eq '1'}">
-                        <a href="${pageContext.request.contextPath}/manage/exlconf">配置</a>
+                        <li><a href="${pageContext.request.contextPath}/manage/exlconf">配置</a></li>
                         <li><a href="${pageContext.request.contextPath}/manage/listlog/1/1">总表导入日志</a></li>
                     </c:if>
 
-                    <li><a href="${pageContext.request.contextPath}/manage/import">导入</a></li>
+                    <%--<li><a href="${pageContext.request.contextPath}/manage/import">导入</a></li>--%>
 
 
                     <li><a href="javascript:" onclick="history.back();">返回</a></li>
@@ -60,6 +53,9 @@
 
 <h2>日志列表</h2>
 
+<form:form id="form1" modelAttribute="tradeDetail"
+           action="${pageContext.request.contextPath}${contextUrl}/1"
+           method="post" cssClass="well form-inline">
 <div class="pagination-centered">
     <jsp:include page="../../common/pagination.jsp"/>
 </div>
@@ -174,6 +170,7 @@
 <div class="pagination-centered">
     <jsp:include page="../../common/pagination.jsp"/>
 </div>
+</form:form>
 
 <div class="modal hide fade" id="reExtract_win">
     <div class="modal-header">
