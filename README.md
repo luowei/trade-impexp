@@ -1,4 +1,4 @@
-﻿#trade-impexp
+#trade-impexp
 **[trade-impexp](https://github.com/luowei/trade-impexp)是一个maven项目，其中包含了多个模块**
 
 ##trade-globle
@@ -16,6 +16,22 @@
 8. 此外此项目中还封装也解压zip文件、解压rar文件、配置工具、动态条件查询、文件操作、泛型、jdbcUtil、QueryUtil、CommonUtil等工具类；
 9. 并配置了maven 的jetty、groovy、mojo、cargo等插件；
 10. 导出excel，使用了spring mvc 的视图技术，并对导入excel视图封装了良好的工具类；
+
+
+### trade-globle视频讲解
+1.项目的主要配置及概览
+[http://www.tudou.com/programs/view/6HqDeYy7guE/](http://www.tudou.com/programs/view/6HqDeYy7guE/)
+<iframe src="http://www.tudou.com/programs/view/html5embed.action?type=0&code=6HqDeYy7guE&lcode=&resourceId=68930770_06_05_99" allowtransparency="true" scrolling="no" border="0" frameborder="0" style="width:480px;height:400px;"></iframe>
+
+2.代码分析及反射,AOP的灵活应用
+[http://www.tudou.com/programs/view/AHZeS687Jrk/](http://www.tudou.com/programs/view/AHZeS687Jrk/)
+<iframe src="http://www.tudou.com/programs/view/html5embed.action?type=0&code=AHZeS687Jrk&lcode=&resourceId=68930770_06_05_99" allowtransparency="true" scrolling="no" border="0" frameborder="0" style="width:480px;height:400px;"></iframe>
+
+3.项目成品与效果预览
+[http://www.tudou.com/programs/view/JPTEEJSELBI/](http://www.tudou.com/programs/view/JPTEEJSELBI/)
+<iframe src="http://www.tudou.com/programs/view/html5embed.action?type=0&code=JPTEEJSELBI&lcode=&resourceId=68930770_06_05_99" allowtransparency="true" scrolling="no" border="0" frameborder="0" style="width:480px;height:400px;"></iframe>
+
+----
 
 ##trade-persistent
 [trade-persistent](https://github.com/luowei/trade-impexp/tree/master/trade-persistent)是trade-globle持久化的模块接口部分，待完成中。。
