@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.oilchem</groupId>
+    <artifactId>app</artifactId>
+    <version>1.0</version>
+
+    <packaging>pom</packaging>
+
+
+    <distributionManagement>
+
+        <snapshotRepository>
+            <id>my_app_snapshots</id>
+            <name>my_app_snapshots</name>
+            <url>http://localhost:8081/nexus/content/repositories/my_app_snapshots/</url>
+        </snapshotRepository>
+
+        <repository>
+            <id>my_app_releases</id>
+            <name>my_app_releases</name>
+            <url>http://localhost:8081/nexus/content/repositories/my_app_releases/</url>
+        </repository>
+
+    </distributionManagement>
+
+    <properties>
+
+        <!--system-->
+        <jdkVersion>1.6</jdkVersion>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!--spring-->
+        <springframework.version>3.1.2.RELEASE</springframework.version>
+        <spring-data-jpa.version>1.1.0.RELEASE</spring-data-jpa.version>
+
+        <!--log-->
+        <slf4j.version>1.6.4</slf4j.version>
+        <log4j.version>1.2.16</log4j.version>
+        <logback.version>1.0.7</logback.version>
+
+        <!--aspect-->
+        <org.aspectj-version>1.6.12</org.aspectj-version>
+        <javassist.version>3.16.1-GA</javassist.version>
+        <cglib.version>2.2.2</cglib.version>
+        <aopalliance.version>1.0</aopalliance.version>
+
+
+        <!--sql driver-->
+        <sqljdbc4.version>3.0</sqljdbc4.version>
+        <sqlserver-connector>1.0</sqlserver-connector>
+        <jtds.version>1.2.4</jtds.version>
+        <mysql-connector-java.version>5.1.18</mysql-connector-java.version>
+
+        <!--database connection pool-->
+        <commons-dbcp.version>1.4</commons-dbcp.version>
+        <boneCP.version>0.7.1.RELEASE</boneCP.version>
+        <c3p0.version>0.9.1</c3p0.version>
+
+        <!--persistent-->
+        <hibernate.version>4.1.4.Final</hibernate.version>
+        <hibernate-jpa-2.0-api.version>1.0.0.Final</hibernate-jpa-2.0-api.version>
+
+        <!--servlet-->
+        <servlet-api.version>2.5</servlet-api.version>
+        <jsp-api.version>2.1</jsp-api.version>
+        <jstl.version>1.2</jstl.version>
+
+
+        <!--apache commons-->
+        <commons-lang.version>3.1</commons-lang.version>
+        <commons-collections.version>3.2.1</commons-collections.version>
+        <commons-fileupload.version>1.2.2</commons-fileupload.version>
+        <commons-io.version>2.3</commons-io.version>
+
+        <!--third part-->
+        <sitemesh.version>2.4.2</sitemesh.version>
+        <java-mail.version>1.4</java-mail.version>
+        <joda-time.version>2.1</joda-time.version>
+        <joda-time-jsptag.version>1.1.1</joda-time-jsptag.version>
+        <jackson.version>1.9.6</jackson.version>
+        <jxl.version>2.6.12</jxl.version>
+        <ant-zip.version>1.8.4</ant-zip.version>
+        <gson.version>2.2.1</gson.version>
+        <ehcache.version>2.5.2</ehcache.version>
+        <jamon.version>2.4</jamon.version>
+        <ecj.version>3.7</ecj.version>
+        <groovy-all.version>1.7-beta-2</groovy-all.version>
+        <xstream.version>1.4.3</xstream.version>
+
+        <!--my own-->
+        <java-unrar.version>0.3</java-unrar.version>
+
+        <!--unit test-->
+        <junit.version>4.10</junit.version>
+
+        <!--cargo-->
+        <servlet.port>8080</servlet.port>
+        <hostname>127.0.0.1</hostname>
+        <username>tomcat</username>
+        <password>tomcat</password>
+
+        <!--maven plugin-->
+        <maven-compiler-plugin.version>2.4</maven-compiler-plugin.version>
+        <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
+        <jetty-maven-plugin.version>8.1.0.v20120127</jetty-maven-plugin.version>
+        <cargo-maven2-plugin.version>1.2.1</cargo-maven2-plugin.version>
+        <gmaven-plugin.version>1.0</gmaven-plugin.version>
+
+
+    </properties>
+
+
+    <developers>
+        <developer>
+            <name>luowei</name>
+            <email>luowei010101@gmail.com</email>
+        </developer>
+    </developers>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${servlet-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet.jsp</groupId>
+                <artifactId>jsp-api</artifactId>
+                <version>${jsp-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- JSTL1.2 -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jstl</artifactId>
+                <version>${jstl.version}</version>
+            </dependency>
+
+            <!--Spring -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${springframework.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+                <version>${springframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${springframework.version}</version>
+            </dependency>
+
+            <!-- Aspect -->
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${org.aspectj-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jamonapi</groupId>
+                <artifactId>jamon</artifactId>
+                <version>${jamon.version}</version>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>aopalliance</groupId>
+                <artifactId>aopalliance</artifactId>
+                <version>${aopalliance.version}</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-jpa</artifactId>
+                <version>${spring-data-jpa.version}</version>
+            </dependency>
+
+            <!-- javassist -->
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${javassist.version}</version>
+            </dependency>
+
+
+            <!-- cglib -->
+            <dependency>
+                <groupId>cglib</groupId>
+                <artifactId>cglib</artifactId>
+                <version>${cglib.version}</version>
+            </dependency>
+
+            <!-- joda-time -->
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda-time.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time-jsptags</artifactId>
+                <version>${joda-time-jsptag.version}</version>
+            </dependency>
+
+
+            <!-- Logging in favor of slf4j  -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>${java-mail.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${log4j.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>sqljdbc4</artifactId>
+                <version>${sqljdbc4.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <!--MySQL JDBC Driver -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql-connector-java.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate.javax.persistence</groupId>
+                <artifactId>hibernate-jpa-2.0-api</artifactId>
+                <version>${hibernate-jpa-2.0-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>${hibernate.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- apache commons-dbcp -->
+            <dependency>
+                <groupId>commons-dbcp</groupId>
+                <artifactId>commons-dbcp</artifactId>
+                <version>${commons-dbcp.version}</version>
+            </dependency>
+
+            <!-- dataSource use BoneCP -->
+            <dependency>
+                <groupId>com.jolbox</groupId>
+                <artifactId>bonecp</artifactId>
+                <version>${boneCP.version}</version>
+            </dependency>
+
+            <!--dataSource use c3p0-->
+            <dependency>
+                <groupId>c3p0</groupId>
+                <artifactId>c3p0</artifactId>
+                <version>${c3p0.version}</version>
+            </dependency>
+
+
+            <!-- commons-lang3 -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang.version}</version>
+            </dependency>
+            <!-- commons-collections -->
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${commons-collections.version}</version>
+            </dependency>
+
+            <!-- FileUpload -->
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>${commons-fileupload.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+
+            <!-- jxl -->
+            <dependency>
+                <groupId>net.sourceforge.jexcelapi</groupId>
+                <artifactId>jxl</artifactId>
+                <version>${jxl.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant</artifactId>
+                <version>${ant-zip.version}</version>
+            </dependency>
+
+            <!-- ehcache -->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-ehcache</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
+
+            <!-- LogTest -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${springframework.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>de.innosystec</groupId>
+                <artifactId>java-unrar</artifactId>
+                <version>${java-unrar.version}</version>
+            </dependency>
+
+            <!-- Google gson -->
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.jdt.core.compiler</groupId>
+                <artifactId>ecj</artifactId>
+                <version>${ecj.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.vvvv.app</groupId>
+                <artifactId>ofc4j</artifactId>
+                <version>1.0</version>
+                <classifier>alpha5</classifier>
+            </dependency>
+
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-all</artifactId>
+                <version>${groovy-all.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.thoughtworks.xstream</groupId>
+                <artifactId>xstream</artifactId>
+                <version>${xstream.version}</version>
+            </dependency>
+
+            <!--<dependency>-->
+            <!--<groupId>org.codehaus.gmaven.runtime</groupId>-->
+            <!--<artifactId>gmaven-runtime-default</artifactId>-->
+            <!--</dependency>-->
+
+        </dependencies>
+
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <source>${jdkVersion}</source>
+                        <target>${jdkVersion}</target>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.5</version>
+                    <configuration>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.12</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.mortbay.jetty</groupId>
+                    <artifactId>jetty-maven-plugin</artifactId>
+                    <version>${jetty-maven-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>sql-maven-plugin</artifactId>
+                    <version>${sql-maven-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.groovy.maven</groupId>
+                    <artifactId>gmaven-plugin</artifactId>
+                    <version>${gmaven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>generateStubs</goal>
+                                <goal>compile</goal>
+                                <goal>generateTestStubs</goal>
+                                <goal>testCompile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!--<plugin>-->
+                <!--<groupId>org.codehaus.groovy.maven</groupId>-->
+                <!--<artifactId>gmaven-plugin</artifactId>-->
+                <!--<executions>-->
+                <!--<execution>-->
+                <!--<goals>-->
+                <!--<goal>compile</goal>-->
+                <!--</goals>-->
+                <!--<configuration>-->
+                <!--<sources>-->
+                <!--<fileset>-->
+                <!--<directory>${pom.basedir}/src/main/script</directory>-->
+                <!--<includes>-->
+                <!--<include>**/*.groovy</include>-->
+                <!--</includes>-->
+                <!--</fileset>-->
+                <!--</sources>-->
+                <!--</configuration>-->
+                <!--</execution>-->
+                <!--</executions>-->
+                <!--</plugin>-->
+
+
+                <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-pmd-plugin</artifactId>-->
+                <!--<version>2.7.1</version>-->
+                <!--</plugin>-->
+
+                <plugin>
+                    <groupId>org.codehaus.cargo</groupId>
+                    <artifactId>cargo-maven2-plugin</artifactId>
+                    <version>${cargo-maven2-plugin.version}</version>
+                    <configuration>
+                        <container>
+                            <containerId>tomcat6x</containerId>
+                            <type>remote</type>
+                        </container>
+                        <configuration>
+                            <type>runtime</type>
+                            <properties>
+                                <cargo.hostname>${hostname}</cargo.hostname>
+                                <cargo.servlet.port>${servlet.port}</cargo.servlet.port>
+                                <cargo.remote.username>${username}</cargo.remote.username>
+                                <cargo.remote.password>${password}</cargo.remote.password>
+                                <cargo.tomcat.manager.url>
+                                    http://${hostname}:${servlet.port}/manager/html
+                                </cargo.tomcat.manager.url>
+                            </properties>
+                        </configuration>
+                        <deployer>
+                            <deployables>
+                                <!--
+                                The project's artifact is automatically deployed if no deployable
+                                is defined. However, we define it here so that we can specify the
+                                context (we don't want the version to be included in the context).
+                                -->
+                                <deployable>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>${project.artifactId}</artifactId>
+                                    <type>war</type>
+                                    <pingURL>http://${hostname}:${servlet.port}</pingURL>
+                                    <properties>
+                                        <context>${project.artifactId}</context>
+                                    </properties>
+                                </deployable>
+                            </deployables>
+                        </deployer>
+                    </configuration>
+                </plugin>
+
+
+            </plugins>
+
+        </pluginManagement>
+
+    </build>
+
+    <!--<repositories>-->
+    <!--<repository>-->
+    <!--<id>local</id>-->
+    <!--<name>local</name>-->
+    <!--<url>file://C:/Documents and Settings/Administrator/.m2/repository</url>-->
+    <!--</repository>-->
+
+    <!--</repositories>-->
+
+
+</project>
