@@ -15,6 +15,9 @@ logs/
 *.log
 *~
 
+# Claude Code
+.claude/
+
 #=========================
 #eclipse
 *.pydevproject
