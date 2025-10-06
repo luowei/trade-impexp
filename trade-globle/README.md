@@ -1710,6 +1710,868 @@ mvn help:active-profiles
 
 ---
 
+## 🎯 核心技术深度解析
+
+### 1️⃣ Spring IoC 依赖注入的优雅应用
+
+#### 多层次依赖注入策略
+
+**接口与实现分离**（`src/main/java/com/oilchem/trade/service/`）:
+```java
+// 接口定义
+public interface TradeDetailService {
+    Page<ImpTradeDetail> findImpWithCriteria(...);
+    void importDetailData(...);
+}
+
+// 实现类通过 @Service 注解注入
+@Service
+@Transactional
+public class TradeDetailServiceImpl implements TradeDetailService {
+
+    @Autowired
+    private ImpTradeDetailDao impDao;  // 自动注入 Repository
+
+    @Autowired
+    private TradeSumService sumService;  // 跨服务依赖注入
+
+    @Resource
+    private LogDao logDao;  // 使用 @Resource 按名称注入
+}
+```
+
+**Repository 自动装配**（Spring Data JPA）:
+```java
+// 无需实现类，Spring Data 自动代理
+public interface ImpTradeDetailDao extends
+        CrudRepository<ImpTradeDetail, Long>,
+        JpaSpecificationExecutor<ImpTradeDetail>,
+        ImpTradeDetailDaoCustom {
+
+    // 方法名查询，Spring 自动实现
+    List<ImpTradeDetail> findByProductCodeAndYearMonth(String code, String ym);
+
+    // JPQL 自定义查询
+    @Query("delete from ImpTradeDetail t where t.year = ?1 and t.month = ?2")
+    @Modifying
+    @Transactional
+    void delRepeatImpTradeDetail(Integer year, Integer month);
+}
+```
+
+**ApplicationContext 的灵活运用**（CommonServiceImpl.java:143-154）:
+```java
+// 动态获取 Spring Bean
+ApplicationContext ctx = getAppContext();
+
+DetailCriteria cityCri = new DetailCriteria(
+    access_city.getValue(),
+    City.class,
+    CityDao.class,
+    CityDao.class.getDeclaredMethod("findByCity", String.class),
+    ctx.getBean(CityDao.class),  // 运行时动态注入 Bean
+    new HashSet<String>()
+);
+```
+
+**配置文件分离**（`applicationContext-root.xml:16-18`）:
+```xml
+<!-- 组件扫描，排除 Controller -->
+<context:component-scan base-package="com.oilchem">
+    <context:exclude-filter type="annotation"
+        expression="org.springframework.stereotype.Controller"/>
+</context:component-scan>
+
+<!-- 启用 AspectJ 自动代理 -->
+<aop:aspectj-autoproxy expose-proxy="true"/>
+```
+
+#### 亮点总结
+- ✅ **分层注入**: Controller 由 MVC 容器管理，Service/DAO 由根容器管理，避免循环依赖
+- ✅ **多种注入方式**: `@Autowired`（类型）、`@Resource`（名称）、`ApplicationContext.getBean()`（动态）
+- ✅ **接口编程**: 面向接口依赖，降低耦合度
+
+---
+
+### 2️⃣ Spring AOP 切面编程的实战应用
+
+#### 完整的日志追踪切面（LogServiceImpl.java）
+
+**切点定义与多通知类型**:
+```java
+@Aspect
+@Service("logService")
+public class LogServiceImpl implements LogService {
+
+    // 1. 定义切点 - 上传文件
+    @Pointcut(value = "execution(String com.oilchem.trade.service.impl.CommonServiceImpl.uploadFile(" +
+            "org.springframework.web.multipart.MultipartFile," +
+            "java.lang.String," +
+            "com.oilchem.trade.bean.YearMonthDto)) " +
+            "&& args(file,realDir,yearMonthDto)",
+            argNames = "file,realDir,yearMonthDto")
+    void cutUploadFile(MultipartFile file, String realDir, YearMonthDto yearMonthDto) {}
+
+    // 2. 前置通知 - 记录上传开始
+    @Before("cutUploadFile(file,readDir,yearMonthDto)")
+    void logUploadingFile(MultipartFile file, String readDir, YearMonthDto yearMonthDto) {
+        log = new Log();
+        log.setUploadFlg(uploading_flag.getValue());
+        log.setLogTime(new Date());
+        logDao.save(log);
+    }
+
+    // 3. 后置通知 - 记录上传成功（获取返回值）
+    @AfterReturning(pointcut = "cutUploadFile(file,readDir,yearMonthDto)",
+                    returning = "uploadUrl")
+    void logUploadedFile(MultipartFile file, String readDir,
+                         YearMonthDto yearMonthDto, String uploadUrl) {
+        log.setUploadPath(uploadUrl);  // 使用返回值
+        log.setUploadFlg(uploaded_flag.getValue());
+        logDao.save(log);
+    }
+
+    // 4. 异常通知 - 记录上传失败
+    @AfterThrowing("cutUploadFile(file,readDir,yearMonthDto)")
+    void logUploadFileThrowing(MultipartFile file, String readDir,
+                               YearMonthDto yearMonthDto) {
+        log.setUploadFlg(upload_faild.getValue());
+        log.setErrorOccur(upload_faild.getValue());
+        logDao.save(log);
+    }
+}
+```
+
+**完整的业务流程追踪**:
+```
+文件上传 → 解压 → 数据导入
+   ↓         ↓         ↓
+ @Before   @Before   @Before      (记录开始状态)
+   ↓         ↓         ↓
+执行业务   执行业务   执行业务
+   ↓         ↓         ↓
+@AfterReturning (成功) / @AfterThrowing (失败)
+```
+
+**切点表达式的灵活运用**（LogServiceImpl.java:136-143）:
+```java
+// 解压文件切点 - 匹配复杂参数类型
+@Pointcut(value = "execution(" +
+        "String com.oilchem.trade.service.impl.CommonServiceImpl.unpackageFile(" +
+        "java.util.Map.Entry<Long, com.oilchem.trade.domain.Log>," +
+        "java.lang.String))" +
+        "&& args(logEntry,unPackageDir)",
+        argNames = "logEntry,unPackageDir")
+void cutUnpackageFile(Map.Entry<Long, Log> logEntry, String unPackageDir) {}
+```
+
+#### 亮点总结
+- ✅ **全生命周期追踪**: @Before、@AfterReturning、@AfterThrowing 覆盖业务全流程
+- ✅ **参数与返回值绑定**: `args()` 绑定方法参数，`returning` 获取返回值
+- ✅ **零侵入日志**: 业务代码无任何日志逻辑，完全由切面管理
+- ✅ **状态机模式**: 通过标志位追踪业务状态（上传中→已上传→解压中→已解压→导入中→已导入）
+
+---
+
+### 3️⃣ Java 反射与泛型的深度结合
+
+#### 泛型工具类（GenericsUtils.java）
+
+**获取父类泛型参数**:
+```java
+/**
+ * 通过反射获取指定类的父类的泛型参数实际类型
+ * 如: BuyerServiceBean extends DaoSupport<Buyer>
+ *     返回 Buyer.class
+ */
+@SuppressWarnings("unchecked")
+public static Class getSuperClassGenricType(Class clazz, int index) {
+    Type genType = clazz.getGenericSuperclass();  // 得到泛型父类
+
+    if (!(genType instanceof ParameterizedType)) {
+        return Object.class;  // 不支持泛型
+    }
+
+    // 返回表示此类型实际类型参数的 Type 对象数组
+    Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+
+    if (index >= params.length || index < 0) {
+        throw new RuntimeException("索引超出范围");
+    }
+
+    return (Class) params[index];
+}
+```
+
+**获取方法返回值泛型**:
+```java
+/**
+ * 获取方法返回值泛型参数的实际类型
+ * 如: public Map<String, Buyer> getNames(){} 返回 String.class, Buyer.class
+ */
+public static Class getMethodGenericReturnType(Method method, int index) {
+    Type returnType = method.getGenericReturnType();
+
+    if (returnType instanceof ParameterizedType) {
+        ParameterizedType type = (ParameterizedType) returnType;
+        Type[] typeArguments = type.getActualTypeArguments();
+        return (Class) typeArguments[index];
+    }
+
+    return Object.class;
+}
+```
+
+**获取字段泛型**:
+```java
+/**
+ * 获取字段泛型参数的实际类型
+ * 如: public Map<String, Buyer> names;
+ */
+public static Class getFieldGenericType(Field field, int index) {
+    Type genericFieldType = field.getGenericType();
+
+    if (genericFieldType instanceof ParameterizedType) {
+        ParameterizedType aType = (ParameterizedType) genericFieldType;
+        Type[] fieldArgTypes = aType.getActualTypeArguments();
+        return (Class) fieldArgTypes[index];
+    }
+
+    return Object.class;
+}
+```
+
+#### 反射的高级应用（CommonServiceImpl.java）
+
+**动态类加载与实例化**（CommonServiceImpl.java:504-527）:
+```java
+/**
+ * 约定优于配置：根据类型名动态加载 DAO 和 Entity
+ * 传入 "city" → CityDao.class + City.class
+ */
+public <E> List<E> findAllEntityList(String type) {
+    // 1. 类名拼接（遵循命名约定）
+    String entityName = type.substring(0, 1).toUpperCase() + type.substring(1);
+    String daoClassName = daoPkgName + "." + entityName + "Dao";
+
+    // 2. 动态加载类
+    Class daoClass = Class.forName(daoClassName);
+
+    // 3. 反射调用方法
+    Object obj = daoClass.getMethod("findAll", Sort.class)
+            .invoke(getCurrentWebApplicationContext().getBean(daoClass), sort);
+
+    return (List<E>) obj;
+}
+```
+
+**通用 CRUD 操作**（CommonServiceImpl.java:535-554）:
+```java
+/**
+ * 添加记录 - 完全基于反射
+ */
+public void add(String type, String name) {
+    String entityName = type.substring(0, 1).toUpperCase() + type.substring(1);
+    String daoClassName = daoPkgName + "." + entityName + "Dao";
+    String entityClassName = domainPkgName + "." + entityName;
+
+    Class daoClass = Class.forName(daoClassName);
+    Class entityClass = Class.forName(entityClassName);
+
+    // 获取 DAO Bean
+    Object daoObj = getCurrentWebApplicationContext().getBean(daoClass);
+
+    // 通过构造器创建实体
+    Object entityObj = entityClass.getConstructor(String.class).newInstance(name);
+
+    // 调用 save 方法
+    daoClass.getMethod("save", Object.class).invoke(daoObj, entityObj);
+}
+```
+
+**泛型约束的实战应用**（CommonServiceImpl.java:264-326）:
+```java
+/**
+ * 导入明细数据 - 使用泛型约束类型安全
+ * E extends TradeDetail   确保是明细表实体
+ * T extends AbstractTradeDetailRowMapper   确保是对应的 Mapper
+ */
+public <E extends TradeDetail, T extends AbstractTradeDetailRowMapper>
+Boolean importTradeDetail(
+        final CrudRepository repository,
+        T tradeDetailMapper,
+        YearMonthDto yearMonthDto,
+        String accessPath,
+        String sql,
+        Class detailClz) {
+
+    // 批量处理，使用泛型保证类型安全
+    List<E> detailList = (List<E>) obj;
+
+    // Repository 保存
+    Iterable<E> result = repository.save(detailList);
+
+    return result.iterator().hasNext();
+}
+```
+
+**反射获取方法并动态调用**（CommonServiceImpl.java:372-406）:
+```java
+/**
+ * 动态获取 DAO 方法并调用
+ */
+public Map<Long, Log> getUnExtractPackage(String tableType) {
+    Method findByMethod = LogDao.class.getDeclaredMethod(
+        "findByExtractFlagAndTableType", String.class, String.class
+    );
+
+    // 通过反射调用方法
+    Object obj = findByMethod.invoke(logDao, process_flag, tableType);
+
+    return (List<Log>) obj;
+}
+```
+
+#### 亮点总结
+- ✅ **泛型工具类**: 封装复杂的泛型反射操作，提供简洁 API
+- ✅ **约定优于配置**: 通过命名约定自动拼接类名，减少硬编码
+- ✅ **类型安全**: 泛型约束确保编译期类型检查
+- ✅ **通用性强**: 一套代码处理所有实体类的 CRUD 操作
+
+---
+
+### 4️⃣ Groovy 脚本的动态图表生成
+
+#### Groovy 基类封装（Common.groovy）
+
+**动态构建图表配置**:
+```groovy
+class Common {
+    def style = "{color:#736AEF; font-size:12px;}"
+
+    /**
+     * 构建图表核心逻辑
+     * 1. 计算坐标轴范围（自适应数据）
+     * 2. 设置刻度步长
+     * 3. 配置 X/Y 轴
+     */
+    Chart newChart(Chart chart, ChartData chartData, String key,
+                   Map<String,BigDecimal> minRangMap,
+                   Map<String,BigDecimal> maxRangMap,
+                   Map<String,BigDecimal> stepMap) {
+
+        int scale = Integer.parseInt(scale_size.value())
+        BigDecimal steps = BigDecimal.valueOf(Long.valueOf(axis_steps.value()))
+
+        BigDecimal minRang = chartData.minRangMap.get(key) ?: 0
+        BigDecimal maxRang = chartData.maxRangMap.get(key) ?: steps
+
+        // 放大 20% 留白
+        maxRang = maxRang.multiply(BigDecimal.valueOf(1.2))
+
+        // 计算步长
+        BigDecimal rang = maxRangMap.get(key).subtract(minRangMap.get(key))
+        Integer step = rang.divide(steps, scale, BigDecimal.ROUND_HALF_UP).intValue()
+
+        return chart.setXAxis(new XAxis().addLabels(chartData.labels))
+                .setXLegend(new Text("年月", style))
+                .setYAxis(new YAxis()
+                    .setRange(minRangMap.get(key).intValue(),
+                              maxRangMap.get(key).intValue(),
+                              step.intValue()))
+    }
+
+    /**
+     * 随机颜色生成
+     */
+    def getRadomColor() {
+        def rand = new Random()
+        def color = "#" + toHexString(rand.nextInt(255)) * 3
+
+        for (def i = 7 - color.length(); i > 0; i--) {
+            color += "0"
+        }
+        return color
+    }
+}
+```
+
+#### 详细图表生成（DetailChart.groovy）
+
+**闭包与集合操作**:
+```groovy
+class DetailChart extends Common {
+
+    /**
+     * 生成多产品对比折线图
+     * 1. 遍历产品数据（each 闭包）
+     * 2. 动态创建图表元素
+     * 3. 返回多个图表
+     */
+    def List<Chart> getDetailLineChart(
+            Map<String, ChartData<TradeDetail>> chartDataMap,
+            String chartType) {
+
+        Chart amountChat = new Chart()
+                .setTitle(new Text("平均数量"))
+                .setYLegend(new Text("平均数量", style))
+        Chart amountMoneyChart = new Chart()
+                .setTitle(new Text("平均金额"))
+        Chart unitpriceChart = new Chart()
+                .setTitle(new Text("单价"))
+
+        Map<String, BigDecimal> minRangMap = new TreeMap()
+        Map<String, BigDecimal> maxRangMap = new TreeMap()
+        Map<String, BigDecimal> stepMap = new TreeMap()
+
+        // 遍历每一种产品（Groovy each 闭包语法）
+        chartDataMap.each {
+            String code = it.key
+            ChartData<TradeDetail> chartData = it.value
+
+            // 根据图表类型动态选择
+            List<LineChart> detailElementList =
+                ("barChart".equals(chartType)) ?
+                    getDetailBarList(code, chartData.elementList) :
+                    getDetailLineList(code, chartData.elementList)
+
+            // 添加图表元素
+            amountChat = newChart(amountChat, chartData, "amount",
+                                  minRangMap, maxRangMap, stepMap)
+                        .addElements(detailElementList.get(0))
+            amountMoneyChart = newChart(amountMoneyChart, chartData, "amountMoney",
+                                        minRangMap, maxRangMap, stepMap)
+                              .addElements(detailElementList.get(1))
+            unitpriceChart = newChart(unitpriceChart, chartData, "unitPrice",
+                                      minRangMap, maxRangMap, stepMap)
+                            .addElements(detailElementList.get(2))
+        }
+
+        [amountChat, amountMoneyChart, unitpriceChart]  // 返回列表
+    }
+
+    /**
+     * 生成折线数据
+     */
+    def getDetailLineList(String code, List<TradeDetail> detailList) {
+        LineChart amountLineChart = new LineChart().setText(code)
+        LineChart amountMoneyLineChart = new LineChart().setText(code)
+        LineChart unitPriceLineChart = new LineChart().setText(code)
+
+        // 遍历每个月（Groovy 简洁语法）
+        detailList.each {
+            amountLineChart = newLineElement(amountLineChart, it)
+                .addValues(it?.amount?.doubleValue() ?: 0)  // 安全导航操作符
+            amountMoneyLineChart = newLineElement(amountMoneyLineChart, it)
+                .addValues(it?.amountMoney?.doubleValue() ?: 0)
+            unitPriceLineChart = newLineElement(unitPriceLineChart, it)
+                .addValues(it?.unitPrice?.doubleValue() ?: 0)
+        }
+
+        [amountLineChart, amountMoneyLineChart, unitPriceLineChart]
+    }
+}
+```
+
+#### Groovy 语法亮点
+
+**Elvis 操作符**:
+```groovy
+// Groovy
+BigDecimal minRang = chartData.minRangMap.get(key) ?: 0
+
+// 等价 Java
+BigDecimal minRang = chartData.minRangMap.get(key) == null ? 0 : chartData.minRangMap.get(key);
+```
+
+**安全导航操作符**:
+```groovy
+// Groovy
+it?.amount?.doubleValue() ?: 0
+
+// 等价 Java
+(it != null && it.getAmount() != null) ? it.getAmount().doubleValue() : 0
+```
+
+**闭包遍历**:
+```groovy
+// Groovy
+chartDataMap.each { code, chartData ->
+    println "$code: $chartData"
+}
+
+// 等价 Java
+for (Map.Entry<String, ChartData> entry : chartDataMap.entrySet()) {
+    String code = entry.getKey();
+    ChartData chartData = entry.getValue();
+    System.out.println(code + ": " + chartData);
+}
+```
+
+#### 亮点总结
+- ✅ **动态语言优势**: 简洁的语法、强大的闭包、安全的空值处理
+- ✅ **Java 互操作**: 无缝调用 Java 类库（OFC4J）
+- ✅ **继承复用**: 通过继承 Common 类复用图表构建逻辑
+- ✅ **函数式风格**: 使用闭包和集合操作替代传统循环
+
+---
+
+### 5️⃣ 接口抽象的优雅设计
+
+#### 实体类继承体系（domain/abstrac/）
+
+**抽象基类设计**（IdEntity.java）:
+```java
+/**
+ * 所有实体的基类
+ * 继承 Spring Data 的 AbstractPersistable 获取通用功能
+ */
+@MappedSuperclass
+public abstract class IdEntity extends AbstractPersistable<Long>
+        implements Serializable {
+    // Spring Data 已提供:
+    // - Long id 主键
+    // - getId/setId 方法
+    // - equals/hashCode 实现
+    // - isNew() 判断是否新实体
+}
+```
+
+**业务抽象类**（TradeDetail.java）:
+```java
+/**
+ * 明细表抽象类
+ * 使用 @MappedSuperclass 让子类继承所有字段映射
+ */
+@MappedSuperclass
+public class TradeDetail extends IdEntity implements Serializable {
+    @Column(name = "col_year")
+    private Integer year;
+
+    @Column(name = "col_month")
+    private Integer month;
+
+    @Column(name = "product_code")
+    private String productCode;
+
+    // ... 13 个核心字段
+
+    // Fluent API 风格（链式调用）
+    public TradeDetail setYear(Integer year) {
+        this.year = year;
+        return this;
+    }
+
+    public TradeDetail setMonth(Integer month) {
+        this.month = month;
+        return this;
+    }
+}
+```
+
+**具体实体类**（ImpTradeDetail.java / ExpTradeDetail.java）:
+```java
+@Entity
+@Table(name = "t_import_detail")
+public class ImpTradeDetail extends TradeDetail {
+    // 仅需添加特有字段，继承全部公共字段
+}
+
+@Entity
+@Table(name = "t_export_detail")
+public class ExpTradeDetail extends TradeDetail {
+    // 进出口表结构相同，仅表名不同
+}
+```
+
+**继承层级**:
+```
+AbstractPersistable<Long> (Spring Data)
+    ↓
+IdEntity (@MappedSuperclass)
+    ↓
+TradeDetail (@MappedSuperclass)
+    ↓
+ImpTradeDetail (@Entity)  /  ExpTradeDetail (@Entity)
+```
+
+#### Repository 接口抽象（dao/）
+
+**组合多接口获取能力**（ImpTradeDetailDao.java）:
+```java
+/**
+ * 通过继承多个接口组合功能
+ * 1. CrudRepository: CRUD 基础方法
+ * 2. JpaSpecificationExecutor: 动态查询
+ * 3. ImpTradeDetailDaoCustom: 自定义方法
+ */
+public interface ImpTradeDetailDao extends
+        CrudRepository<ImpTradeDetail, Long>,           // 提供 save/findAll/delete 等
+        JpaSpecificationExecutor<ImpTradeDetail>,       // 提供 findAll(Specification)
+        ImpTradeDetailDaoCustom {                       // 自定义复杂查询
+
+    // 方法名查询（Spring Data 自动实现）
+    List<ImpTradeDetail> findByProductCodeAndYearMonth(String code, String ym);
+
+    // JPQL 自定义查询
+    @Query("delete from ImpTradeDetail t where t.year = ?1 and t.month = ?2")
+    @Modifying
+    @Transactional
+    void delRepeatImpTradeDetail(Integer year, Integer month);
+}
+```
+
+**自定义 Repository 实现**（custom/impl/ImpTradeDetailDaoImpl.java）:
+```java
+/**
+ * 命名规则：接口名 + Impl
+ * Spring Data 会自动识别并合并
+ */
+public class ImpTradeDetailDaoImpl extends BaseDao
+        implements ImpTradeDetailDaoCustom {
+
+    @Override
+    public List<ProductCount> getCustomStatistics(String productCode, String yearMonth) {
+        // 使用 JDBC 实现复杂统计
+        String sql = "SELECT product_code, SUM(amount) FROM t_import_detail " +
+                     "WHERE product_code = ? AND year_month = ? GROUP BY product_code";
+
+        return jdbcTemplate.query(sql, new ProductCountRowMapper(),
+                                  productCode, yearMonth);
+    }
+}
+```
+
+#### Service 接口抽象
+
+**接口与实现分离**:
+```java
+// 接口定义契约
+public interface TradeDetailService {
+    Page<ImpTradeDetail> findImpWithCriteria(...);
+    void importDetailData(...);
+    void updateDetailType(...);
+}
+
+// 实现类专注业务逻辑
+@Service
+@Transactional
+public class TradeDetailServiceImpl implements TradeDetailService {
+    @Autowired
+    private ImpTradeDetailDao impDao;
+
+    // 实现业务方法
+}
+```
+
+#### 亮点总结
+- ✅ **@MappedSuperclass**: 字段映射继承，避免重复定义
+- ✅ **接口组合**: 通过多继承组合不同能力
+- ✅ **Fluent API**: 链式调用提升代码可读性
+- ✅ **自定义扩展**: 保留 Spring Data 便利性的同时支持复杂查询
+
+---
+
+### 6️⃣ 动态条件构建（JPA Criteria API）
+
+#### 核心工具类（DynamicSpecifications.java）
+
+**PropertyFilter 查询条件封装**（QueryUtils.java:110-186）:
+```java
+/**
+ * 查询条件封装类
+ * 支持多种比较类型
+ */
+public static class PropertyFilter {
+    private String name;    // 属性名（如 "productCode"）
+    private Object value;   // 属性值（如 "001"）
+    private Type type;      // 比较类型
+
+    public enum Type {
+        EQ,    // 等于        =
+        LIKE,  // 模糊查询    like
+        GT,    // 大于        >
+        GE,    // 大于等于    >=
+        LT,    // 小于        <
+        LE     // 小于等于    <=
+    }
+
+    /**
+     * 判断条件值是否有效
+     */
+    public boolean isNotBlankOfThisPropertyValue() {
+        if (value instanceof String) {
+            String str = (String) value;
+            return (null != str && !str.trim().isEmpty());
+        } else {
+            return (null != value);
+        }
+    }
+}
+```
+
+**动态 Specification 构建器**（DynamicSpecifications.java:25-72）:
+```java
+/**
+ * 将 PropertyFilter 集合转换为 JPA Specification
+ * 核心: 使用 Criteria API 动态构建查询条件
+ */
+public static <T> Specification<T> byPropertyFilter(
+        final Collection<PropertyFilter> filterList,
+        final Class<T> clazz) {
+
+    return new Specification<T>() {
+        @Override
+        public Predicate toPredicate(Root<T> tRoot,
+                                     CriteriaQuery<?> query,
+                                     CriteriaBuilder cb) {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+
+            for (PropertyFilter filter : filterList) {
+                // 1. 获取属性表达式
+                Path expression = tRoot.get(filter.getName());
+
+                // 2. 类型转换（String → 目标类型）
+                Class attributeClass = expression.getJavaType();
+                if (!attributeClass.equals(String.class)
+                    && filter.getValue() instanceof String
+                    && conversionService.canConvert(String.class, attributeClass)) {
+                    filter.setValue(
+                        conversionService.convert(filter.getValue(), attributeClass)
+                    );
+                }
+
+                // 3. 根据类型构建 Predicate
+                switch (filter.getType()) {
+                    case EQ:
+                        predicates.add(cb.equal(expression, filter.getValue()));
+                        break;
+                    case LIKE:
+                        predicates.add(cb.like(expression,
+                                              "%" + filter.getValue() + "%"));
+                        break;
+                    case GT:
+                        predicates.add(cb.greaterThan(expression,
+                                                     (Comparable) filter.getValue()));
+                        break;
+                    case GE:
+                        predicates.add(cb.greaterThanOrEqualTo(expression,
+                                                              (Comparable) filter.getValue()));
+                        break;
+                    case LT:
+                        predicates.add(cb.lessThan(expression,
+                                                  (Comparable) filter.getValue()));
+                        break;
+                    case LE:
+                        predicates.add(cb.lessThanOrEqualTo(expression,
+                                                           (Comparable) filter.getValue()));
+                        break;
+                }
+            }
+
+            // 4. 组合所有条件（AND）
+            if (predicates.size() > 0) {
+                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+            }
+
+            return cb.conjunction();  // 无条件时返回 true
+        }
+    };
+}
+```
+
+#### 实战应用
+
+**Service 层构建查询条件**:
+```java
+public Page<ImpTradeDetail> findImpWithCriteria(
+        ImpTradeDetail tradeDetail,
+        CommonDto commonDto,
+        YearMonthDto yearMonthDto,
+        Pageable pageable) {
+
+    // 1. 构建过滤条件列表
+    List<PropertyFilter> filters = new ArrayList<>();
+
+    if (isNotBlank(tradeDetail.getProductCode())) {
+        filters.add(new PropertyFilter("productCode",
+                                       tradeDetail.getProductCode(),
+                                       PropertyFilter.Type.EQ));
+    }
+
+    if (isNotBlank(tradeDetail.getCompanyType())) {
+        filters.add(new PropertyFilter("companyType",
+                                       tradeDetail.getCompanyType(),
+                                       PropertyFilter.Type.LIKE));
+    }
+
+    if (yearMonthDto.getLowYear() != null) {
+        String lowYearMonth = yearMonthDto.getLowYear() + "-"
+                            + yearMonthDto.getLowMonth();
+        filters.add(new PropertyFilter("yearMonth",
+                                       lowYearMonth,
+                                       PropertyFilter.Type.GE));
+    }
+
+    if (yearMonthDto.getHighYear() != null) {
+        String highYearMonth = yearMonthDto.getHighYear() + "-"
+                             + yearMonthDto.getHighMonth();
+        filters.add(new PropertyFilter("yearMonth",
+                                       highYearMonth,
+                                       PropertyFilter.Type.LE));
+    }
+
+    // 2. 转换为 Specification
+    Specification<ImpTradeDetail> spec =
+        DynamicSpecifications.byPropertyFilter(filters, ImpTradeDetail.class);
+
+    // 3. 执行查询
+    return repository.findAll(spec, pageable);
+}
+```
+
+**生成的 SQL 示例**:
+```sql
+SELECT * FROM t_import_detail
+WHERE product_code = '001'
+  AND company_type LIKE '%国企%'
+  AND year_month >= '2012-01'
+  AND year_month <= '2012-12'
+ORDER BY year_month DESC
+LIMIT 20 OFFSET 0
+```
+
+#### 优势对比
+
+**传统方式（拼接 SQL）**:
+```java
+// ❌ 问题：SQL 注入风险、难以维护、类型不安全
+String sql = "SELECT * FROM t_import_detail WHERE 1=1";
+if (productCode != null) {
+    sql += " AND product_code = '" + productCode + "'";
+}
+if (companyType != null) {
+    sql += " AND company_type LIKE '%" + companyType + "%'";
+}
+```
+
+**Criteria API 方式**:
+```java
+// ✅ 优势：类型安全、防注入、IDE 自动补全、易于测试
+Specification<ImpTradeDetail> spec =
+    DynamicSpecifications.byPropertyFilter(filters, ImpTradeDetail.class);
+Page<ImpTradeDetail> page = repository.findAll(spec, pageable);
+```
+
+#### 亮点总结
+- ✅ **类型安全**: 编译期检查，避免字段名拼写错误
+- ✅ **防 SQL 注入**: 使用参数化查询
+- ✅ **高度复用**: 一套代码支持所有实体类动态查询
+- ✅ **灵活组合**: 条件可任意增减，自动 AND 组合
+- ✅ **自动类型转换**: String → Integer/Date 自动转换
+
+---
+
 ## 参考资料
 
 - [Spring Framework 3.1.x 文档](https://docs.spring.io/spring-framework/docs/3.1.x/spring-framework-reference/html/)
